@@ -164,16 +164,12 @@
 									<listOptionValue builtIn="false" value="BulletCollision"/>
 									<listOptionValue builtIn="false" value="LinearMath"/>
 									<listOptionValue builtIn="false" value="png16"/>
-									<listOptionValue builtIn="false" value="expat"/>
-									<listOptionValue builtIn="false" value="dae"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.paths.1618069807" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glfw-3.2.1\lib-mingw-w64&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\GLEW-2.1.0\lib\Release\x64&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\bullet3-2.88\build\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\lpng1636\lib&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Libraries\expat-2.2.6\lib&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Libraries\libdae\lib&quot;"/>
 								</option>
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.561436206" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" useByScannerDiscovery="false" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.userobjs.1501414571" name="Other objects" superClass="gnu.cpp.link.option.userobjs" useByScannerDiscovery="false" valueType="userObjs">

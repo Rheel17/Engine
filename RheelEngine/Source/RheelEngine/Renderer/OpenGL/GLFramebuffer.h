@@ -29,10 +29,10 @@ public:
 
 	/**
 	 * Resizes the framebuffer to the specified dimensions. Note that both
-	 * width and heigth must be at least 1. When any of them is 0, they are
+	 * width and height must be at least 1. When any of them is 0, they are
 	 * automatically set to 1.
 	 */
-	void Resize(GLuint width, GLuint height);
+	GLFramebuffer ResizedCopy(GLuint width, GLuint height);
 
 	/**
 	 * Binds this framebuffer to both the read and write buffer. Use
@@ -71,6 +71,8 @@ public:
 	static void ClearBindingForDrawing();
 
 	/**
+	 * TODO
+	 *
 	 * Adds a texture to the framebuffer. Can only be done before creating
 	 * (using Create()).
 	 */
@@ -88,6 +90,8 @@ public:
 	void Create();
 
 	/**
+	 * TODO
+	 *
 	 * Returns a vector of all the multisample textures attached to this
 	 * framebuffer. If the number of samples is one, this always returns
 	 * and empty vector.
@@ -95,6 +99,8 @@ public:
 	const std::vector<GLTexture2DMultisample>& MultisampleTextures() const;
 
 	/**
+	 * TODO
+	 *
 	 * Returns a vector of all textures attached to this framebuffer. If the
 	 * framebuffer is multisampled (samples != 1), calling
 	 * ResolveMultisampleTextures() is required if the framebuffer has changed.
@@ -102,11 +108,15 @@ public:
 	const std::vector<GLTexture2D>& Textures() const;
 
 	/**
+	 * TODO
+	 *
 	 * Resolves the multisample textures into regular GLTexture2D instances.
 	 */
 	void ResolveMultisampleTextures() const;
 
 	/**
+	 * TODO
+	 *
 	 * Resolves the multisample textures into regular GLTexture2D instances.
 	 * If the framebuffer only has one sample, these textures are equal to the
 	 * attached textures. To only resolve the textures, and not return them,

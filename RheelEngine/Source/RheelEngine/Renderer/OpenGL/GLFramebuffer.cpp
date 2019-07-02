@@ -27,6 +27,24 @@ GLuint GLFramebuffer::GetID() const {
 	return _id;
 }
 
+GLFramebuffer GLFramebuffer::ResizedCopy(GLuint width, GLuint height) {
+	GLFramebuffer newBuffer(width, height, _samples);
+
+	for (auto t : _texture_add_info) {
+		newBuffer.AddTexture(std::get<0>(t), std::get<1>(t), std::get<2>(t));
+	}
+
+	for (auto r : _renderbuffer_add_info) {
+		newBuffer.AddRenderbuffer(std::get<0>(r), std::get<1>(r));
+	}
+
+	if (_created) {
+		newBuffer.Create();
+	}
+
+	return newBuffer;
+}
+
 void GLFramebuffer::Bind() const {
 	if (GL::BindFramebuffer(_id)) {
 		glViewport(0, 0, _width, _height);
@@ -57,24 +75,6 @@ void GLFramebuffer::ClearBindingForDrawing() {
 	if (GL::ClearFramebufferBinding(GL::FramebufferTarget::DRAW)) {
 		glViewport(0, 0, _window_framebuffer_width, _window_framebuffer_height);
 	}
-}
-
-void GLFramebuffer::Resize(GLuint width, GLuint height) {
-	GLFramebuffer newBuffer(width, height);
-
-	for (auto t : _texture_add_info) {
-		newBuffer.AddTexture(std::get<0>(t), std::get<1>(t), std::get<2>(t));
-	}
-
-	for (auto r : _renderbuffer_add_info) {
-		newBuffer.AddRenderbuffer(std::get<0>(r), std::get<1>(r));
-	}
-
-	if (_created) {
-		newBuffer.Create();
-	}
-
-	*this = newBuffer;
 }
 
 void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum type) {

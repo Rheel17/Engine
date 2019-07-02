@@ -30,11 +30,8 @@ void SceneRenderer::SetSize(unsigned width, unsigned height) {
 		return;
 	}
 
-//	_g_buffer = _g_buffer.CreateResizedCopy(width, height);
-//	_result_buffer = _result_buffer.CreateResizedCopy(width, height);
-
-	_g_buffer.Resize(width, height);
-	_result_buffer.Resize(width, height);
+	_g_buffer = _g_buffer.ResizedCopy(width, height);
+	_result_buffer = _result_buffer.ResizedCopy(width, height);
 }
 
 void SceneRenderer::Render() const {
