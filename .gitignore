@@ -1,5 +1,3 @@
 .metadata/
-**/*.project
-**/*.cproject
 **/.settings/
 **/*.o
