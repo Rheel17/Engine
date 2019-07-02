@@ -1,0 +1,22 @@
+implement a very simple UI system
+	- UI components like
+		- text
+		- button
+		- textfield
+		- etc.
+		-
+		- custom
+	- Nesting of components should be possible. 
+	- At later stages: create a UI editor and read/write a .rui file
+
+Implement lighting shader correctly
+-> Find a way to more efficiently get lights to the shader (uniform buffer objects?)
+
+Add anti-aliazing effects
+
+Custom shaders? Let the user specify the main function, other functions, uniforms, but not
+	'in'/'out' for vertex/fragment. Have some pre-defined uniforms that	the default 
+	modelshader also uses. 
+
+IMPORTANT: VERSION CONTROL!!!
++ tasks ---->
