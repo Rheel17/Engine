@@ -17,7 +17,8 @@ ld -o ../../Build/Resources/resources.o -b binary %files%
 REM create resources.h file
 
 cd ..\..\Build\Resources
-echo #ifndef ___RE_RESOURCES_H > resources.h
+echo // THIS IS A MACHINE GENERATED FILE. DO NOT EDIT^^! > resources.h
+echo #ifndef ___RE_RESOURCES_H >> resources.h
 echo #define ___RE_RESOURCES_H >> resources.h
 echo:>> resources.h
 echo #define RESOURCE_START(resource) ___binary___ ## resource ## _start >> resources.h
