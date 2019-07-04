@@ -14,6 +14,9 @@ inline static GLFWwindow *getWindow(void *handle) {
 	return static_cast<GLFWwindow *>(handle);
 }
 
+static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
+		GLsizei length, const GLchar *message, const void *userParam);
+
 Window::Window(DisplayConfiguration configuration) :
 		_configuration(configuration) {}
 
@@ -44,8 +47,12 @@ void Window::Show() {
 
 	glfwWindowHint(GLFW_SAMPLES, _configuration.SampleCount());
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef RE_DEBUG
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+#endif
 
 	// create the window and set the window handle for later user
 	GLFWwindow *window = glfwCreateWindow(
@@ -66,6 +73,19 @@ void Window::Show() {
 	if (glewInit() != GLEW_OK) {
 		throw std::runtime_error("Failed to initialize GLEW.");
 	}
+
+#ifdef RE_DEBUG
+	// initialize OpenGL debugging
+	GLint debugFlags;
+	glGetIntegerv(GL_CONTEXT_FLAGS, &debugFlags);
+
+	if (debugFlags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(glDebugOutput, nullptr);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+	}
+#endif
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -110,6 +130,54 @@ void Window::DestroyDisplaySystems() {
 	if (_is_glfw_initialized) {
 		glfwTerminate();
 	}
+}
+
+static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
+		GLsizei length, const GLchar *message, const void *userParam) {
+
+	if (id == 131169 || id == 131204) {
+		return;
+	}
+
+	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) {
+		return;
+	}
+
+	std::cout << "[Debug][OpenGL] " << id << ": ";
+
+	switch (source) {
+		case GL_DEBUG_SOURCE_API:			  std::cout << "source=API"; 			 break;
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "source=WINDOW_SYSTEM";   break;
+		case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "source=SHADER_COMPILER"; break;
+		case GL_DEBUG_SOURCE_THIRD_PARTY:	  std::cout << "source=THIRD_PARTY";	 break;
+		case GL_DEBUG_SOURCE_APPLICATION:	  std::cout << "source=APPLICATION";	 break;
+		case GL_DEBUG_SOURCE_OTHER:			  std::cout << "source=OTHER";			 break;
+	}
+
+	std::cout << ", ";
+
+	switch (type) {
+		case GL_DEBUG_TYPE_ERROR: 				std::cout << "type=ERROR"; 				 break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "type=DEPRECATED_BEHAVIOR"; break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: 	std::cout << "type=UNDEFINED_BEHAVIOR";  break;
+		case GL_DEBUG_TYPE_PORTABILITY: 		std::cout << "type=PORTABILITY";		 break;
+		case GL_DEBUG_TYPE_PERFORMANCE:		 	std::cout << "type=PERFORMANCE";		 break;
+		case GL_DEBUG_TYPE_MARKER: 				std::cout << "type=MARKER";				 break;
+		case GL_DEBUG_TYPE_PUSH_GROUP: 			std::cout << "type=PUSH_GROUP";			 break;
+		case GL_DEBUG_TYPE_POP_GROUP: 			std::cout << "type=POP_GROUP";			 break;
+		case GL_DEBUG_TYPE_OTHER: 				std::cout << "type=OTHER";				 break;
+	}
+
+	std::cout << ", ";
+
+	switch (severity) {
+		case GL_DEBUG_SEVERITY_HIGH:         std::cout << "severity=HIGH";         break;
+		case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "severity=MEDIUM";       break;
+		case GL_DEBUG_SEVERITY_LOW:          std::cout << "severity=LOW";          break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "severity=NOTIFICATION"; break;
+	}
+
+	std::cout << ", " << std::string(message, length) << std::endl;
 }
 
 }

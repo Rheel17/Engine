@@ -1,4 +1,4 @@
-#version 400 core
+#version 330 core
 
 out vec4 frag_Color;
 
@@ -15,6 +15,7 @@ uniform sampler2DMS gBufferMaterialParameters;
 
 // g-buffer parameters
 uniform ivec2 gBufferTextureSize;
+uniform int sampleCount;
 ivec2 textureLocation;
 
 // light parameters
@@ -97,8 +98,8 @@ vec3 directionalLight(Material material, vec3 P, vec3 N, vec3 direction, vec4 co
 	return abstractLight(material, P, N, -direction, color);
 }
 
-vec3 _main(void) {
-	vec3 ambient = texelFetch(gBufferAmbient, textureLocation, gl_SampleID).rgb;
+vec3 calculateColor(int sample) {
+	vec3 ambient = texelFetch(gBufferAmbient, textureLocation, sample).rgb;
 
 	// no lights: just return the ambient color
 	if (lightCount == 0) {
@@ -106,11 +107,11 @@ vec3 _main(void) {
 	} 
 	
 	// lookup g-buffer
-	vec3 position = texelFetch(gBufferPosition, textureLocation, gl_SampleID).rgb;
-	vec3 normal = normalize(texelFetch(gBufferNormal, textureLocation, gl_SampleID).rgb);
-	vec3 diffuse = texelFetch(gBufferDiffuse, textureLocation, gl_SampleID).rgb;
-	vec3 specular = texelFetch(gBufferSpecular, textureLocation, gl_SampleID).rgb;
-	vec4 materialParameters = texelFetch(gBufferMaterialParameters, textureLocation, gl_SampleID);
+	vec3 position = texelFetch(gBufferPosition, textureLocation, sample).rgb;
+	vec3 normal = normalize(texelFetch(gBufferNormal, textureLocation, sample).rgb);
+	vec3 diffuse = texelFetch(gBufferDiffuse, textureLocation, sample).rgb;
+	vec3 specular = texelFetch(gBufferSpecular, textureLocation, sample).rgb;
+	vec4 materialParameters = texelFetch(gBufferMaterialParameters, textureLocation, sample);
 
 	// build material
 	Material material;
@@ -141,17 +142,23 @@ vec3 _main(void) {
 	return ambient + color;
 }
 
-void main(void) {
-	textureLocation = ivec2(vf_Texture.x * gBufferTextureSize.x, vf_Texture.y * gBufferTextureSize.y);
-	vec4 color = texelFetch(gBufferColor, textureLocation, gl_SampleID);
+vec4 _main(int sample) {
+	vec4 color = texelFetch(gBufferColor, textureLocation, sample);
 
 	// if the g-buffer color value is an actual color (so alpha >= 0), bypass the lighting
 	// system, and just return that color. 
 	if (color.a >= 0) {
-		frag_Color = color;
-		return;
+		return color;
 	}
 
 	// apply the lighting shader
-	frag_Color = vec4(_main(), 1.0);
+	return vec4(calculateColor(sample), 1.0);
+}
+
+void main(void) {
+	textureLocation = ivec2(vf_Texture.x * gBufferTextureSize.x, vf_Texture.y * gBufferTextureSize.y);
+
+	for (int sample = 0; sample < sampleCount; sample++) {
+		frag_Color += _main(sample) / sampleCount;
+	}
 }

@@ -6,10 +6,12 @@
 
 namespace rheel {
 
-SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height) :
-		_manager(manager), _camera_name(std::move(cameraName)), _width(width), _height(height),
+SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName,
+		unsigned width, unsigned height) :
+		_manager(manager), _camera_name(std::move(cameraName)),
+		_width(width), _height(height),
 		_g_buffer(width, height, Engine::GetDisplayConfiguration().SampleCount(), true),
-		_result_buffer(width, height, Engine::GetDisplayConfiguration().SampleCount()) {
+		_result_buffer(width, height) {
 
 	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT); // color
 	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB,  GL_FLOAT); // position
@@ -69,11 +71,11 @@ void SceneRenderer::Render() const {
 
 	GLShaderProgram& shader = _manager->InitializedLightingShader();
 	shader["gBufferTextureSize"] = ivec2 { _width, _height };
+	shader["sampleCount"] = (GLint) Engine::GetDisplayConfiguration().SampleCount();
 	shader["cameraPosition"] = camera->Position();
 
 	_manager->DrawLightingQuad();
 
-	_result_buffer.ResolveMultisampleTextures();
 	GLFramebuffer::ClearBinding();
 }
 

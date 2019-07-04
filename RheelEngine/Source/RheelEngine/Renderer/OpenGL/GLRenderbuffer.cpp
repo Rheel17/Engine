@@ -2,11 +2,12 @@
 
 namespace rheel {
 
-GLRenderbuffer::GLRenderbuffer(GLuint width, GLuint height, GLenum internalFormat, GLuint samples) {
+GLRenderbuffer::GLRenderbuffer(GLuint width, GLuint height, GLenum internalFormat,
+		GLuint samples, bool forceMultisampled) {
 	_id = GL::GenRenderbuffer();
 	Bind();
 
-	if (samples == 1) {
+	if (samples == 1 && !forceMultisampled) {
 		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
 	} else {
 		glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, internalFormat, width, height);

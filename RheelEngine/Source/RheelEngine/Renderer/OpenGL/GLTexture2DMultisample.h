@@ -22,26 +22,6 @@ public:
 	void Bind(GLuint textureUnit = 0) const;
 
 	/**
-	 * Sets the minifying function for this texture.
-	 */
-	void SetMinifyingFilter(GL::FilterFunction filterFunction);
-
-	/**
-	 * Sets the magnification function for this texture.
-	 */
-	void SetMagnificationFilter(GL::FilterFunction filterFuntion);
-
-	/**
-	 * Sets the wrapping parameter for the horizontal direction.
-	 */
-	void SetWrapParameterS(GL::WrapParameter parameter);
-
-	/**
-	 * Sets the wrapping parameter for the vertical direction.
-	 */
-	void SetWrapParameterT(GL::WrapParameter parameter);
-
-	/**
 	 * Sets the data of this texture.
 	 *
 	 * internalFormat: Specifies the number of color components in the texture.

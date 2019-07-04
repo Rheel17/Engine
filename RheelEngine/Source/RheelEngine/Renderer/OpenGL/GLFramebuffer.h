@@ -20,7 +20,8 @@ public:
 	 * automatically set to 1. The samples variable is used in multisampling
 	 * effects. Each attachment will use that amount of samples.
 	 */
-	GLFramebuffer(GLuint width, GLuint height, GLuint samples = 1, bool forceMultisampled = false);
+	GLFramebuffer(GLuint width, GLuint height, GLuint samples = 1,
+			bool forceMultisampled = false);
 
 	/**
 	 * Returns the internal OpenGL ID of this texture.
@@ -89,30 +90,16 @@ public:
 
 	/**
 	 * Returns a vector of all the multisample textures attached to this
-	 * framebuffer. If the number of samples is one, this always returns
+	 * framebuffer. If the framebuffer is not multisampled, this always returns
 	 * and empty vector.
 	 */
 	const std::vector<GLTexture2DMultisample>& MultisampleTextures() const;
 
 	/**
 	 * Returns a vector of all textures attached to this framebuffer. If the
-	 * framebuffer is multisampled, calling ResolveMultisampleTextures()
-	 * is required if the framebuffer has changed.
+	 * framebuffer is multisampled, this always returns and empty vector.
 	 */
 	const std::vector<GLTexture2D>& Textures() const;
-
-	/**
-	 * Resolves the multisample textures into regular GLTexture2D instances.
-	 */
-	void ResolveMultisampleTextures() const;
-
-	/**
-	 * Resolves the multisample textures into regular GLTexture2D instances.
-	 * If the framebuffer only has one sample, these textures are equal to the
-	 * attached textures. To only resolve the textures, and not return them,
-	 * use ResolveMultisampleTextures()
-	 */
-	const std::vector<GLTexture2D>& ResolveAndGetTextures() const;
 
 	/**
 	 * Returns a vector of all the renderbuffers attached to this framebuffer.
@@ -132,7 +119,6 @@ private:
 
 	bool _is_multisampled;
 	std::vector<GLTexture2DMultisample> _multisample_textures;
-	std::shared_ptr<GLFramebuffer> _resolve_buffer;
 
 	std::vector<std::tuple<GLint, GLenum, GLenum>> _texture_add_info;
 	std::vector<std::tuple<GLenum, GLenum>> _renderbuffer_add_info;

@@ -84,7 +84,7 @@ void Element::_Draw(const std::vector<Vertex>& vertices, int mode) {
 	_Initialize();
 
 	_ui_shader->GetUniform("uiMode") = mode;
-	_ui_vertex_data->SetData(vertices, GLBuffer::DYNAMIC_DRAW);
+	_ui_vertex_data->SetData(vertices, GLBuffer::STREAM_DRAW);
 	_ui_vao->Bind();
 
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());

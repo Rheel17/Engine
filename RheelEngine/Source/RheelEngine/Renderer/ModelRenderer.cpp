@@ -46,7 +46,7 @@ GLShaderProgram& ModelRenderer::GetModelShader() {
 
 void ModelRenderer::RenderObjects() const {
 	_vao.Bind();
-	_object_data_buffer.SetData(_objects, GLBuffer::DYNAMIC_DRAW);
+	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
 
 	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
 }

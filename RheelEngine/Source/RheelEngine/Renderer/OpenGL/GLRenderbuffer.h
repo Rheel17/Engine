@@ -14,10 +14,12 @@ public:
 	 * The renderbuffer is automatically initialized using
 	 * glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height).
 	 *
-	 * If samples is not set to 1, the renderbuffer is initialized using
+	 * If samples is not set to 1, or if the forceMultisampled boolean is set to true, the
+	 * renderbuffer is initialized using
 	 * glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, internalFormat, width, height).
 	 */
-	GLRenderbuffer(GLuint width, GLuint height, GLenum internalFormat, GLuint samples = 1);
+	GLRenderbuffer(GLuint width, GLuint height, GLenum internalFormat, GLuint samples = 1,
+			bool forceMultisampled = false);
 
 	/**
 	 * Returns the internal OpenGL ID of this renderbuffer.

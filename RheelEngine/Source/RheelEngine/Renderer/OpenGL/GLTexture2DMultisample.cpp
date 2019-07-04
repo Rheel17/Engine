@@ -16,30 +16,6 @@ void GLTexture2DMultisample::Bind(GLuint textureUnit) const {
 	GL::BindTexture(_id, GL::TextureTarget::TEXTURE_2D_MULTISAMPLE, textureUnit);
 }
 
-void GLTexture2DMultisample::SetMinifyingFilter(GL::FilterFunction filterFunction) {
-	Bind();
-	glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GLint(filterFunction));
-}
-
-void GLTexture2DMultisample::SetMagnificationFilter(GL::FilterFunction filterFunction) {
-	if (filterFunction != GL::FilterFunction::NEAREST && filterFunction != GL::FilterFunction::LINEAR) {
-		throw std::invalid_argument("filterFunction must be NEAREST of LINEAR");
-	}
-
-	Bind();
-	glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GLint(filterFunction));
-}
-
-void GLTexture2DMultisample::SetWrapParameterS(GL::WrapParameter parameter) {
-	Bind();
-	glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GLint(parameter));
-}
-
-void GLTexture2DMultisample::SetWrapParameterT(GL::WrapParameter parameter) {
-	Bind();
-	glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GLint(parameter));
-}
-
 void GLTexture2DMultisample::Initialize(GLint internalFormat) {
 	Bind();
 	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, _samples, internalFormat, _width, _height, true);
