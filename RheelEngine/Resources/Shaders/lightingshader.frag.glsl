@@ -1,17 +1,21 @@
-#version 330 core
+#version 400 core
 
 out vec4 frag_Color;
 
 in vec2 vf_Texture;
 
 // g-buffer textures
-uniform sampler2D gBufferColor;
-uniform sampler2D gBufferPosition;
-uniform sampler2D gBufferNormal;
-uniform sampler2D gBufferAmbient;
-uniform sampler2D gBufferDiffuse;
-uniform sampler2D gBufferSpecular;
-uniform sampler2D gBufferMaterialParameters;
+uniform sampler2DMS gBufferColor;
+uniform sampler2DMS gBufferPosition;
+uniform sampler2DMS gBufferNormal;
+uniform sampler2DMS gBufferAmbient;
+uniform sampler2DMS gBufferDiffuse;
+uniform sampler2DMS gBufferSpecular;
+uniform sampler2DMS gBufferMaterialParameters;
+
+// g-buffer parameters
+uniform ivec2 gBufferTextureSize;
+ivec2 textureLocation;
 
 // light parameters
 uniform int lights_type[64];
@@ -23,13 +27,13 @@ uniform float lights_spot_attenuation[64];
 
 uniform int lightCount;
 
-// camera parameters
-uniform vec3 cameraPosition;
-
 // light type definitions
 #define TYPE_PointLight         0
 #define TYPE_SpotLight          1
 #define TYPE_DirectionalLight   2
+
+// camera parameters
+uniform vec3 cameraPosition;
 
 struct Material {
 	vec3 ambient;
@@ -94,7 +98,7 @@ vec3 directionalLight(Material material, vec3 P, vec3 N, vec3 direction, vec4 co
 }
 
 vec3 _main(void) {
-	vec3 ambient = texture(gBufferAmbient, vf_Texture).rgb;
+	vec3 ambient = texelFetch(gBufferAmbient, textureLocation, gl_SampleID).rgb;
 
 	// no lights: just return the ambient color
 	if (lightCount == 0) {
@@ -102,11 +106,11 @@ vec3 _main(void) {
 	} 
 	
 	// lookup g-buffer
-	vec3 position = texture(gBufferPosition, vf_Texture).rgb;
-	vec3 normal = normalize(texture(gBufferNormal, vf_Texture).rgb);
-	vec3 diffuse = texture(gBufferDiffuse, vf_Texture).rgb;
-	vec3 specular = texture(gBufferSpecular, vf_Texture).rgb;
-	vec4 materialParameters = texture(gBufferMaterialParameters, vf_Texture);
+	vec3 position = texelFetch(gBufferPosition, textureLocation, gl_SampleID).rgb;
+	vec3 normal = normalize(texelFetch(gBufferNormal, textureLocation, gl_SampleID).rgb);
+	vec3 diffuse = texelFetch(gBufferDiffuse, textureLocation, gl_SampleID).rgb;
+	vec3 specular = texelFetch(gBufferSpecular, textureLocation, gl_SampleID).rgb;
+	vec4 materialParameters = texelFetch(gBufferMaterialParameters, textureLocation, gl_SampleID);
 
 	// build material
 	Material material;
@@ -138,7 +142,8 @@ vec3 _main(void) {
 }
 
 void main(void) {
-	vec4 color = texture(gBufferColor, vf_Texture);
+	textureLocation = ivec2(vf_Texture.x * gBufferTextureSize.x, vf_Texture.y * gBufferTextureSize.y);
+	vec4 color = texelFetch(gBufferColor, textureLocation, gl_SampleID);
 
 	// if the g-buffer color value is an actual color (so alpha >= 0), bypass the lighting
 	// system, and just return that color. 

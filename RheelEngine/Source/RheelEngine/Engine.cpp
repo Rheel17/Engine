@@ -28,7 +28,7 @@ void Engine::_Run(Game *game) {
 	_instance.window = std::make_shared<Window>(_instance.display_configuration);
 	_instance.window->Show();
 
-	GLFramebuffer::SetWindowFramebufferSize(
+	GL::SetWindowFramebufferSize(
 			_instance.display_configuration.resolution.width,
 			_instance.display_configuration.resolution.height);
 

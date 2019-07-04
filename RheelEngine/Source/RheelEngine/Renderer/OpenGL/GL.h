@@ -4,10 +4,12 @@
 
 #include <GL/glew.h>
 
+#include <array>
 #include <cassert>
 #include <functional>
 #include <map>
 #include <memory>
+#include <stack>
 
 namespace rheel {
 
@@ -56,20 +58,39 @@ private:
 
 class RE_API GL {
 
+private:
+	struct _BindingState {
+		std::array<GLuint, 13> bound_buffer = { 0 };
+		std::array<GLuint, 2> bound_framebuffer = { 0 };
+		GLuint bound_renderbuffer = 0;
+		std::array<std::array<GLuint, 11>, 16> bound_texture = { 0 };
+		GLuint bound_vertex_array = 0;
+
+		GLuint bound_framebuffer_width = 0;
+		GLuint bound_framebuffer_height = 0;
+	};
+
 public:
 	enum class BufferTarget {
-			ARRAY, ATOMIC_COUNTER, COPY_READ, COPY_WRITE, DISPATCH_INDIRECT, ELEMENT_ARRAY, PIXEL_PACK,
-			PIXEL_UNPACK, QUERY, SHADER_STORAGE, TEXTURE, TRANSFORM_FEEDBACK, UNIFORM
+			ARRAY, ATOMIC_COUNTER, COPY_READ, COPY_WRITE, DISPATCH_INDIRECT, ELEMENT_ARRAY,
+			PIXEL_PACK, PIXEL_UNPACK, QUERY, SHADER_STORAGE, TEXTURE, TRANSFORM_FEEDBACK,
+			UNIFORM,
+
+			LAST = UNIFORM
 	};
 
 	enum class FramebufferTarget {
-			DRAW, READ
+			DRAW, READ,
+
+			LAST = READ
 	};
 
 	enum class TextureTarget {
-			TEXTURE_1D, TEXTURE_2D, TEXTURE_3D, TEXTURE_1D_ARRAY, TEXTURE_2D_ARRAY, TEXTURE_RECTANGLE,
-			TEXTURE_CUBE_MAP, TEXTURE_CUBE_MAP_ARRAY, TEXTURE_BUFFER, TEXTURE_2D_MULTISAMPLE,
-			TEXTURE_2D_MULTISAMPLE_ARRAY
+			TEXTURE_1D, TEXTURE_2D, TEXTURE_3D, TEXTURE_1D_ARRAY, TEXTURE_2D_ARRAY,
+			TEXTURE_RECTANGLE, TEXTURE_CUBE_MAP, TEXTURE_CUBE_MAP_ARRAY, TEXTURE_BUFFER,
+			TEXTURE_2D_MULTISAMPLE, TEXTURE_2D_MULTISAMPLE_ARRAY,
+
+			LAST = TEXTURE_2D_MULTISAMPLE_ARRAY
 	};
 
 public:
@@ -91,9 +112,10 @@ public:
 
 private:
 	constexpr static GLenum _BUFFER_BINDING_TARGET_GL[13] = {
-			GL_ARRAY_BUFFER, GL_ATOMIC_COUNTER_BUFFER, GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
-			GL_DISPATCH_INDIRECT_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER,
-			GL_QUERY_BUFFER, GL_SHADER_STORAGE_BUFFER, GL_TEXTURE_BUFFER, GL_TRANSFORM_FEEDBACK_BUFFER,
+			GL_ARRAY_BUFFER, GL_ATOMIC_COUNTER_BUFFER, GL_COPY_READ_BUFFER,
+			GL_COPY_WRITE_BUFFER, GL_DISPATCH_INDIRECT_BUFFER, GL_ELEMENT_ARRAY_BUFFER,
+			GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER, GL_QUERY_BUFFER,
+			GL_SHADER_STORAGE_BUFFER, GL_TEXTURE_BUFFER, GL_TRANSFORM_FEEDBACK_BUFFER,
 			GL_UNIFORM_BUFFER
 	};
 
@@ -102,8 +124,9 @@ private:
 	};
 
 	constexpr static GLenum _TEXTURE_TARGET_GL[11] = {
-			GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_1D_ARRAY, GL_TEXTURE_2D_ARRAY, GL_TEXTURE_RECTANGLE,
-			GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_BUFFER, GL_TEXTURE_2D_MULTISAMPLE,
+			GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_1D_ARRAY,
+			GL_TEXTURE_2D_ARRAY, GL_TEXTURE_RECTANGLE, GL_TEXTURE_CUBE_MAP,
+			GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_BUFFER, GL_TEXTURE_2D_MULTISAMPLE,
 			GL_TEXTURE_2D_MULTISAMPLE_ARRAY
 	};
 
@@ -117,11 +140,25 @@ private:
 public:
 	// GLhandle creators
 
-	inline static GLhandle GenBuffer()       { return GLhandle(glGenBuffers,       glDeleteBuffers      ); }
-	inline static GLhandle GenFramebuffer()  { return GLhandle(glGenFramebuffers,  glDeleteFramebuffers ); }
-	inline static GLhandle GenRenderbuffer() { return GLhandle(glGenRenderbuffers, glDeleteRenderbuffers); }
-	inline static GLhandle GenTexture()      { return GLhandle(glGenTextures,      glDeleteTextures     ); }
-	inline static GLhandle GenVertexArray()  { return GLhandle(glGenVertexArrays,  glDeleteVertexArrays ); }
+	inline static GLhandle GenBuffer() {
+		return GLhandle(glGenBuffers, glDeleteBuffers);
+	}
+
+	inline static GLhandle GenFramebuffer() {
+		return GLhandle(glGenFramebuffers, glDeleteFramebuffers);
+	}
+
+	inline static GLhandle GenRenderbuffer() {
+		return GLhandle(glGenRenderbuffers, glDeleteRenderbuffers);
+	}
+
+	inline static GLhandle GenTexture() {
+		return GLhandle(glGenTextures, glDeleteTextures);
+	}
+
+	inline static GLhandle GenVertexArray() {
+		return GLhandle(glGenVertexArrays, glDeleteVertexArrays);
+	}
 
 	inline static GLhandle CreateProgram() {
 		return GLhandle([](GLsizei count, GLuint *ids) {
@@ -137,9 +174,18 @@ public:
 
 	// Binders
 
+private:
+	static bool _BindBuffer(GLuint handle, BufferTarget target);
+	static bool _BindFramebuffer(GLuint handle, GLuint width, GLuint height, FramebufferTarget target);
+	static bool _BindFramebuffer(GLuint handle, GLuint width, GLuint height);
+	static bool _BindRenderbuffer(GLuint handle);
+	static bool _BindTexture(GLuint handle, TextureTarget target, GLuint textureUnit = 0);
+	static bool _BindVertexArray(GLuint handle);
+
+public:
 	static bool BindBuffer(GLhandle handle, BufferTarget target);
-	static bool BindFramebuffer(GLhandle handle, FramebufferTarget target);
-	static bool BindFramebuffer(GLhandle handle);
+	static bool BindFramebuffer(GLhandle handle, GLuint width, GLuint height, FramebufferTarget target);
+	static bool BindFramebuffer(GLhandle handle, GLuint width, GLuint height);
 	static bool BindRenderbuffer(GLhandle handle);
 	static bool BindTexture(GLhandle handle, TextureTarget target, GLuint textureUnit = 0);
 	static bool BindVertexArray(GLhandle handle);
@@ -151,19 +197,37 @@ public:
 	static bool ClearTextureBinding(TextureTarget target, GLuint textureUnit = 0);
 	static bool ClearVertexArrayBinding();
 
-	inline static GLenum Target(BufferTarget target) { return _BUFFER_BINDING_TARGET_GL[int(target)]; }
-	inline static GLenum Target(FramebufferTarget target) { return _FRAMEBUFFER_TARGET_GL[int(target)]; }
-	inline static GLenum Target(TextureTarget target) { return _TEXTURE_TARGET_GL[int(target)]; }
+	inline static GLenum Target(BufferTarget target) {
+		return _BUFFER_BINDING_TARGET_GL[int(target)];
+	}
+
+	inline static GLenum Target(FramebufferTarget target) {
+		return _FRAMEBUFFER_TARGET_GL[int(target)];
+	}
+
+	inline static GLenum Target(TextureTarget target) {
+		return _TEXTURE_TARGET_GL[int(target)];
+	}
+
+	static void PushState();
+	static void PopState();
+
+	/**
+	 * Sets the window framebuffer size. These are the dimensions of the
+	 * viewport when the framebuffer binding is cleared. This method needs
+	 * to be called at least once at the startup of the program and once
+	 * every time the window is resized.
+	 */
+	static void SetWindowFramebufferSize(GLuint width, GLuint height);
 
 private:
-	static GLuint _BOUND_BUFFER[13];
-	static GLuint _BOUND_FRAMEBUFFER[2];
-	static GLuint _BOUND_RENDERBUFFER;
-	static GLuint _BOUND_TEXTURE[11][16];
-	static GLuint _BOUND_VERTEX_ARRAY;
+	inline static _BindingState& _S() {
+		return _STATE_STACK.top();
+	}
 
-	// TODO: create state-version of this, so push/pop is possible. Probably put everything in
-	// struct, so all the binding state is pushed/popped at once.
+	static std::stack<_BindingState> _STATE_STACK;
+	static GLuint _window_framebuffer_width;
+	static GLuint _window_framebuffer_height;
 
 };
 

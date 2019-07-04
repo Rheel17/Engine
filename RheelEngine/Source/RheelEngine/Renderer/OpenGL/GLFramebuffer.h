@@ -20,7 +20,7 @@ public:
 	 * automatically set to 1. The samples variable is used in multisampling
 	 * effects. Each attachment will use that amount of samples.
 	 */
-	GLFramebuffer(GLuint width, GLuint height, GLuint samples = 1);
+	GLFramebuffer(GLuint width, GLuint height, GLuint samples = 1, bool forceMultisampled = false);
 
 	/**
 	 * Returns the internal OpenGL ID of this texture.
@@ -71,8 +71,6 @@ public:
 	static void ClearBindingForDrawing();
 
 	/**
-	 * TODO
-	 *
 	 * Adds a texture to the framebuffer. Can only be done before creating
 	 * (using Create()).
 	 */
@@ -90,8 +88,6 @@ public:
 	void Create();
 
 	/**
-	 * TODO
-	 *
 	 * Returns a vector of all the multisample textures attached to this
 	 * framebuffer. If the number of samples is one, this always returns
 	 * and empty vector.
@@ -99,28 +95,22 @@ public:
 	const std::vector<GLTexture2DMultisample>& MultisampleTextures() const;
 
 	/**
-	 * TODO
-	 *
 	 * Returns a vector of all textures attached to this framebuffer. If the
-	 * framebuffer is multisampled (samples != 1), calling
-	 * ResolveMultisampleTextures() is required if the framebuffer has changed.
+	 * framebuffer is multisampled, calling ResolveMultisampleTextures()
+	 * is required if the framebuffer has changed.
 	 */
 	const std::vector<GLTexture2D>& Textures() const;
 
 	/**
-	 * TODO
-	 *
 	 * Resolves the multisample textures into regular GLTexture2D instances.
 	 */
 	void ResolveMultisampleTextures() const;
 
 	/**
-	 * TODO
-	 *
 	 * Resolves the multisample textures into regular GLTexture2D instances.
 	 * If the framebuffer only has one sample, these textures are equal to the
 	 * attached textures. To only resolve the textures, and not return them,
-	 * use ::ResolveMultisampleTextures
+	 * use ResolveMultisampleTextures()
 	 */
 	const std::vector<GLTexture2D>& ResolveAndGetTextures() const;
 
@@ -136,26 +126,19 @@ private:
 	GLuint _height;
 	GLuint _samples;
 
+	GLuint _texture_count;
 	std::vector<GLTexture2D> _textures;
 	std::vector<GLRenderbuffer> _renderbuffers;
+
+	bool _is_multisampled;
+	std::vector<GLTexture2DMultisample> _multisample_textures;
+	std::shared_ptr<GLFramebuffer> _resolve_buffer;
 
 	std::vector<std::tuple<GLint, GLenum, GLenum>> _texture_add_info;
 	std::vector<std::tuple<GLenum, GLenum>> _renderbuffer_add_info;
 
 	bool _created;
 
-public:
-	/**
-	 * Sets the window framebuffer size. These are the dimensions of the
-	 * viewport when the framebuffer binding is cleared. This method needs
-	 * to be called at least once at the startup of the program and once
-	 * every time the window is resized.
-	 */
-	static void SetWindowFramebufferSize(GLuint width, GLuint height);
-
-private:
-	static GLuint _window_framebuffer_width;
-	static GLuint _window_framebuffer_height;
 
 };
 

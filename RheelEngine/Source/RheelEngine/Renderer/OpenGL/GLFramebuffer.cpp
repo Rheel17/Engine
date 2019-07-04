@@ -6,11 +6,9 @@
 
 namespace rheel {
 
-GLuint GLFramebuffer::_window_framebuffer_width;
-GLuint GLFramebuffer::_window_framebuffer_height;
-
-GLFramebuffer::GLFramebuffer(GLuint width, GLuint height, GLuint samples) :
-		_width(width), _height(height), _samples(1), _created(false) {
+GLFramebuffer::GLFramebuffer(GLuint width, GLuint height, GLuint samples, bool forceMultisampled) :
+		_width(width), _height(height), _samples(samples), _texture_count(0),
+		_is_multisampled(samples != 1 || forceMultisampled), _created(false) {
 
 	if (_width <= 0) {
 		_width = 1;
@@ -21,6 +19,10 @@ GLFramebuffer::GLFramebuffer(GLuint width, GLuint height, GLuint samples) :
 	}
 
 	_id = GL::GenFramebuffer();
+
+	if (_is_multisampled) {
+		_resolve_buffer = std::make_shared<GLFramebuffer>(width, height, 1);
+	}
 }
 
 GLuint GLFramebuffer::GetID() const {
@@ -46,25 +48,19 @@ GLFramebuffer GLFramebuffer::ResizedCopy(GLuint width, GLuint height) {
 }
 
 void GLFramebuffer::Bind() const {
-	if (GL::BindFramebuffer(_id)) {
-		glViewport(0, 0, _width, _height);
-	}
+	GL::BindFramebuffer(_id, _width, _height);
 }
 
 void GLFramebuffer::BindForReading() const {
-	GL::BindFramebuffer(_id, GL::FramebufferTarget::READ);
+	GL::BindFramebuffer(_id, _width, _height, GL::FramebufferTarget::READ);
 }
 
 void GLFramebuffer::BindForDrawing() const {
-	if (GL::BindFramebuffer(_id, GL::FramebufferTarget::DRAW)) {
-		glViewport(0, 0, _width, _height);
-	}
+	GL::BindFramebuffer(_id, _width, _height, GL::FramebufferTarget::DRAW);
 }
 
 void GLFramebuffer::ClearBinding() {
-	if (GL::ClearFramebufferBinding()) {
-		glViewport(0, 0, _window_framebuffer_width, _window_framebuffer_height);
-	}
+	GL::ClearFramebufferBinding();
 }
 
 void GLFramebuffer::ClearBindingForReading() {
@@ -72,9 +68,7 @@ void GLFramebuffer::ClearBindingForReading() {
 }
 
 void GLFramebuffer::ClearBindingForDrawing() {
-	if (GL::ClearFramebufferBinding(GL::FramebufferTarget::DRAW)) {
-		glViewport(0, 0, _window_framebuffer_width, _window_framebuffer_height);
-	}
+	GL::ClearFramebufferBinding(GL::FramebufferTarget::DRAW);
 }
 
 void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum type) {
@@ -84,24 +78,47 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum type)
 
 	Bind();
 
-	// generate and bind the texture
-	GLTexture2D texture(_width, _height);
-	texture.Bind();
+	if (_is_multisampled) {
+		// generate and bind the texture
+		GLTexture2DMultisample texture(_width, _height, _samples);
+		texture.Bind();
 
-	// set texture parameters
-	texture.SetWrapParameterS(GL::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetWrapParameterT(GL::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
-	texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
+		// set texture parameters
+		texture.SetWrapParameterS(GL::WrapParameter::CLAMP_TO_EDGE);
+		texture.SetWrapParameterT(GL::WrapParameter::CLAMP_TO_EDGE);
+		texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
+		texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
 
-	// upload empty texture data
-	texture.SetData(internalFormat, format, type, nullptr);
+		// initialize texture
+		texture.Initialize(internalFormat);
 
-	// add the texture to the framebuffer
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _textures.size(), GL_TEXTURE_2D, texture.GetID(), 0);
+		// add the texture to the framebuffer
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _texture_count, GL_TEXTURE_2D_MULTISAMPLE, texture.GetID(), 0);
 
-	_textures.push_back(texture);
+		_multisample_textures.push_back(texture);
+		_resolve_buffer->AddTexture(internalFormat, format, type);
+	} else {
+		// generate and bind the texture
+		GLTexture2D texture(_width, _height);
+		texture.Bind();
+
+		// set texture parameters
+		texture.SetWrapParameterS(GL::WrapParameter::CLAMP_TO_EDGE);
+		texture.SetWrapParameterT(GL::WrapParameter::CLAMP_TO_EDGE);
+		texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
+		texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
+
+		// upload empty texture data
+		texture.SetData(internalFormat, format, type, nullptr);
+
+		// add the texture to the framebuffer
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _texture_count, GL_TEXTURE_2D, texture.GetID(), 0);
+
+		_textures.push_back(texture);
+	}
+
 	_texture_add_info.push_back({ internalFormat, format, type });
+	_texture_count++;
 }
 
 void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
@@ -112,7 +129,7 @@ void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
 	Bind();
 
 	// generate and bind the renderbuffer
-	GLRenderbuffer renderbuffer(_width, _height, internalFormat);
+	GLRenderbuffer renderbuffer(_width, _height, internalFormat, _samples);
 	renderbuffer.Bind();
 
 	// add the renderbuffer to the framebuffer
@@ -129,7 +146,7 @@ void GLFramebuffer::Create() {
 
 	// collect the attachments
 	std::vector<GLuint> attachments;
-	for (unsigned int i = 0; i < _textures.size(); i++) {
+	for (unsigned int i = 0; i < _texture_count; i++) {
 		attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
 	}
 
@@ -144,20 +161,45 @@ void GLFramebuffer::Create() {
 		throw std::runtime_error("Framebuffer is not complete");
 	}
 
+	if (_is_multisampled) {
+		_resolve_buffer->Create();
+	}
+
 	_created = true;
 }
 
+const std::vector<GLTexture2DMultisample>& GLFramebuffer::MultisampleTextures() const {
+	return _multisample_textures;
+}
+
 const std::vector<GLTexture2D>& GLFramebuffer::Textures() const {
+	if (_is_multisampled) {
+		return _resolve_buffer->Textures();
+	}
+
 	return _textures;
+}
+
+void GLFramebuffer::ResolveMultisampleTextures() const {
+	if (_is_multisampled) {
+		GL::PushState();
+
+		_resolve_buffer->BindForDrawing();
+		BindForReading();
+
+		glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+		GL::PopState();
+	}
+}
+
+const std::vector<GLTexture2D>& GLFramebuffer::ResolveAndGetTextures() const {
+	ResolveMultisampleTextures();
+	return Textures();
 }
 
 const std::vector<GLRenderbuffer>& GLFramebuffer::Renderbuffers() const {
 	return _renderbuffers;
-}
-
-void GLFramebuffer::SetWindowFramebufferSize(GLuint width, GLuint height) {
-	_window_framebuffer_width = width;
-	_window_framebuffer_height = height;
 }
 
 }
