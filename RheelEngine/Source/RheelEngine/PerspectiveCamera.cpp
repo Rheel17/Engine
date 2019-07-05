@@ -6,7 +6,7 @@ PerspectiveCamera::PerspectiveCamera(std::string name, vec3 position, vec3 rotat
 		Camera(std::move(name), std::move(position), std::move(rotation)),
 		_fov(glm::radians(fov)), _near(near), _far(far) {}
 
-mat4 PerspectiveCamera::GetMatrix(unsigned width, unsigned height) const {
+mat4 PerspectiveCamera::CreateMatrix(unsigned width, unsigned height) const {
 	return glm::perspective(_fov, float(width) / float(height), _near, _far) * _ViewMatrix();
 }
 

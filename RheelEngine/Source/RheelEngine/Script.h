@@ -18,12 +18,14 @@ public:
 	// TODO: add script parameters
 
 	/**
-	 * TODO: Called when the scene is updated, before the scene objects are updated.
+	 * TODO: Called when the scene is updated, before the scene objects are
+	 * updated.
 	 */
 	virtual void PreOnUpdate() {}
 
 	/**
-	 * TODO: Called when the scene is updated, after the scene objects are updated.
+	 * TODO: Called when the scene is updated, after the scene objects are
+	 * updated.
 	 */
 	virtual void PostOnUpdate() {}
 

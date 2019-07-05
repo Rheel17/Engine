@@ -6,6 +6,9 @@
 
 namespace rheel {
 
+Blueprint::Blueprint(std::string name) :
+		_name(std::move(name)) {}
+
 void Blueprint::AddComponent(const std::string& componentName, std::function<void(ComponentPtr)> onLoad) {
 	if (!Engine::HasComponent(componentName)) {
 		throw std::runtime_error("Component not registered: \"" + componentName + "\"");
@@ -29,6 +32,14 @@ void Blueprint::AddChild(const std::string& blueprintName) {
 	}
 
 	_child_blueprints.push_back(blueprintName);
+}
+
+const std::vector<std::string> Blueprint::Components() const {
+	return _components;
+}
+
+const std::vector<std::string> Blueprint::Children() const {
+	return _child_blueprints;
 }
 
 const Blueprint::_ComponentLoader& Blueprint::GetLoaderForComponent(const std::string& component) const {

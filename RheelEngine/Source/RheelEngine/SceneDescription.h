@@ -64,38 +64,42 @@ public:
 
 	/**
 	 * Adds a script to the scene description. When a scene is created from this
-	 * description, the scripts are the added first, to be able to notify the scripts
-	 * of other additions to the scene.
+	 * description, the scripts are the added first, to be able to notify the
+	 * scripts of other additions to the scene.
 	 */
 	void AddScript(std::string script);
 
 	/**
-	 * See: Scene::AddObject(...). When a scene is created from this description,
-	 * the objects are added after the scripts and before the lights.
+	 * See: Scene::AddObject(...). When a scene is created from this
+	 * description, the objects are added after the scripts and before the
+	 * lights.
 	 */
 	void AddObject(std::string blueprint, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0), vec3 scale = { 1, 1, 1 });
 
 	/**
-	 * See: Scene::AddPointLight(...). When a scene is create from this description,
-	 * the lights are added after the objects and before the cameras.
+	 * See: Scene::AddPointLight(...). When a scene is create from this
+	 * description, the lights are added after the objects and before the
+	 * cameras.
 	 */
 	void AddPointLight(std::string name, vec3 position, Color color, float attenuation = 0.0f);
 
 	/**
-	 * See: Scene::AddSpotLight(...). When a scene is created from this description,
-	 * the lights are added after the objects and before the cameras.
+	 * See: Scene::AddSpotLight(...). When a scene is created from this
+	 * description, the lights are added after the objects and before the
+	 * cameras.
 	 */
 	void AddSpotLight(std::string name, vec3 position, Color color, vec3 direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
 
 	/**
 	 * See: Scene::AddDirectionalLight(...). When a scene is created from this
-	 * description, the lights are added after the objects and before the cameras.
+	 * description, the lights are added after the objects and before the
+	 * cameras.
 	 */
 	void AddDirectionalLight(std::string name, Color color, vec3 direction);
 
 	/**
-	 * See: Scene::AddCamera(...). When a scene is created from this description,
-	 * the cameras are added last.
+	 * See: Scene::AddCamera(...). When a scene is created from this
+	 * description, the cameras are added last.
 	 */
 	void AddCamera(float fov, float near, float far, std::string name, vec3 position = { 0, 0, 0 }, vec3 rotation = { 0, 0, 0 });
 

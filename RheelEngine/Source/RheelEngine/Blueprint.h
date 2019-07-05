@@ -19,8 +19,7 @@ public:
 	/**
 	 * Constructs a blueprint object.
 	 */
-	Blueprint(std::string name) :
-			_name(std::move(name)) {}
+	Blueprint(std::string name);
 
 	/**
 	 * Returns the name of this blueprint.
@@ -39,20 +38,20 @@ public:
 	void AddComponent(const std::string& componentName, _ComponentLoader onLoad = [](ComponentPtr){});
 
 	/**
-	 * Adds a nested blueprint. When an instance of this blueprint is
-	 * created, all child blueprints are also automatically created.
+	 * Adds a nested blueprint. When an instance of this blueprint is created,
+	 * all child blueprints are also automatically created.
 	 */
 	void AddChild(const std::string& blueprintName);
 
 	/**
 	 * Returns a vector of all components in this blueprint.
 	 */
-	const std::vector<std::string> Components() const { return _components; }
+	const std::vector<std::string> Components() const;
 
 	/**
 	 * Returns a vector of all the nested blueprints in this blueprint.
 	 */
-	const std::vector<std::string> Children() const { return _child_blueprints; }
+	const std::vector<std::string> Children() const;
 
 	/**
 	 * Returns the component loader for the specified component.

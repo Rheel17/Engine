@@ -21,8 +21,9 @@ public:
 	virtual void Initialize() {}
 
 	/**
-	 * Called when the game is started. At this point, a window and OpenGL context
-	 * are present. This is the final method called before the main game loop.
+	 * Called when the game is started. At this point, a window and OpenGL
+	 * context are present. This is the final method called before the main game
+	 * loop.
 	 */
 	virtual void Start() {}
 

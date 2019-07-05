@@ -24,8 +24,8 @@ public:
 	Object(const Blueprint& blueprint);
 
 	/**
-	 * Returns the parent object of this object, or nullptr if this object
-	 * has no parent object.
+	 * Returns the parent object of this object, or nullptr if this object has
+	 * no parent object.
 	 */
 	Object *ParentObject();
 
@@ -96,8 +96,8 @@ public:
 
 	/**
 	 * Fires an event of the given type to its components. A second parameter
-	 * can be set to false if this event should not be fired to children of
-	 * this object. By default, this will fire the same event in its children.
+	 * can be set to false if this event should not be fired to children of this
+	 * object. By default, this will fire the same event in its children.
 	 * NOTE: If recursive is true, the event will FIRST be fired in its
 	 *       children, THEN in its own components.
 	 */

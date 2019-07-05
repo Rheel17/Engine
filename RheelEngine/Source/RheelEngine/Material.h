@@ -20,15 +20,14 @@ public:
 	Material();
 
 //	/**
-//	 * Creates a colored material with the given colors. Additionally, the ambient,
-//	 * diffuse, and specular components can be given.
+//	 * Creates a colored material with the given colors. Additionally, the
+//	 * ambient, diffuse, and specular components can be given.
 //	 */
 //	Material();
 
 private:
 	MaterialType _type;
 	Color _color;
-
 
 };
 

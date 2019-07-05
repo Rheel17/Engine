@@ -21,8 +21,8 @@ public:
 	virtual void OnAdd() {}
 
 	/**
-	 * Called when the scene is updated, and gives a chance to this component
-	 * to update its state and/or its object. Updates are received in the same
+	 * Called when the scene is updated, and gives a chance to this component to
+	 * update its state and/or its object. Updates are received in the same
 	 * order as the components were added to the object or its blueprint.
 	 */
 	virtual void OnUpdate() {}

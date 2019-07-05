@@ -48,7 +48,7 @@ void SceneRenderer::Render() const {
 
 	// send the camera matrix to the model shader
 	GLShaderProgram& modelShader = ModelRenderer::GetModelShader();
-	mat4 cameraMatrix = camera->GetMatrix(_width, _height);
+	mat4 cameraMatrix = camera->CreateMatrix(_width, _height);
 	modelShader["cameraMatrix"] = cameraMatrix;
 
 	// write the scene to the g-buffer.

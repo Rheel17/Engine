@@ -68,21 +68,24 @@ public:
 	static Scene *CreateScene();
 
 	/**
-	 * Constructs a scene from the given scene description. The scene description must
-	 * have been previously registered using RegisterSceneDescription(...).
+	 * Constructs a scene from the given scene description. The scene
+	 * description must have been previously registered using
+	 * RegisterSceneDescription(...).
 	 */
 	static Scene *CreateScene(const std::string& sceneDescription);
 
 	/**
-	 * Sets the current active scene from a pointer to a previously instantiated scene.
-	 * See also: SetActiveScene(const std::string&) to use a registered scene description
+	 * Sets the current active scene from a pointer to a previously instantiated
+	 * scene. See also: SetActiveScene(const std::string&) to use a registered
+	 * scene description
 	 */
 	static void SetActiveScene(Scene *scene);
 
 	/**
-	 * Sets the current active scene from a scene description. The scene description must
-	 * have been previously registered using RegisterSceneDescription(...).
-	 * See also: SetActiveScene(Scene *) to use a previously instantiated scene.
+	 * Sets the current active scene from a scene description. The scene
+	 * description must have been previously registered using
+	 * RegisterSceneDescription(...). See also: SetActiveScene(Scene *) to use a
+	 * previously instantiated scene.
 	 */
 	static void SetActiveScene(const std::string& sceneDescription);
 
@@ -102,8 +105,7 @@ public:
 	static void RegisterBlueprint(Blueprint blueprint);
 
 	/**
-	 * Returns true only if a blueprint with the given name has been
-	 * registered.
+	 * Returns true only if a blueprint with the given name has been registered.
 	 */
 	static bool HasBlueprint(const std::string& name);
 
@@ -142,8 +144,7 @@ public:
 	}
 
 	/**
-	 * Returns true only if a component with the given name has been
-	 * registered.
+	 * Returns true only if a component with the given name has been registered.
 	 */
 	static bool HasComponent(const std::string& name);
 
@@ -166,8 +167,7 @@ public:
 	}
 
 	/**
-	 * Return true only if a script with the given name has been
-	 * registered.
+	 * Return true only if a script with the given name has been registered.
 	 */
 	static bool HasScript(const std::string& name);
 
@@ -177,9 +177,9 @@ public:
 	static ScriptPtr CreateScript(const std::string& name);
 
 	/**
-	 * Returns a GetSceneRenderManager instance to render the specified
-	 * scene. Multiple calls with the same scene will result in the same
-	 * scene render manager.
+	 * Returns a GetSceneRenderManager instance to render the specified scene.
+	 * Multiple calls with the same scene will result in the same scene render
+	 * manager.
 	 */
 	static SceneRenderManager& GetSceneRenderManager(Scene *scene);
 
