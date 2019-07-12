@@ -15,6 +15,14 @@ void ModelRenderer::ObjectData::SetTransform(vec3 position, quat rotation, vec3 
 	_normal_model_matrix = glm::transpose(glm::inverse(_model_matrix));
 }
 
+void ModelRenderer::ObjectData::SetMaterialVector(vec4 materialVector) {
+	_material_vector = std::move(materialVector);
+}
+
+void ModelRenderer::ObjectData::SetMaterialColor(vec4 materialColor) {
+	_material_color = std::move(materialColor);
+}
+
 ModelRenderer::ModelRenderer(ModelPtr model) :
 		_vertex_buffer_object(GL::BufferTarget::ARRAY),
 		_element_array_buffer(GL::BufferTarget::ELEMENT_ARRAY),
@@ -27,7 +35,7 @@ ModelRenderer::ModelRenderer(ModelPtr model) :
 
 	_vao.SetVertexAttributes<vec3, vec3, vec2>(_vertex_buffer_object);
 	_vao.SetVertexIndices(_element_array_buffer);
-	_vao.SetVertexAttributes<mat4, mat4>(_object_data_buffer, sizeof(ObjectData), true);
+	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ObjectData), true);
 }
 
 ModelRenderer::ObjectData *ModelRenderer::AddObject() {

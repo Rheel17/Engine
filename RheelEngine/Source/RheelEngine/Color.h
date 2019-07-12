@@ -1,6 +1,6 @@
 #ifndef COLOR_H_
 #define COLOR_H_
-#include "../_common.h"
+#include "_common.h"
 
 namespace rheel {
 

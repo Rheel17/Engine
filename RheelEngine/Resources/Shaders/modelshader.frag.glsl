@@ -11,16 +11,18 @@ out layout(location = 6) vec4 frag_MaterialParameters;
 in vec3 vf_Position;
 in vec3 vf_Normal;
 in vec2 vf_Texture;
+in vec4 vf_Material;
+in vec4 vf_Color;
 
 void main(void) {
 	frag_Color = vec4(0, 0, 0, -1);
 	frag_Position = vf_Position;
 	frag_Normal = normalize(vf_Normal);
 	
-	vec3 albedo = vec3(1.0);
+	vec3 albedo = vf_Color.rgb;
 
-	frag_Ambient = 0.01 * albedo;
-	frag_Diffuse = 0.99 * albedo;
-	frag_Specular = albedo;
-	frag_MaterialParameters = vec4(100.0, 0.0, 0.0, 0.0);
+	frag_Ambient = vf_Material.x * albedo;
+	frag_Diffuse = vf_Material.y * albedo;
+	frag_Specular = vf_Material.z * albedo;
+	frag_MaterialParameters = vec4(vf_Material.w, 0.0, 0.0, 0.0);
 }

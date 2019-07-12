@@ -2,7 +2,7 @@
 #define LIGHT_H_
 #include "_common.h"
 
-#include "Util/Color.h"
+#include "Color.h"
 
 namespace rheel {
 

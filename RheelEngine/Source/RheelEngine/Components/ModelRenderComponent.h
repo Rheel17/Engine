@@ -3,6 +3,7 @@
 #include "../_common.h"
 
 #include "RenderComponent.h"
+#include "../Material.h"
 #include "../Model.h"
 #include "../Renderer/ModelRenderer.h"
 
@@ -16,6 +17,8 @@ class RE_API ModelRenderComponent : public RenderComponent {
 public:
 	void SetModel(ModelPtr model);
 
+	void SetMaterial(Material material);
+
 	void OnAdd() override;
 
 	void OnUpdateRenderers() override;
@@ -24,6 +27,7 @@ public:
 
 private:
 	ModelPtr _model;
+	Material _material;
 	ModelRenderer::ObjectData *_object_data;
 
 };

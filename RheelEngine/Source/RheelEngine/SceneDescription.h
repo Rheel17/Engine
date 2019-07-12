@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "Util/Color.h"
+#include "Color.h"
 
 namespace rheel {
 

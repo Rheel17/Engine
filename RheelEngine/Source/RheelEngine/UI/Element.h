@@ -8,7 +8,7 @@
 #include "../Renderer/OpenGL/GLVertexArray.h"
 #include "../Renderer/OpenGL/GLTexture2D.h"
 
-#include "../Util/Color.h"
+#include "../Color.h"
 
 namespace rheel::ui {
 

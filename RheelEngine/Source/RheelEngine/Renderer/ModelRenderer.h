@@ -17,12 +17,16 @@ public:
 
 	public:
 		void SetTransform(vec3 position, quat rotation, vec3 scale);
+		void SetMaterialVector(vec4 materialVector);
+		void SetMaterialColor(vec4 materialColor);
 
 	private:
 		ObjectData(unsigned index);
 
 		mat4 _model_matrix;
 		mat4 _normal_model_matrix;
+		vec4 _material_vector;
+		vec4 _material_color;
 
 		unsigned _index;
 

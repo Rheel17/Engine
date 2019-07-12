@@ -22,6 +22,7 @@ static Blueprint createCubeBlueprint() {
 	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](ComponentPtr c) {
 		ModelRenderComponent *component = static_cast<ModelRenderComponent *>(c.get());
 		component->SetModel(model);
+		component->SetMaterial(Material(Color{ 1.0f, 0.4f, 0.1f, 1.0f }, 0.9f, 1.0f, 50.0f));
 	});
 
 	return blueprint;
