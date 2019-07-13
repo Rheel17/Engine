@@ -2,6 +2,7 @@
 #define MODELRENDERER_H_
 #include "../_common.h"
 
+#include "../Material.h"
 #include "../Model.h"
 
 #include "OpenGL/GLVertexArray.h"
@@ -32,11 +33,19 @@ public:
 
 	};
 
+private:
+	struct MaterialTextureCompare {
+		bool operator()(const Material& mat1, const Material& mat2) const;
+	};
+
 public:
 	ModelRenderer(ModelPtr model);
 
 	ObjectData *AddObject();
+	ObjectData *AddTexturedObject(const Material& material);
+
 	void RemoveObject(ObjectData *object);
+	void RemoveTexturedObject(const Material& material, ObjectData *object);
 
 	void RenderObjects() const;
 
@@ -50,6 +59,7 @@ public:
 	unsigned _index_count;
 
 	std::vector<ObjectData> _objects;
+	std::map<Material, std::vector<ObjectData>, MaterialTextureCompare> _textured_objects;
 
 public:
 	static GLShaderProgram& GetModelShader();

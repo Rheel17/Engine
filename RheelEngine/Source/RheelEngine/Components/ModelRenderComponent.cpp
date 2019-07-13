@@ -16,18 +16,33 @@ void ModelRenderComponent::SetModel(ModelPtr model) {
 }
 
 void ModelRenderComponent::SetMaterial(Material material) {
+	bool wasTextured = _material.Type() == Material::Textured;
+	bool isTextured = material.Type() == Material::Textured;
+
+	Material oldMaterial = _material;
 	_material = std::move(material);
 
 	if (_object_data != nullptr) {
-		_object_data->SetMaterialVector(_material.MaterialVector());
-		_object_data->SetMaterialColor(_material.MaterialColor());
+		if (!wasTextured && !isTextured) {
+			_object_data->SetMaterialVector(_material.MaterialVector());
+			_object_data->SetMaterialColor(_material.MaterialColor());
+		} else {
+			OnRemove();
+			OnAdd();
+		}
 	}
 }
 
 void ModelRenderComponent::OnAdd() {
-	_object_data = Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).AddObject();
-	_object_data->SetMaterialVector(_material.MaterialVector());
-	_object_data->SetMaterialColor(_material.MaterialColor());
+	if (_material.Type() == Material::Textured) {
+		_object_data = Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).AddTexturedObject(_material);
+		_object_data->SetMaterialVector(_material.MaterialVector());
+		_object_data->SetMaterialColor(_material.MaterialColor());
+	} else {
+		_object_data = Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).AddObject();
+		_object_data->SetMaterialVector(_material.MaterialVector());
+		_object_data->SetMaterialColor(_material.MaterialColor());
+	}
 }
 
 void ModelRenderComponent::OnUpdateRenderers() {
@@ -35,7 +50,11 @@ void ModelRenderComponent::OnUpdateRenderers() {
 }
 
 void ModelRenderComponent::OnRemove() {
-	Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).RemoveObject(_object_data);
+	if (_material.Type() == Material::Textured) {
+		Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).RemoveTexturedObject(_material, _object_data);
+	} else {
+		Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).RemoveObject(_object_data);
+	}
 }
 
 }

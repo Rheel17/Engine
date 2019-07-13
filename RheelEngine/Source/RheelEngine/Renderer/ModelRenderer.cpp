@@ -1,5 +1,7 @@
 #include "ModelRenderer.h"
 
+#include <tuple>
+
 #include "../Resources.h"
 
 namespace rheel {
@@ -23,6 +25,11 @@ void ModelRenderer::ObjectData::SetMaterialColor(vec4 materialColor) {
 	_material_color = std::move(materialColor);
 }
 
+bool ModelRenderer::MaterialTextureCompare::operator()(const Material& mat1, const Material& mat2) const {
+	return std::tie(mat1.AmbientTexture(), mat1.DiffuseTexture(), mat1.SpecularTexture()) <
+			std::tie(mat2.AmbientTexture(), mat2.DiffuseTexture(), mat2.SpecularTexture());
+}
+
 ModelRenderer::ModelRenderer(ModelPtr model) :
 		_vertex_buffer_object(GL::BufferTarget::ARRAY),
 		_element_array_buffer(GL::BufferTarget::ELEMENT_ARRAY),
@@ -39,12 +46,21 @@ ModelRenderer::ModelRenderer(ModelPtr model) :
 }
 
 ModelRenderer::ObjectData *ModelRenderer::AddObject() {
-	_objects.emplace_back(ObjectData(_objects.size()));
-	return &_objects.back();
+	return &_objects.emplace_back(ObjectData(_objects.size()));
+}
+
+ModelRenderer::ObjectData *ModelRenderer::AddTexturedObject(const Material& material) {
+	std::vector<ObjectData>& objects = _textured_objects[material];
+	return &objects.emplace_back(ObjectData(objects.size()));
 }
 
 void ModelRenderer::RemoveObject(ObjectData *object) {
 	_objects.erase(_objects.begin() + object->_index);
+}
+
+void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectData *object) {
+	std::vector<ObjectData>& objects = _textured_objects[material];
+	objects.erase(objects.begin() + object->_index);
 }
 
 GLShaderProgram& ModelRenderer::GetModelShader() {
@@ -54,9 +70,16 @@ GLShaderProgram& ModelRenderer::GetModelShader() {
 
 void ModelRenderer::RenderObjects() const {
 	_vao.Bind();
-	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
 
+	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
+
+	for (auto pair : _textured_objects) {
+		pair.first.BindTextures();
+
+		_object_data_buffer.SetData(pair.second, GLBuffer::STREAM_DRAW);
+		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, pair.second.size());
+	}
 }
 
 void ModelRenderer::_InitializeShader() {
@@ -67,6 +90,9 @@ void ModelRenderer::_InitializeShader() {
 	_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_modelshader_vert_glsl));
 	_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_modelshader_frag_glsl));
 	_model_shader.Link();
+	_model_shader["ambientTexture"] = 0;
+	_model_shader["diffuseTexture"] = 1;
+	_model_shader["specularTexture"] = 2;
 
 	_is_model_shader_initialized = true;
 }

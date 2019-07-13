@@ -4,6 +4,7 @@
 
 #define RESOURCE_START(resource) ___binary___ ## resource ## _start 
 #define RESOURCE_END(resource) ___binary___ ## resource ## _end 
+#define RESOURCE_LENGTH(resource) (RESOURCE_END(resource) - RESOURCE_START(resource)) 
 
 #ifdef __cplusplus 
 extern "C" { 

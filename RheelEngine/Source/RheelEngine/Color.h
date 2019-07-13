@@ -7,7 +7,10 @@ namespace rheel {
 struct RE_API Color {
 	float r, g, b, a;
 
-	inline operator vec4() const { return { r, g, b, a }; }
+	operator vec4() const;
+
+	bool operator==(const Color& color) const;
+	bool operator<(const Color& color) const;
 };
 
 }

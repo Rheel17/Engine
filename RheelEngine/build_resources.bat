@@ -23,6 +23,7 @@ echo #define ___RE_RESOURCES_H >> resources.h
 echo:>> resources.h
 echo #define RESOURCE_START(resource) ___binary___ ## resource ## _start >> resources.h
 echo #define RESOURCE_END(resource) ___binary___ ## resource ## _end >> resources.h
+echo #define RESOURCE_LENGTH(resource) (RESOURCE_END(resource) - RESOURCE_START(resource)) >> resources.h
 echo:>> resources.h
 echo #ifdef __cplusplus >> resources.h
 echo extern "C" { >> resources.h

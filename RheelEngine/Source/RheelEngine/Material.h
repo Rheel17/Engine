@@ -53,6 +53,11 @@ public:
 			float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
 	/**
+	 * Returns the type of this material.
+	 */
+	MaterialType Type() const;
+
+	/**
 	 * Returns a 4-dimensional vector with all the material factors. The
 	 * returned vector will be [ Ia, Id, Is, exp ].
 	 */
@@ -60,9 +65,33 @@ public:
 
 	/**
 	 * Returns a const reference to the color of this material. If this is a
-	 * textured material, the returned values are undefined.
+	 * textured material, { 0, 0, 0, -1 } is returned.
 	 */
 	const Color& MaterialColor() const;
+
+	/**
+	 * Binds the texture images as OpenGL textures.
+	 *
+	 * 0: ambient
+	 * 1: diffuse
+	 * 2: specular
+	 */
+	void BindTextures() const;
+
+	/**
+	 * Returns the ambient texture of this material, if present.
+	 */
+	const ImagePtr AmbientTexture() const;
+
+	/**
+	 * Returns the diffuse texture of this material, if present.
+	 */
+	const ImagePtr DiffuseTexture() const;
+
+	/**
+	 * Returns the specular texture of this material, if present.
+	 */
+	const ImagePtr SpecularTexture() const;
 
 private:
 	MaterialType _type;
@@ -81,6 +110,7 @@ private:
 public:
 	static constexpr float DEFAULT_SPECULAR_EXPONENT = 50.0f;
 
+	static const Material UV_TEST_MATERIAL;
 
 };
 
