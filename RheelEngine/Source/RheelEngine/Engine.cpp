@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include "Renderer/OpenGL/GLFramebuffer.h"
+#include "Renderer/Text/Font.h"
 
 #include <type_traits>
 
@@ -18,6 +19,7 @@ Engine::EngineInstance::~EngineInstance() {
 
 void Engine::_Initialize() {
 	Window::InitializeDisplaySystems();
+	Font::RegisterFont("C:/Windows/Fonts/ARIALUNI.TTF", Font::DEFAULT_FONT);
 	registerComponents();
 }
 
@@ -54,14 +56,14 @@ const DisplayConfiguration& Engine::GetDisplayConfiguration() {
 	return _instance.display_configuration;
 }
 
-void Engine::SetUI(ui::UIPtr ui) {
+void Engine::SetUI(UIPtr ui) {
 	_instance.ui = ui;
 	_instance.ui->GetContainer()->Layout(
 			_instance.display_configuration.resolution.width,
 			_instance.display_configuration.resolution.height);
 }
 
-ui::UIPtr Engine::GetUI() {
+UIPtr Engine::GetUI() {
 	return _instance.ui;
 }
 

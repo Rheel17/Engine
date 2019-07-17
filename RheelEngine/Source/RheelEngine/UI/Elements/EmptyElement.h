@@ -4,7 +4,7 @@
 
 #include "../Element.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 class RE_API EmptyElement : public Element {
 

@@ -1,7 +1,6 @@
 #include <RheelEngine.h>
 
 using namespace rheel;
-using namespace rheel::ui;
 
 class RotationComponent : public rheel::Component {
 
@@ -15,14 +14,14 @@ public:
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("object");
 
-	ModelPtr model = Model::LoadCollada("suzanne.dae");
+	ModelPtr model = Model::LoadCollada("suzanne_hires.dae");
 
 	blueprint.AddComponent("rotation");
 
 	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](ComponentPtr c) {
 		ModelRenderComponent *component = static_cast<ModelRenderComponent *>(c.get());
 		component->SetModel(model);
-		component->SetMaterial(Material::UV_TEST_MATERIAL);
+		component->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.9f, 1.0f));
 	});
 
 	return blueprint;

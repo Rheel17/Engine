@@ -1,6 +1,6 @@
 #include "EmptyElement.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 EmptyElement::EmptyElement(unsigned width, unsigned height) :
 		_width(width), _height(height) {}

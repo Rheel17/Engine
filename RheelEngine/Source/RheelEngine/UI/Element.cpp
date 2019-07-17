@@ -3,7 +3,7 @@
 #include "../Engine.h"
 #include "../Resources.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 #define MODE_COLORED    1
 #define MODE_TEXTURED   2

@@ -4,7 +4,7 @@
 
 #include "Elements/Container.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 class RE_API UI {
 

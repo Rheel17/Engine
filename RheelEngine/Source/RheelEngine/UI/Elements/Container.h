@@ -8,7 +8,7 @@
 
 #include "Constraint.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 class RE_API Container : public Element {
 	friend class UI;
@@ -39,7 +39,7 @@ public:
 	 * details about constraints, look at the documentation of the
 	 * Constraint class.
 	 *
-	 * Can throw a rheel::ui::ConstraintException if the constraint is
+	 * Can throw a rheel::ConstraintException if the constraint is
 	 * invalid, the destination anchor is already constraint, the
 	 * constraint is a self-loop, or if the elements are not in this
 	 * container.
@@ -55,7 +55,7 @@ public:
 	 * The distance specified is multiplied by the container width to
 	 * get the final distance.
 	 *
-	 * Can throw a rheel::ui::ConstraintException if the constraint is
+	 * Can throw a rheel::ConstraintException if the constraint is
 	 * invalid, the destination anchor is already constraint, the
 	 * constraint is a self-loop, or if the elements are not in this
 	 * container.
@@ -71,7 +71,7 @@ public:
 	 * The distance specified is multiplied by the container height to
 	 * get the final distance.
 	 *
-	 * Can throw a rheel::ui::ConstraintException if the constraint is
+	 * Can throw a rheel::ConstraintException if the constraint is
 	 * invalid, the destination anchor is already constraint, the
 	 * constraint is a self-loop, or if the elements are not in this
 	 * container.
@@ -84,7 +84,7 @@ public:
 	 * details about constraints, look at the documentation of the
 	 * Constraint class.
 	 *
-	 * Can throw a rheel::ui::ConstraintException if the constraint is
+	 * Can throw a rheel::ConstraintException if the constraint is
 	 * invalid, the destination anchor is already constraint, the
 	 * constraint is a self-loop, or if the elements are not in this
 	 * container.

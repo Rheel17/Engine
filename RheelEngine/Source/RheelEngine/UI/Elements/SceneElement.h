@@ -6,7 +6,7 @@
 #include "../Element.h"
 #include "../../Scene.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 class RE_API SceneElement : public Element {
 

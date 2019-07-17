@@ -39,6 +39,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\lpng1636\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glfw-3.2.1\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Build/Resources}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1257020691" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
@@ -63,6 +64,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\GLEW-2.1.0\lib\Release\x64&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\bullet3-2.88\build\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\lpng1636\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\lib&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.libs.1111790089" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="glfw3"/>
@@ -73,6 +75,7 @@
 									<listOptionValue builtIn="false" value="BulletCollision"/>
 									<listOptionValue builtIn="false" value="LinearMath"/>
 									<listOptionValue builtIn="false" value="png16"/>
+									<listOptionValue builtIn="false" value="freetype"/>
 								</option>
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1226383228" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" useByScannerDiscovery="false" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.userobjs.43350718" name="Other objects" superClass="gnu.cpp.link.option.userobjs" useByScannerDiscovery="false" valueType="userObjs">
@@ -90,8 +93,9 @@
 						<entry excluding="RheelEngine" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source"/>
 						<entry excluding="UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
-						<entry excluding="OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
+						<entry excluding="Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
 						<entry excluding="Elements" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI/Elements"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Util"/>
@@ -189,8 +193,9 @@
 						<entry excluding="RheelEngine" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source"/>
 						<entry excluding="UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
-						<entry excluding="OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
+						<entry excluding="Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
 						<entry excluding="Elements" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI/Elements"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Util"/>

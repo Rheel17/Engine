@@ -2,7 +2,7 @@
 
 #include "../../Engine.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 SceneElement::SceneElement(std::string cameraName) :
 		_use_active_scene(true), _scene(nullptr), _camera_name(cameraName) {}

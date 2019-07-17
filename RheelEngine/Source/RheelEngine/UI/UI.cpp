@@ -1,6 +1,6 @@
 #include "UI.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 std::shared_ptr<Container> UI::GetContainer() {
 	return _ui_container;

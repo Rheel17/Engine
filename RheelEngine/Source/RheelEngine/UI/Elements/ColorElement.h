@@ -5,7 +5,7 @@
 #include "../Element.h"
 #include "../../Renderer/OpenGL/GL.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 class RE_API ColorElement : public Element {
 

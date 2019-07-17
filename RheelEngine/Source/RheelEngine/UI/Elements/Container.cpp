@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace rheel::ui {
+namespace rheel {
 
 Container::Container() :
 		_constraint_tree(_CreateEmptyConstraintTree()) {}

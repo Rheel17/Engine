@@ -7,7 +7,7 @@
 #include <exception>
 #include <optional>
 
-namespace rheel::ui {
+namespace rheel {
 
 /**
  * A Constraint is used to constraint elements in a Container. When handling a
@@ -181,6 +181,6 @@ private:
 
 }
 
-std::ostream& operator<<(std::ostream& stream, const rheel::ui::Constraint& constraint);
+std::ostream& operator<<(std::ostream& stream, const rheel::Constraint& constraint);
 
 #endif

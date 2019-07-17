@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace rheel::ui {
+namespace rheel {
 
 ColorElement::ColorElement(unsigned width, unsigned height, Color&& color) :
 		_width(width), _height(height), _color(color) {}

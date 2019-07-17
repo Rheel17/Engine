@@ -1,6 +1,6 @@
 #include "Constraint.h"
 
-namespace rheel::ui {
+namespace rheel {
 
 Constraint::Anchor::Anchor(ElementPtr element, ConstraintLocation location) :
 		_element(element), _location(location) {}
@@ -124,7 +124,7 @@ std::optional<Constraint> Constraint::VerticalConstraint() const {
 
 }
 
-std::ostream& operator<<(std::ostream& stream, const rheel::ui::Constraint& constraint)  {
+std::ostream& operator<<(std::ostream& stream, const rheel::Constraint& constraint)  {
 	static const char *location_strings[] = {
 			"NORTH_WEST", "NORTH", "NORTH_EAST", "WEST", "EAST", "SOUTH_WEST", "SOUTH", "SOUTH_EAST"
 	};
