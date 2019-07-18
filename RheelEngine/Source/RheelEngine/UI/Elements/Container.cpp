@@ -192,6 +192,12 @@ void Container::Layout(unsigned containerWidth, unsigned containerHeight) {
 	}
 }
 
+void Container::Draw() const {
+	for (auto elem : _elements) {
+		elem->Draw();
+	}
+}
+
 void Container::_LayoutNode(TempBoundsMap& boundsMap, ConstraintTreeNode *node, unsigned width, unsigned height) {
 	for (auto child : node->children) {
 		if (child.first->anchor.Element() != nullptr) {

@@ -90,7 +90,7 @@ void Window::Show() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LEQUAL);
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);

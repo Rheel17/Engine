@@ -11,6 +11,8 @@
 #include <memory>
 #include <stack>
 
+#define RE_GL_DEBUG 0
+
 namespace rheel {
 
 class GL;

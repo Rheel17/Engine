@@ -20,6 +20,10 @@ class RE_API GLShaderProgramBindings {
 private:
 	inline static void Use(GLuint program) {
 		if (programInUse != program) {
+
+#if RE_GL_DEBUG
+			std::cout << "glUseProgram(" << program << ")" << std::endl;
+#endif
 			glUseProgram(program);
 			programInUse = program;
 		}

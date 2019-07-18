@@ -1,6 +1,8 @@
 #include "GL.h"
 
+#if RE_GL_DEBUG
 #include <iostream>
+#endif
 
 namespace rheel {
 
@@ -16,6 +18,10 @@ bool GL::_BindBuffer(GLuint handle, BufferTarget target) {
 		return false;
 	}
 
+#if RE_GL_DEBUG
+	std::cout << "glBindBuffer(" << int(target) << ", " << handle << ")" << std::endl;
+#endif
+
 	glBindBuffer(Target(target), handle);
 	_S().bound_buffer[int(target)] = handle;
 
@@ -27,10 +33,19 @@ bool GL::_BindFramebuffer(GLuint handle, GLuint width, GLuint height, Framebuffe
 		return false;
 	}
 
+#if RE_GL_DEBUG
+	std::cout << "glBindFramebuffer(" << int(target) << ", " << handle << ")" << std::endl;
+#endif
+
 	glBindFramebuffer(Target(target), handle);
 	_S().bound_framebuffer[int(target)] = handle;
 
 	if (target == FramebufferTarget::DRAW) {
+
+#if RE_GL_DEBUG
+	std::cout << "glViewport(0, 0, " << width << ", " << height << ")" << std::endl;
+#endif
+
 		glViewport(0, 0, width, height);
 	}
 
@@ -47,6 +62,10 @@ bool GL::_BindRenderbuffer(GLuint handle) {
 		return false;
 	}
 
+#if RE_GL_DEBUG
+	std::cout << "glBindRenderbuffer(" << GL_RENDERBUFFER << ", " << handle << ")" << std::endl;
+#endif
+
 	glBindRenderbuffer(GL_RENDERBUFFER, handle);
 	_S().bound_renderbuffer = handle;
 
@@ -54,11 +73,20 @@ bool GL::_BindRenderbuffer(GLuint handle) {
 }
 
 bool GL::_BindTexture(GLuint handle, TextureTarget target, GLuint textureUnit) {
+
+#if RE_GL_DEBUG
+	std::cout << "glActiveTexture(GL_TEXTURE0 + " << textureUnit << ")" << std::endl;
+#endif
+
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 
 	if (_S().bound_texture[int(target)][textureUnit] == handle) {
 		return false;
 	}
+
+#if RE_GL_DEBUG
+	std::cout << "glBindTexture(" << int(target) << ", " << handle << ")" << std::endl;
+#endif
 
 	glBindTexture(Target(target), handle);
 	_S().bound_texture[int(target)][textureUnit] = handle;
@@ -70,6 +98,10 @@ bool GL::_BindVertexArray(GLuint handle) {
 	if (_S().bound_vertex_array == handle) {
 		return false;
 	}
+
+#if RE_GL_DEBUG
+	std::cout << "glBindVertexArray(" << handle << ")" << std::endl;
+#endif
 
 	glBindVertexArray(handle);
 	_S().bound_vertex_array = handle;

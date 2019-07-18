@@ -11,6 +11,7 @@
 #include "RheelEngine/UI/Elements/ColorElement.h"
 #include "RheelEngine/UI/Elements/EmptyElement.h"
 #include "RheelEngine/UI/Elements/SceneElement.h"
+#include "RheelEngine/UI/Elements/TextElement.h"
 
 #include "RheelEngine/Util/Math.h"
 

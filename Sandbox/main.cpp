@@ -63,11 +63,16 @@ class SandboxGame : public Game {
 		Engine::SetActiveScene("main");
 
 		UIPtr ui = UI::Create();
+
 		ElementPtr sceneView = SceneElement::Create("main_camera");
 		ui->GetContainer()->AddElement(sceneView);
 
+		ElementPtr textView = TextElement::Create(20);
+		ui->GetContainer()->AddElement(textView);
+
 		ui->GetContainer()->AddConstraint(sceneView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui->GetContainer()->AddConstraint(sceneView, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+		ui->GetContainer()->AddConstraint(textView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 
 		Engine::SetUI(ui);
 	}

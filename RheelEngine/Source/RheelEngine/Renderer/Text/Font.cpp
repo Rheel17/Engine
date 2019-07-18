@@ -2,14 +2,18 @@
 
 namespace rheel {
 
-std::unordered_map<std::string, Font> Font::_registered_fonts;
 std::shared_ptr<FT_Library> Font::_ft;
+std::unordered_map<std::string, Font> Font::_registered_fonts;
 
 Font::Font(FT_Face face) :
-		_face(face) {}
+		_face(face), _texture(nullptr) {}
 
 Font::~Font() {
 	FT_Done_Face(_face);
+}
+
+vec4 Font::LoadCharacter(char c) {
+
 }
 
 void Font::RegisterFont(const std::string& filename, const std::string& name) {
@@ -42,7 +46,8 @@ const Font& Font::GetDefaultFont() {
 
 void Font::_InitializeFreeType() {
 	if (!_ft) {
-		_ft = std::shared_ptr<FT_Library>(nullptr, [](FT_Library *ft) {
+		FT_Library *library = new FT_Library;
+		_ft = std::shared_ptr<FT_Library>(library, [](FT_Library *ft) {
 			FT_Done_FreeType(*ft);
 		});
 

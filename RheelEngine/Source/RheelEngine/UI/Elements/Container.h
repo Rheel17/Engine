@@ -112,11 +112,10 @@ public:
 		return std::make_shared<Container>(Container());
 	}
 
-	void Draw() const override {
-		for (auto elem : _elements) {
-			elem->Draw();
-		}
-	}
+	/**
+	 * Draws the container.
+	 */
+	void Draw() const override;
 
 private:
 	struct ConstraintTreeNode {
