@@ -1,5 +1,7 @@
 #include "TextElement.h"
 
+#include "../../Renderer/Text/TextRenderer.h"
+
 namespace rheel {
 
 TextElement::TextElement(unsigned size) :
@@ -10,7 +12,8 @@ std::pair<unsigned, unsigned> TextElement::GetDefaultDimensions() const {
 }
 
 void TextElement::Draw() const {
-	_DrawColoredQuad(GetBounds(), { 1, 1, 1, 1 });
+	const Bounds& bounds = GetBounds();
+	TextRenderer::DrawText(Font::GetDefaultFont(), "Testing!", bounds.x, bounds.y, _size);
 }
 
 }

@@ -6,14 +6,24 @@ std::shared_ptr<FT_Library> Font::_ft;
 std::unordered_map<std::string, Font> Font::_registered_fonts;
 
 Font::Font(FT_Face face) :
-		_face(face), _texture(nullptr) {}
+		_face(face), _texture(nullptr) {
+}
 
 Font::~Font() {
 	FT_Done_Face(_face);
 }
 
-vec4 Font::LoadCharacter(char c) {
+vec4 Font::LoadCharacter(wchar_t c) {
+	auto iter = _character_cache_reference.find(c);
+	if (iter == _character_cache_reference.end()) {
+		// character needs to be loaded
 
+
+	} else {
+		// character was already loaded
+
+
+	}
 }
 
 void Font::RegisterFont(const std::string& filename, const std::string& name) {
@@ -31,7 +41,7 @@ void Font::RegisterFont(const std::string& filename, const std::string& name) {
 	_registered_fonts.emplace(name, face);
 }
 
-const Font& Font::GetFont(const std::string& name) {
+Font& Font::GetFont(const std::string& name) {
 	auto iter = _registered_fonts.find(name);
 	if (iter == _registered_fonts.end()) {
 		throw std::runtime_error("Font '" + name + "' not found. Is it registered?");
@@ -40,7 +50,7 @@ const Font& Font::GetFont(const std::string& name) {
 	return iter->second;
 }
 
-const Font& Font::GetDefaultFont() {
+Font& Font::GetDefaultFont() {
 	return GetFont(DEFAULT_FONT);
 }
 
