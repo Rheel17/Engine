@@ -1,5 +1,7 @@
 #include "Font.h"
 
+#include <fstream>
+
 namespace rheel {
 
 std::shared_ptr<FT_Library> Font::_ft;
@@ -23,6 +25,20 @@ vec4 Font::LoadCharacter(wchar_t c) {
 		// character was already loaded
 
 
+	}
+}
+
+void Font::Initialize() {
+	std::vector<std::string> testDefaults = {
+			"C:/Windows/Fonts/ARIALUNI.TTF",
+			"C:/Windows/Fonts/arial.ttf"
+	};
+
+	for (auto test : testDefaults) {
+		if (std::ifstream(test).good()) {
+			RegisterFont(test, DEFAULT_FONT);
+			break;
+		}
 	}
 }
 

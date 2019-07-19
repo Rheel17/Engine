@@ -42,6 +42,7 @@ private:
 public:
 	static constexpr auto DEFAULT_FONT = "__default_font__";
 
+	static void Initialize();
 	static void RegisterFont(const std::string& filename, const std::string& name);
 	static Font& GetFont(const std::string& name);
 	static Font& GetDefaultFont();

@@ -19,7 +19,7 @@ Engine::EngineInstance::~EngineInstance() {
 
 void Engine::_Initialize() {
 	Window::InitializeDisplaySystems();
-	Font::RegisterFont("C:/Windows/Fonts/ARIALUNI.TTF", Font::DEFAULT_FONT);
+	Font::Initialize();
 	registerComponents();
 }
 
