@@ -50,11 +50,20 @@ public:
 	 */
 	void SetData(GLint internalFormat, GLenum format, GLenum type, const void *data);
 
+	/**
+	 * Sets part of the data of this texture. The area enclosed by the
+	 * (x, y, width, height) rectangle will be set with the data provided. This
+	 * function is only valid after a SetData() call.
+	 */
+	void SetPartialData(int x, int y, unsigned width, unsigned height, GLenum format, GLenum type, const void *data);
+
 private:
 	GLhandle _id;
 
 	GLuint _width;
 	GLuint _height;
+
+	bool _has_set_data = false;
 
 };
 

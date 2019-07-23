@@ -7,6 +7,12 @@
 
 namespace rheel {
 
+Image::Image(unsigned width, unsigned height) :
+		_width(width), _height(height) {
+
+	_pixels.resize(width * height);
+}
+
 Image::~Image() {
 	ImageTexture::_DestroyTexture(this);
 }

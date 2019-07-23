@@ -13,7 +13,8 @@ std::pair<unsigned, unsigned> TextElement::GetDefaultDimensions() const {
 
 void TextElement::Draw() const {
 	const Bounds& bounds = GetBounds();
-	TextRenderer::DrawText(Font::GetDefaultFont(), "Testing!", bounds.x, bounds.y, _size);
+	TextRenderer::DrawText(Font::GetDefaultFont(), L"Testing the text rendering!", bounds.x, bounds.y, _size);
+	abort();
 }
 
 }

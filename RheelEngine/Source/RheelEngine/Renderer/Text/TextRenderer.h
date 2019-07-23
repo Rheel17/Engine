@@ -1,11 +1,12 @@
 #ifndef TEXTRENDERER_H_
 #define TEXTRENDERER_H_
+#include "../../_common.h"
 
 #include "Font.h"
 
 namespace rheel {
 
-class TextRenderer {
+class RE_API TextRenderer {
 
 public:
 	static void DrawText(Font& font, const std::wstring& text,

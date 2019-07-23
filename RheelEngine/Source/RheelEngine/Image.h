@@ -20,6 +20,7 @@ public:
 	};
 
 public:
+	Image(unsigned width, unsigned height);
 	~Image();
 
 	unsigned Width() const;

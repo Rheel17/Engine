@@ -5,6 +5,8 @@
 namespace rheel {
 
 void TextRenderer::DrawText(Font& font, const std::wstring& text, unsigned x, unsigned y, unsigned size) {
+	std::wcout << "DrawText(" << text << ")" << std::endl;
+
 	const wchar_t *chars = text.c_str();
 	unsigned length = text.length();
 
@@ -28,7 +30,7 @@ void TextRenderer::DrawText(Font& font, const std::string& text, unsigned x, uns
 
 void TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, unsigned x, unsigned y, unsigned size) {
 	assert(length <= 256);
-	std::vector<vec4> characters;
+	std::vector<Font::CharacterData> characters;
 
 	for (unsigned i = 0; i < length; i++) {
 		wchar_t c = text[i];

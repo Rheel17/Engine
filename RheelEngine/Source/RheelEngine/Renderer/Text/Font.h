@@ -1,5 +1,6 @@
 #ifndef FONT_H_
 #define FONT_H_
+#include "../../_common.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -13,31 +14,38 @@
 
 namespace rheel {
 
-class Font {
+class RE_API Font {
+	RE_NO_COPY(Font)
+	RE_NO_MOVE(Font)
+
+public:
+	struct CharacterData {
+		ivec4 texture_position;
+		vec4 metrics;
+	};
 
 private:
-	// disable copy and move
-	Font(const Font&) = delete;
-	Font(Font&&) = delete;
-	Font& operator=(const Font&) = delete;
-	Font& operator=(Font&&) = delete;
-
-	struct CharacterCacheItem {
+	struct _CharacterCacheItem {
 		wchar_t character;
-		vec4 character_data;
+		CharacterData character_data;
 	};
 
 public:
 	Font(FT_Face face);
 	~Font();
 
-	vec4 LoadCharacter(wchar_t c);
+	CharacterData LoadCharacter(wchar_t c);
 
 private:
+	void _Initialize();
+	CharacterData _LoadCharacter(wchar_t c);
+
 	FT_Face _face;
 	GLTexture2D *_texture;
-	std::list<CharacterCacheItem> _character_cache;
-	std::map<wchar_t, std::list<CharacterCacheItem>::iterator> _character_cache_reference;
+	std::list<_CharacterCacheItem> _character_cache;
+	std::map<wchar_t, std::list<_CharacterCacheItem>::iterator> _character_cache_reference;
+	unsigned _next_character_x = 0;
+	unsigned _next_character_y = 0;
 
 public:
 	static constexpr auto DEFAULT_FONT = "__default_font__";
@@ -53,8 +61,10 @@ private:
 	static std::shared_ptr<FT_Library> _ft;
 	static std::unordered_map<std::string, Font> _registered_fonts;
 
-	static constexpr unsigned BITMAP_SIZE = 2048;
-	static constexpr unsigned GLYPH_SIZE = 2048 / 256;
+	static constexpr unsigned _BITMAP_SIZE = 2048; // 2048
+	static constexpr unsigned _GLYPH_DIVISION = 16; // 16
+	static constexpr unsigned _GLYPH_SIZE = _BITMAP_SIZE / _GLYPH_DIVISION;
+	static constexpr unsigned _NUM_GLYPHS = _GLYPH_DIVISION * _GLYPH_DIVISION;
 
 };
 

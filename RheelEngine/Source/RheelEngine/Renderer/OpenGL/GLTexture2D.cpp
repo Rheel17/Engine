@@ -43,6 +43,19 @@ void GLTexture2D::SetWrapParameterT(GL::WrapParameter parameter) {
 void GLTexture2D::SetData(GLint internalFormat, GLenum format, GLenum type, const void *data) {
 	Bind();
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _width, _height, 0, format, type, data);
+
+	_has_set_data = true;
+}
+
+void GLTexture2D::SetPartialData(int x, int y, unsigned width, unsigned height, GLenum format, GLenum type, const void *data) {
+	if (!_has_set_data) {
+		throw std::runtime_error("SetPartialData() was called without a prior call to SetData().");
+	}
+
+	std::cout << static_cast<const float *>(data)[width * height - 1] << std::endl;
+
+	Bind();
+	glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, format, type, data);
 }
 
 }

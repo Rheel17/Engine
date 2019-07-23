@@ -55,6 +55,7 @@ class SandboxGame : public Game {
 		DisplayConfiguration config;
 		config.title = "Sandbox";
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
+		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
 
 		Engine::SetDisplayConfiguration(std::move(config));
 	}
