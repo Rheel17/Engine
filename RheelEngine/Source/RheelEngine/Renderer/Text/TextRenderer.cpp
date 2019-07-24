@@ -103,18 +103,18 @@ void TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, 
 	_gl.vao->Bind();
 	_gl.eab->SetData(characters);
 
-	_gl.eab->SetData(std::vector<Character> {
-		Character {
-			{ 0, 0, Font::BITMAP_SIZE, Font::BITMAP_SIZE },
-			{ -1.0f, -1.0f, 2.0f, 2.0f }
-		}
-	});
+//	_gl.eab->SetData(std::vector<Character> {
+//		Character {
+//			{ 0, 0, Font::BITMAP_SIZE, Font::BITMAP_SIZE },
+//			{ -1.0f, -1.0f, 2.0f, 2.0f }
+//		}
+//	});
 
 	// TODO: find out why font texture is empty
 
 	font.BindTexture();
 	ImageTexture::Get(Material::UV_TEST_TEXTURE.get()).Bind(0);
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 1);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, characters.size());
 }
 
 }
