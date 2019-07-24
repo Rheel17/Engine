@@ -52,8 +52,6 @@ void GLTexture2D::SetPartialData(int x, int y, unsigned width, unsigned height, 
 		throw std::runtime_error("SetPartialData() was called without a prior call to SetData().");
 	}
 
-	std::cout << static_cast<const float *>(data)[width * height - 1] << std::endl;
-
 	Bind();
 	glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, format, type, data);
 }

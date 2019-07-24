@@ -33,6 +33,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\json\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\lpng1636\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.750886266" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1645656571" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=c++17" valueType="string"/>
@@ -95,9 +96,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\bullet3-2.88\build\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\json\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\lpng1636\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Libraries\expat-2.2.6\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Libraries\libdae\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.62981634" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1541028533" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=c++17" valueType="string"/>

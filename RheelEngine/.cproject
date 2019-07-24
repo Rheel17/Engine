@@ -143,6 +143,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\libdae\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glfw-3.2.1\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Build/Resources}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1759327498" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>

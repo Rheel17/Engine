@@ -11,10 +11,7 @@ std::shared_ptr<FT_Library> Font::_ft;
 std::unordered_map<std::string, Font> Font::_registered_fonts;
 
 Font::Font(FT_Face face) :
-		_face(face), _texture(nullptr) {
-
-	FT_Set_Pixel_Sizes(_face, 0, _GLYPH_SIZE);
-}
+		_face(face), _texture(nullptr) {}
 
 Font::~Font() {
 	FT_Done_Face(_face);
@@ -29,15 +26,15 @@ Font::CharacterData Font::LoadCharacter(wchar_t c) {
 	if (iter == _character_cache_reference.end()) {
 		// character needs to be loaded
 
-		if (_character_cache.size() == _NUM_GLYPHS) {
+		if (_character_cache.size() == NUM_GLYPHS) {
 			// character cache is full
 
 			_CharacterCacheItem back = _character_cache.back();
 			_character_cache.pop_back();
 			_character_cache_reference.erase(back.character);
 
-			_next_character_x = back.character_data.texture_position.x;
-			_next_character_y = back.character_data.texture_position.y;
+			_next_character_x = back.character_data.texture_location.x;
+			_next_character_y = back.character_data.texture_location.y;
 		}
 
 		CharacterData data = _LoadCharacter(c);
@@ -59,9 +56,24 @@ Font::CharacterData Font::LoadCharacter(wchar_t c) {
 	}
 }
 
-void Font::_Initialize() {
+unsigned Font::Ascend(unsigned size) const {
+	FT_Set_Pixel_Sizes(_face, 0, size);
+	return (unsigned) std::ceil(_face->size->metrics.ascender / 64.0f);
+}
+
+unsigned Font::Descend(unsigned size) const {
+	FT_Set_Pixel_Sizes(_face, 0, size);
+	return (unsigned) std::ceil(_face->size->metrics.descender / -64.0f);
+}
+
+void Font::BindTexture(unsigned textureUnit) const {
+	_Initialize();
+	_texture->Bind(textureUnit);
+}
+
+void Font::_Initialize() const {
 	if (!_texture) {
-		_texture = new GLTexture2D(_BITMAP_SIZE, _BITMAP_SIZE);
+		_texture = new GLTexture2D(BITMAP_SIZE, BITMAP_SIZE);
 
 		// set the pixel store
 		int pixelAlignment;
@@ -77,9 +89,8 @@ void Font::_Initialize() {
 }
 
 Font::CharacterData Font::_LoadCharacter(wchar_t c) {
-	std::wcout << "_LoadCharacter(" << c << ", " << _next_character_x << ", " << _next_character_y << ")" << std::endl;
-
 	// load the character
+	FT_Set_Pixel_Sizes(_face, 0, _GLYPH_SIZE);
 	if (FT_Load_Char(_face, c, FT_LOAD_RENDER)) {
 		throw std::runtime_error("Could not load character '" + std::to_string(c) + "'.");
 	}
@@ -125,8 +136,18 @@ Font::CharacterData Font::_LoadCharacter(wchar_t c) {
 
 	// create the return data
 	CharacterData data = {
-			{ _next_character_x, _next_character_y, width, height },
-			{ scale, 0, 0, 0 }
+			{ _next_character_x, _next_character_y },
+			{ width, height },
+			{
+					_face->glyph->bitmap_left / float(_GLYPH_SIZE),
+					((int) height - (int) _face->glyph->bitmap_top) / float(_GLYPH_SIZE)
+			},
+			{
+					width / float(_GLYPH_SIZE),
+					height / float(_GLYPH_SIZE)
+			},
+			(_face->glyph->advance.x / 64.0f) / float(_GLYPH_SIZE),
+			scale
 	};
 
 	// advance the next character position

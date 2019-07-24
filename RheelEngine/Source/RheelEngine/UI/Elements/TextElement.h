@@ -3,6 +3,7 @@
 #include "../../_common.h"
 
 #include "../Element.h"
+#include "../../Renderer/Text/Font.h"
 
 namespace rheel {
 
@@ -14,12 +15,16 @@ public:
 
 private:
 	TextElement(unsigned size);
+	TextElement(Font& font, unsigned size);
 
+	Font& _font;
+	unsigned _font_ascend;
+	unsigned _font_descend;
 	unsigned _size;
 
 public:
 	/**
-	 * Create a color component of a certain width and height, and with a certain color
+	 * Create a text component of a certain width and height.
 	 */
 	inline static std::shared_ptr<TextElement> Create(unsigned size) {
 		// not std::make_shared<...>(...) because than the constructor can't be private.

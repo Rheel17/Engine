@@ -146,6 +146,14 @@ void GLVertexArray::_SetVertexAttributes(const GLBuffer& buffer, const std::vect
 
 			attribute = VertexAttribute(index, 4, GL_FLOAT, 0, offset + attribute._ByteSize() * 3);
 			offset += attribute._ByteSize() * 3;
+		} else if (t == typeid(int) || t == typeid(ivec1)) {
+			attribute = VertexAttribute(index, 1, GL_INT, 0, offset);
+		} else if (t == typeid(ivec2)) {
+			attribute = VertexAttribute(index, 2, GL_INT, 0, offset);
+		} else if (t == typeid(ivec3)) {
+			attribute = VertexAttribute(index, 3, GL_INT, 0, offset);
+		} else if (t == typeid(ivec4)) {
+			attribute = VertexAttribute(index, 4, GL_INT, 0, offset);
 		} else {
 			throw std::runtime_error("attribute type " + std::string(t.name()) + " not available.");
 		}

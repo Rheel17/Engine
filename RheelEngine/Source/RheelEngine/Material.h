@@ -110,6 +110,7 @@ private:
 public:
 	static constexpr float DEFAULT_SPECULAR_EXPONENT = 50.0f;
 
+	static ImagePtr UV_TEST_TEXTURE;
 	static const Material UV_TEST_MATERIAL;
 
 };
