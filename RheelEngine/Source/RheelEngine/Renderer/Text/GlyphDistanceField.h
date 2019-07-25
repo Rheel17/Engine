@@ -2,6 +2,8 @@
 #define GLYPHDISTANCEFIELD_H_
 #include "../../_common.h"
 
+#include <vector>
+
 namespace rheel {
 
 class RE_API GlyphDistanceField {
@@ -12,9 +14,8 @@ class RE_API GlyphDistanceField {
 
 public:
 	GlyphDistanceField(unsigned char *data, unsigned width, unsigned height);
-	~GlyphDistanceField();
 
-	float *Data() const;
+	const float *Data() const;
 
 private:
 	void _Handle(_Grid grid, vec2& p, unsigned x, unsigned y, int dx, int dy);
@@ -23,9 +24,14 @@ private:
 
 	_Grid _grid1;
 	_Grid _grid2;
-	float *_data;
+	std::vector<vec4> _data;
 	unsigned _width;
 	unsigned _height;
+	unsigned _grid_width;
+	unsigned _grid_height;
+
+public:
+	static constexpr int PADDING = 3;
 
 };
 

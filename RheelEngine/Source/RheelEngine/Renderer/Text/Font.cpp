@@ -5,6 +5,8 @@
 #include "../../Image.h"
 #include "GlyphDistanceField.h"
 
+#include <string_format.h>
+
 namespace rheel {
 
 std::shared_ptr<FT_Library> Font::_ft;
@@ -73,50 +75,45 @@ void Font::BindTexture(unsigned textureUnit) const {
 
 void Font::_Initialize() const {
 	if (!_texture) {
-		_texture = new GLTexture2D(BITMAP_SIZE, BITMAP_SIZE);
-
-		// set the pixel store
-		int pixelAlignment;
-		glGetIntegerv(GL_UNPACK_ALIGNMENT, &pixelAlignment);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		_texture = new GLTexture2D(BITMAP_SIZE, BITMAP_SIZE, GL_R32F);
+		_texture->SetMinifyingFilter(GL::FilterFunction::LINEAR);
+		_texture->SetMagnificationFilter(GL::FilterFunction::LINEAR);
+		_texture->SetWrapParameterS(GL::WrapParameter::CLAMP_TO_EDGE);
+		_texture->SetWrapParameterT(GL::WrapParameter::CLAMP_TO_EDGE);
 
 		// initialize the data
-		_texture->SetData(GL_R32F, GL_RED, GL_FLOAT, nullptr);
-
-		// reset the pixel store
-		glPixelStorei(GL_UNPACK_ALIGNMENT, pixelAlignment);
+		_texture->InitializeEmpty();
 	}
 }
 
 Font::CharacterData Font::_LoadCharacter(wchar_t c) {
 	// load the character
-	FT_Set_Pixel_Sizes(_face, 0, _GLYPH_SIZE);
+	FT_Set_Pixel_Sizes(_face, 0, _GLYPH_SIZE - 2 * GlyphDistanceField::PADDING);
 	if (FT_Load_Char(_face, c, FT_LOAD_RENDER)) {
 		throw std::runtime_error("Could not load character '" + std::to_string(c) + "'.");
 	}
 
 	unsigned width = _face->glyph->bitmap.width;
 	unsigned height = _face->glyph->bitmap.rows;
+	unsigned textureWidth = width;
+	unsigned textureHeight = height;
 	float scale = 1.0f;
 
 	if (width > 0 && height > 0) {
 		// create the signed distance field
 		GlyphDistanceField distanceField(_face->glyph->bitmap.buffer, width, height);
+		textureWidth += 2 * GlyphDistanceField::PADDING;
+		textureHeight += 2 * GlyphDistanceField::PADDING;
 
 		// copy / scale the texture
-		// set the pixel store
-		int pixelAlignment;
-		glGetIntegerv(GL_UNPACK_ALIGNMENT, &pixelAlignment);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		if (width <= _GLYPH_SIZE && height <= _GLYPH_SIZE) {
+		if (textureWidth <= _GLYPH_SIZE && textureHeight <= _GLYPH_SIZE) {
 			// copy the glyph to the texture
 			if (width > 0 && height > 0) {
 				_texture->SetPartialData(
 						_GLYPH_SIZE * _next_character_x,
 						_GLYPH_SIZE * _next_character_y,
-						width, height,
-						GL_RED,
+						textureWidth, textureHeight,
+						GL_RGBA,
 						GL_FLOAT,
 						distanceField.Data());
 			}
@@ -124,29 +121,36 @@ Font::CharacterData Font::_LoadCharacter(wchar_t c) {
 			// The glyph is too big. We eventually want to scale here.
 			// TODO scale the glyph, and upload to the gpu.
 			// TODO Maybe: redraw the glyph with a lower size?
-
-			scale = float(_GLYPH_SIZE) / std::max(width, height);
+			// TODO Maybe: large glyphs take multiple slots?
 
 			throw std::runtime_error("Glyph has exceeded max size. Character not supported.");
 		}
-
-		// reset the pixel store
-		glPixelStorei(GL_UNPACK_ALIGNMENT, pixelAlignment);
 	}
 
 	// create the return data
 	CharacterData data = {
-			{ _next_character_x, _next_character_y },
-			{ width, height },
+			// texture location
+			{ _next_character_x * _GLYPH_SIZE, _next_character_y * _GLYPH_SIZE },
+
+			// texture size
+			{ textureWidth, textureHeight },
+
+			// offset
 			{
 					_face->glyph->bitmap_left / float(_GLYPH_SIZE),
 					((int) height - (int) _face->glyph->bitmap_top) / float(_GLYPH_SIZE)
 			},
+
+			// size
 			{
 					width / float(_GLYPH_SIZE),
 					height / float(_GLYPH_SIZE)
 			},
+
+			// advance
 			(_face->glyph->advance.x / 64.0f) / float(_GLYPH_SIZE),
+
+			// scale
 			scale
 	};
 
@@ -157,6 +161,29 @@ Font::CharacterData Font::_LoadCharacter(wchar_t c) {
 	if (_next_character_x == 0) {
 		_next_character_y++;
 	}
+
+//	float *loadData = new float[BITMAP_SIZE * BITMAP_SIZE * 4];
+//	_texture->Bind();
+//	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, loadData);
+//
+//	unsigned index = 0;
+//	for (unsigned i = 0; i < BITMAP_SIZE; i++) {
+//		for (unsigned j = 0; j < BITMAP_SIZE; j++) {
+//			if (loadData[index] > 0.0f) {
+//				std::cout << "x";
+//			} else {
+//				std::cout << ".";
+//			}
+//			index += 4;
+//		}
+//
+//		std::cout << std::endl;
+//	}
+//
+//	std::cout << std::endl;
+//	std::cout << std::endl;
+//
+//	delete[] loadData;
 
 	// return the data
 	return data;

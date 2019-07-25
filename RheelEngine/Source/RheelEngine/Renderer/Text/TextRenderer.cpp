@@ -32,7 +32,7 @@ void TextRenderer::_StaticData::Initialize() {
 	eab->SetData(std::vector<Character>());
 
 	vao->SetVertexAttributes<vec2>(*vbo);
-	vao->SetVertexAttributes<ivec4, vec4>(*eab, sizeof(Character), true);
+	vao->SetVertexAttributes<vec4, vec4>(*eab, sizeof(Character), true);
 
 	shader->AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_fontshader_vert_glsl));
 	shader->AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_fontshader_frag_glsl));
@@ -49,7 +49,7 @@ void TextRenderer::DrawText(Font& font, const std::wstring& text, int x, int y, 
 	while (length > 0) {
 		unsigned charsLength = std::min(length, (unsigned) Font::NUM_GLYPHS);
 
-		_DrawChars(font, chars, charsLength, x, y, size);
+		x = _DrawChars(font, chars, charsLength, x, y, size);
 
 		length -= charsLength;
 		chars += charsLength;
@@ -63,7 +63,7 @@ void TextRenderer::DrawText(Font& font, const std::string& text, int x, int y, u
 	DrawText(font, wide, x, y, size);
 }
 
-void TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
+int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
 	assert(length <= Font::NUM_GLYPHS);
 	std::vector<Character> characters;
 
@@ -84,8 +84,10 @@ void TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, 
 
 		characters.push_back(Character {
 			{
-				data.texture_location,
-				data.texture_size
+				data.texture_location.x / float(Font::BITMAP_SIZE),
+				data.texture_location.y / float(Font::BITMAP_SIZE),
+				data.texture_size.x / float(Font::BITMAP_SIZE),
+				data.texture_size.y / float(Font::BITMAP_SIZE)
 			},
 			{
 				((x + (data.offset.x * size)) / dimensions.width) * 2 - 1,
@@ -110,11 +112,10 @@ void TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, 
 //		}
 //	});
 
-	// TODO: find out why font texture is empty
-
 	font.BindTexture();
-	ImageTexture::Get(Material::UV_TEST_TEXTURE.get()).Bind(0);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, characters.size());
+
+	return x;
 }
 
 }

@@ -7,11 +7,11 @@ out vec4 frag_Color;
 uniform sampler2D fontTexture;
 
 void main(void) {
-	float distance = texture(fontTexture, vf_Texture).r;
+	vec2 uv = vf_Texture;
+	float dist = texture(fontTexture, uv).r;
+	frag_Color = vec4(vec3(1.0), dist);
 
-	if (distance > 0) {
-		frag_Color = vec4(vec3(distance), 1.0);
-	} else {
-		frag_Color = vec4(0.0);
+	if (frag_Color.a <= 0) {
+		frag_Color = vec4(1.0, 0.0, 0.0, 1.0);
 	}
 }

@@ -22,7 +22,7 @@ class RE_API TextRenderer {
 	};
 
 	struct Character {
-		ivec4 texture_data;
+		vec4 texture_data;
 		vec4 character_data;
 	};
 
@@ -34,7 +34,7 @@ public:
 			int x, int y, unsigned size);
 
 private:
-	static void _DrawChars(Font& font, const wchar_t *text, unsigned length,
+	static int _DrawChars(Font& font, const wchar_t *text, unsigned length,
 			int x, int y, unsigned size);
 
 	static _StaticData _gl;

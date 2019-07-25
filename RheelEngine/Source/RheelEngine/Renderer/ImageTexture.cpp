@@ -11,7 +11,7 @@ void ImageTexture::Bind(unsigned textureUnit) const {
 }
 
 ImageTexture::ImageTexture(Image *image)
-		: _texture(image->Width(), image->Height()) {
+		: _texture(image->Width(), image->Height(), GL_RGBA) {
 
 	_texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
 	_texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
@@ -27,7 +27,7 @@ ImageTexture::ImageTexture(Image *image)
 		memcpy(glData + y * w * 4, data + (h - y - 1) * w * 4, w * 4 * sizeof(float));
 	}
 
-	_texture.SetData(GL_RGBA, GL_RGBA, GL_FLOAT, glData);
+	_texture.SetData(GL_RGBA, GL_FLOAT, glData);
 
 	delete[] glData;
 }

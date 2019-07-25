@@ -71,10 +71,10 @@ private:
 	static std::unordered_map<std::string, Font> _registered_fonts;
 
 public:
-	static constexpr unsigned BITMAP_SIZE = 2048; // 2048
+	static constexpr unsigned BITMAP_SIZE = 64; // 2048
 
 private:
-	static constexpr unsigned _GLYPH_DIVISION = 16; // 16
+	static constexpr unsigned _GLYPH_DIVISION = 4; // 16
 	static constexpr unsigned _GLYPH_SIZE = BITMAP_SIZE / _GLYPH_DIVISION;
 
 public:

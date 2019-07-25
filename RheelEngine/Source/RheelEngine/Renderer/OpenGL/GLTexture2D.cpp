@@ -2,8 +2,8 @@
 
 namespace rheel {
 
-GLTexture2D::GLTexture2D(GLuint width, GLuint height) :
-		_width(width), _height(height) {
+GLTexture2D::GLTexture2D(GLuint width, GLuint height, GLuint internalFormat) :
+		_width(width), _height(height), _internal_format(internalFormat) {
 
 	_id = GL::GenTexture();
 }
@@ -40,16 +40,21 @@ void GLTexture2D::SetWrapParameterT(GL::WrapParameter parameter) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GLint(parameter));
 }
 
-void GLTexture2D::SetData(GLint internalFormat, GLenum format, GLenum type, const void *data) {
-	Bind();
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _width, _height, 0, format, type, data);
+void GLTexture2D::InitializeEmpty() {
+	std::vector<GLubyte> zeroBytes(_width * _height * 4, 0);
+	SetData(GL_RGBA, GL_UNSIGNED_BYTE, zeroBytes.data());
+}
 
-	_has_set_data = true;
+void GLTexture2D::SetData(GLenum format, GLenum type, const void *data) {
+	Bind();
+	glTexImage2D(GL_TEXTURE_2D, 0, _internal_format, _width, _height, 0, format, type, data);
+
+	_has_initialized = true;
 }
 
 void GLTexture2D::SetPartialData(int x, int y, unsigned width, unsigned height, GLenum format, GLenum type, const void *data) {
-	if (!_has_set_data) {
-		throw std::runtime_error("SetPartialData() was called without a prior call to SetData().");
+	if (!_has_initialized) {
+		InitializeEmpty();
 	}
 
 	Bind();

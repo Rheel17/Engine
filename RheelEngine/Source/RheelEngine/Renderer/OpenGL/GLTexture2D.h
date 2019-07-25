@@ -9,7 +9,7 @@ namespace rheel {
 class RE_API GLTexture2D {
 
 public:
-	GLTexture2D(GLuint width, GLuint height);
+	GLTexture2D(GLuint width, GLuint height, GLuint internalFormat);
 
 	/**
 	 * Returns the internal OpenGL ID of this texture.
@@ -42,18 +42,22 @@ public:
 	void SetWrapParameterT(GL::WrapParameter parameter);
 
 	/**
+	 * Initializes this texture with empty data. All-zero bytes will be written
+	 * to the complete texture.
+	 */
+	void InitializeEmpty();
+
+	/**
 	 * Sets the data of this texture.
 	 *
-	 * internalFormat: Specifies the number of color components in the texture.
 	 * format: Specifies the format of the pixel data.
 	 * type: Specifies the data type of the pixel data.
 	 */
-	void SetData(GLint internalFormat, GLenum format, GLenum type, const void *data);
+	void SetData(GLenum format, GLenum type, const void *data);
 
 	/**
 	 * Sets part of the data of this texture. The area enclosed by the
-	 * (x, y, width, height) rectangle will be set with the data provided. This
-	 * function is only valid after a SetData() call.
+	 * (x, y, width, height) rectangle will be set with the data provided.
 	 */
 	void SetPartialData(int x, int y, unsigned width, unsigned height, GLenum format, GLenum type, const void *data);
 
@@ -62,8 +66,9 @@ private:
 
 	GLuint _width;
 	GLuint _height;
+	GLuint _internal_format;
 
-	bool _has_set_data = false;
+	bool _has_initialized = false;
 
 };
 

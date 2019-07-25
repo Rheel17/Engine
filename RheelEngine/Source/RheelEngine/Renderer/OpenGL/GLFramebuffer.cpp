@@ -88,7 +88,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum type)
 		_multisample_textures.push_back(texture);
 	} else {
 		// generate and bind the texture
-		GLTexture2D texture(_width, _height);
+		GLTexture2D texture(_width, _height, internalFormat);
 		texture.Bind();
 
 		// set texture parameters
@@ -98,7 +98,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum type)
 		texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
 
 		// upload empty texture data
-		texture.SetData(internalFormat, format, type, nullptr);
+		texture.InitializeEmpty();
 
 		// add the texture to the framebuffer
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _texture_count, GL_TEXTURE_2D, texture.GetID(), 0);

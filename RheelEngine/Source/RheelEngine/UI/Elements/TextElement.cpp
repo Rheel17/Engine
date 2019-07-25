@@ -20,7 +20,6 @@ std::pair<unsigned, unsigned> TextElement::GetDefaultDimensions() const {
 
 void TextElement::Draw() const {
 	const Bounds& bounds = GetBounds();
-	_DrawColoredQuad(bounds, { 1, 0, 0, 1 });
 
 	unsigned textBounds = _font_ascend + _font_descend;
 	unsigned y = bounds.y + (bounds.height - textBounds) / 2 + _font_ascend;

@@ -1,5 +1,6 @@
 #include "GlyphDistanceField.h"
 
+#include <algorithm>
 #include <iostream>
 #include <limits>
 
@@ -8,51 +9,55 @@
 namespace rheel {
 
 GlyphDistanceField::GlyphDistanceField(unsigned char *data, unsigned width, unsigned height) :
-		_width(width), _height(height) {
+		_width(width + 2 * PADDING), _height(height + 2 * PADDING) {
 
 	float inf = 123456.789f;
 
 	// create the grid array
-	_grid1 = new vec2 *[_height + 2];
-	_grid2 = new vec2 *[_height + 2];
+	_grid1 = new vec2 *[_height];
+	_grid2 = new vec2 *[_height];
 
-	for (unsigned y = 0; y < _height + 2; y++) {
-		_grid1[y] = new vec2[_width + 2];
-		_grid2[y] = new vec2[_width + 2];
+	for (unsigned y = 0; y < _height; y++) {
+		_grid1[y] = new vec2[_width];
+		_grid2[y] = new vec2[_width];
 	}
 
 	// fill the bitmap
-	for (unsigned y = 0; y < _height; y++) {
-		for (unsigned x = 0; x < _width; x++) {
-			if (data[x + y * _width] > 0) {
-				_grid1[y + 1][x + 1] = { 0, 0 };
-				_grid2[y + 1][x + 1] = { inf, inf };
+	for (unsigned y = 0; y < height; y++) {
+		for (unsigned x = 0; x < width; x++) {
+			if (data[x + y * width] > 0) {
+				_grid1[y + PADDING][x + PADDING] = { 0, 0 };
+				_grid2[y + PADDING][x + PADDING] = { inf, inf };
 			} else {
-				_grid1[y + 1][x + 1] = { inf, inf };
-				_grid2[y + 1][x + 1] = { 0, 0 };
+				_grid1[y + PADDING][x + PADDING] = { inf, inf };
+				_grid2[y + PADDING][x + PADDING] = { 0, 0 };
 			}
 		}
 	}
 
 	// fill the border
-	for (unsigned x = 0; x < _width + 2; x++) {
-		_grid1[0][x] = { inf, inf };
-		_grid2[0][x] = { 0, 0 };
+	for (unsigned x = 0; x < _width; x++) {
+		for (unsigned y = 0; y < PADDING; y++) {
+			_grid1[y][x] = { inf, inf };
+			_grid2[y][x] = { 0, 0 };
 
-		_grid1[_height + 1][x] = { inf, inf };
-		_grid2[_height + 1][x] = { 0, 0 };
+			_grid1[_height - y - 1][x] = { inf, inf };
+			_grid2[_height - y - 1][x] = { 0, 0 };
+		}
 	}
 
-	for (unsigned y = 1; y < _height + 1; y++) {
-		_grid1[y][0] = { inf, inf };
-		_grid2[y][0] = { 0, 0 };
+	for (unsigned y = PADDING; y < _height - PADDING; y++) {
+		for (unsigned x = 0; x < PADDING; x++) {
+			_grid1[y][x] = { inf, inf };
+			_grid2[y][x] = { 0, 0 };
 
-		_grid1[y][_width + 1] = { inf, inf };
-		_grid2[y][_width + 1] = { 0, 0 };
+			_grid1[y][_width - x - 1] = { inf, inf };
+			_grid2[y][_width - x - 1] = { 0, 0 };
+		}
 	}
 
 	// create the output data array
-	_data = new float[_width * _height];
+	_data.resize(_width * _height);
 
 	// compute and create the SDF
 	_Compute(_grid1);
@@ -60,7 +65,7 @@ GlyphDistanceField::GlyphDistanceField(unsigned char *data, unsigned width, unsi
 	_Convert();
 
 	// delete the grids
-	for (unsigned y = 0; y < _height + 2; y++) {
+	for (unsigned y = 0; y < _height; y++) {
 		delete[] _grid1[y];
 		delete[] _grid2[y];
 	}
@@ -69,12 +74,8 @@ GlyphDistanceField::GlyphDistanceField(unsigned char *data, unsigned width, unsi
 	delete[] _grid2;
 }
 
-GlyphDistanceField::~GlyphDistanceField() {
-	delete[] _data;
-}
-
-float *GlyphDistanceField::Data() const {
-	return _data;
+const float *GlyphDistanceField::Data() const {
+	return reinterpret_cast<const float *>(_data.data());
 }
 
 void GlyphDistanceField::_Handle(_Grid grid, vec2& p, unsigned x, unsigned y, int dx, int dy) {
@@ -82,7 +83,7 @@ void GlyphDistanceField::_Handle(_Grid grid, vec2& p, unsigned x, unsigned y, in
 		return;
 	}
 
-	if ((x >= _width + 1 && dx > 0) || (y >= _height + 1 && dy > 0)) {
+	if ((x >= _width - 1 && dx > 0) || (y >= _height - 1 && dy > 0)) {
 		return;
 	}
 
@@ -95,8 +96,8 @@ void GlyphDistanceField::_Handle(_Grid grid, vec2& p, unsigned x, unsigned y, in
 }
 
 void GlyphDistanceField::_Compute(_Grid grid) {
-	for (unsigned y = 0; y < _height + 2; y++) {
-		for (unsigned x = 0; x < _width + 2; x++) {
+	for (unsigned y = 0; y < _height; y++) {
+		for (unsigned x = 0; x < _width; x++) {
 			vec2 p = grid[y][x];
 			_Handle(grid, p, x, y, -1, 0);
 			_Handle(grid, p, x, y, 0, -1);
@@ -105,15 +106,15 @@ void GlyphDistanceField::_Compute(_Grid grid) {
 			grid[y][x] = p;
 		}
 
-		for (int x = _width + 1; x >= 0; x--) {
+		for (int x = _width - 1; x >= 0; x--) {
 			vec2 p = grid[y][x];
 			_Handle(grid, p, x, y, 1, 0);
 			grid[y][x] = p;
 		}
 	}
 
-	for (int y = _height + 1; y >= 0; y--) {
-		for (int x = _width + 1; x >= 0; x--) {
+	for (int y = _height - 1; y >= 0; y--) {
+		for (int x = _width - 1; x >= 0; x--) {
 			vec2 p = grid[y][x];
 			_Handle(grid, p, x, y, 1, 0);
 			_Handle(grid, p, x, y, 0, 1);
@@ -122,7 +123,7 @@ void GlyphDistanceField::_Compute(_Grid grid) {
 			grid[y][x] = p;
 		}
 
-		for (unsigned x = 0; x < _width + 2; x++) {
+		for (unsigned x = 0; x < _width; x++) {
 			vec2 p = grid[y][x];
 			_Handle(grid, p, x, y, -1, 0);
 			grid[y][x] = p;
@@ -133,7 +134,9 @@ void GlyphDistanceField::_Compute(_Grid grid) {
 void GlyphDistanceField::_Convert() {
 	for (unsigned y = 0; y < _height; y++) {
 		for (unsigned x = 0; x < _width; x++) {
-			_data[y + _width * x] = glm::length(_grid1[y + 1][x + 1]) - glm::length(_grid2[y + 1][x + 1]);
+			float g1Length = glm::length(_grid1[y][x]);
+			float g2Length = glm::length(_grid2[y][x]);
+			_data[x + _width * y] = { std::max(0.0f, g2Length - g1Length), 0, 0, 0 };
 		}
 	}
 }
