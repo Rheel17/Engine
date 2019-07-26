@@ -19,29 +19,23 @@ class RE_API Font {
 	RE_NO_COPY(Font)
 	RE_NO_MOVE(Font)
 
-public:
-	struct CharacterData {
-		Character character;
-		float x_advance;
-	};
-
 private:
 	struct _CharacterCacheItem {
 		wchar_t character;
-		CharacterData character_data;
+		Character character_data;
 	};
 
 public:
 	Font(FT_Face face);
 	~Font();
 
-	CharacterData LoadCharacter(wchar_t c);
+	const Character& LoadCharacter(wchar_t c);
 
 	unsigned Ascend(unsigned size) const;
 	unsigned Descend(unsigned size) const;
 
 private:
-	CharacterData _LoadCharacter(wchar_t c);
+	Character _LoadCharacter(wchar_t c);
 
 	FT_Face _face;
 	std::list<_CharacterCacheItem> _character_cache;

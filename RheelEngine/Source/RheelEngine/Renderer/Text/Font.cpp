@@ -14,7 +14,7 @@ Font::~Font() {
 	FT_Done_Face(_face);
 }
 
-Font::CharacterData Font::LoadCharacter(wchar_t c) {
+const Character& Font::LoadCharacter(wchar_t c) {
 	auto iter = _character_cache_reference.find(c);
 
 	if (iter == _character_cache_reference.end()) {
@@ -28,23 +28,21 @@ Font::CharacterData Font::LoadCharacter(wchar_t c) {
 			_character_cache_reference.erase(back.character);
 		}
 
-		CharacterData data = _LoadCharacter(c);
+		Character data = _LoadCharacter(c);
 		_character_cache.push_front({ c, data });
 		_character_cache_reference[c] = _character_cache.begin();
-
-		return data;
 	} else {
 		// character was already loaded
 
 		auto ref = iter->second;
-		CharacterData data = ref->character_data;
+		Character data = ref->character_data;
 
 		_character_cache.erase(ref);
 		_character_cache.push_front({ c, data });
 		_character_cache_reference[c] = _character_cache.begin();
-
-		return data;
 	}
+
+	return _character_cache_reference[c]->character_data;
 }
 
 unsigned Font::Ascend(unsigned size) const {
@@ -57,13 +55,15 @@ unsigned Font::Descend(unsigned size) const {
 	return (unsigned) std::ceil(_face->size->metrics.descender / -64.0f);
 }
 
-Font::CharacterData Font::_LoadCharacter(wchar_t c) {
+Character Font::_LoadCharacter(wchar_t c) {
+	std::wcout << "_LoadCharacter(" << c << ")" << std::endl;
+
 	// load the character
 	if (FT_Load_Char(_face, c, 0)) {
 		throw std::runtime_error("Could not load character '" + std::to_string(c) + "'.");
 	}
 
-	// TODO: find out what to return
+	return Character(_face->glyph);
 }
 
 void Font::Initialize() {

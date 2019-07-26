@@ -26,6 +26,11 @@ void TextRenderer::DrawText(Font& font, const std::string& text, int x, int y, u
 
 int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
 	assert(length <= Font::FONT_CACHE_SIZE);
+
+	for (unsigned i = 0; i < length; i++) {
+		font.LoadCharacter(text[i]);
+	}
+
 	return 0;
 }
 
