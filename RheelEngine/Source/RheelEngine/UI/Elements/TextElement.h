@@ -1,9 +1,9 @@
 #ifndef TEXTELEMENT_H_
 #define TEXTELEMENT_H_
 #include "../../_common.h"
+#include "../../Renderer/Text/Font.h"
 
 #include "../Element.h"
-#include "../../Renderer/Text/Font.h"
 
 namespace rheel {
 

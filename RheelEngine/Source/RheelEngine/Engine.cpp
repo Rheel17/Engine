@@ -1,9 +1,8 @@
 #include "Engine.h"
 
 #include "Renderer/OpenGL/GLFramebuffer.h"
-#include "Renderer/Text/Font.h"
-
 #include <type_traits>
+#include "Renderer/Text/Font.h"
 
 namespace rheel {
 

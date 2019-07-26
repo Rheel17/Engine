@@ -2,41 +2,30 @@
 
 #include <fstream>
 
-#include "../../Image.h"
-#include "GlyphDistanceField.h"
-
-#include <string_format.h>
-
 namespace rheel {
 
 std::shared_ptr<FT_Library> Font::_ft;
 std::unordered_map<std::string, Font> Font::_registered_fonts;
 
 Font::Font(FT_Face face) :
-		_face(face), _texture(nullptr) {}
+		_face(face) {}
 
 Font::~Font() {
 	FT_Done_Face(_face);
-	delete _texture;
 }
 
 Font::CharacterData Font::LoadCharacter(wchar_t c) {
-	_Initialize();
-
 	auto iter = _character_cache_reference.find(c);
 
 	if (iter == _character_cache_reference.end()) {
 		// character needs to be loaded
 
-		if (_character_cache.size() == NUM_GLYPHS) {
+		if (_character_cache.size() == FONT_CACHE_SIZE) {
 			// character cache is full
 
 			_CharacterCacheItem back = _character_cache.back();
 			_character_cache.pop_back();
 			_character_cache_reference.erase(back.character);
-
-			_next_character_x = back.character_data.texture_location.x;
-			_next_character_y = back.character_data.texture_location.y;
 		}
 
 		CharacterData data = _LoadCharacter(c);
@@ -68,125 +57,13 @@ unsigned Font::Descend(unsigned size) const {
 	return (unsigned) std::ceil(_face->size->metrics.descender / -64.0f);
 }
 
-void Font::BindTexture(unsigned textureUnit) const {
-	_Initialize();
-	_texture->Bind(textureUnit);
-}
-
-void Font::_Initialize() const {
-	if (!_texture) {
-		_texture = new GLTexture2D(BITMAP_SIZE, BITMAP_SIZE, GL_R32F);
-		_texture->SetMinifyingFilter(GL::FilterFunction::LINEAR);
-		_texture->SetMagnificationFilter(GL::FilterFunction::LINEAR);
-		_texture->SetWrapParameterS(GL::WrapParameter::CLAMP_TO_EDGE);
-		_texture->SetWrapParameterT(GL::WrapParameter::CLAMP_TO_EDGE);
-
-		// initialize the data
-		_texture->InitializeEmpty();
-	}
-}
-
 Font::CharacterData Font::_LoadCharacter(wchar_t c) {
 	// load the character
-	FT_Set_Pixel_Sizes(_face, 0, _GLYPH_SIZE - 2 * GlyphDistanceField::PADDING);
-	if (FT_Load_Char(_face, c, FT_LOAD_RENDER)) {
+	if (FT_Load_Char(_face, c, 0)) {
 		throw std::runtime_error("Could not load character '" + std::to_string(c) + "'.");
 	}
 
-	unsigned width = _face->glyph->bitmap.width;
-	unsigned height = _face->glyph->bitmap.rows;
-	unsigned textureWidth = width;
-	unsigned textureHeight = height;
-	float scale = 1.0f;
-
-	if (width > 0 && height > 0) {
-		// create the signed distance field
-		GlyphDistanceField distanceField(_face->glyph->bitmap.buffer, width, height);
-		textureWidth += 2 * GlyphDistanceField::PADDING;
-		textureHeight += 2 * GlyphDistanceField::PADDING;
-
-		// copy / scale the texture
-		if (textureWidth <= _GLYPH_SIZE && textureHeight <= _GLYPH_SIZE) {
-			// copy the glyph to the texture
-			if (width > 0 && height > 0) {
-				_texture->SetPartialData(
-						_GLYPH_SIZE * _next_character_x,
-						_GLYPH_SIZE * _next_character_y,
-						textureWidth, textureHeight,
-						GL_RGBA,
-						GL_FLOAT,
-						distanceField.Data());
-			}
-		} else {
-			// The glyph is too big. We eventually want to scale here.
-			// TODO scale the glyph, and upload to the gpu.
-			// TODO Maybe: redraw the glyph with a lower size?
-			// TODO Maybe: large glyphs take multiple slots?
-
-			throw std::runtime_error("Glyph has exceeded max size. Character not supported.");
-		}
-	}
-
-	// create the return data
-	CharacterData data = {
-			// texture location
-			{ _next_character_x * _GLYPH_SIZE, _next_character_y * _GLYPH_SIZE },
-
-			// texture size
-			{ textureWidth, textureHeight },
-
-			// offset
-			{
-					_face->glyph->bitmap_left / float(_GLYPH_SIZE),
-					((int) height - (int) _face->glyph->bitmap_top) / float(_GLYPH_SIZE)
-			},
-
-			// size
-			{
-					width / float(_GLYPH_SIZE),
-					height / float(_GLYPH_SIZE)
-			},
-
-			// advance
-			(_face->glyph->advance.x / 64.0f) / float(_GLYPH_SIZE),
-
-			// scale
-			scale
-	};
-
-	// advance the next character position
-	_next_character_x++;
-	_next_character_x %= _GLYPH_DIVISION;
-
-	if (_next_character_x == 0) {
-		_next_character_y++;
-	}
-
-//	float *loadData = new float[BITMAP_SIZE * BITMAP_SIZE * 4];
-//	_texture->Bind();
-//	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, loadData);
-//
-//	unsigned index = 0;
-//	for (unsigned i = 0; i < BITMAP_SIZE; i++) {
-//		for (unsigned j = 0; j < BITMAP_SIZE; j++) {
-//			if (loadData[index] > 0.0f) {
-//				std::cout << "x";
-//			} else {
-//				std::cout << ".";
-//			}
-//			index += 4;
-//		}
-//
-//		std::cout << std::endl;
-//	}
-//
-//	std::cout << std::endl;
-//	std::cout << std::endl;
-//
-//	delete[] loadData;
-
-	// return the data
-	return data;
+	// TODO: find out what to return
 }
 
 void Font::Initialize() {
