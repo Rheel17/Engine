@@ -63,7 +63,9 @@ Character Font::_LoadCharacter(wchar_t c) {
 		throw std::runtime_error("Could not load character '" + std::to_string(c) + "'.");
 	}
 
-	return Character(_face->glyph);
+	unsigned short em = _face->units_per_EM;
+
+	return Character(_face->glyph, em);
 }
 
 void Font::Initialize() {

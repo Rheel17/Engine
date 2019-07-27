@@ -4,15 +4,24 @@
 
 namespace rheel {
 
-Character::_ContourPoint::operator FT_Vector_() const {
+Character::_ContourPoint::operator vec2() const {
 	return { x, y };
 }
 
-Character::Character(const FT_GlyphSlot& glyph) {
-	_LoadTriangles(glyph->outline);
+Character::Character(const FT_GlyphSlot& glyph, unsigned short em) {
+	_LoadTriangles(glyph->outline, em);
+	_advance = glyph->advance.x;
 }
 
-void Character::_LoadTriangles(const FT_Outline& outline) {
+const std::vector<Character::Triangle>& Character::Triangles() const {
+	return _triangles;
+}
+
+const std::vector<Character::Triangle>& Character::BezierCurveTriangles() const {
+	return _bezier_curves;
+}
+
+void Character::_LoadTriangles(const FT_Outline& outline, unsigned short em) {
 	std::cout << outline.n_contours << " contours, " << outline.n_points << " points" << std::endl;
 
 	if (outline.n_contours == 0) {
@@ -72,35 +81,39 @@ void Character::_LoadTriangles(const FT_Outline& outline) {
 		// add the first point to the back to close the contour
 		contour.push_back(contour.front());
 
-		_AddContour(contour);
+		_AddContour(contour, em);
 		contourStart = contourEnd;
 	}
 }
 
-void Character::_AddContour(const _Contour& contour) {
+void Character::_AddContour(const _Contour& contour, unsigned short emUnits) {
+	float em = emUnits;
+
 	// calculate a point to the left of all control points
 	FT_Pos xMin = contour[0].x;
+	FT_Pos yMin = contour[0].y;
 
 	for (unsigned i = 1; i < contour.size(); i++) {
 		xMin = std::min(xMin, contour[i].x);
+		yMin = std::min(yMin, contour[i].y);
 	}
 
-	FT_Vector common = { xMin - 4096, 0 };
+	vec2 common = { (xMin - 512) / em, (yMin - 512) / em };
 
 	// add the contour
 	unsigned startIndex = 0;
 
 	for (unsigned i = 1; i < contour.size(); i++) {
 		if (contour[i].on) {
-			FT_Vector v1 = (FT_Vector) contour[startIndex];
-			FT_Vector v2 = (FT_Vector) contour[i];
+			vec2 v1 = (vec2) contour[startIndex] / em;
+			vec2 v2 = (vec2) contour[i] / em;
 
 			_triangles.push_back({{ common, v1, v2 }});
 
 			// if the previous was more than 1 less than this, we had an 'off'
 			// point in between, so add the Bézier curve.
 			if (i - startIndex < 1) {
-				_bezier_curves.push_back({{ v1, (FT_Vector) contour[i - 1], v2 }});
+				_bezier_curves.push_back({{ v1, (vec2) contour[i - 1] / em, v2 }});
 			}
 
 			// start the new triangle/curve at the current 'on' point.

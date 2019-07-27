@@ -49,7 +49,7 @@ public:
 	static Font& GetFont(const std::string& name);
 	static Font& GetDefaultFont();
 
-	static constexpr unsigned FONT_CACHE_SIZE = 256;
+	static constexpr unsigned FONT_CACHE_SIZE = 1;
 
 private:
 	static void _InitializeFreeType();
