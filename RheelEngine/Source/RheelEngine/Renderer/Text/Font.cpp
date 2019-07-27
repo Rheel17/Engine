@@ -59,12 +59,11 @@ Character Font::_LoadCharacter(wchar_t c) {
 	std::wcout << "_LoadCharacter(" << c << ")" << std::endl;
 
 	// load the character
-	if (FT_Load_Char(_face, c, 0)) {
+	if (FT_Load_Char(_face, c, FT_LOAD_NO_SCALE)) {
 		throw std::runtime_error("Could not load character '" + std::to_string(c) + "'.");
 	}
 
 	unsigned short em = _face->units_per_EM;
-
 	return Character(_face->glyph, em);
 }
 

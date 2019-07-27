@@ -9,6 +9,7 @@ Character::_ContourPoint::operator vec2() const {
 }
 
 Character::Character(const FT_GlyphSlot& glyph, unsigned short em) {
+	std::cout << "em=" << em << std::endl;
 	_LoadTriangles(glyph->outline, em);
 	_advance = glyph->advance.x;
 }
@@ -93,7 +94,15 @@ void Character::_AddContour(const _Contour& contour, unsigned short emUnits) {
 	FT_Pos xMin = contour[0].x;
 	FT_Pos yMin = contour[0].y;
 
-	for (unsigned i = 1; i < contour.size(); i++) {
+	for (unsigned i = 0; i < contour.size(); i++) {
+		std::cout << "  point " << contour[i].x << "," << contour[i].y;
+
+		if (contour[i].on) {
+			std::cout << " ON" << std::endl;
+		} else {
+			std::cout << " OFF" << std::endl;
+		}
+
 		xMin = std::min(xMin, contour[i].x);
 		yMin = std::min(yMin, contour[i].y);
 	}
@@ -108,17 +117,34 @@ void Character::_AddContour(const _Contour& contour, unsigned short emUnits) {
 			vec2 v1 = (vec2) contour[startIndex] / em;
 			vec2 v2 = (vec2) contour[i] / em;
 
+			std::cout << "  " << common << " " << v1 << " " << v2 << std::endl;
+
 			_triangles.push_back({{ common, v1, v2 }});
+			_EnsureCounterClockwise(_triangles.back());
 
 			// if the previous was more than 1 less than this, we had an 'off'
 			// point in between, so add the Bézier curve.
 			if (i - startIndex < 1) {
 				_bezier_curves.push_back({{ v1, (vec2) contour[i - 1] / em, v2 }});
+				_EnsureCounterClockwise(_bezier_curves.back());
 			}
 
 			// start the new triangle/curve at the current 'on' point.
 			startIndex = i;
 		}
+	}
+}
+
+void Character::_EnsureCounterClockwise(Triangle& triangle) {
+	vec2 u = triangle[1] - triangle[0];
+	vec2 v = triangle[2] - triangle[0];
+
+	// vertex 3 is on the right side of the 1 -> 2 vector, so it should come
+	// before vertex 2.
+	if (glm::dot(u, v) < 0) {
+		vec2 tmp = std::move(triangle[1]);
+		triangle[1] = std::move(triangle[2]);
+		triangle[2] = std::move(tmp);
 	}
 }
 

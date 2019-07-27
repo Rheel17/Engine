@@ -24,7 +24,9 @@ void TextElement::Draw() const {
 	unsigned textBounds = _font_ascend + _font_descend;
 	unsigned y = bounds.y + (bounds.height - textBounds) / 2 + _font_ascend;
 
-	TextRenderer::DrawText(_font, L"Testing the text rendering!", bounds.x, y, _size);
+	// Testing the text rendering!
+
+	TextRenderer::DrawText(_font, L"e", bounds.x, y, _size);
 }
 
 }

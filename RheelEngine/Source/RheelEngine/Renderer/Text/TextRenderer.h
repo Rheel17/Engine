@@ -4,6 +4,7 @@
 
 #include "Font.h"
 #include "../OpenGL/GLVertexArray.h"
+#include "../OpenGL/GLShaderProgram.h"
 
 namespace rheel {
 
@@ -18,11 +19,15 @@ public:
 			int x, int y, unsigned size);
 
 private:
+	static void _Initialize();
+
 	static int _DrawChars(Font& font, const wchar_t *text, unsigned length,
 			int x, int y, unsigned size);
 
-	std::shared_ptr<GLBuffer> _vertex_buffer;
-	std::shared_ptr<GLVertexArray> _vao;
+	static std::shared_ptr<GLBuffer> _triangle_buffer;
+	static std::shared_ptr<GLVertexArray> _vao;
+	static GLShaderProgram _shader;
+	static bool _initialized;
 
 };
 

@@ -36,6 +36,7 @@ private:
 
 	void _LoadTriangles(const FT_Outline& outline, unsigned short em);
 	void _AddContour(const _Contour& contour, unsigned short em);
+	void _EnsureCounterClockwise(Triangle& triangle);
 
 	std::vector<Triangle> _triangles;
 	std::vector<Triangle> _bezier_curves;
