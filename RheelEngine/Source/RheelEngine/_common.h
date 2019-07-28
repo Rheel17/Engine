@@ -9,6 +9,9 @@
 
 #include "Util/Math.h"
 
+#define RE_NO_CONSTRUCT(X)				\
+	X() = delete;
+
 #define RE_NO_COPY(X) 					\
 	X(const X&) = delete;				\
 	X& operator=(const X&) = delete;

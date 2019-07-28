@@ -90,7 +90,7 @@ void SceneRenderManager::_Initialize() {
 	_lighting_shader["gBufferSpecular"] = 5;
 	_lighting_shader["gBufferMaterialParameters"] = 6;
 
-	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f,  1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
+	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
 	_lighting_quad_vbo = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);
 	_lighting_quad_vbo->SetData(triangles, sizeof(triangles));
 
