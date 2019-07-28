@@ -9,8 +9,7 @@ Character::_ContourPoint::operator vec2() const {
 }
 
 Character::Character(const FT_GlyphSlot& glyph, unsigned short em) {
-	std::cout << "em=" << em << std::endl;
-	_LoadTriangles(glyph->outline, em);
+	_LoadTriangles(glyph->outline, float(em));
 	_advance = glyph->advance.x;
 }
 
@@ -22,13 +21,25 @@ const std::vector<Character::Triangle>& Character::BezierCurveTriangles() const 
 	return _bezier_curves;
 }
 
-void Character::_LoadTriangles(const FT_Outline& outline, unsigned short em) {
+void Character::_LoadTriangles(const FT_Outline& outline, float em) {
 	std::cout << outline.n_contours << " contours, " << outline.n_points << " points" << std::endl;
 
-	if (outline.n_contours == 0) {
+	if (outline.n_contours == 0 || outline.n_points == 0) {
 		return;
 	}
 
+	// calculate a common point to the bottom-left of all control points
+	FT_Pos xMin = outline.points[0].x;
+	FT_Pos yMin = outline.points[0].y;
+
+	for (short i = 0; i < outline.n_points; i++) {
+		xMin = std::min(xMin, outline.points[i].x);
+		yMin = std::min(yMin, outline.points[i].y);
+	}
+
+	_common = { (xMin - 512) / em, (yMin - 512) / em };
+
+	// add the contours
 	unsigned contourStart = 0;
 	unsigned contourEnd;
 
@@ -87,28 +98,7 @@ void Character::_LoadTriangles(const FT_Outline& outline, unsigned short em) {
 	}
 }
 
-void Character::_AddContour(const _Contour& contour, unsigned short emUnits) {
-	float em = emUnits;
-
-	// calculate a point to the left of all control points
-	FT_Pos xMin = contour[0].x;
-	FT_Pos yMin = contour[0].y;
-
-	for (unsigned i = 0; i < contour.size(); i++) {
-		std::cout << "  point " << contour[i].x << "," << contour[i].y;
-
-		if (contour[i].on) {
-			std::cout << " ON" << std::endl;
-		} else {
-			std::cout << " OFF" << std::endl;
-		}
-
-		xMin = std::min(xMin, contour[i].x);
-		yMin = std::min(yMin, contour[i].y);
-	}
-
-	vec2 common = { (xMin - 512) / em, (yMin - 512) / em };
-
+void Character::_AddContour(const _Contour& contour, float em) {
 	// add the contour
 	unsigned startIndex = 0;
 
@@ -117,16 +107,12 @@ void Character::_AddContour(const _Contour& contour, unsigned short emUnits) {
 			vec2 v1 = (vec2) contour[startIndex] / em;
 			vec2 v2 = (vec2) contour[i] / em;
 
-			std::cout << "  " << common << " " << v1 << " " << v2 << std::endl;
-
-			_triangles.push_back({{ common, v1, v2 }});
-			_EnsureCounterClockwise(_triangles.back());
+			_triangles.push_back(_CreateTriangle(_common, v1, v2));
 
 			// if the previous was more than 1 less than this, we had an 'off'
 			// point in between, so add the Bézier curve.
 			if (i - startIndex < 1) {
-				_bezier_curves.push_back({{ v1, (vec2) contour[i - 1] / em, v2 }});
-				_EnsureCounterClockwise(_bezier_curves.back());
+				_bezier_curves.push_back(_CreateTriangle(v1, (vec2) contour[i - 1] / em, v2));
 			}
 
 			// start the new triangle/curve at the current 'on' point.
@@ -135,16 +121,16 @@ void Character::_AddContour(const _Contour& contour, unsigned short emUnits) {
 	}
 }
 
-void Character::_EnsureCounterClockwise(Triangle& triangle) {
-	vec2 u = triangle[1] - triangle[0];
-	vec2 v = triangle[2] - triangle[0];
+Character::Triangle Character::_CreateTriangle(const vec2& v1, const vec2& v2, const vec2& v3) {
+	vec2 u = v2 - v1;
+	vec2 v = v3 - v1;
 
-	// vertex 3 is on the right side of the 1 -> 2 vector, so it should come
-	// before vertex 2.
-	if (glm::dot(u, v) < 0) {
-		vec2 tmp = std::move(triangle[1]);
-		triangle[1] = std::move(triangle[2]);
-		triangle[2] = std::move(tmp);
+	// calculate the determinant of the matrix [u v]. The sign of y will
+	// determine the side of the third point, and thus if a flip is needed.
+	if (u.y * v.x - u.x * v.y < 0) {
+		return Triangle {{ v1, v3, v2 }};
+	} else {
+		return Triangle {{ v1, v2, v3 }};
 	}
 }
 

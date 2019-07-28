@@ -34,10 +34,11 @@ public:
 private:
 	Character(const FT_GlyphSlot& glyph, unsigned short em);
 
-	void _LoadTriangles(const FT_Outline& outline, unsigned short em);
-	void _AddContour(const _Contour& contour, unsigned short em);
-	void _EnsureCounterClockwise(Triangle& triangle);
+	void _LoadTriangles(const FT_Outline& outline, float em);
+	void _AddContour(const _Contour& contour, float em);
+	Triangle _CreateTriangle(const vec2& v1, const vec2& v2, const vec2& v3);
 
+	vec2 _common;
 	std::vector<Triangle> _triangles;
 	std::vector<Triangle> _bezier_curves;
 	float _advance;

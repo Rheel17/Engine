@@ -26,6 +26,8 @@ private:
 
 	static std::shared_ptr<GLBuffer> _triangle_buffer;
 	static std::shared_ptr<GLVertexArray> _vao;
+	static std::shared_ptr<GLBuffer> _screenquad_vbo;
+	static std::shared_ptr<GLVertexArray> _screenquad_vao;
 	static GLShaderProgram _shader;
 	static bool _initialized;
 
