@@ -1,5 +1,7 @@
 #version 330 core
 
+in vec3 vf_BarycentricCoordinates;
+
 out vec4 frag_Color;
 
 uniform int stage;
@@ -13,7 +15,14 @@ void handleTriangles(void) {
 }
 
 void handleBezier(void) {
-	frag_Color = vec4(1.0);
+	float s = vf_BarycentricCoordinates.z;
+	float t = vf_BarycentricCoordinates.x;
+
+	if ((s / 2.0 + t) * (s / 2.0 + t) < t) {
+	 	frag_Color = vec4(1.0);
+	} else {
+		discard;
+	}
 }
 
 void handleResolve(void) {

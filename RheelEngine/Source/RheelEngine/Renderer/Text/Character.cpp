@@ -22,8 +22,6 @@ const std::vector<Character::Triangle>& Character::BezierCurveTriangles() const 
 }
 
 void Character::_LoadTriangles(const FT_Outline& outline, float em) {
-	std::cout << outline.n_contours << " contours, " << outline.n_points << " points" << std::endl;
-
 	if (outline.n_contours == 0 || outline.n_points == 0) {
 		return;
 	}
@@ -111,7 +109,7 @@ void Character::_AddContour(const _Contour& contour, float em) {
 
 			// if the previous was more than 1 less than this, we had an 'off'
 			// point in between, so add the Bézier curve.
-			if (i - startIndex < 1) {
+			if (i - startIndex > 1) {
 				_bezier_curves.push_back(_CreateTriangle(v1, (vec2) contour[i - 1] / em, v2));
 			}
 
@@ -125,12 +123,16 @@ Character::Triangle Character::_CreateTriangle(const vec2& v1, const vec2& v2, c
 	vec2 u = v2 - v1;
 	vec2 v = v3 - v1;
 
+	// the barycentric coordinate index of the vertices is the same as the
+	// defined order, and not necessarily the same as the order in the
+	// Triangle type.
+
 	// calculate the determinant of the matrix [u v]. The sign of y will
 	// determine the side of the third point, and thus if a flip is needed.
-	if (u.y * v.x - u.x * v.y < 0) {
-		return Triangle {{ v1, v3, v2 }};
+	if (u.y * v.x - u.x * v.y > 0) {
+		return Triangle {{ vec3(v1, 0.0f), vec3(v3, 1.0f), vec3(v2, 2.0f) }};
 	} else {
-		return Triangle {{ v1, v2, v3 }};
+		return Triangle {{ vec3(v1, 0.0f), vec3(v2, 2.0f), vec3(v3, 1.0f) }};
 	}
 }
 

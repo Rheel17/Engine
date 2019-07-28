@@ -25,7 +25,7 @@ private:
 	using _Contour = std::vector<_ContourPoint>;
 
 public:
-	using Triangle = std::array<vec2, 3>;
+	using Triangle = std::array<vec3, 3>;
 
 public:
 	const std::vector<Triangle>& Triangles() const;

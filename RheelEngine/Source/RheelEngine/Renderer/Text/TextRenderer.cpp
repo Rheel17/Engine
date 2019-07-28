@@ -53,7 +53,7 @@ void TextRenderer::_Initialize() {
 	_triangle_buffer->SetData(nullptr, 0);
 
 	_vao = std::make_shared<GLVertexArray>();
-	_vao->SetVertexAttributes<vec2>(*_triangle_buffer);
+	_vao->SetVertexAttributes<vec3>(*_triangle_buffer);
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
 	_screenquad_vbo = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);
@@ -72,25 +72,13 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 
 	_Initialize();
 
-//	float scale = size / float(Engine::GetDisplayConfiguration().resolution.height);
-
 	std::vector<Character::Triangle> triangles;
-	std::vector<vec2> lines;
-	std::vector<vec2> points;
+	std::vector<Character::Triangle> bezierCurves;
 
 	for (unsigned i = 0; i < length; i++) {
 		Character c = font.LoadCharacter(text[i]);
-		const std::vector<Character::Triangle>& characterTriangles = c.Triangles();
-		triangles.insert(triangles.end(), characterTriangles.begin(), characterTriangles.end());
-	}
-
-	for (const auto& triangle : triangles) {
-		lines.push_back(triangle[1]);
-		lines.push_back(triangle[2]);
-
-		points.push_back(triangle[0]);
-		points.push_back(triangle[1]);
-		points.push_back(triangle[2]);
+		triangles.insert(triangles.end(), c.Triangles().begin(), c.Triangles().end());
+		bezierCurves.insert(bezierCurves.end(), c.BezierCurveTriangles().begin(), c.BezierCurveTriangles().end());
 	}
 
 	// enable the stencil buffer, and clear it
@@ -104,7 +92,6 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 	glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
 	glColorMask(false, false, false, false);
 	glDepthMask(false);
-	glDisable(GL_CULL_FACE);
 
 	// initialize the stencil buffer
 	glStencilFunc(GL_NEVER, 1, 0xFF);
@@ -113,10 +100,15 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 
 	_shader["stage"] = STAGE_TRIANGLES;
 	_vao->Bind();
-	_triangle_buffer->SetData(points);
+	_triangle_buffer->SetData(triangles);
 
+	glDrawArrays(GL_TRIANGLES, 0, 3 * triangles.size());
 
-	glDrawArrays(GL_TRIANGLES, 0, points.size());
+	_shader["stage"] = STAGE_BEZIER;
+	_vao->Bind();
+	_triangle_buffer->SetData(bezierCurves);
+
+	glDrawArrays(GL_TRIANGLES, 0, 3 * bezierCurves.size());
 
 	// restore color and depth mask
 	glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
@@ -130,7 +122,6 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 	_screenquad_vao->Bind();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_STENCIL_TEST);
 	return 0;
 }
