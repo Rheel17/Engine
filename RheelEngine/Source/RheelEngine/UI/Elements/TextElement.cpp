@@ -26,7 +26,7 @@ void TextElement::Draw() const {
 
 	// Testing the text rendering!
 
-	TextRenderer::DrawText(_font, L"Testing the text rendering!", bounds.x, y, _size);
+	TextRenderer::DrawText(_font, Color { 1.0f, 1.0f, 1.0f, 1.0f }, L"Testing the text rendering!", bounds.x, y, _size);
 }
 
 }

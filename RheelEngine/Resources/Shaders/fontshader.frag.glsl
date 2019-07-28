@@ -5,6 +5,7 @@ in vec3 vf_BarycentricCoordinates;
 out vec4 frag_Color;
 
 uniform int stage;
+uniform vec4 color;
 
 #define STAGE_TRIANGLES		0
 #define STAGE_BEZIER		1
@@ -26,7 +27,7 @@ void handleBezier(void) {
 }
 
 void handleResolve(void) {
-	frag_Color = vec4(1.0);
+	frag_Color = color;
 }
 
 void main(void) {

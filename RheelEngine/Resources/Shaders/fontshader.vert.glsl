@@ -4,8 +4,19 @@ layout (location = 0) in vec3 vert_Position;
 
 out vec3 vf_BarycentricCoordinates;
 
+uniform int stage;
+uniform vec2 multisampleOffset;
+
+#define STAGE_TRIANGLES		0
+#define STAGE_BEZIER		1
+#define STAGE_RESOLVE		2
+
 void main(void) {
 	gl_Position = vec4(vert_Position.xy, 0.0, 1.0);
+
+	if (stage != STAGE_RESOLVE) {
+		gl_Position.xy +=  + multisampleOffset;
+	}
 
 	if (vert_Position.z == 0.0) {
 		vf_BarycentricCoordinates = vec3(1.0, 0.0, 0.0);

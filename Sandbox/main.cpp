@@ -54,7 +54,7 @@ class SandboxGame : public Game {
 	void Initialize() override {
 		DisplayConfiguration config;
 		config.title = "Sandbox";
-		config.aa_mode = DisplayConfiguration::AntiAliasing::AA_OFF;
+		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
 		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
 
 		Engine::SetDisplayConfiguration(std::move(config));
@@ -65,14 +65,14 @@ class SandboxGame : public Game {
 
 		UIPtr ui = UI::Create();
 
-//		ElementPtr sceneView = SceneElement::Create("main_camera");
-//		ui->GetContainer()->AddElement(sceneView);
+		ElementPtr sceneView = SceneElement::Create("main_camera");
+		ui->GetContainer()->AddElement(sceneView);
 
-		ElementPtr textView = TextElement::Create(100);
+		ElementPtr textView = TextElement::Create(20);
 		ui->GetContainer()->AddElement(textView);
 
-//		ui->GetContainer()->AddConstraint(sceneView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
-//		ui->GetContainer()->AddConstraint(sceneView, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+		ui->GetContainer()->AddConstraint(sceneView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
+		ui->GetContainer()->AddConstraint(sceneView, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 		ui->GetContainer()->AddConstraint(textView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 50);
 
 		Engine::SetUI(ui);

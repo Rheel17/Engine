@@ -16,7 +16,7 @@ std::shared_ptr<GLVertexArray> TextRenderer::_screenquad_vao(nullptr);
 GLShaderProgram TextRenderer::_shader;
 bool TextRenderer::_initialized(false);
 
-void TextRenderer::DrawText(Font& font, const std::wstring& text, int x, int y, unsigned size) {
+void TextRenderer::DrawText(Font& font, const Color& color, const std::wstring& text, int x, int y, unsigned size) {
 	const wchar_t *chars = text.c_str();
 	unsigned length = text.length();
 
@@ -24,18 +24,18 @@ void TextRenderer::DrawText(Font& font, const std::wstring& text, int x, int y, 
 	while (length > 0) {
 		unsigned charsLength = std::min(length, (unsigned) Font::FONT_CACHE_SIZE);
 
-		x = _DrawChars(font, chars, charsLength, x, y, size);
+		x = _DrawChars(font, color, chars, charsLength, x, y, size);
 
 		length -= charsLength;
 		chars += charsLength;
 	}
 }
 
-void TextRenderer::DrawText(Font& font, const std::string& text, int x, int y, unsigned size) {
+void TextRenderer::DrawText(Font& font, const Color& color, const std::string& text, int x, int y, unsigned size) {
 	std::wstring wide;
 	wide.assign(text.begin(), text.end());
 
-	DrawText(font, wide, x, y, size);
+	DrawText(font, color, wide, x, y, size);
 }
 
 void TextRenderer::_Initialize() {
@@ -63,7 +63,9 @@ void TextRenderer::_Initialize() {
 	_initialized = true;
 }
 
-int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
+int frame = 0;
+
+int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
 	assert(length <= Font::FONT_CACHE_SIZE);
 
 	_Initialize();
@@ -87,6 +89,7 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 	std::vector<Character::Triangle> triangles;
 	std::vector<Character::Triangle> bezierCurves;
 
+	// load the characters and populate the triangle and Bézier curve vectors.
 	for (unsigned i = 0; i < length; i++) {
 		const Character& c = font.LoadCharacter(text[i]);
 		std::vector<Character::Triangle> cTriangles = c.Triangles();
@@ -103,9 +106,33 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 		px += c.Advance() * sx;
 	}
 
-	// enable the stencil buffer, and clear it
+	// enable the stencil buffer
 	glEnable(GL_STENCIL_TEST);
-	glClear(GL_STENCIL_BUFFER_BIT);
+
+	// for anti-aliasing, enable GL_BLEND
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	float subpixelWidth = 2.0f / (screen.width * 8);
+	float subpixelHeight = 2.0f / (screen.height * 8);
+
+	_shader["color"] = vec4 { color.r, color.g, color.b, color.a / 4.0f };
+
+	_DrawTriangles(triangles, bezierCurves, { subpixelWidth * -1, subpixelHeight *  3 });
+	_DrawTriangles(triangles, bezierCurves, { subpixelWidth *  3, subpixelHeight *  1 });
+	_DrawTriangles(triangles, bezierCurves, { subpixelWidth * -3, subpixelHeight * -1 });
+	_DrawTriangles(triangles, bezierCurves, { subpixelWidth *  1, subpixelHeight * -3 });
+
+	frame++;
+
+	glDisable(GL_BLEND);
+	glDisable(GL_STENCIL_TEST);
+	return x;
+}
+
+void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triangles,
+		const std::vector<Character::Triangle>& bezierCurves,
+		vec2 multisampleOffset) {
 
 	// only draw on the stencil buffer
 	GLboolean colorMask[4];
@@ -116,12 +143,14 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 	glDepthMask(false);
 
 	// initialize the stencil buffer
+	glClear(GL_STENCIL_BUFFER_BIT);
 	glStencilFunc(GL_NEVER, 1, 0xFF);
 	glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
-	glStencilMask(0x1);
+	glStencilMask(0x01);
 
 	// draw the simple triangles
 	_shader["stage"] = STAGE_TRIANGLES;
+	_shader["multisampleOffset"] = multisampleOffset;
 	_vao->Bind();
 	_triangle_buffer->SetData(triangles);
 
@@ -145,9 +174,6 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 	// resolve the stencil buffer
 	_screenquad_vao->Bind();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glDisable(GL_STENCIL_TEST);
-	return x;
 }
 
 }
