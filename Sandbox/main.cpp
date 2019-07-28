@@ -68,7 +68,7 @@ class SandboxGame : public Game {
 //		ElementPtr sceneView = SceneElement::Create("main_camera");
 //		ui->GetContainer()->AddElement(sceneView);
 
-		ElementPtr textView = TextElement::Create(500);
+		ElementPtr textView = TextElement::Create(100);
 		ui->GetContainer()->AddElement(textView);
 
 //		ui->GetContainer()->AddConstraint(sceneView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);

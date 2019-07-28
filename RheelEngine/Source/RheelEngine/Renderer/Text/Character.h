@@ -30,6 +30,7 @@ public:
 public:
 	const std::vector<Triangle>& Triangles() const;
 	const std::vector<Triangle>& BezierCurveTriangles() const;
+	float Advance() const;
 
 private:
 	Character(const FT_GlyphSlot& glyph, unsigned short em);

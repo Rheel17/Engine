@@ -28,8 +28,6 @@ void TextRenderer::DrawText(Font& font, const std::wstring& text, int x, int y, 
 
 		length -= charsLength;
 		chars += charsLength;
-
-		break;
 	}
 }
 
@@ -65,20 +63,44 @@ void TextRenderer::_Initialize() {
 	_initialized = true;
 }
 
-int frame = 0;
-
 int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
 	assert(length <= Font::FONT_CACHE_SIZE);
 
 	_Initialize();
 
+	auto screen = Engine::GetDisplayConfiguration().resolution;
+	float px = float(x) / screen.width * 2.0f - 1.0f;
+	float py = float(y) / screen.height * -2.0f + 1.0f;
+	float sx = float(size) / screen.width * 2.0f;
+	float sy = float(size) / screen.height * 2.0f;
+
+	const auto transform = [&px, &py, &sx, &sy](vec3& v) {
+		v.x = v.x * sx + px;
+		v.y = v.y * sy + py;
+	};
+
+	const auto transform2 = [transform](Character::Triangle& triangle) {
+		// transform the triangle by transforming its coordinates
+		std::for_each(triangle.begin(), triangle.end(), transform);
+	};
+
 	std::vector<Character::Triangle> triangles;
 	std::vector<Character::Triangle> bezierCurves;
 
 	for (unsigned i = 0; i < length; i++) {
-		Character c = font.LoadCharacter(text[i]);
-		triangles.insert(triangles.end(), c.Triangles().begin(), c.Triangles().end());
-		bezierCurves.insert(bezierCurves.end(), c.BezierCurveTriangles().begin(), c.BezierCurveTriangles().end());
+		const Character& c = font.LoadCharacter(text[i]);
+		std::vector<Character::Triangle> cTriangles = c.Triangles();
+		std::vector<Character::Triangle> cBezierCurves = c.BezierCurveTriangles();
+
+		// transform the triangles to the correct position and scale
+		std::for_each(cTriangles.begin(), cTriangles.end(), transform2);
+		std::for_each(cBezierCurves.begin(), cBezierCurves.end(), transform2);
+
+		triangles.insert(triangles.end(), cTriangles.begin(), cTriangles.end());
+		bezierCurves.insert(bezierCurves.end(), cBezierCurves.begin(), cBezierCurves.end());
+
+		x += c.Advance() * size;
+		px += c.Advance() * sx;
 	}
 
 	// enable the stencil buffer, and clear it
@@ -98,14 +120,15 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 	glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
 	glStencilMask(0x1);
 
+	// draw the simple triangles
 	_shader["stage"] = STAGE_TRIANGLES;
 	_vao->Bind();
 	_triangle_buffer->SetData(triangles);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3 * triangles.size());
 
+	// flip the bezier curves
 	_shader["stage"] = STAGE_BEZIER;
-	_vao->Bind();
 	_triangle_buffer->SetData(bezierCurves);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3 * bezierCurves.size());
@@ -119,11 +142,12 @@ int TextRenderer::_DrawChars(Font& font, const wchar_t *text, unsigned length, i
 	glStencilFunc(GL_EQUAL, 1, 0xFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
+	// resolve the stencil buffer
 	_screenquad_vao->Bind();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glDisable(GL_STENCIL_TEST);
-	return 0;
+	return x;
 }
 
 }

@@ -10,7 +10,7 @@ Character::_ContourPoint::operator vec2() const {
 
 Character::Character(const FT_GlyphSlot& glyph, unsigned short em) {
 	_LoadTriangles(glyph->outline, float(em));
-	_advance = glyph->advance.x;
+	_advance = glyph->advance.x / float(em);
 }
 
 const std::vector<Character::Triangle>& Character::Triangles() const {
@@ -19,6 +19,10 @@ const std::vector<Character::Triangle>& Character::Triangles() const {
 
 const std::vector<Character::Triangle>& Character::BezierCurveTriangles() const {
 	return _bezier_curves;
+}
+
+float Character::Advance() const {
+	return _advance;
 }
 
 void Character::_LoadTriangles(const FT_Outline& outline, float em) {
