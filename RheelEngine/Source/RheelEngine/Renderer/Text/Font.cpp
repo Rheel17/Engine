@@ -55,6 +55,54 @@ unsigned Font::Descend(unsigned size) const {
 	return (unsigned) std::ceil(_face->size->metrics.descender / -64.0f);
 }
 
+unsigned Font::CharacterWidth(char character, unsigned size) const {
+	return CharacterWidth((wchar_t) character, size);
+}
+
+unsigned Font::CharacterWidth(wchar_t character, unsigned size) const {
+	auto iter = _character_cache_reference.find(character);
+
+	if (iter == _character_cache_reference.end()) {
+		if (FT_Load_Char(_face, character, FT_LOAD_NO_SCALE | FT_LOAD_ADVANCE_ONLY)) {
+			throw std::runtime_error("Could not load character '" + std::to_string(character) + "'.");
+		}
+
+		return size * (_face->glyph->advance.x / float(_face->units_per_EM));
+	}
+
+	return size * iter->second->character_data.Advance();
+}
+
+unsigned Font::StringWidth(const char *str, unsigned size) const {
+	unsigned width = 0;
+
+	while (*str != 0) {
+		width += CharacterWidth(*str, size);
+		str++;
+	}
+
+	return width;
+}
+
+unsigned Font::StringWidth(const wchar_t *str, unsigned size) const {
+	unsigned width = 0;
+
+	while (*str != 0) {
+		width += CharacterWidth(*str, size);
+		str++;
+	}
+
+	return width;
+}
+
+unsigned Font::StringWidth(const std::string& str, unsigned size) const {
+	return StringWidth(str.c_str(), size);
+}
+
+unsigned Font::StringWidth(const std::wstring& str, unsigned size) const {
+	return StringWidth(str.c_str(), size);
+}
+
 Character Font::_LoadCharacter(wchar_t c) {
 	// load the character
 	if (FT_Load_Char(_face, c, FT_LOAD_NO_SCALE)) {

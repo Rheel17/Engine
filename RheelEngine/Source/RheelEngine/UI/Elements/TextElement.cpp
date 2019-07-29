@@ -4,18 +4,39 @@
 
 namespace rheel {
 
-TextElement::TextElement(unsigned size) :
-		TextElement(Font::GetDefaultFont(), size) {}
+TextElement::TextElement(std::string text, unsigned size) :
+		TextElement(text, Font::GetDefaultFont(), size) {}
 
-TextElement::TextElement(Font& font, unsigned size) :
+TextElement::TextElement(std::wstring text, unsigned size) :
+		TextElement(text, Font::GetDefaultFont(), size) {}
+
+TextElement::TextElement(std::string text, Font& font, unsigned size) :
 		_font(font), _size(size) {
+
+	_text = std::move(text);
+	_wide = false;
+
+	_font_ascend = _font.Ascend(_size);
+	_font_descend = _font.Descend(_size);
+}
+
+TextElement::TextElement(std::wstring text, Font& font, unsigned size) :
+		_font(font), _size(size) {
+
+	_w_text = std::move(text);
+	_wide = true;
 
 	_font_ascend = _font.Ascend(_size);
 	_font_descend = _font.Descend(_size);
 }
 
 std::pair<unsigned, unsigned> TextElement::GetDefaultDimensions() const {
-	return std::make_pair(1200, _font_ascend + _font_descend);
+	if (_wide) {
+		return std::make_pair(_font.StringWidth(_w_text, _size), _font_ascend + _font_descend);
+	} else {
+		return std::make_pair(_font.StringWidth(_text, _size), _font_ascend + _font_descend);
+	}
+
 }
 
 void TextElement::Draw() const {
@@ -24,9 +45,11 @@ void TextElement::Draw() const {
 	unsigned textBounds = _font_ascend + _font_descend;
 	unsigned y = bounds.y + (bounds.height - textBounds) / 2 + _font_ascend;
 
-	// Testing the text rendering!
-
-	TextRenderer::DrawText(_font, Color { 1.0f, 1.0f, 1.0f, 1.0f }, L"Testing the text rendering!", bounds.x, y, _size);
+	if (_wide) {
+		TextRenderer::DrawText(_font, Color { 1.0f, 1.0f, 1.0f, 1.0f }, _w_text, bounds.x, y, _size);
+	} else {
+		TextRenderer::DrawText(_font, Color { 1.0f, 1.0f, 1.0f, 1.0f }, _text, bounds.x, y, _size);
+	}
 }
 
 }

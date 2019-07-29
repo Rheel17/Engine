@@ -14,23 +14,55 @@ public:
 	void Draw() const override;
 
 private:
-	TextElement(unsigned size);
-	TextElement(Font& font, unsigned size);
+	TextElement(std::string text, unsigned size);
+	TextElement(std::wstring text, unsigned size);
+	TextElement(std::string text, Font& font, unsigned size);
+	TextElement(std::wstring text, Font& font, unsigned size);
+
+	std::string _text;
+	std::wstring _w_text;
+	bool _wide;
 
 	Font& _font;
+
 	unsigned _font_ascend;
 	unsigned _font_descend;
 	unsigned _size;
 
 public:
 	/**
-	 * Create a text component of a certain width and height.
+	 * Create a text component with text and size. The default font is used.
 	 */
-	inline static std::shared_ptr<TextElement> Create(unsigned size) {
+	inline static std::shared_ptr<TextElement> Create(std::string text, unsigned size) {
 		// not std::make_shared<...>(...) because than the constructor can't be private.
-		return std::shared_ptr<TextElement>(new TextElement(size));
+		return std::shared_ptr<TextElement>(new TextElement(text, size));
 	}
 
+	/**
+	 * Create a text component with wide text (allowing Unicode characters) and
+	 * size. The default font is used.
+	 */
+	inline static std::shared_ptr<TextElement> Create(std::wstring text, unsigned size) {
+		// not std::make_shared<...>(...) because than the constructor can't be private.
+		return std::shared_ptr<TextElement>(new TextElement(text, size));
+	}
+
+	/**
+	 * Create a text component with text, font, and size.
+	 */
+	inline static std::shared_ptr<TextElement> Create(std::string text, Font& font, unsigned size) {
+		// not std::make_shared<...>(...) because than the constructor can't be private.
+		return std::shared_ptr<TextElement>(new TextElement(text, font, size));
+	}
+
+	/**
+	 * Create a text component with wide text (allowing Unicode characters),
+	 * font, and size.
+	 */
+	inline static std::shared_ptr<TextElement> Create(std::wstring text, Font& font, unsigned size) {
+		// not std::make_shared<...>(...) because than the constructor can't be private.
+		return std::shared_ptr<TextElement>(new TextElement(text, font, size));
+	}
 };
 
 }

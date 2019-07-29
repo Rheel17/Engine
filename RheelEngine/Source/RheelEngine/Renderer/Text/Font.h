@@ -34,6 +34,13 @@ public:
 	unsigned Ascend(unsigned size) const;
 	unsigned Descend(unsigned size) const;
 
+	unsigned CharacterWidth(char character, unsigned size) const;
+	unsigned CharacterWidth(wchar_t character, unsigned size) const;
+	unsigned StringWidth(const char *str, unsigned size) const;
+	unsigned StringWidth(const wchar_t *str, unsigned size) const;
+	unsigned StringWidth(const std::string& str, unsigned size) const;
+	unsigned StringWidth(const std::wstring& str, unsigned size) const;
+
 private:
 	Character _LoadCharacter(wchar_t c);
 
