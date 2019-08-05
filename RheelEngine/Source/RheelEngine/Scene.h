@@ -81,7 +81,7 @@ public:
 	/**
 	 * Returns a vector of all objects in the scene.
 	 */
-	const std::vector<Object>& Objects() const;
+	const std::vector<Object *>& Objects() const;
 
 	/**
 	 * Returns a vector of all lights in the scene.
@@ -97,7 +97,7 @@ private:
 	Scene() = default;
 	Scene(const SceneDescription& description);
 
-	std::vector<Object> _objects;
+	std::vector<Object *> _objects;
 	std::vector<ScriptPtr> _scripts;
 	std::vector<Light> _lights;
 	std::map<std::string, Light *> _light_map;

@@ -3,4 +3,5 @@
 **/*.o
 Build/*/libRheelEngine.dll
 Build/*/Sandbox.exe
+Build/Debug/
 **/_todo

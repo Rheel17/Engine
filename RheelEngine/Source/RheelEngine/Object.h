@@ -133,7 +133,7 @@ private:
 	vec3 _scale = vec3(1, 1, 1);
 
 	std::vector<ComponentPtr> _components;
-	std::vector<Object> _children;
+	std::vector<Object *> _children;
 };
 
 }

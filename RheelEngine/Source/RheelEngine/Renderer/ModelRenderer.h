@@ -2,6 +2,8 @@
 #define MODELRENDERER_H_
 #include "../_common.h"
 
+#include <set>
+
 #include "../Material.h"
 #include "../Model.h"
 
@@ -22,19 +24,33 @@ public:
 		void SetMaterialColor(vec4 materialColor);
 
 	private:
-		ObjectData(unsigned index);
+		ObjectData();
 
 		mat4 _model_matrix;
 		mat4 _normal_model_matrix;
 		vec4 _material_vector;
 		vec4 _material_color;
 
-		unsigned _index;
-
 	};
 
 private:
-	struct MaterialTextureCompare {
+	class _ObjectDataList {
+
+	public:
+		_ObjectDataList() = default;
+		~_ObjectDataList();
+
+		ObjectData *Add();
+		void Remove(ObjectData *data);
+
+		std::vector<ObjectData> Data() const;
+
+	private:
+		std::set<ObjectData *> _objects;
+
+	};
+
+	struct _MaterialTextureCompare {
 		bool operator()(const Material& mat1, const Material& mat2) const;
 	};
 
@@ -49,7 +65,6 @@ public:
 
 	void RenderObjects() const;
 
-private:
 public:
 	GLVertexArray _vao;
 	GLBuffer _vertex_buffer_object;
@@ -58,8 +73,8 @@ public:
 
 	unsigned _index_count;
 
-	std::vector<ObjectData> _objects;
-	std::map<Material, std::vector<ObjectData>, MaterialTextureCompare> _textured_objects;
+	_ObjectDataList _objects;
+	std::map<Material, _ObjectDataList, _MaterialTextureCompare> _textured_objects;
 
 public:
 	static GLShaderProgram& GetModelShader();

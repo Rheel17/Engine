@@ -19,8 +19,9 @@ Object::Object(const Blueprint& blueprint) {
 
 	// add the children
 	for (const auto& childName : children) {
-		auto child = _children.emplace_back(Engine::GetBlueprint(childName));
-		child._parent_object = this;
+		Object *child = new Object(Engine::GetBlueprint(childName));
+		_children.push_back(child);
+		child->_parent_object = this;
 	}
 
 	// initialize the components
@@ -96,7 +97,7 @@ const vec3& Object::Scale() const {
 void Object::FireEvent(EventType type, bool recursive) {
 	if (recursive) {
 		for (auto& child : _children) {
-			child.FireEvent(type, recursive);
+			child->FireEvent(type, recursive);
 		}
 	}
 
@@ -115,7 +116,7 @@ void Object::_SetParentScene(Scene *scene) {
 	_parent_scene = scene;
 
 	for (auto& child : _children) {
-		child._SetParentScene(scene);
+		child->_SetParentScene(scene);
 	}
 }
 

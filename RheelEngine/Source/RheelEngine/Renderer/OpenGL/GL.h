@@ -50,6 +50,7 @@ private:
 		// of this object go out of scope
 		_handle = std::shared_ptr<GLuint>(id, [deleter](GLuint *id) {
 			deleter(1, id);
+			delete id;
 		});
 	}
 
