@@ -103,7 +103,7 @@ Light *Scene::AddSpotLight(vec3 position, Color color, vec3 direction, float spo
 }
 
 void Scene::AddDirectionalLight(const std::string& name, Color color, vec3 direction) {
-	Light& light = _lights.emplace_back(std::move(color), std::move(direction));
+	Light& light = _lights.emplace_back(std::move(color), glm::normalize(std::move(direction)));
 	_light_map.insert({ name, &light });
 }
 
@@ -143,15 +143,25 @@ const std::vector<Light>& Scene::Lights() const {
 }
 
 void Scene::Update() {
+	// pre-update the scripts
+	for (auto script : _scripts) {
+		script->PreOnUpdate();
+	}
+
+	// update the objects
 	for (Object& object : _objects) {
 		object.FireEvent(Object::ON_UPDATE);
 	}
 
+	// post-update the scripts
+	for (auto script : _scripts) {
+		script->PostOnUpdate();
+	}
+
+	// update the object renderers
 	for (Object& object : _objects) {
 		object.FireEvent(Object::ON_UPDATE_RENDERER);
 	}
-
-	// TODO: send update event to scene scripts
 
 	SceneRenderManager& renderManager = Engine::GetSceneRenderManager(this);
 	renderManager.Update();

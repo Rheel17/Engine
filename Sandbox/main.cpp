@@ -2,21 +2,10 @@
 
 using namespace rheel;
 
-class RotationComponent : public rheel::Component {
-
-public:
-	void OnUpdate() override {
-		Parent().Rotate(quat(0.9999996f, 0.0f, 0.0008727f, 0.0f));
-	}
-
-};
-
 static Blueprint createCubeBlueprint() {
-	Blueprint blueprint("object");
+	Blueprint blueprint("cube");
 
-	ModelPtr model = Model::LoadCollada("suzanne_hires.dae");
-
-	blueprint.AddComponent("rotation");
+	ModelPtr model = Model::LoadCollada("cube.dae");
 
 	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](ComponentPtr c) {
 		ModelRenderComponent *component = static_cast<ModelRenderComponent *>(c.get());
@@ -30,17 +19,20 @@ static Blueprint createCubeBlueprint() {
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
-	description.AddObject("object");
-	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { -1, 0, 0 });
-	description.AddSpotLight("green_light", { -5, 0, 0 }, { 0, 1, 0, 1 }, { 1, 0, 0 }, 50.0f, 0.1f);
-	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 0, -3 });
+	description.AddObject("cube");
+	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0, -1, -1 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 10, -5 }, { 0.819152f, 0.5735764f, 0, 0 });
 
 	return description;
 }
 
 class SandboxGame : public Game {
 	void RegisterComponents() override {
-		Engine::RegisterComponent<RotationComponent>("rotation");
+
+	}
+
+	void RegisterScripts() override {
+
 	}
 
 	void RegisterBlueprints() override {
@@ -68,12 +60,8 @@ class SandboxGame : public Game {
 		ElementPtr sceneView = SceneElement::Create("main_camera");
 		ui->GetContainer()->AddElement(sceneView);
 
-		ElementPtr textView = TextElement::Create(L"Text element!", 20);
-		ui->GetContainer()->AddElement(textView);
-
 		ui->GetContainer()->AddConstraint(sceneView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui->GetContainer()->AddConstraint(sceneView, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
-		ui->GetContainer()->AddConstraint(textView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 50);
 
 		Engine::SetUI(ui);
 	}
