@@ -12,7 +12,7 @@ public:
 	/**
 	 * Creates a camera object with a starting position and rotation.
 	 */
-	Camera(std::string name, vec3 position, vec3 rotation);
+	Camera(std::string name, vec3 position, quat rotation);
 
 	virtual ~Camera() = default;
 
@@ -23,14 +23,44 @@ public:
 	virtual mat4 CreateMatrix(unsigned width, unsigned height) const = 0;
 
 	/**
-	 * Returns the position of this camera
+	 * Sets the position of this camera.
+	 */
+	void SetPosition(const vec3& position);
+
+	/**
+	 * Sets the position of this camera.
+	 */
+	void SetPosition(float x, float y, float z);
+
+	/**
+	 * Moves this object relative to its current position.
+	 */
+	void Move(const vec3& position);
+
+	/**
+	 * Moves this camera relative to its current position.
+	 */
+	void Move(float x, float y, float z);
+
+	/**
+	 * Returns the position of this camera.
 	 */
 	const vec3& Position() const;
 
 	/**
-	 * Returns the rotation of this camera
+	 * Sets the rotation of this camera.
 	 */
-	const vec3& Rotation() const;
+	void SetRotation(const quat& rotation);
+
+	/**
+	 * Rotates this camera relative to its current rotation.
+	 */
+	void Rotate(const quat& rotation);
+
+	/**
+	 * Returns the rotation of this camera.
+	 */
+	const quat& Rotation() const;
 
 protected:
 
@@ -41,9 +71,11 @@ protected:
 	const mat4& _ViewMatrix() const;
 
 private:
+	void _CalculateViewMatrix();
+
 	std::string _name;
 	vec3 _position;
-	vec3 _rotation;
+	quat _rotation;
 
 	mat4 _view_matrix;
 

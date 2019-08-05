@@ -33,7 +33,7 @@ static SceneDescription createSceneDescription() {
 	description.AddObject("object");
 	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { -1, 0, 0 });
 	description.AddSpotLight("green_light", { -5, 0, 0 }, { 0, 1, 0, 1 }, { 1, 0, 0 }, 50.0f, 0.1f);
-	description.AddCamera(75.0f, 0.01f, 1000.0f, "main_camera", { 0, 0, -3 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 0, -3 });
 
 	return description;
 }

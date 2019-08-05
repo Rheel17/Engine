@@ -64,7 +64,7 @@ public:
 	/**
 	 * Adds a camera to the scene with the given camera parameters
 	 */
-	void AddCamera(float fov, float near, float far, std::string name, vec3 position = { 0, 0, 0 }, vec3 rotation = { 0, 0, 0 });
+	void AddCamera(float fov, float near, float far, std::string name, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0));
 
 	/**
 	 * Returns a pointer to the light in this scene with the given name, or

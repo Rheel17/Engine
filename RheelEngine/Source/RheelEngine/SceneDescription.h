@@ -39,13 +39,13 @@ class RE_API SceneDescription {
 		std::string name;
 
 		vec3 position;
-		vec3 rotation;
+		quat rotation;
 
 		float perspective_fov;
 		float perspective_near;
 		float perspective_far;
 
-		CameraDescription(std::string name, vec3 position, vec3 rotation, float fov, float near, float far);
+		CameraDescription(std::string name, vec3 position, quat rotation, float fov, float near, float far);
 
 		static constexpr int PERSPECTIVE_CAMERA = 0;
 	};
@@ -101,7 +101,7 @@ public:
 	 * See: Scene::AddCamera(...). When a scene is created from this
 	 * description, the cameras are added last.
 	 */
-	void AddCamera(float fov, float near, float far, std::string name, vec3 position = { 0, 0, 0 }, vec3 rotation = { 0, 0, 0 });
+	void AddCamera(std::string name, float fov, float near, float far, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0));
 
 	/**
 	 * Returns the vector of script names in this scene description.
