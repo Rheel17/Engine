@@ -2,8 +2,6 @@
 #define MODELRENDERER_H_
 #include "../_common.h"
 
-#include <set>
-
 #include "../Material.h"
 #include "../Model.h"
 
@@ -18,37 +16,35 @@ public:
 	class ObjectData {
 		friend class ModelRenderer;
 
+		// Make sure that our vectors can copy instances. This is probably not
+		// the correct way of doing this, but it works for now.
+		template<typename _T1, typename... _Args>
+		friend void std::_Construct(_T1* __p, _Args&&... __args);
+		friend class std::vector<ObjectData>;
+
 	public:
+		ObjectData();
+
 		void SetTransform(vec3 position, quat rotation, vec3 scale);
 		void SetMaterialVector(vec4 materialVector);
 		void SetMaterialColor(vec4 materialColor);
 
 	private:
-		ObjectData();
+		ObjectData(const ObjectData& data);
 
 		mat4 _model_matrix;
 		mat4 _normal_model_matrix;
 		vec4 _material_vector;
 		vec4 _material_color;
 
+	public:
+		// fields we won't use on the GPU go after the ones that we do.
+		ObjectData **change_ptr = nullptr;
+
 	};
 
 private:
-	class _ObjectDataList {
-
-	public:
-		_ObjectDataList() = default;
-		~_ObjectDataList();
-
-		ObjectData *Add();
-		void Remove(ObjectData *data);
-
-		std::vector<ObjectData> Data() const;
-
-	private:
-		std::set<ObjectData *> _objects;
-
-	};
+	using _ObjectDataVector = std::vector<ObjectData>;
 
 	struct _MaterialTextureCompare {
 		bool operator()(const Material& mat1, const Material& mat2) const;
@@ -65,7 +61,10 @@ public:
 
 	void RenderObjects() const;
 
-public:
+private:
+	ObjectData *_Add(_ObjectDataVector& objects);
+	void _Remove(_ObjectDataVector& objects, ObjectData *data);
+
 	GLVertexArray _vao;
 	GLBuffer _vertex_buffer_object;
 	GLBuffer _element_array_buffer;
@@ -73,8 +72,8 @@ public:
 
 	unsigned _index_count;
 
-	_ObjectDataList _objects;
-	std::map<Material, _ObjectDataList, _MaterialTextureCompare> _textured_objects;
+	_ObjectDataVector _objects;
+	std::map<Material, _ObjectDataVector, _MaterialTextureCompare> _textured_objects;
 
 public:
 	static GLShaderProgram& GetModelShader();

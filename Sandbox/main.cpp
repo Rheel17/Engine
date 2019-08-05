@@ -19,8 +19,12 @@ static Blueprint createCubeBlueprint() {
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
-	description.AddObject("cube", { -2, 0, 0 });
-	description.AddObject("cube", {  2, 0, 0 });
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			description.AddObject("cube", { -2 * i, 0, -2 * j });
+			description.AddObject("cube", {  2 * i, 0,  2 * j });
+		}
+	}
 
 	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0, -1, -1 });
 	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 10, -5 }, { 0.819152f, 0.5735764f, 0, 0 });

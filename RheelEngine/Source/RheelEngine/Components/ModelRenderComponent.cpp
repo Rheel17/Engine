@@ -43,6 +43,8 @@ void ModelRenderComponent::OnAdd() {
 		_object_data->SetMaterialVector(_material.MaterialVector());
 		_object_data->SetMaterialColor(_material.MaterialColor());
 	}
+
+	_object_data->change_ptr = &_object_data;
 }
 
 void ModelRenderComponent::OnUpdateRenderers() {

@@ -10,9 +10,18 @@ namespace rheel {
 GLShaderProgram ModelRenderer::_model_shader;
 bool ModelRenderer::_is_model_shader_initialized = false;
 
-ModelRenderer::ObjectData::ObjectData() :
-		_model_matrix(glm::identity<mat4>()),
-		_normal_model_matrix(glm::identity<mat4>()) {}
+ModelRenderer::ObjectData::ObjectData() {}
+
+ModelRenderer::ObjectData::ObjectData(const ObjectData& data) :
+		_model_matrix(data._model_matrix),
+		_normal_model_matrix(data._normal_model_matrix),
+		_material_vector(data._material_vector),
+		_material_color(data._material_color),
+		change_ptr(data.change_ptr) {
+
+	std::cout << "Copy " << *change_ptr << " to " << this << std::endl;
+	*change_ptr = this;
+}
 
 void ModelRenderer::ObjectData::SetTransform(vec3 position, quat rotation, vec3 scale) {
 	_model_matrix = glm::translate(glm::mat4_cast(rotation) * glm::scale(glm::identity<mat4>(), scale), position);
@@ -25,34 +34,6 @@ void ModelRenderer::ObjectData::SetMaterialVector(vec4 materialVector) {
 
 void ModelRenderer::ObjectData::SetMaterialColor(vec4 materialColor) {
 	_material_color = std::move(materialColor);
-}
-
-ModelRenderer::_ObjectDataList::~_ObjectDataList() {
-	for (ObjectData *data : _objects) {
-		delete data;
-	}
-}
-
-ModelRenderer::ObjectData *ModelRenderer::_ObjectDataList::Add() {
-	ObjectData *data = new ObjectData;
-	_objects.insert(data);
-	return data;
-}
-
-void ModelRenderer::_ObjectDataList::Remove(ObjectData *data) {
-	_objects.erase(data);
-	delete data;
-}
-
-std::vector<ModelRenderer::ObjectData> ModelRenderer::_ObjectDataList::Data() const {
-	std::vector<ObjectData> vec;
-	vec.reserve(_objects.size());
-
-	for (auto data : _objects) {
-		vec.push_back(*data);
-	}
-
-	return vec;
 }
 
 bool ModelRenderer::_MaterialTextureCompare::operator()(const Material& mat1, const Material& mat2) const {
@@ -76,19 +57,19 @@ ModelRenderer::ModelRenderer(ModelPtr model) :
 }
 
 ModelRenderer::ObjectData *ModelRenderer::AddObject() {
-	return _objects.Add();
+	return _Add(_objects);
 }
 
 ModelRenderer::ObjectData *ModelRenderer::AddTexturedObject(const Material& material) {
-	return _textured_objects[material].Add();
+	return _Add(_textured_objects[material]);
 }
 
 void ModelRenderer::RemoveObject(ObjectData *object) {
-	_objects.Remove(object);
+	_Remove(_objects, object);
 }
 
 void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectData *object) {
-	_textured_objects[material].Remove(object);
+	_Remove(_textured_objects[material], object);
 }
 
 GLShaderProgram& ModelRenderer::GetModelShader() {
@@ -99,17 +80,25 @@ GLShaderProgram& ModelRenderer::GetModelShader() {
 void ModelRenderer::RenderObjects() const {
 	_vao.Bind();
 
-	auto data = _objects.Data();
-	_object_data_buffer.SetData(data, GLBuffer::STREAM_DRAW);
-	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, data.size());
+	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
+	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
 
 	for (auto pair : _textured_objects) {
 		pair.first.BindTextures();
 
-		auto pairData = pair.second.Data();
-		_object_data_buffer.SetData(pairData, GLBuffer::STREAM_DRAW);
-		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, pairData.size());
+		_object_data_buffer.SetData(pair.second, GLBuffer::STREAM_DRAW);
+		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, pair.second.size());
 	}
+}
+
+ModelRenderer::ObjectData *ModelRenderer::_Add(_ObjectDataVector& objects) {
+	auto obj = &objects.emplace_back();
+	std::cout << "_Add(" << &objects << "): " << obj << std::endl;
+	return obj;
+}
+
+void ModelRenderer::_Remove(_ObjectDataVector& objects, ObjectData *data) {
+	// TODO: implement
 }
 
 void ModelRenderer::_InitializeShader() {
