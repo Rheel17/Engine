@@ -1,9 +1,10 @@
 #ifndef GAME_H_
 #define GAME_H_
+#include "_common.h"
 
 namespace rheel {
 
-class Game {
+class RE_API Game {
 
 public:
 	virtual ~Game() = default;

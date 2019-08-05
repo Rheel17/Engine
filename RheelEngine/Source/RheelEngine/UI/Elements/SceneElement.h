@@ -1,10 +1,10 @@
 #ifndef SCENEELEMENT_H_
 #define SCENEELEMENT_H_
 #include "../../_common.h"
-#include "../../Renderer/SceneRenderManager.h"
 
 #include "../Element.h"
 #include "../../Scene.h"
+#include "../../Renderer/SceneRenderManager.h"
 
 namespace rheel {
 

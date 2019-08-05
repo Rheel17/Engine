@@ -1,5 +1,6 @@
 #ifndef IMAGETEXTURE_H_
 #define IMAGETEXTURE_H_
+#include "../_common.h"
 
 #include <unordered_map>
 
@@ -8,7 +9,7 @@
 
 namespace rheel {
 
-class ImageTexture {
+class RE_API ImageTexture {
 	friend class Image;
 
 public:
