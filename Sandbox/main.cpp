@@ -26,7 +26,7 @@ static SceneDescription createSceneDescription() {
 	}
 
 	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0, -1, -1 });
-	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 40, -20 }, { 0.819152f, 0.5735764f, 0, 0 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 50, -30 }, { 0.819152f, 0.5735764f, 0, 0 });
 
 	return description;
 }

@@ -8,7 +8,7 @@
 namespace rheel {
 
 void ModelRenderComponent::SetModel(ModelPtr model) {
-	if (_object_data != nullptr) {
+	if (_object_data) {
 		throw std::runtime_error("Model cannot be set after initialization");
 	}
 
@@ -22,10 +22,10 @@ void ModelRenderComponent::SetMaterial(Material material) {
 	Material oldMaterial = _material;
 	_material = std::move(material);
 
-	if (_object_data != nullptr) {
+	if (_object_data) {
 		if (!wasTextured && !isTextured) {
-			_object_data->SetMaterialVector(_material.MaterialVector());
-			_object_data->SetMaterialColor(_material.MaterialColor());
+			_object_data.SetMaterialVector(_material.MaterialVector());
+			_object_data.SetMaterialColor(_material.MaterialColor());
 		} else {
 			OnRemove();
 			OnAdd();
@@ -36,26 +36,24 @@ void ModelRenderComponent::SetMaterial(Material material) {
 void ModelRenderComponent::OnAdd() {
 	if (_material.Type() == Material::Textured) {
 		_object_data = Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).AddTexturedObject(_material);
-		_object_data->SetMaterialVector(_material.MaterialVector());
-		_object_data->SetMaterialColor(_material.MaterialColor());
+		_object_data.SetMaterialVector(_material.MaterialVector());
+		_object_data.SetMaterialColor(_material.MaterialColor());
 	} else {
 		_object_data = Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).AddObject();
-		_object_data->SetMaterialVector(_material.MaterialVector());
-		_object_data->SetMaterialColor(_material.MaterialColor());
+		_object_data.SetMaterialVector(_material.MaterialVector());
+		_object_data.SetMaterialColor(_material.MaterialColor());
 	}
-
-	_object_data->change_ptr = &_object_data;
 }
 
 void ModelRenderComponent::OnUpdateRenderers() {
-	_object_data->SetTransform(Parent().Position(), Parent().Rotation(), Parent().Scale());
+	_object_data.SetTransform(Parent().Position(), Parent().Rotation(), Parent().Scale());
 }
 
 void ModelRenderComponent::OnRemove() {
 	if (_material.Type() == Material::Textured) {
-		Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).RemoveTexturedObject(_material, _object_data);
+		Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).RemoveTexturedObject(_material, std::move(_object_data));
 	} else {
-		Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).RemoveObject(_object_data);
+		Engine::GetSceneRenderManager(Parent().ParentScene()).GetModelRenderer(_model).RemoveObject(std::move(_object_data));
 	}
 }
 

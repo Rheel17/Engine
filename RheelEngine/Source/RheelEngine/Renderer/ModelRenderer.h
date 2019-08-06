@@ -13,23 +13,14 @@ namespace rheel {
 class RE_API ModelRenderer {
 
 public:
+	class ObjectDataPtr;
+
 	class ObjectData {
 		friend class ModelRenderer;
-
-		// Make sure that our vectors can copy instances. This is probably not
-		// the correct way of doing this, but it works for now.
-		template<typename _T1, typename... _Args>
-		friend void std::_Construct(_T1* __p, _Args&&... __args);
-		friend class std::vector<ObjectData>;
+		friend class ObjectDataPtr;
 
 	public:
 		ObjectData();
-
-		void SetTransform(vec3 position, quat rotation, vec3 scale);
-		void SetMaterialVector(vec4 materialVector);
-		void SetMaterialColor(vec4 materialColor);
-
-	private:
 		ObjectData(const ObjectData& data);
 
 		mat4 _model_matrix;
@@ -37,9 +28,28 @@ public:
 		vec4 _material_vector;
 		vec4 _material_color;
 
+		ObjectDataPtr *_ptr;
+	};
+
+	class ObjectDataPtr {
+		friend class ObjectData;
+		friend class ModelRenderer;
+
+		RE_NO_COPY(ObjectDataPtr)
+
 	public:
-		// fields we won't use on the GPU go after the ones that we do.
-		ObjectData **change_ptr = nullptr;
+		ObjectDataPtr();
+		ObjectDataPtr(ObjectData *data);
+
+		void SetTransform(vec3 position, quat rotation, vec3 scale);
+		void SetMaterialVector(vec4 materialVector);
+		void SetMaterialColor(vec4 materialColor);
+
+		operator bool() const;
+		ObjectDataPtr& operator=(ObjectDataPtr&& ptr);
+
+	private:
+		ObjectData *_data;
 
 	};
 
@@ -53,17 +63,17 @@ private:
 public:
 	ModelRenderer(ModelPtr model);
 
-	ObjectData *AddObject();
-	ObjectData *AddTexturedObject(const Material& material);
+	ObjectDataPtr AddObject();
+	ObjectDataPtr AddTexturedObject(const Material& material);
 
-	void RemoveObject(ObjectData *object);
-	void RemoveTexturedObject(const Material& material, ObjectData *object);
+	void RemoveObject(ObjectDataPtr&& object);
+	void RemoveTexturedObject(const Material& material, ObjectDataPtr&& object);
 
 	void RenderObjects() const;
 
 private:
-	ObjectData *_Add(_ObjectDataVector& objects);
-	void _Remove(_ObjectDataVector& objects, ObjectData *data);
+	ObjectDataPtr _Add(_ObjectDataVector& objects);
+	void _Remove(_ObjectDataVector& objects, ObjectDataPtr&& data);
 
 	GLVertexArray _vao;
 	GLBuffer _vertex_buffer_object;
