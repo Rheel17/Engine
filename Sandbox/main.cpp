@@ -2,6 +2,28 @@
 
 using namespace rheel;
 
+class RandomRemoveScript : public Script {
+
+public:
+	void PreOnUpdate() override {
+
+	}
+
+	void AddObject() {
+
+	}
+
+};
+
+class RandomRemoveComponent : public Component {
+
+public:
+	void OnAdd() override {
+		Parent().ParentScene()->GetScript<RandomRemoveScript>()->AddObject();
+	}
+
+};
+
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
@@ -33,11 +55,11 @@ static SceneDescription createSceneDescription() {
 
 class SandboxGame : public Game {
 	void RegisterComponents() override {
-
+		Engine::RegisterComponent<RandomRemoveComponent>("RandomRemove");
 	}
 
 	void RegisterScripts() override {
-
+		Engine::RegisterScript<RandomRemoveScript>("RandomRemove");
 	}
 
 	void RegisterBlueprints() override {

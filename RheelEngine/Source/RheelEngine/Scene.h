@@ -22,11 +22,33 @@ public:
 	void AddScript(const std::string& script);
 
 	/**
+	 * Returns a shared pointer to the script of the given type. A nullptr
+	 * shared pointer is returned if no such script exists in this object.
+	 */
+	template<typename T>
+	std::shared_ptr<T> GetScript() {
+		static_assert(std::is_base_of<Script, T>::value, "Type must be a script");
+
+		for (auto script : _scripts) {
+			if (auto ptr = std::dynamic_pointer_cast<T>(script)) {
+				return ptr;
+			}
+		}
+
+		return nullptr;
+	}
+
+	/**
 	 * Adds an object to the scene with the given blueprint. A position and
 	 * rotation can be specified, but if not, the default (origin, no rotation)
 	 * are used.
 	 */
 	void AddObject(const std::string& blueprint, const vec3& position = { 0, 0, 0 }, const quat& rotation = quat(1, 0, 0, 0), const vec3& scale = { 1, 1, 1 });
+
+	/**
+	 * Removes an object from this scene.
+	 */
+	void RemoveObject(Object *object);
 
 	/**
 	 * Adds a named point light to the scene.
@@ -62,31 +84,26 @@ public:
 	Light *AddDirectionalLight(Color color, vec3 direction);
 
 	/**
-	 * Adds a camera to the scene with the given camera parameters
-	 */
-	void AddCamera(float fov, float near, float far, std::string name, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0));
-
-	/**
 	 * Returns a pointer to the light in this scene with the given name, or
 	 * nullptr when a light with the given name does not exist in this scene.
 	 */
 	Light *GetLight(const std::string& lightName);
 
 	/**
+	 * Returns a vector of all lights in the scene.
+	 */
+	const std::vector<Light>& Lights() const;
+
+	/**
+	 * Adds a camera to the scene with the given camera parameters
+	 */
+	void AddCamera(float fov, float near, float far, std::string name, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0));
+
+	/**
 	 * Returns the camera in this scene with the given name, or nullptr when a
 	 * camera with the given name does not exist in this scene.
 	 */
 	CameraPtr GetCamera(const std::string& cameraName);
-
-	/**
-	 * Returns a vector of all objects in the scene.
-	 */
-	const std::vector<Object *>& Objects() const;
-
-	/**
-	 * Returns a vector of all lights in the scene.
-	 */
-	const std::vector<Light>& Lights() const;
 
 	/**
 	 * Updates the scene and all the objects in the scene.
@@ -97,7 +114,7 @@ private:
 	Scene() = default;
 	Scene(const SceneDescription& description);
 
-	std::vector<Object *> _objects;
+	std::vector<Object> _objects;
 	std::vector<ScriptPtr> _scripts;
 	std::vector<Light> _lights;
 	std::map<std::string, Light *> _light_map;

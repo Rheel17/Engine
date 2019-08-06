@@ -9,9 +9,11 @@
 namespace rheel {
 
 class Scene;
+class ObjectPtr;
 
 class RE_API Object {
 	friend class Scene;
+	friend class ObjectPtr;
 
 public:
 	enum EventType {
@@ -22,6 +24,11 @@ public:
 	 * Constructs a new object from the given blueprint.
 	 */
 	Object(const Blueprint& blueprint);
+
+	/**
+	 * Copies this object.
+	 */
+	Object(const Object& object);
 
 	/**
 	 * Returns the parent object of this object, or nullptr if this object has
@@ -98,13 +105,13 @@ public:
 	 * Fires an event of the given type to its components. A second parameter
 	 * can be set to false if this event should not be fired to children of this
 	 * object. By default, this will fire the same event in its children.
-	 * NOTE: If recursive is true, the event will FIRST be fired in its
-	 *       children, THEN in its own components.
+	 * NOTE: If recursive is true, the event will first be fired in its
+	 *       children, then in its own components.
 	 */
 	void FireEvent(EventType type, bool recursive = true);
 
 	/**
-	 * Returns a shader pointer to the component of the given type. A nullptr
+	 * Returns a shared pointer to the component of the given type. A nullptr
 	 * shared pointer is returned if no such component exists in this object.
 	 */
 	template<typename T>
@@ -133,7 +140,18 @@ private:
 	vec3 _scale = vec3(1, 1, 1);
 
 	std::vector<ComponentPtr> _components;
-	std::vector<Object *> _children;
+	std::vector<Object> _children;
+
+	ObjectPtr *_ptr;
+};
+
+class ObectPtr {
+
+public:
+
+private:
+	Object *_object;
+
 };
 
 }

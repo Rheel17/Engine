@@ -14,19 +14,35 @@ Object::Object(const Blueprint& blueprint) {
 	for (const auto& componentName : components) {
 		ComponentPtr component = Engine::CreateComponent(componentName);
 		blueprint.GetLoaderForComponent(componentName)(component);
+		component->_parent_object = this;
 		_components.push_back(component);
 	}
 
 	// add the children
 	for (const auto& childName : children) {
-		Object *child = new Object(Engine::GetBlueprint(childName));
-		_children.push_back(child);
-		child->_parent_object = this;
+		Object& child = _children.emplace_back(Engine::GetBlueprint(childName));
+		child._parent_object = this;
+	}
+}
+
+Object::Object(const Object& object) :
+		_parent_scene(object._parent_scene),
+		_parent_object(object._parent_object),
+		_alive(object._alive),
+		_position(object._position),
+		_rotation(object._rotation),
+		_scale(object._scale),
+		_components(object._components),
+		_children(object._children) {
+
+	// re-initialize the components
+	for (auto& component : _components) {
+		component->_parent_object = this;
 	}
 
-	// initialize the components
-	for (auto component : _components) {
-		component->_parent_object = this;
+	// re-initialize the children
+	for (auto& child : _children) {
+		child._parent_object = this;
 	}
 }
 
@@ -97,7 +113,7 @@ const vec3& Object::Scale() const {
 void Object::FireEvent(EventType type, bool recursive) {
 	if (recursive) {
 		for (auto& child : _children) {
-			child->FireEvent(type, recursive);
+			child.FireEvent(type, recursive);
 		}
 	}
 
@@ -116,7 +132,7 @@ void Object::_SetParentScene(Scene *scene) {
 	_parent_scene = scene;
 
 	for (auto& child : _children) {
-		child->_SetParentScene(scene);
+		child._SetParentScene(scene);
 	}
 }
 

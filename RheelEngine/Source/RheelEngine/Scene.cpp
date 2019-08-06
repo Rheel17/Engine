@@ -72,16 +72,21 @@ void Scene::AddScript(const std::string& script) {
 
 void Scene::AddObject(const std::string& blueprintName, const vec3& position, const quat& rotation, const vec3& scale) {
 	const Blueprint& blueprint = Engine::GetBlueprint(blueprintName);
-	Object *object = new Object(blueprint);
-	_objects.push_back(object);
+	Object& object = _objects.emplace_back(blueprint);
+	object._SetParentScene(this);
 
-	object->_SetParentScene(this);
+	object.SetPosition(position);
+	object.SetRotation(rotation);
+	object.SetScale(scale);
 
-	object->SetPosition(position);
-	object->SetRotation(rotation);
-	object->SetScale(scale);
+	object.FireEvent(Object::ON_ADD);
+}
 
-	object->FireEvent(Object::ON_ADD);
+void Scene::RemoveObject(Object *object) {
+	object->FireEvent(Object::ON_REMOVE);
+
+	size_t index = ((size_t) object) - ((size_t) &_objects.front());
+	_objects.erase(_objects.begin() + index);
 }
 
 void Scene::AddPointLight(const std::string& name, vec3 position, Color color, float attenuation) {
@@ -136,10 +141,6 @@ CameraPtr Scene::GetCamera(const std::string& cameraName) {
 	return iter->second;
 }
 
-const std::vector<Object *>& Scene::Objects() const {
-	return _objects;
-}
-
 const std::vector<Light>& Scene::Lights() const {
 	return _lights;
 }
@@ -151,8 +152,8 @@ void Scene::Update() {
 	}
 
 	// update the objects
-	for (auto object : _objects) {
-		object->FireEvent(Object::ON_UPDATE);
+	for (auto& object : _objects) {
+		object.FireEvent(Object::ON_UPDATE);
 	}
 
 	// post-update the scripts
@@ -161,8 +162,8 @@ void Scene::Update() {
 	}
 
 	// update the object renderers
-	for (auto object : _objects) {
-		object->FireEvent(Object::ON_UPDATE_RENDERER);
+	for (auto& object : _objects) {
+		object.FireEvent(Object::ON_UPDATE_RENDERER);
 	}
 
 	SceneRenderManager& renderManager = Engine::GetSceneRenderManager(this);
