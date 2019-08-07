@@ -26,6 +26,20 @@ ModelRenderer::ObjectData::ObjectData(const ObjectData& data) :
 	}
 }
 
+ModelRenderer::ObjectData& ModelRenderer::ObjectData::operator=(ObjectData&& data) {
+	_model_matrix = std::move(data._model_matrix);
+	_normal_model_matrix = std::move(data._normal_model_matrix);
+	_material_vector = std::move(data._material_vector);
+	_material_color = std::move(data._material_color);
+	_ptr = data._ptr;
+
+	if (_ptr) {
+		_ptr->_data = this;
+	}
+
+	return *this;
+}
+
 ModelRenderer::ObjectDataPtr::ObjectDataPtr() :
 		_data(nullptr) {}
 
@@ -119,6 +133,11 @@ ModelRenderer::ObjectDataPtr ModelRenderer::_Add(_ObjectDataVector& objects) {
 
 void ModelRenderer::_Remove(_ObjectDataVector& objects, ObjectDataPtr&& data) {
 	size_t index = (((size_t) data._data) - ((size_t) &objects.front())) / sizeof(ObjectData);
+
+	if (index >= objects.size()) {
+		throw std::invalid_argument("index of ObjectData out of range");
+	}
+
 	objects.erase(objects.begin() + index);
 }
 

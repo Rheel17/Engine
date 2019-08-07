@@ -32,6 +32,11 @@ public:
 	Object(const Object& object);
 
 	/**
+	 * Moves this object.
+	 */
+	Object& operator=(Object&& object);
+
+	/**
 	 * Returns the parent object of this object, or nullptr if this object has
 	 * no parent object.
 	 */

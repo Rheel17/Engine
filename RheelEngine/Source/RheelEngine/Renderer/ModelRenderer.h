@@ -22,6 +22,7 @@ public:
 	public:
 		ObjectData();
 		ObjectData(const ObjectData& data);
+		ObjectData& operator=(ObjectData&& data);
 
 		mat4 _model_matrix;
 		mat4 _normal_model_matrix;

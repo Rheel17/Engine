@@ -46,6 +46,30 @@ Object::Object(const Object& object) :
 	}
 }
 
+Object& Object::operator=(Object&& object)  {
+	// move fields
+	_parent_scene = std::move(object._parent_scene);
+	_parent_object = std::move(object._parent_object);
+	_alive = std::move(object._alive);
+	_position = std::move(object._position);
+	_rotation = std::move(object._rotation);
+	_scale = std::move(object._scale);
+	_components = std::move(object._components);
+	_children = std::move(object._children);
+
+	// re-initialize the components
+	for (auto& component : _components) {
+		component->_parent_object = this;
+	}
+
+	// re-initialize the children
+	for (auto& child : _children) {
+		child._parent_object = this;
+	}
+
+	return *this;
+}
+
 ObjectPtr Object::ParentObject() {
 	return _parent_object;
 }

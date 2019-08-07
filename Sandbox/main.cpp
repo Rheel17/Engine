@@ -8,7 +8,7 @@ public:
 	void PreOnUpdate() override {
 		_timer++;
 
-		if (_timer == 60 && !_objects.empty()) {
+		if (_timer == 6 && !_objects.empty()) {
 			unsigned index = rand() % _objects.size();
 			ObjectPtr object = _objects[index];
 			_objects.erase(_objects.begin() + index);
@@ -18,7 +18,7 @@ public:
 	}
 
 	void PostOnUpdate() override {
-		_timer %= 60;
+		_timer %= 6;
 	}
 
 	void AddObject(ObjectPtr object) {
@@ -60,8 +60,8 @@ static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 	description.AddScript("RandomRemove");
 
-	for (int i = -1; i <= 1; i++) {
-		for (int j = -1; j <= 1; j++) {
+	for (int i = -10; i <= 10; i++) {
+		for (int j = -10; j <= 10; j++) {
 			description.AddObject("cube", { 4 * i, 0, 4 * j });
 		}
 	}
