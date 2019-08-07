@@ -24,8 +24,6 @@ public:
 private:
 	DisplayConfiguration _configuration;
 
-	// type void* to avoid having to include the GLFW headers
-	// in this header.
 	void *_window_handle = nullptr;
 
 public:

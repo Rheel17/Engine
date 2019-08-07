@@ -9,6 +9,7 @@ namespace rheel {
 Engine::EngineInstance Engine::_instance;
 
 extern void registerComponents();
+extern void registerScripts();
 
 Engine::EngineInstance::~EngineInstance() {
 	for (Scene *scene : scenes) {
@@ -19,7 +20,9 @@ Engine::EngineInstance::~EngineInstance() {
 void Engine::_Initialize() {
 	Window::InitializeDisplaySystems();
 	Font::Initialize();
+
 	registerComponents();
+	registerScripts();
 }
 
 void Engine::_Run(Game *game) {

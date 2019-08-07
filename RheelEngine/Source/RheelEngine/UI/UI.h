@@ -2,6 +2,7 @@
 #define UI_H_
 #include "../_common.h"
 
+#include "Input.h"
 #include "Elements/Container.h"
 
 namespace rheel {
@@ -23,6 +24,16 @@ public:
 	 * Creates a new empty UI.
 	 */
 	static std::shared_ptr<UI> Create();
+
+	void OnKey(int key, int scancode, Input::Action action, Input::Modifiers mods);
+
+	void OnCharacter(wchar_t character);
+
+	void OnMouseMove(float x, float y);
+
+	void OnMouseButton(int button, Input::Action action, Input::Modifiers mods);
+
+	void OnScroll(float x, float y);
 
 private:
 	UI() = default;

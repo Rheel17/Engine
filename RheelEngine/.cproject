@@ -91,11 +91,12 @@
 					<sourceEntries>
 						<entry excluding="Source/RheelEngine|Source|Resources2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="RheelEngine" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source"/>
-						<entry excluding="UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
+						<entry excluding="Scripts|UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
-						<entry excluding="Text|OpenGL|Text" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
+						<entry excluding="Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Scripts"/>
 						<entry excluding="Elements" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI/Elements"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Util"/>
@@ -192,11 +193,12 @@
 					<sourceEntries>
 						<entry excluding="Source/RheelEngine|Source|Resources2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="RheelEngine" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source"/>
-						<entry excluding="UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
+						<entry excluding="Scripts|UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
 						<entry excluding="Text|OpenGL|Text.old" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Scripts"/>
 						<entry excluding="Elements" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI/Elements"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Util"/>
@@ -253,7 +255,7 @@
 									<listOptionValue builtIn="false" value="RE_DEBUG"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.other.506747496" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.debugging.other.1994570502" superClass="gnu.cpp.compiler.option.debugging.other" useByScannerDiscovery="false" value="-fno-inline -fno-omit-frame-pointer" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.debugging.other.1994570502" name="Other debugging flags" superClass="gnu.cpp.compiler.option.debugging.other" useByScannerDiscovery="false" value="-fno-inline -fno-omit-frame-pointer" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1647524311" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug.1106407378" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug">
@@ -298,11 +300,12 @@
 					<sourceEntries>
 						<entry excluding="Source/RheelEngine|Source|Resources2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="RheelEngine" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source"/>
-						<entry excluding="UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
+						<entry excluding="Scripts|UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
-						<entry excluding="Text|OpenGL|Text" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
+						<entry excluding="Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Scripts"/>
 						<entry excluding="Elements" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI/Elements"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Util"/>

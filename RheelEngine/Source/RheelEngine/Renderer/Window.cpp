@@ -14,6 +14,12 @@ inline static GLFWwindow *getWindow(void *handle) {
 	return static_cast<GLFWwindow *>(handle);
 }
 
+static void glfw_KeyCallback(GLFWwindow *glfw_window, int key, int scancode, int action, int mods);
+static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned int codepoint);
+static void glfw_MouseMoveCallback(GLFWwindow *glfw_window, double xpos, double ypos);
+static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int action, int mods);
+static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y);
+
 static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 		GLsizei length, const GLchar *message, const void *userParam);
 
@@ -62,6 +68,13 @@ void Window::Show() {
 			monitor, nullptr);
 
 	_window_handle = window;
+
+	// initialize callbacks
+	glfwSetKeyCallback(window, glfw_KeyCallback);
+	glfwSetCharCallback(window, glfw_CharCallback);
+	glfwSetCursorPosCallback(window, glfw_MouseMoveCallback);
+	glfwSetMouseButtonCallback(window, glfw_MouseButtonCallback);
+	glfwSetScrollCallback(window, glfw_ScrollCallback);
 
 	// enable or disable vsync
 	if (!_configuration.vsync) {
@@ -129,6 +142,36 @@ void Window::DestroyDisplaySystems() {
 	// terminate GLFW
 	if (_is_glfw_initialized) {
 		glfwTerminate();
+	}
+}
+
+static void glfw_KeyCallback(GLFWwindow *glfw_window, int key, int scancode, int action, int mods) {
+	if (auto ui = Engine::GetUI()) {
+		ui->OnKey(key, scancode, static_cast<Input::Action>(action), mods);
+	}
+}
+
+static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned int codepoint) {
+	if (auto ui = Engine::GetUI()) {
+		ui->OnCharacter(codepoint);
+	}
+}
+
+static void glfw_MouseMoveCallback(GLFWwindow *glfw_window, double xpos, double ypos) {
+	if (auto ui = Engine::GetUI()) {
+		ui->OnMouseMove(xpos, ypos);
+	}
+}
+
+static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int action, int mods) {
+	if (auto ui = Engine::GetUI()) {
+		ui->OnMouseButton(button, static_cast<Input::Action>(action), mods);
+	}
+}
+
+static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y) {
+	if (auto ui = Engine::GetUI()) {
+		ui->OnScroll(x, y);
 	}
 }
 
