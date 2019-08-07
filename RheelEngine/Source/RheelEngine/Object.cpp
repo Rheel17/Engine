@@ -46,7 +46,7 @@ Object::Object(const Object& object) :
 	}
 }
 
-Object *Object::ParentObject() {
+ObjectPtr Object::ParentObject() {
 	return _parent_object;
 }
 

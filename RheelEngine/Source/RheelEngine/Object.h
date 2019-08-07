@@ -3,13 +3,14 @@
 #include "_common.h"
 
 #include "Blueprint.h"
+#include "ObjectPtr.h"
 
 #include <memory>
 
 namespace rheel {
 
 class Scene;
-class ObjectPtr;
+class Object;
 
 class RE_API Object {
 	friend class Scene;
@@ -34,7 +35,7 @@ public:
 	 * Returns the parent object of this object, or nullptr if this object has
 	 * no parent object.
 	 */
-	Object *ParentObject();
+	ObjectPtr ParentObject();
 
 	/**
 	 * Returns the parent scene of this object.
@@ -131,7 +132,7 @@ private:
 	void _SetParentScene(Scene *scene);
 
 	Scene *_parent_scene = nullptr;
-	Object *_parent_object = nullptr;
+	ObjectPtr _parent_object;
 
 	bool _alive = true;
 
@@ -141,17 +142,6 @@ private:
 
 	std::vector<ComponentPtr> _components;
 	std::vector<Object> _children;
-
-	ObjectPtr *_ptr;
-};
-
-class ObectPtr {
-
-public:
-
-private:
-	Object *_object;
-
 };
 
 }

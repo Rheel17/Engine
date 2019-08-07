@@ -6,12 +6,28 @@ class RandomRemoveScript : public Script {
 
 public:
 	void PreOnUpdate() override {
+		_timer++;
 
+		if (_timer == 60 && !_objects.empty()) {
+			unsigned index = rand() % _objects.size();
+			ObjectPtr object = _objects[index];
+			_objects.erase(_objects.begin() + index);
+
+			Parent().RemoveObject(object);
+		}
 	}
 
-	void AddObject() {
-
+	void PostOnUpdate() override {
+		_timer %= 60;
 	}
+
+	void AddObject(ObjectPtr object) {
+		_objects.push_back(object);
+	}
+
+private:
+	std::vector<ObjectPtr> _objects;
+	unsigned _timer;
 
 };
 
@@ -19,7 +35,7 @@ class RandomRemoveComponent : public Component {
 
 public:
 	void OnAdd() override {
-		Parent().ParentScene()->GetScript<RandomRemoveScript>()->AddObject();
+		Parent()->ParentScene()->GetScript<RandomRemoveScript>()->AddObject(Parent());
 	}
 
 };
@@ -35,14 +51,17 @@ static Blueprint createCubeBlueprint() {
 		component->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.9f, 1.0f));
 	});
 
+	blueprint.AddComponent("RandomRemove");
+
 	return blueprint;
 }
 
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
+	description.AddScript("RandomRemove");
 
-	for (int i = -10; i <= 10; i++) {
-		for (int j = -10; j <= 10; j++) {
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
 			description.AddObject("cube", { 4 * i, 0, 4 * j });
 		}
 	}

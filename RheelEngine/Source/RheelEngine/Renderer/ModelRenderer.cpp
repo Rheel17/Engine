@@ -118,7 +118,7 @@ ModelRenderer::ObjectDataPtr ModelRenderer::_Add(_ObjectDataVector& objects) {
 }
 
 void ModelRenderer::_Remove(_ObjectDataVector& objects, ObjectDataPtr&& data) {
-	size_t index = ((size_t) data._data) - ((size_t) &objects.front());
+	size_t index = (((size_t) data._data) - ((size_t) &objects.front())) / sizeof(ObjectData);
 	objects.erase(objects.begin() + index);
 }
 

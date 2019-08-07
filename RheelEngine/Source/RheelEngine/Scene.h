@@ -48,7 +48,7 @@ public:
 	/**
 	 * Removes an object from this scene.
 	 */
-	void RemoveObject(Object *object);
+	void RemoveObject(ObjectPtr object);
 
 	/**
 	 * Adds a named point light to the scene.

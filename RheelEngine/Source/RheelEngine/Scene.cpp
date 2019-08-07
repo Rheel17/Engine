@@ -82,10 +82,23 @@ void Scene::AddObject(const std::string& blueprintName, const vec3& position, co
 	object.FireEvent(Object::ON_ADD);
 }
 
-void Scene::RemoveObject(Object *object) {
+void Scene::RemoveObject(ObjectPtr ptr) {
+	// TODO: check if the current object pointer system works when adding or
+	// deleting objects.
+
+	Object *object = *ptr._ptr;
+
 	object->FireEvent(Object::ON_REMOVE);
 
-	size_t index = ((size_t) object) - ((size_t) &_objects.front());
+	size_t index = (((size_t) object) - ((size_t) &_objects.front())) / sizeof(Object);
+
+	std::cout << "Remove(" << index << ")" << std::endl;
+
+	if (index >= _objects.size()) {
+		throw std::invalid_argument("index of object out of range");
+	}
+
+
 	_objects.erase(_objects.begin() + index);
 }
 
