@@ -28,7 +28,7 @@ public:
 private:
 	ModelPtr _model;
 	Material _material;
-	ModelRenderer::ObjectData *_object_data;
+	ModelRenderer::ObjectDataPtr _object_data;
 
 };
 

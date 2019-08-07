@@ -2,12 +2,12 @@
 #define COMPONENT_H_
 #include "_common.h"
 
+#include "ObjectPtr.h"
+
 #include <memory>
 #include <string>
 
 namespace rheel {
-
-class Object;
 
 class RE_API Component {
 	friend class Object;
@@ -45,10 +45,10 @@ public:
 protected:
 	Component() = default;
 
-	Object& Parent() { return *_parent_object; }
+	ObjectPtr Parent() { return _parent_object; }
 
 private:
-	Object *_parent_object = nullptr;
+	ObjectPtr _parent_object;
 
 public:
 	static constexpr auto NAME_MODELRENDER = "engine:meshrender";

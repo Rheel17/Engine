@@ -70,8 +70,8 @@ public:
 	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
-	template<typename T>
-	void SetData(const std::vector<T>& data, Usage usage = STATIC_DRAW) {
+	template<typename T, typename _Alloc>
+	void SetData(const std::vector<T, _Alloc>& data, Usage usage = STATIC_DRAW) {
 		SetData(data.data(), data.size() * sizeof(T), usage);
 	}
 
