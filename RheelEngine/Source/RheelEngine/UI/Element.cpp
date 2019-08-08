@@ -25,7 +25,12 @@ Element::Vertex::Vertex(vec2 position, vec2 texture) :
 Element::Element() :
 		_parent_container(nullptr) {}
 
-void Element::SetBounds(Bounds bounds){
+void Element::SetDefaultSize(unsigned width, unsigned height) {
+	_default_width = width;
+	_default_height = height;
+}
+
+void Element::SetBounds(Bounds bounds) {
 	_has_initialized_bounds = true;
 	_bounds = std::move(bounds);
 }
@@ -40,7 +45,8 @@ Element::Bounds& Element::GetBounds() {
 
 void Element::InitializeBounds() {
 	if (!_has_initialized_bounds) {
-		std::tie(_bounds.width, _bounds.height) = GetDefaultDimensions();
+		_bounds.width = _default_width;
+		_bounds.height = _default_height;
 		_bounds.x = 0;
 		_bounds.y = 0;
 		_has_initialized_bounds = true;

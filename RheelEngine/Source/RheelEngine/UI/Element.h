@@ -44,8 +44,14 @@ public:
 	virtual ~Element() = default;
 
 	/**
-	 * Set the bounds of this Element, in pixel space. If this element is a child of a
-	 * Container, this method is called when the parent container is layed-out.
+	 * Sets the default width and height of this Element.
+	 */
+	void SetDefaultSize(unsigned width, unsigned height);
+
+	/**
+	 * Set the bounds of this Element, in pixel space. If this element is a
+	 * child of a Container, this method is called when the parent container is
+	 * layed-out.
 	 */
 	void SetBounds(Bounds bounds);
 
@@ -60,17 +66,8 @@ public:
 	Bounds& GetBounds();
 
 	/**
-	 * Returns the default dimensions of this element. When the element is
-	 * initialized, the location is set to (0, 0) with the width and height
-	 * set to the returned (width, height) of this method.
-	 *
-	 * To be implemented by each child class.
-	 */
-	virtual std::pair<unsigned, unsigned> GetDefaultDimensions() const = 0;
-
-	/**
-	 * Initializes the bounds of this elements. Calling this method after
-	 * it was already called, or when SetBounds was called, has no effect.
+	 * Initializes the bounds of this elements. Calling this method after it was
+	 * already called, or when SetBounds was called, has no effect.
 	 */
 	void InitializeBounds();
 
@@ -86,6 +83,9 @@ private:
 	Container *_parent_container;
 	Bounds _bounds;
 	bool _has_initialized_bounds = false;
+
+	unsigned _default_width = 20;
+	unsigned _default_height = 20;
 
 protected:
 	/**

@@ -7,6 +7,8 @@
 namespace rheel {
 
 class RE_API EmptyElement : public Element {
+	RE_NO_COPY(EmptyElement);
+	RE_NO_MOVE(EmptyElement);
 
 public:
 	/**
@@ -14,12 +16,7 @@ public:
 	 */
 	EmptyElement(unsigned width, unsigned height);
 
-	std::pair<unsigned, unsigned> GetDefaultDimensions() const override;
 	void Draw() const override {}
-
-private:
-	unsigned _width;
-	unsigned _height;
 
 };
 

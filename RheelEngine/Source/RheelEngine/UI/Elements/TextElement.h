@@ -8,6 +8,8 @@
 namespace rheel {
 
 class RE_API TextElement : public Element {
+	RE_NO_COPY(TextElement);
+	RE_NO_MOVE(TextElement);
 
 public:
 	/**
@@ -32,7 +34,6 @@ public:
 	 */
 	TextElement(std::wstring text, Font& font, unsigned size);
 
-	std::pair<unsigned, unsigned> GetDefaultDimensions() const override;
 	void Draw() const override;
 
 private:

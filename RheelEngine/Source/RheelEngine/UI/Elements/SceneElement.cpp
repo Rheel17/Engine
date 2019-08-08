@@ -10,10 +10,6 @@ SceneElement::SceneElement(std::string cameraName) :
 SceneElement::SceneElement(Scene *scene, std::string cameraName) :
 		_use_active_scene(false), _scene(scene), _camera_name(cameraName) {}
 
-std::pair<unsigned, unsigned> SceneElement::GetDefaultDimensions() const {
-	return std::make_pair(1, 1);
-}
-
 void SceneElement::Draw() const {
 	const Bounds& bounds = GetBounds();
 	_InitializeRenderer(bounds);

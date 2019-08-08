@@ -9,24 +9,25 @@
 namespace rheel {
 
 class RE_API SceneElement : public Element {
+	RE_NO_COPY(SceneElement);
+	RE_NO_MOVE(SceneElement);
 
 public:
 	/**
-	 * Creates a UI element that displays the camera output of the
-	 * currently active scene. When the currently active scene switches,
-	 * the camera switches to that scene automatically, looking for a
-	 * camera with the given name.
+	 * Creates a UI element that displays the camera output of the currently
+	 * active scene. When the currently active scene switches, the camera
+	 * switches to that scene automatically, looking for a camera with the given
+	 * name.
 	 */
 	SceneElement(std::string cameraName);
 
 	/**
-	 * Creates a UI element that displays the camera output of the
-	 * given scene. This does not automatically switch when the
-	 * current active scene switches.
+	 * Creates a UI element that displays the camera output of the given scene.
+	 * This does not automatically switch when the current active scene
+	 * switches.
 	 */
 	SceneElement(Scene *scene, std::string cameraName);
 
-	std::pair<unsigned, unsigned> GetDefaultDimensions() const override;
 	void Draw() const override;
 
 private:

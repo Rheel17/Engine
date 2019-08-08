@@ -18,6 +18,12 @@ TextElement::TextElement(std::string text, Font& font, unsigned size) :
 
 	_font_ascend = _font.Ascend(_size);
 	_font_descend = _font.Descend(_size);
+
+	if (_wide) {
+		SetDefaultSize(_font.StringWidth(_w_text, _size), _font_ascend + _font_descend);
+	} else {
+		SetDefaultSize(_font.StringWidth(_text, _size), _font_ascend + _font_descend);
+	}
 }
 
 TextElement::TextElement(std::wstring text, Font& font, unsigned size) :
@@ -28,15 +34,12 @@ TextElement::TextElement(std::wstring text, Font& font, unsigned size) :
 
 	_font_ascend = _font.Ascend(_size);
 	_font_descend = _font.Descend(_size);
-}
 
-std::pair<unsigned, unsigned> TextElement::GetDefaultDimensions() const {
 	if (_wide) {
-		return std::make_pair(_font.StringWidth(_w_text, _size), _font_ascend + _font_descend);
+		SetDefaultSize(_font.StringWidth(_w_text, _size), _font_ascend + _font_descend);
 	} else {
-		return std::make_pair(_font.StringWidth(_text, _size), _font_ascend + _font_descend);
+		SetDefaultSize(_font.StringWidth(_text, _size), _font_ascend + _font_descend);
 	}
-
 }
 
 void TextElement::Draw() const {
