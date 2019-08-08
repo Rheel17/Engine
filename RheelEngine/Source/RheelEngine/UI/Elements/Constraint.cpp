@@ -2,10 +2,13 @@
 
 namespace rheel {
 
-Constraint::Anchor::Anchor(ElementPtr element, ConstraintLocation location) :
+Constraint::Anchor::Anchor() :
+		_element(nullptr) {}
+
+Constraint::Anchor::Anchor(rheel::Element *element, ConstraintLocation location) :
 		_element(element), _location(location) {}
 
-ElementPtr Constraint::Anchor::Element() const {
+Element *Constraint::Anchor::Element() const {
 	return _element;
 }
 
@@ -47,19 +50,19 @@ std::optional<Constraint::Anchor> Constraint::Anchor::VerticalComponent() const 
 	}
 }
 
-Constraint::Constraint(ElementPtr movingElement, ConstraintLocation movingLocation, ElementPtr fixedElement, ConstraintLocation fixedLocation, int distance) :
+Constraint::Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, int distance) :
 		_moving(movingElement, movingLocation), _fixed(fixedElement, fixedLocation), _distance_type(ABSOLUTE) {
 
 	_distance.distance = distance;
 }
 
-Constraint::Constraint(ElementPtr movingElement, ConstraintLocation movingLocation, ElementPtr fixedElement, ConstraintLocation fixedLocation, WidthRelative distance) :
+Constraint::Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, WidthRelative distance) :
 		_moving(movingElement, movingLocation), _fixed(fixedElement, fixedLocation), _distance_type(RELATIVE_TO_WIDTH) {
 
 	_distance.distance_relative = distance.value;
 }
 
-Constraint::Constraint(ElementPtr movingElement, ConstraintLocation movingLocation, ElementPtr fixedElement, ConstraintLocation fixedLocation, HeightRelative distance) :
+Constraint::Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, HeightRelative distance) :
 		_moving(movingElement, movingLocation), _fixed(fixedElement, fixedLocation), _distance_type(RELATIVE_TO_HEIGHT) {
 
 	_distance.distance_relative = distance.value;

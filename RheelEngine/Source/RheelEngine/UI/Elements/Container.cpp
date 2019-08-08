@@ -4,59 +4,84 @@
 #include <iostream>
 #include <sstream>
 
+#include "../UI.h"
+
 namespace rheel {
+
+std::optional<const Container::ConstraintTreeNode *> Container::ConstraintTreeNode::GetNodeForAnchor(const Constraint::Anchor& anchor) const {
+	if (this->anchor == anchor) {
+		return this;
+	}
+
+	for (auto child : children) {
+		auto childResult = child.first->GetNodeForAnchor(anchor);
+		if (childResult) {
+			return childResult;
+		}
+	}
+
+	return {};
+}
+
+std::optional<Container::ConstraintTreeNode *> Container::ConstraintTreeNode::GetNodeForAnchor(const Constraint::Anchor& anchor) {
+	if (this->anchor == anchor) {
+		return this;
+	}
+
+	for (auto child : children) {
+		auto childResult = child.first->GetNodeForAnchor(anchor);
+		if (childResult) {
+			return childResult;
+		}
+	}
+
+	return {};
+}
+
+Container::ConstraintTreeNode *Container::ConstraintTreeNode::Copy(ConstraintTreeNode *parent) const {
+	ConstraintTreeNode *copy = new ConstraintTreeNode;
+	copy->anchor = anchor;
+	copy->parent = parent;
+
+	for (auto child : children) {
+		copy->children.insert({ child.first->Copy(copy), child.second });
+	}
+
+	return copy;
+}
+
+Container::TemporaryBounds::operator Element::Bounds() const  {
+	return { (unsigned) left, (unsigned) top, (unsigned) (right - left), (unsigned) (bottom - top) };
+}
 
 Container::Container() :
 		_constraint_tree(_CreateEmptyConstraintTree()) {}
-
-Container::Container(const Container& container) :
-		_constraint_tree(_CreateEmptyConstraintTree()) {
-
-	*this = container;
-}
 
 Container::~Container() {
 	_DeleteConstraintTree(_constraint_tree);
 }
 
-Container& Container::operator=(const Container& container) {
-	// replace the element list
-	_elements = container._elements;
-
-	// replace the constraint tree
-	_DeleteConstraintTree(_constraint_tree);
-	_constraint_tree = container._constraint_tree->Copy(nullptr);
-
-	// replace the _container_element references in the constraint tree to
-	// the actual _container_element of this container.
-	for (int loc = Constraint::LOCATION_ITERATOR_BEGIN; loc != Constraint::LOCATION_ITERATOR_END; loc++) {
-		auto nodeOpt = _constraint_tree->GetNodeForAnchor(Constraint::Anchor {
-			nullptr,
-			static_cast<Constraint::ConstraintLocation>(loc)
-		});
-
-		if (nodeOpt) {
-			(*nodeOpt)->anchor = Constraint::Anchor(nullptr, (*nodeOpt)->anchor.Location());
-		}
-	}
-
-	return *this;
-}
-
-void Container::AddElement(ElementPtr element) {
+void Container::AddElement(Element *element) {
 	// no-op if the element is already in the container.
 	if (std::find(_elements.begin(), _elements.end(), element) != _elements.end()) {
 		return;
 	}
 
+	// throw if the element is already in another container
+	if (element->_parent_container != nullptr) {
+		throw std::runtime_error("Element already in another container");
+	}
+
+	element->_parent_container = this;
 	_elements.push_back(element);
 }
 
-void Container::RemoveElement(ElementPtr element) {
+void Container::RemoveElement(Element *element) {
 	_elements.erase(std::find(_elements.begin(), _elements.end(), element));
+	element->_parent_container = nullptr;
 }
 
-void Container::_CheckElement(ElementPtr element, std::string sourceOrDestination) const {
+void Container::_CheckElement(Element *element, std::string sourceOrDestination) const {
 	if (element == nullptr) {
 		return;
 	}
@@ -67,18 +92,18 @@ void Container::_CheckElement(ElementPtr element, std::string sourceOrDestinatio
 	}
 }
 
-void Container::AddConstraint(ElementPtr movingElement, Constraint::ConstraintLocation movingLocation,
-		ElementPtr fixedElement, Constraint::ConstraintLocation fixedLocation, int distance) {
+void Container::AddConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
+		Element *fixedElement, Constraint::ConstraintLocation fixedLocation, int distance) {
 	AddConstraint(Constraint(movingElement, movingLocation, fixedElement, fixedLocation, distance));
 }
 
-void Container::AddWidthRelativeConstraint(ElementPtr movingElement, Constraint::ConstraintLocation movingLocation,
-		ElementPtr fixedElement, Constraint::ConstraintLocation fixedLocation, float distance) {
+void Container::AddWidthRelativeConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
+		Element *fixedElement, Constraint::ConstraintLocation fixedLocation, float distance) {
 	AddConstraint(Constraint(movingElement, movingLocation, fixedElement, fixedLocation, Constraint::WidthRelative { distance }));
 }
 
-void Container::AddHeightRelativeConstraint(ElementPtr movingElement, Constraint::ConstraintLocation movingLocation,
-		ElementPtr fixedElement, Constraint::ConstraintLocation fixedLocation, float distance) {
+void Container::AddHeightRelativeConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
+		Element *fixedElement, Constraint::ConstraintLocation fixedLocation, float distance) {
 	AddConstraint(Constraint(movingElement, movingLocation, fixedElement, fixedLocation, Constraint::HeightRelative { distance }));
 }
 
@@ -170,7 +195,7 @@ void Container::Layout(unsigned containerWidth, unsigned containerHeight) {
 	TempBoundsMap boundsMap;
 
 	// initialize the temporary map with the default bounds of each element
-	for (ElementPtr element : _elements) {
+	for (Element *element : _elements) {
 		element->InitializeBounds();
 
 		boundsMap[element] = { 0, 0, 0, 0, false, false, false, false };
@@ -187,7 +212,7 @@ void Container::Layout(unsigned containerWidth, unsigned containerHeight) {
 	_LayoutNode(boundsMap, _constraint_tree, containerWidth, containerHeight);
 
 	// apply the bounds
-	for (ElementPtr element : _elements) {
+	for (Element *element : _elements) {
 		element->SetBounds(boundsMap[element]);
 	}
 }
@@ -298,48 +323,6 @@ void Container::_DeleteConstraintTree(ConstraintTreeNode *node) {
 	}
 
 	delete node;
-}
-
-std::optional<const Container::ConstraintTreeNode *> Container::ConstraintTreeNode::GetNodeForAnchor(const Constraint::Anchor& anchor) const {
-	if (this->anchor == anchor) {
-		return this;
-	}
-
-	for (auto child : children) {
-		auto childResult = child.first->GetNodeForAnchor(anchor);
-		if (childResult) {
-			return childResult;
-		}
-	}
-
-	return {};
-}
-
-std::optional<Container::ConstraintTreeNode *> Container::ConstraintTreeNode::GetNodeForAnchor(const Constraint::Anchor& anchor) {
-	if (this->anchor == anchor) {
-		return this;
-	}
-
-	for (auto child : children) {
-		auto childResult = child.first->GetNodeForAnchor(anchor);
-		if (childResult) {
-			return childResult;
-		}
-	}
-
-	return {};
-}
-
-Container::ConstraintTreeNode *Container::ConstraintTreeNode::Copy(ConstraintTreeNode *parent) const {
-	ConstraintTreeNode *copy = new ConstraintTreeNode;
-	copy->anchor = anchor;
-	copy->parent = parent;
-
-	for (auto child : children) {
-		copy->children.insert({ child.first->Copy(copy), child.second });
-	}
-
-	return copy;
 }
 
 }

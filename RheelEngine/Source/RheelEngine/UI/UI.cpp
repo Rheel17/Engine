@@ -2,7 +2,13 @@
 
 namespace rheel {
 
-std::shared_ptr<Container> UI::GetContainer() {
+UI::UI() :
+		_ui_container(new Container()) {
+
+	_ui_container->_parent_ui = this;
+}
+
+Container *UI::GetContainer() {
 	return _ui_container;
 }
 

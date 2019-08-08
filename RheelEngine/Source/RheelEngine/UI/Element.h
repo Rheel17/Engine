@@ -12,7 +12,12 @@
 
 namespace rheel {
 
+class UI;
+class Container;
+
 class RE_API Element {
+	friend class UI;
+	friend class Container;
 
 public:
 	struct Bounds {
@@ -75,9 +80,10 @@ public:
 	virtual void Draw() const = 0;
 
 protected:
-	Element() = default;
+	Element();
 
 private:
+	Container *_parent_container;
 	Bounds _bounds;
 	bool _has_initialized_bounds = false;
 

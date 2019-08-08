@@ -22,6 +22,8 @@ Element::Vertex::Vertex(vec2 position, vec4 color) :
 Element::Vertex::Vertex(vec2 position, vec2 texture) :
 		_position(std::move(position)), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(std::move(texture)) {}
 
+Element::Element() :
+		_parent_container(nullptr) {}
 
 void Element::SetBounds(Bounds bounds){
 	_has_initialized_bounds = true;

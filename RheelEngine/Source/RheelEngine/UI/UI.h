@@ -13,7 +13,7 @@ public:
 	/**
 	 * Returns the container which contains the UI elements of this UI.
 	 */
-	std::shared_ptr<Container> GetContainer();
+	Container *GetContainer();
 
 	/**
 	 * Draws this UI
@@ -36,9 +36,10 @@ public:
 	void OnScroll(float x, float y);
 
 private:
-	UI() = default;
+	UI();
 
-	std::shared_ptr<Container> _ui_container = Container::Create();
+	Container *_ui_container;
+	ElementPtr _focus_element;
 
 };
 

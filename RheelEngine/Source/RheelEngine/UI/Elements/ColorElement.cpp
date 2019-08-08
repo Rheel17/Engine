@@ -4,7 +4,10 @@
 
 namespace rheel {
 
-ColorElement::ColorElement(unsigned width, unsigned height, Color&& color) :
+ColorElement::ColorElement(Color color) :
+		_width(0), _height(0), _color(std::move(color)) {}
+
+ColorElement::ColorElement(unsigned width, unsigned height, Color color) :
 		_width(width), _height(height), _color(color) {}
 
 std::pair<unsigned, unsigned> ColorElement::GetDefaultDimensions() const {

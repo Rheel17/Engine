@@ -19,8 +19,6 @@ namespace rheel {
  *
  * NOTE that not all constraints make sense, and before adding a constraint, the
  * container will check and throw an exception if the constraint doesn't make sense.
- *
- * When constraining
  */
 class RE_API Constraint {
 
@@ -57,14 +55,13 @@ public:
 	class Anchor {
 
 	public:
-		Anchor() = default;
-
-		Anchor(ElementPtr element, ConstraintLocation location);
+		Anchor();
+		Anchor(rheel::Element *element, ConstraintLocation location);
 
 		/**
 		 * Returns the element of this anchor
 		 */
-		ElementPtr Element() const;
+		rheel::Element *Element() const;
 
 		/**
 		 * Returns the location on the element.
@@ -87,7 +84,7 @@ public:
 		bool operator==(const Anchor& other) const;
 
 	private:
-		ElementPtr _element;
+		rheel::Element *_element;
 		ConstraintLocation _location = ConstraintLocation::NORTH_WEST;
 
 	};
@@ -103,9 +100,9 @@ private:
 	};
 
 public:
-	Constraint(ElementPtr movingElement, ConstraintLocation movingLocation, ElementPtr fixedElement, ConstraintLocation fixedLocation, int distance = 0);
-	Constraint(ElementPtr movingElement, ConstraintLocation movingLocation, ElementPtr fixedElement, ConstraintLocation fixedLocation, WidthRelative distance);
-	Constraint(ElementPtr movingElement, ConstraintLocation movingLocation, ElementPtr fixedElement, ConstraintLocation fixedLocation, HeightRelative distance);
+	Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, int distance = 0);
+	Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, WidthRelative distance);
+	Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, HeightRelative distance);
 
 	/**
 	 * Returns the moving anchor: the anchor that moves towards the
