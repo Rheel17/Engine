@@ -35,7 +35,6 @@ protected:
 
 	};
 
-
 public:
 	virtual ~Element() = default;
 

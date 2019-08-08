@@ -147,7 +147,7 @@ void Window::DestroyDisplaySystems() {
 
 static void glfw_KeyCallback(GLFWwindow *glfw_window, int key, int scancode, int action, int mods) {
 	if (auto ui = Engine::GetUI()) {
-		ui->OnKey(key, scancode, static_cast<Input::Action>(action), mods);
+		ui->OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
 	}
 }
 
@@ -165,7 +165,7 @@ static void glfw_MouseMoveCallback(GLFWwindow *glfw_window, double xpos, double 
 
 static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int action, int mods) {
 	if (auto ui = Engine::GetUI()) {
-		ui->OnMouseButton(button, static_cast<Input::Action>(action), mods);
+		ui->OnMouseButton(static_cast<Input::MouseButton>(button), static_cast<Input::Action>(action), mods);
 	}
 }
 

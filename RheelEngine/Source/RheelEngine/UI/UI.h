@@ -25,13 +25,13 @@ public:
 	 */
 	static std::shared_ptr<UI> Create();
 
-	void OnKey(int key, int scancode, Input::Action action, Input::Modifiers mods);
+	void OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, Input::Modifiers mods);
 
 	void OnCharacter(wchar_t character);
 
 	void OnMouseMove(float x, float y);
 
-	void OnMouseButton(int button, Input::Action action, Input::Modifiers mods);
+	void OnMouseButton(Input::MouseButton button, Input::Action action, Input::Modifiers mods);
 
 	void OnScroll(float x, float y);
 
