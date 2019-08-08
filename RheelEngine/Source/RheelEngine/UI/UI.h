@@ -10,6 +10,8 @@ namespace rheel {
 class RE_API UI {
 
 public:
+	~UI();
+
 	/**
 	 * Returns the container which contains the UI elements of this UI.
 	 */

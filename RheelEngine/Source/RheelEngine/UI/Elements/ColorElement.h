@@ -10,9 +10,6 @@ namespace rheel {
 class RE_API ColorElement : public Element {
 	friend class UI;
 
-	RE_NO_COPY(ColorElement);
-	RE_NO_MOVE(ColorElement);
-
 public:
 	/**
 	 * Create a color component with a certain color.

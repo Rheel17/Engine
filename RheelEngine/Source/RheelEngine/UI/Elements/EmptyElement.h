@@ -7,8 +7,6 @@
 namespace rheel {
 
 class RE_API EmptyElement : public Element {
-	RE_NO_COPY(EmptyElement);
-	RE_NO_MOVE(EmptyElement);
 
 public:
 	/**

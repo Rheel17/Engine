@@ -43,71 +43,74 @@ public:
 	virtual ~Container();
 
 	/**
-	 * Adds an element to this container. Adding an element more than
-	 * once is a no-op.
+	 * Adds an element to this container. The element is copied into a pointer,
+	 * which is returned by this method. Use this pointer to reference the
+	 * element.
 	 */
-	void AddElement(Element *element);
+	template<typename T>
+	Element *AddElement(const T& element) {
+		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class");
+		static_assert(std::is_copy_constructible<T>::value, "Element must be copy-constructible");
+
+		Element *ptr = new T(element);
+		ptr->_parent_container = this;
+		_elements.push_back(ptr);
+
+		return ptr;
+	}
 
 	/**
-	 * Removes an element from this container. Removing an element not
-	 * in this container is a no-op.
+	 * Removes an element from this container. Removing an element not in this
+	 * container has no effect.
 	 */
 	void RemoveElement(Element *element);
 
 	/**
-	 * Adds a constraint between elements in this container. For more
-	 * details about constraints, look at the documentation of the
-	 * Constraint class.
+	 * Adds a constraint between elements in this container. For more details
+	 * about constraints, look at the documentation of the Constraint class.
 	 *
-	 * Can throw a rheel::ConstraintException if the constraint is
-	 * invalid, the destination anchor is already constraint, the
-	 * constraint is a self-loop, or if the elements are not in this
-	 * container.
+	 * Can throw a rheel::ConstraintException if the constraint is invalid, the
+	 * destination anchor is already constraint, the constraint is a self-loop,
+	 * or if the elements are not in this container.
 	 */
 	void AddConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
 			Element *fixedElement, Constraint::ConstraintLocation fixedLocation, int distance = 0);
 
 	/**
-	 * Adds a constraint between elements in this container. For more
-	 * details about constraints, look at the documentation of the
-	 * Constraint class.
+	 * Adds a constraint between elements in this container. For more details
+	 * about constraints, look at the documentation of the Constraint class.
 	 *
-	 * The distance specified is multiplied by the container width to
-	 * get the final distance.
+	 * The distance specified is multiplied by the container width to get the
+	 * final distance.
 	 *
-	 * Can throw a rheel::ConstraintException if the constraint is
-	 * invalid, the destination anchor is already constraint, the
-	 * constraint is a self-loop, or if the elements are not in this
-	 * container.
+	 * Can throw a rheel::ConstraintException if the constraint is invalid, the
+	 * destination anchor is already constraint, the constraint is a self-loop,
+	 * or if the elements are not in this container.
 	 */
 	void AddWidthRelativeConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
 			Element *fixedElement, Constraint::ConstraintLocation fixedLocation, float distance = 0);
 
 	/**
-	 * Adds a constraint between elements in this container. For more
-	 * details about constraints, look at the documentation of the
-	 * Constraint class.
+	 * Adds a constraint between elements in this container. For more details
+	 * about constraints, look at the documentation of the Constraint class.
 	 *
-	 * The distance specified is multiplied by the container height to
-	 * get the final distance.
+	 * The distance specified is multiplied by the container height to get the
+	 * final distance.
 	 *
-	 * Can throw a rheel::ConstraintException if the constraint is
-	 * invalid, the destination anchor is already constraint, the
-	 * constraint is a self-loop, or if the elements are not in this
-	 * container.
+	 * Can throw a rheel::ConstraintException if the constraint is invalid, the
+	 * destination anchor is already constraint, the constraint is a self-loop,
+	 * or if the elements are not in this container.
 	 */
 	void AddHeightRelativeConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
 			Element *fixedElement, Constraint::ConstraintLocation fixedLocation, float distance = 0);
 
 	/**
-	 * Adds a constraint between elements in this container. For more
-	 * details about constraints, look at the documentation of the
-	 * Constraint class.
+	 * Adds a constraint between elements in this container. For more details
+	 * about constraints, look at the documentation of the Constraint class.
 	 *
-	 * Can throw a rheel::ConstraintException if the constraint is
-	 * invalid, the destination anchor is already constraint, the
-	 * constraint is a self-loop, or if the elements are not in this
-	 * container.
+	 * Can throw a rheel::ConstraintException if the constraint is invalid, the
+	 * destination anchor is already constraint, the constraint is a self-loop,
+	 * or if the elements are not in this container.
 	 */
 	void AddConstraint(const Constraint& constraint);
 
@@ -117,16 +120,11 @@ public:
 	void ClearConstraints();
 
 	/**
-	 * Applies all constraints. The given width and height are the
-	 * target dimensions of this container. If an element is constraint
-	 * with the container itself, these values are used to resolve
-	 * those constraints.
+	 * Applies all constraints. The given width and height are the target
+	 * dimensions of this container. If an element is constraint with the
+	 * container itself, these values are used to resolve those constraints.
 	 */
 	void Layout(unsigned containerWidth, unsigned containerHeight);
-
-	std::pair<unsigned, unsigned> GetDefaultDimensions() const {
-		return std::make_pair(0, 0);
-	}
 
 	/**
 	 * Draws the container.

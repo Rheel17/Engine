@@ -8,8 +8,6 @@
 namespace rheel {
 
 class RE_API TextElement : public Element {
-	RE_NO_COPY(TextElement);
-	RE_NO_MOVE(TextElement);
 
 public:
 	/**

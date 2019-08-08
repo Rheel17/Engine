@@ -3,9 +3,13 @@
 namespace rheel {
 
 UI::UI() :
-		_ui_container(new Container()) {
+		_ui_container(new Container) {
 
 	_ui_container->_parent_ui = this;
+}
+
+UI::~UI() {
+	delete _ui_container;
 }
 
 Container *UI::GetContainer() {

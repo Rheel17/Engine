@@ -9,8 +9,6 @@
 namespace rheel {
 
 class RE_API SceneElement : public Element {
-	RE_NO_COPY(SceneElement);
-	RE_NO_MOVE(SceneElement);
 
 public:
 	/**

@@ -59,26 +59,19 @@ Container::Container() :
 
 Container::~Container() {
 	_DeleteConstraintTree(_constraint_tree);
-}
 
-void Container::AddElement(Element *element) {
-	// no-op if the element is already in the container.
-	if (std::find(_elements.begin(), _elements.end(), element) != _elements.end()) {
-		return;
+	for (Element *element : _elements) {
+		delete element;
 	}
-
-	// throw if the element is already in another container
-	if (element->_parent_container != nullptr) {
-		throw std::runtime_error("Element already in another container");
-	}
-
-	element->_parent_container = this;
-	_elements.push_back(element);
 }
 
 void Container::RemoveElement(Element *element) {
-	_elements.erase(std::find(_elements.begin(), _elements.end(), element));
-	element->_parent_container = nullptr;
+	auto iter = std::find(_elements.begin(), _elements.end(), element);
+
+	if (iter != _elements.end()) {
+		_elements.erase(iter);
+		delete element;
+	}
 }
 
 void Container::_CheckElement(Element *element, std::string sourceOrDestination) const {

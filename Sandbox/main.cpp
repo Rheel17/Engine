@@ -100,11 +100,11 @@ class SandboxGame : public Game {
 
 		UIPtr ui = UI::Create();
 
-		SceneElement *sceneView = new SceneElement("main_camera");
-		ui->GetContainer()->AddElement(sceneView);
+		SceneElement sceneView("main_camera");
+		Element *sceneViewPtr = ui->GetContainer()->AddElement(sceneView);
 
-		ui->GetContainer()->AddConstraint(sceneView, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
-		ui->GetContainer()->AddConstraint(sceneView, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+		ui->GetContainer()->AddConstraint(sceneViewPtr, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
+		ui->GetContainer()->AddConstraint(sceneViewPtr, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
 		Engine::SetUI(ui);
 	}
