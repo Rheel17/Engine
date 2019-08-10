@@ -28,7 +28,7 @@ private:
 		std::optional<const ConstraintTreeNode *> GetNodeForAnchor(const Constraint::Anchor& anchor) const;
 		std::optional<ConstraintTreeNode *> GetNodeForAnchor(const Constraint::Anchor& anchor);
 
-		ConstraintTreeNode *Copy(ConstraintTreeNode *parent) const;
+		ConstraintTreeNode *Copy(ConstraintTreeNode *parent, std::map<Element *, Element *>& copies) const;
 	};
 
 	struct TemporaryBounds {

@@ -38,13 +38,13 @@ std::optional<Container::ConstraintTreeNode *> Container::ConstraintTreeNode::Ge
 	return {};
 }
 
-Container::ConstraintTreeNode *Container::ConstraintTreeNode::Copy(ConstraintTreeNode *parent) const {
+Container::ConstraintTreeNode *Container::ConstraintTreeNode::Copy(ConstraintTreeNode *parent, std::map<Element *, Element *>& copies) const {
 	ConstraintTreeNode *copy = new ConstraintTreeNode;
-	copy->anchor = Constraint::Anchor(anchor.Element()->_Clone(), anchor.Location());
+	copy->anchor = Constraint::Anchor(copies[anchor.Element()], anchor.Location());
 	copy->parent = parent;
 
 	for (auto child : children) {
-		copy->children.insert({ child.first->Copy(copy), child.second });
+		copy->children.insert({ child.first->Copy(copy, copies), child.second });
 	}
 
 	return copy;
@@ -72,25 +72,36 @@ Container::~Container() {
 }
 
 Container& Container::operator=(const Container& container) {
-	// replace the element list
-	_elements = container._elements;
-
-	// replace the constraint tree
-	_DeleteConstraintTree(_constraint_tree);
-	_constraint_tree = container._constraint_tree->Copy(nullptr);
-
-	// replace the _container_element references in the constraint tree to the
-	// actual _container_element of this container.
-	for (int loc = Constraint::LOCATION_ITERATOR_BEGIN; loc != Constraint::LOCATION_ITERATOR_END; loc++) {
-		auto nodeOpt = _constraint_tree->GetNodeForAnchor(Constraint::Anchor {
-			nullptr,
-			static_cast<Constraint::ConstraintLocation>(loc)
-		});
-
-		if (nodeOpt) {
-			(*nodeOpt)->anchor = Constraint::Anchor(nullptr, (*nodeOpt)->anchor.Location());
-		}
+	// explicit self-copy: return normally.
+	if (this == &container) {
+		return *this;
 	}
+
+	// delete current elements and their constraints
+	_DeleteConstraintTree(_constraint_tree);
+
+	for (Element *element : _elements) {
+		delete element;
+	}
+
+	// reset the element vector
+	_elements.clear();
+	_elements.reserve(container._elements.size());
+
+	// copy the elements and store them in a map to easily get the new element
+	// based on the old one.
+	std::map<Element *, Element *> copies;
+	copies[nullptr] = nullptr;
+
+	for (Element *element : container._elements) {
+		Element *copy = element->_Clone();
+
+		_elements.push_back(copy);
+		copies[element] = copy;
+	}
+
+	// copy the constraint tree with the copy map
+	_constraint_tree = container._constraint_tree->Copy(nullptr, copies);
 
 	return *this;
 }
