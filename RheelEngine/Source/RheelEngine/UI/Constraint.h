@@ -11,21 +11,22 @@ namespace rheel {
 
 /**
  * A Constraint is used to constraint elements in a Container. When handling a
- * constraint, the layout engine will fix the 'source' element in place, and move
- * and/or resize the destination element until the constraint is satisfied.
+ * constraint, the layout engine will fix the 'source' element in place, and
+ * move and/or resize the destination element until the constraint is satisfied.
  *
  * Unconstrained elements will sit at (0, 0) with their default size, or need to
  * have their bounds set manually.
  *
  * NOTE that not all constraints make sense, and before adding a constraint, the
- * container will check and throw an exception if the constraint doesn't make sense.
+ * container will check and throw an exception if the constraint doesn't make
+ * sense.
  */
 class RE_API Constraint {
 
 public:
 	/**
-	 * A ConstraintLocation represents a location relative to a given element, with
-	 * each symbol meaning the following:
+	 * A ConstraintLocation represents a location relative to a given element,
+	 * with each symbol meaning the following:
 	 *
 	 * - NORTH_WEST: top left
 	 * - NORTH:      top
@@ -105,14 +106,20 @@ public:
 	Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, HeightRelative distance);
 
 	/**
-	 * Returns the moving anchor: the anchor that moves towards the
-	 * fixed anchor.
+	 * Copies this constraint, but replaces the anchors. The distance remains
+	 * the same.
+	 */
+	Constraint WithAnchors(const Anchor& moving, const Anchor& fixed) const;
+
+	/**
+	 * Returns the moving anchor: the anchor that moves towards the fixed
+	 * anchor.
 	 */
 	const Anchor& MovingAnchor() const;
 
 	/**
-	 * Returns the fixed anchor: the anchor that stays in place and
-	 * dictates where the moving anchor goes.
+	 * Returns the fixed anchor: the anchor that stays in place and dictates
+	 * where the moving anchor goes.
 	 */
 	const Anchor& FixedAnchor() const;
 
@@ -127,14 +134,14 @@ public:
 	bool IsDistanceRelative() const;
 
 	/**
-	 * Returns an optional constraint representing the horizontal
-	 * component of this constraint.
+	 * Returns an optional constraint representing the horizontal component of
+	 * this constraint.
 	 */
 	std::optional<Constraint> HorizontalConstraint() const;
 
 	/**
-	 * Returns an optional constraint representing the vertical
-	 * component of this constraint.
+	 * Returns an optional constraint representing the vertical component of
+	 * this constraint.
 	 */
 	std::optional<Constraint> VerticalConstraint() const;
 

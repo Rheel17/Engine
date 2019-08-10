@@ -40,14 +40,25 @@ std::optional<Container::ConstraintTreeNode *> Container::ConstraintTreeNode::Ge
 
 Container::ConstraintTreeNode *Container::ConstraintTreeNode::Copy(ConstraintTreeNode *parent, std::map<Element *, Element *>& copies) const {
 	ConstraintTreeNode *copy = new ConstraintTreeNode;
+
 	copy->anchor = Constraint::Anchor(copies[anchor.Element()], anchor.Location());
 	copy->parent = parent;
 
 	for (auto child : children) {
-		copy->children.insert({ child.first->Copy(copy, copies), child.second });
+		auto anchorMoving = child.second.MovingAnchor();
+		auto anchorFixed = child.second.FixedAnchor();
+
+		auto anchorMovingCopy = Constraint::Anchor(copies[anchorMoving.Element()], anchorMoving.Location());
+		auto anchorFixedCopy = Constraint::Anchor(copies[anchorFixed.Element()], anchorFixed.Location());
+
+		copy->children.insert({ child.first->Copy(copy, copies), child.second.WithAnchors(anchorMovingCopy, anchorFixedCopy) });
 	}
 
 	return copy;
+}
+
+Container::ConstraintTreeNode *Container::ConstraintTreeNode::NewRoot() {
+	return new ConstraintTreeNode { { nullptr, (Constraint::ConstraintLocation) -1 }, nullptr, {} };
 }
 
 Container::TemporaryBounds::operator Element::Bounds() const  {
@@ -55,7 +66,8 @@ Container::TemporaryBounds::operator Element::Bounds() const  {
 }
 
 Container::Container() :
-		_constraint_tree(_CreateEmptyConstraintTree()) {}
+		_constraint_tree(ConstraintTreeNode::NewRoot()),
+		_parent_ui(nullptr) {}
 
 Container::Container(const Container& container) :
 		Container() {
@@ -76,6 +88,10 @@ Container& Container::operator=(const Container& container) {
 	if (this == &container) {
 		return *this;
 	}
+
+	// perform the Element copying
+	_CopySuperFields(container);
+	_parent_ui = container._parent_ui;
 
 	// delete current elements and their constraints
 	_DeleteConstraintTree(_constraint_tree);
@@ -216,7 +232,7 @@ void Container::AddConstraint(const Constraint& constraint) {
 
 void Container::ClearConstraints() {
 	_DeleteConstraintTree(_constraint_tree);
-	_constraint_tree = _CreateEmptyConstraintTree();
+	_constraint_tree = ConstraintTreeNode::NewRoot();
 }
 
 void Container::Layout(unsigned containerWidth, unsigned containerHeight) {

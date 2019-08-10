@@ -97,6 +97,16 @@ class SandboxGame : public Game {
 
 	void Start() override {
 		Container ui;
+		ColorElement white({ 1, 1, 1, 1 });
+		ColorElement red({ 1, 0, 0, 1 });
+		ColorElement green({ 0, 1, 0, 1 });
+		ColorElement black({ 0, 0, 0, 1 });
+
+		// background: white
+		Element *whitePtr = ui.AddElement(white);
+		ui.AddConstraint(whitePtr, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 0);
+		ui.AddConstraint(whitePtr, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT, 0);
+
 		Engine::GetUI().SetContainer(ui);
 	}
 };

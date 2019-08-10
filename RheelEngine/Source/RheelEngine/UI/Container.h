@@ -20,15 +20,21 @@ class RE_API Container : public Element {
 	RE_NO_MOVE(Container);
 
 private:
-	struct ConstraintTreeNode {
-		Constraint::Anchor anchor;
-		ConstraintTreeNode *parent;
-		std::map<ConstraintTreeNode *, Constraint> children;
+	class ConstraintTreeNode {
 
+	public:
 		std::optional<const ConstraintTreeNode *> GetNodeForAnchor(const Constraint::Anchor& anchor) const;
 		std::optional<ConstraintTreeNode *> GetNodeForAnchor(const Constraint::Anchor& anchor);
 
 		ConstraintTreeNode *Copy(ConstraintTreeNode *parent, std::map<Element *, Element *>& copies) const;
+
+		Constraint::Anchor anchor;
+		ConstraintTreeNode *parent;
+		std::map<ConstraintTreeNode *, Constraint> children;
+
+	public:
+		static ConstraintTreeNode *NewRoot();
+
 	};
 
 	struct TemporaryBounds {
@@ -152,10 +158,6 @@ private:
 
 	void _CheckElement(Element *element, std::string sourceOrDestination) const;
 	void _DeleteConstraintTree(ConstraintTreeNode *node);
-
-	static inline ConstraintTreeNode *_CreateEmptyConstraintTree() {
-		return new ConstraintTreeNode { { nullptr, (Constraint::ConstraintLocation) -1 }, nullptr, {} };
-	}
 
 	void _LayoutNode(TempBoundsMap& boundsMap, ConstraintTreeNode *node, unsigned width, unsigned height);
 	void _LayoutNode(TempBoundsMap& boundsMap, const Constraint& constraint, unsigned width, unsigned height);

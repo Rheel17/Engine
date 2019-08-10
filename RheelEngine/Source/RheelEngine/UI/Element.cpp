@@ -53,6 +53,14 @@ void Element::InitializeBounds() {
 	}
 }
 
+void Element::_CopySuperFields(const Element& element) {
+	_parent_container = element._parent_container;
+	_bounds = element._bounds;
+	_has_initialized_bounds = element._has_initialized_bounds;
+	_default_width = element._default_width;
+	_default_height = element._default_height;
+}
+
 void Element::_DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3) {
 	_Draw({ v1, v2, v3 }, MODE_COLORED);
 }

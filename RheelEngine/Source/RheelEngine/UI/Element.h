@@ -87,6 +87,12 @@ public:
 protected:
 	Element();
 
+	/**
+	 * Copies the fields of this Element superclass when copying derived
+	 * objects.
+	 */
+	void _CopySuperFields(const Element& element);
+
 private:
 	virtual Element *_Clone() const = 0;
 

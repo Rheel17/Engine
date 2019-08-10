@@ -68,6 +68,10 @@ Constraint::Constraint(Element *movingElement, ConstraintLocation movingLocation
 	_distance.distance_relative = distance.value;
 }
 
+Constraint Constraint::WithAnchors(const Anchor& moving, const Anchor& fixed) const {
+	return Constraint(moving, fixed, _distance, _distance_type);
+}
+
 const Constraint::Anchor& Constraint::MovingAnchor() const {
 	return _moving;
 }
