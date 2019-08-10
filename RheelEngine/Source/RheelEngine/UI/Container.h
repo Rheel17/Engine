@@ -1,6 +1,6 @@
 #ifndef CONTAINER_H_
 #define CONTAINER_H_
-#include "../../_common.h"
+#include "../_common.h"
 
 #include <vector>
 #include <map>
@@ -15,7 +15,8 @@ class UI;
 class RE_API Container : public Element {
 	friend class UI;
 
-	RE_NO_COPY(Container);
+	__ELEMENT__
+
 	RE_NO_MOVE(Container);
 
 private:
@@ -40,8 +41,11 @@ private:
 	};
 
 public:
-	virtual ~Container();
+	Container(const Container& container);
 
+	~Container();
+
+	Container& operator=(const Container& container);
 	/**
 	 * Adds an element to this container. The element is copied into a pointer,
 	 * which is returned by this method. Use this pointer to reference the

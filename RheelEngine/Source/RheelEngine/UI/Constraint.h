@@ -1,8 +1,8 @@
 #ifndef CONSTRAINT_H_
 #define CONSTRAINT_H_
-#include "../../_common.h"
+#include "../_common.h"
 
-#include "../Element.h"
+#include "Element.h"
 
 #include <exception>
 #include <optional>

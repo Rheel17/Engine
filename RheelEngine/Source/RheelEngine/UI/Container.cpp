@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "../UI.h"
+#include "UI.h"
 
 namespace rheel {
 
@@ -40,7 +40,7 @@ std::optional<Container::ConstraintTreeNode *> Container::ConstraintTreeNode::Ge
 
 Container::ConstraintTreeNode *Container::ConstraintTreeNode::Copy(ConstraintTreeNode *parent) const {
 	ConstraintTreeNode *copy = new ConstraintTreeNode;
-	copy->anchor = anchor;
+	copy->anchor = Constraint::Anchor(anchor.Element()->_Clone(), anchor.Location());
 	copy->parent = parent;
 
 	for (auto child : children) {
@@ -57,12 +57,42 @@ Container::TemporaryBounds::operator Element::Bounds() const  {
 Container::Container() :
 		_constraint_tree(_CreateEmptyConstraintTree()) {}
 
+Container::Container(const Container& container) :
+		Container() {
+
+	*this = container;
+}
+
 Container::~Container() {
 	_DeleteConstraintTree(_constraint_tree);
 
 	for (Element *element : _elements) {
 		delete element;
 	}
+}
+
+Container& Container::operator=(const Container& container) {
+	// replace the element list
+	_elements = container._elements;
+
+	// replace the constraint tree
+	_DeleteConstraintTree(_constraint_tree);
+	_constraint_tree = container._constraint_tree->Copy(nullptr);
+
+	// replace the _container_element references in the constraint tree to the
+	// actual _container_element of this container.
+	for (int loc = Constraint::LOCATION_ITERATOR_BEGIN; loc != Constraint::LOCATION_ITERATOR_END; loc++) {
+		auto nodeOpt = _constraint_tree->GetNodeForAnchor(Constraint::Anchor {
+			nullptr,
+			static_cast<Constraint::ConstraintLocation>(loc)
+		});
+
+		if (nodeOpt) {
+			(*nodeOpt)->anchor = Constraint::Anchor(nullptr, (*nodeOpt)->anchor.Location());
+		}
+	}
+
+	return *this;
 }
 
 void Container::RemoveElement(Element *element) {

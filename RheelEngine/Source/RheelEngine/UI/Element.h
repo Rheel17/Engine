@@ -3,12 +3,20 @@
 #include "../_common.h"
 
 #include <memory>
+#include <type_traits>
 
 #include "../Renderer/OpenGL/GLShaderProgram.h"
 #include "../Renderer/OpenGL/GLVertexArray.h"
 #include "../Renderer/OpenGL/GLTexture2D.h"
 
 #include "../Color.h"
+
+#define __ELEMENT__													\
+	inline Element *_Clone() const override {						\
+		return new (std::remove_const<								\
+					std::remove_pointer<decltype(this)>::type		\
+				>::type)(*this);									\
+	}
 
 namespace rheel {
 
@@ -80,6 +88,8 @@ protected:
 	Element();
 
 private:
+	virtual Element *_Clone() const = 0;
+
 	Container *_parent_container;
 	Bounds _bounds;
 	bool _has_initialized_bounds = false;

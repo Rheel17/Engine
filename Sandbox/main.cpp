@@ -96,15 +96,8 @@ class SandboxGame : public Game {
 	}
 
 	void Start() override {
-		Engine::SetActiveScene("main");
-
 		UIPtr ui = UI::Create();
-
-		SceneElement sceneView("main_camera");
-		Element *sceneViewPtr = ui->GetContainer()->AddElement(sceneView);
-
-		ui->GetContainer()->AddConstraint(sceneViewPtr, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
-		ui->GetContainer()->AddConstraint(sceneViewPtr, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+		Container *container = ui->GetContainer();
 
 		Engine::SetUI(ui);
 	}

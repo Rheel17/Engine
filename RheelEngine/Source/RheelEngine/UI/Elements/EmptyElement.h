@@ -8,6 +8,8 @@ namespace rheel {
 
 class RE_API EmptyElement : public Element {
 
+	__ELEMENT__
+
 public:
 	/**
 	 * Creates an empty element of a certain width and height.

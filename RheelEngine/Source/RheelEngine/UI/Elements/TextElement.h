@@ -9,6 +9,8 @@ namespace rheel {
 
 class RE_API TextElement : public Element {
 
+	__ELEMENT__
+
 public:
 	/**
 	 * Create a text component with text and size. The default font is used.

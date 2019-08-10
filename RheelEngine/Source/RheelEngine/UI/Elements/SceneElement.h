@@ -10,6 +10,8 @@ namespace rheel {
 
 class RE_API SceneElement : public Element {
 
+	__ELEMENT__
+
 public:
 	/**
 	 * Creates a UI element that displays the camera output of the currently
