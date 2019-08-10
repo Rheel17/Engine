@@ -24,7 +24,7 @@ class RE_API Engine {
 
 		// game state
 		Scene *active_scene = nullptr;
-		UIPtr ui = nullptr;
+		UI *ui;
 
 		// register maps
 		std::unordered_map<std::string, Blueprint> register_blueprints;
@@ -53,14 +53,9 @@ public:
 	static const DisplayConfiguration& GetDisplayConfiguration();
 
 	/**
-	 * Sets the current UI
-	 */
-	static void SetUI(UIPtr ui);
-
-	/**
 	 * Gets the current UI
 	 */
-	static UIPtr GetUI();
+	static UI& GetUI();
 
 	/**
 	 * Creates a new empty scene.

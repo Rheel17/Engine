@@ -2,26 +2,22 @@
 
 namespace rheel {
 
-UI::UI() :
-		_ui_container(new Container) {
-
-	_ui_container->_parent_ui = this;
+UI::UI(unsigned width, unsigned height) :
+		_width(width), _height(height) {
+	_ui_container._parent_ui = this;
 }
 
-UI::~UI() {
-	delete _ui_container;
+void UI::SetContainer(const Container& container) {
+	_ui_container = container;
+	_ui_container.Layout(_width, _height);
 }
 
-Container *UI::GetContainer() {
+const Container& UI::GetContainer() const {
 	return _ui_container;
 }
 
 void UI::Draw() const {
-	_ui_container->Draw();
-}
-
-std::shared_ptr<UI> UI::Create() {
-	return std::shared_ptr<UI>(new UI());
+	_ui_container.Draw();
 }
 
 void UI::OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, Input::Modifiers mods) {

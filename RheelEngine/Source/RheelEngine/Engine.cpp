@@ -15,6 +15,8 @@ Engine::EngineInstance::~EngineInstance() {
 	for (Scene *scene : scenes) {
 		delete scene;
 	}
+
+	delete ui;
 }
 
 void Engine::_Initialize() {
@@ -58,15 +60,8 @@ const DisplayConfiguration& Engine::GetDisplayConfiguration() {
 	return _instance.display_configuration;
 }
 
-void Engine::SetUI(UIPtr ui) {
-	_instance.ui = ui;
-	_instance.ui->GetContainer()->Layout(
-			_instance.display_configuration.resolution.width,
-			_instance.display_configuration.resolution.height);
-}
-
-UIPtr Engine::GetUI() {
-	return _instance.ui;
+UI& Engine::GetUI() {
+	return *_instance.ui;
 }
 
 Scene *Engine::CreateScene() {

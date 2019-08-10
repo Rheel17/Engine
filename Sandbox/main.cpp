@@ -96,10 +96,8 @@ class SandboxGame : public Game {
 	}
 
 	void Start() override {
-		UIPtr ui = UI::Create();
-		Container *container = ui->GetContainer();
-
-		Engine::SetUI(ui);
+		Container ui;
+		Engine::GetUI().SetContainer(ui);
 	}
 };
 

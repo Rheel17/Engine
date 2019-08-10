@@ -41,11 +41,23 @@ private:
 	};
 
 public:
+	/**
+	 * Constructs a default empty container
+	 */
+	Container();
+
+	/**
+	 * Copies the given container into a new container
+	 */
 	Container(const Container& container);
 
 	~Container();
 
+	/**
+	 * Copies the given container into this container
+	 */
 	Container& operator=(const Container& container);
+
 	/**
 	 * Adds an element to this container. The element is copied into a pointer,
 	 * which is returned by this method. Use this pointer to reference the
@@ -137,8 +149,6 @@ public:
 
 private:
 	using TempBoundsMap = std::map<Element *, TemporaryBounds>;
-
-	Container();
 
 	void _CheckElement(Element *element, std::string sourceOrDestination) const;
 	void _DeleteConstraintTree(ConstraintTreeNode *node);

@@ -118,10 +118,7 @@ void Window::Loop() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Engine::UpdateScenes();
-
-		if (auto ui = Engine::GetUI()) {
-			ui->Draw();
-		}
+		Engine::GetUI().Draw();
 
 		glfwSwapBuffers(window);
 	}
@@ -146,33 +143,23 @@ void Window::DestroyDisplaySystems() {
 }
 
 static void glfw_KeyCallback(GLFWwindow *glfw_window, int key, int scancode, int action, int mods) {
-	if (auto ui = Engine::GetUI()) {
-		ui->OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
-	}
+	Engine::GetUI().OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
 }
 
 static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned int codepoint) {
-	if (auto ui = Engine::GetUI()) {
-		ui->OnCharacter(codepoint);
-	}
+	Engine::GetUI().OnCharacter(codepoint);
 }
 
 static void glfw_MouseMoveCallback(GLFWwindow *glfw_window, double xpos, double ypos) {
-	if (auto ui = Engine::GetUI()) {
-		ui->OnMouseMove(xpos, ypos);
-	}
+	Engine::GetUI().OnMouseMove(xpos, ypos);
 }
 
 static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int action, int mods) {
-	if (auto ui = Engine::GetUI()) {
-		ui->OnMouseButton(static_cast<Input::MouseButton>(button), static_cast<Input::Action>(action), mods);
-	}
+	Engine::GetUI().OnMouseButton(static_cast<Input::MouseButton>(button), static_cast<Input::Action>(action), mods);
 }
 
 static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y) {
-	if (auto ui = Engine::GetUI()) {
-		ui->OnScroll(x, y);
-	}
+	Engine::GetUI().OnScroll(x, y);
 }
 
 static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
