@@ -9,7 +9,7 @@ UI::UI(unsigned width, unsigned height) :
 
 void UI::SetContainer(const Container& container) {
 	_ui_container = container;
-	_ui_container.Layout(_width, _height);
+	_ui_container.SetBounds({ 0, 0, _width, _height });
 }
 
 const Container& UI::GetContainer() const {

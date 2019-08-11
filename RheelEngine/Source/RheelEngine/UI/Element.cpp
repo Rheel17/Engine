@@ -13,6 +13,14 @@ std::shared_ptr<GLVertexArray> Element::_ui_vao(nullptr);
 std::shared_ptr<GLBuffer> Element::_ui_vertex_data(nullptr);
 bool Element::_initialized = false;
 
+bool Element::Bounds::operator==(const Bounds& bounds) const {
+	return bounds.x == x && bounds.y == y && bounds.width == width && bounds.height == height;
+}
+
+bool Element::Bounds::operator!=(const Bounds& bounds) const {
+	return !(*this == bounds);
+}
+
 Element::Vertex::Vertex(vec2 position) :
 		_position(std::move(position)), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(0.0f, 0.0f) {}
 
@@ -32,7 +40,11 @@ void Element::SetDefaultSize(unsigned width, unsigned height) {
 
 void Element::SetBounds(Bounds bounds) {
 	_has_initialized_bounds = true;
-	_bounds = std::move(bounds);
+
+	if (_bounds != bounds) {
+		_bounds = std::move(bounds);
+		OnResize();
+	}
 }
 
 const Element::Bounds& Element::GetBounds() const {

@@ -31,6 +31,9 @@ public:
 	struct Bounds {
 		unsigned x, y;
 		unsigned width, height;
+
+		bool operator==(const Bounds& bounds) const;
+		bool operator!=(const Bounds& bounds) const;
 	};
 
 protected:
@@ -83,6 +86,11 @@ public:
 	 * Draws this UI element.
 	 */
 	virtual void Draw() const = 0;
+
+	/**
+	 * Called when this element has been resized.
+	 */
+	virtual void OnResize() {};
 
 protected:
 	Element();

@@ -142,16 +142,20 @@ public:
 	void ClearConstraints();
 
 	/**
-	 * Applies all constraints. The given width and height are the target
-	 * dimensions of this container. If an element is constraint with the
-	 * container itself, these values are used to resolve those constraints.
+	 * Applies all constraints and calculates the bounds of the child elements.
+	 * This methods is automatically called when the container is resized.
 	 */
-	void Layout(unsigned containerWidth, unsigned containerHeight);
+	void Layout();
 
 	/**
 	 * Draws the container.
 	 */
 	void Draw() const override;
+
+	/**
+	 * Called when this element has been resized.
+	 */
+	void OnResize() override;
 
 private:
 	using TempBoundsMap = std::map<Element *, TemporaryBounds>;
@@ -159,8 +163,8 @@ private:
 	void _CheckElement(Element *element, std::string sourceOrDestination) const;
 	void _DeleteConstraintTree(ConstraintTreeNode *node);
 
-	void _LayoutNode(TempBoundsMap& boundsMap, ConstraintTreeNode *node, unsigned width, unsigned height);
-	void _LayoutNode(TempBoundsMap& boundsMap, const Constraint& constraint, unsigned width, unsigned height);
+	void _LayoutNode(TempBoundsMap& boundsMap, ConstraintTreeNode *node);
+	void _LayoutNode(TempBoundsMap& boundsMap, const Constraint& constraint);
 
 	std::vector<Element *> _elements;
 	ConstraintTreeNode *_constraint_tree;

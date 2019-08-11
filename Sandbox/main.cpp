@@ -107,6 +107,30 @@ class SandboxGame : public Game {
 		ui.AddConstraint(whitePtr, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 0);
 		ui.AddConstraint(whitePtr, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT, 0);
 
+		// black square
+		Element *blackPtr = ui.AddElement(black);
+		ui.AddHeightRelativeConstraint(blackPtr, Constraint::TOP, nullptr, Constraint::TOP, 0.4f);
+		ui.AddHeightRelativeConstraint(blackPtr, Constraint::BOTTOM, nullptr, Constraint::BOTTOM, -0.4f);
+		ui.AddHeightRelativeConstraint(blackPtr, Constraint::LEFT, nullptr, Constraint::LEFT, 0.4f);
+		ui.AddHeightRelativeConstraint(blackPtr, Constraint::RIGHT, blackPtr, Constraint::LEFT, 0.2f);
+
+		Container subUI;
+
+		Element *redPtr = subUI.AddElement(red);
+		subUI.AddConstraint(redPtr, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
+		subUI.AddConstraint(redPtr, Constraint::BOTTOM, nullptr, Constraint::BOTTOM);
+		subUI.AddWidthRelativeConstraint(redPtr, Constraint::RIGHT, redPtr, Constraint::LEFT, 0.5F);
+
+		Element *greenPtr = subUI.AddElement(green);
+		subUI.AddConstraint(greenPtr, Constraint::TOP_LEFT, redPtr, Constraint::TOP_RIGHT);
+		subUI.AddConstraint(greenPtr, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT, -10);
+
+		Element *subUIPtr = ui.AddElement(subUI);
+		ui.AddConstraint(subUIPtr, Constraint::TOP, blackPtr, Constraint::TOP);
+		ui.AddHeightRelativeConstraint(subUIPtr, Constraint::LEFT, blackPtr, Constraint::RIGHT, 0.2f);
+		ui.AddHeightRelativeConstraint(subUIPtr, Constraint::RIGHT, subUIPtr, Constraint::LEFT, 0.3f);
+		ui.AddConstraint(subUIPtr, Constraint::BOTTOM, blackPtr, Constraint::BOTTOM);
+
 		Engine::GetUI().SetContainer(ui);
 	}
 };

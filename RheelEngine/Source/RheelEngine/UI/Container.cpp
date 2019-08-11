@@ -235,7 +235,7 @@ void Container::ClearConstraints() {
 	_constraint_tree = ConstraintTreeNode::NewRoot();
 }
 
-void Container::Layout(unsigned containerWidth, unsigned containerHeight) {
+void Container::Layout() {
 	// 0 elements dont't need to be constrained.
 	if (_elements.empty()) {
 		return;
@@ -249,17 +249,22 @@ void Container::Layout(unsigned containerWidth, unsigned containerHeight) {
 		element->InitializeBounds();
 
 		boundsMap[element] = { 0, 0, 0, 0, false, false, false, false };
-		boundsMap[element].left = element->GetBounds().x;
-		boundsMap[element].top = element->GetBounds().y;
-		boundsMap[element].right = element->GetBounds().x + element->GetBounds().width;
-		boundsMap[element].bottom = element->GetBounds().y + element->GetBounds().height;
+		boundsMap[element].left = GetBounds().x + element->GetBounds().x;
+		boundsMap[element].top = GetBounds().y + element->GetBounds().y;
+		boundsMap[element].right = GetBounds().x + element->GetBounds().x + element->GetBounds().width;
+		boundsMap[element].bottom = GetBounds().y + element->GetBounds().y + element->GetBounds().height;
 	}
 
 	// initialize the self bounds with the container bounds
-	boundsMap[nullptr] = { 0, (int) containerWidth, 0, (int) containerHeight, true, true, true, true };
+	boundsMap[nullptr] = {
+			int(GetBounds().x),
+			int(GetBounds().x + GetBounds().width),
+			int(GetBounds().y),
+			int(GetBounds().y + GetBounds().height),
+			true, true, true, true };
 
 	// layout the container
-	_LayoutNode(boundsMap, _constraint_tree, containerWidth, containerHeight);
+	_LayoutNode(boundsMap, _constraint_tree);
 
 	// apply the bounds
 	for (Element *element : _elements) {
@@ -273,19 +278,23 @@ void Container::Draw() const {
 	}
 }
 
-void Container::_LayoutNode(TempBoundsMap& boundsMap, ConstraintTreeNode *node, unsigned width, unsigned height) {
+void Container::OnResize() {
+	Layout();
+}
+
+void Container::_LayoutNode(TempBoundsMap& boundsMap, ConstraintTreeNode *node) {
 	for (auto child : node->children) {
 		if (child.first->anchor.Element() != nullptr) {
 			// actually apply the constraint
-			_LayoutNode(boundsMap, child.second, width, height);
+			_LayoutNode(boundsMap, child.second);
 		}
 
 		// recurse
-		_LayoutNode(boundsMap, child.first, width, height);
+		_LayoutNode(boundsMap, child.first);
 	}
 }
 
-void Container::_LayoutNode(TempBoundsMap& boundsMap, const Constraint& constraint, unsigned width, unsigned height) {
+void Container::_LayoutNode(TempBoundsMap& boundsMap, const Constraint& constraint) {
 	// we don't need to layout our own element
 	if (constraint.MovingAnchor().Element() == nullptr) {
 		return;
@@ -319,7 +328,7 @@ void Container::_LayoutNode(TempBoundsMap& boundsMap, const Constraint& constrai
 	int *moving;
 	int *opposite;
 	bool oppositeFixed;
-	int distance = constraint.Distance(width, height);
+	int distance = constraint.Distance(GetBounds().width, GetBounds().height);
 
 	switch(constraint.FixedAnchor().Location()) {
 		case Constraint::EAST:  fixed = boundsMap[elem_f].right;  break;
