@@ -63,8 +63,6 @@ void TextRenderer::_Initialize() {
 	_initialized = true;
 }
 
-int frame = 0;
-
 int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
 	assert(length <= Font::FONT_CACHE_SIZE);
 
@@ -122,8 +120,6 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	_DrawTriangles(triangles, bezierCurves, { subpixelWidth *  3, subpixelHeight *  1 });
 	_DrawTriangles(triangles, bezierCurves, { subpixelWidth * -3, subpixelHeight * -1 });
 	_DrawTriangles(triangles, bezierCurves, { subpixelWidth *  1, subpixelHeight * -3 });
-
-	frame++;
 
 	glDisable(GL_BLEND);
 	glDisable(GL_STENCIL_TEST);
