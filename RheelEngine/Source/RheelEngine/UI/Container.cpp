@@ -38,25 +38,6 @@ std::optional<Container::ConstraintTreeNode *> Container::ConstraintTreeNode::Ge
 	return {};
 }
 
-Container::ConstraintTreeNode *Container::ConstraintTreeNode::Copy(ConstraintTreeNode *parent, std::map<Element *, Element *>& copies) const {
-	ConstraintTreeNode *copy = new ConstraintTreeNode;
-
-	copy->anchor = Constraint::Anchor(copies[anchor.Element()], anchor.Location());
-	copy->parent = parent;
-
-	for (auto child : children) {
-		auto anchorMoving = child.second.MovingAnchor();
-		auto anchorFixed = child.second.FixedAnchor();
-
-		auto anchorMovingCopy = Constraint::Anchor(copies[anchorMoving.Element()], anchorMoving.Location());
-		auto anchorFixedCopy = Constraint::Anchor(copies[anchorFixed.Element()], anchorFixed.Location());
-
-		copy->children.insert({ child.first->Copy(copy, copies), child.second.WithAnchors(anchorMovingCopy, anchorFixedCopy) });
-	}
-
-	return copy;
-}
-
 Container::ConstraintTreeNode *Container::ConstraintTreeNode::NewRoot() {
 	return new ConstraintTreeNode { { nullptr, (Constraint::ConstraintLocation) -1 }, nullptr, {} };
 }
@@ -69,10 +50,10 @@ Container::Container() :
 		_constraint_tree(ConstraintTreeNode::NewRoot()),
 		_parent_ui(nullptr) {}
 
-Container::Container(const Container& container) :
+Container::Container(Container&& container) :
 		Container() {
 
-	*this = container;
+	*this = std::move(container);
 }
 
 Container::~Container() {
@@ -83,14 +64,14 @@ Container::~Container() {
 	}
 }
 
-Container& Container::operator=(const Container& container) {
-	// explicit self-copy: return normally.
+Container& Container::operator=(Container&& container) {
+	// explicit self-move: return normally
 	if (this == &container) {
 		return *this;
 	}
 
-	// perform the Element copying
-	_CopySuperFields(container);
+	// perform the Element moving
+	_MoveSuperFields(std::move(container));
 	_parent_ui = container._parent_ui;
 
 	// delete current elements and their constraints
@@ -100,25 +81,19 @@ Container& Container::operator=(const Container& container) {
 		delete element;
 	}
 
-	// reset the element vector
-	_elements.clear();
-	_elements.reserve(container._elements.size());
+	// move the elements
+	_elements = std::move(container._elements);
 
-	// copy the elements and store them in a map to easily get the new element
-	// based on the old one.
-	std::map<Element *, Element *> copies;
-	copies[nullptr] = nullptr;
-
-	for (Element *element : container._elements) {
-		Element *copy = element->_Clone();
-
-		_elements.push_back(copy);
-		copies[element] = copy;
+	// set the correct parent of the elements
+	for (Element *element : _elements) {
+		element->_parent_container = this;
 	}
 
-	// copy the constraint tree with the copy map
-	_constraint_tree = container._constraint_tree->Copy(nullptr, copies);
+	// move the constraint tree
+	_constraint_tree = std::move(container._constraint_tree);
+	container._constraint_tree = nullptr;
 
+	// finish
 	return *this;
 }
 
@@ -137,8 +112,8 @@ Element *Container::ElementAt(unsigned x, unsigned y) {
 		const Element::Bounds& bounds = element->GetBounds();
 
 		// check if the coordinates are in the bounds of the element
-		if (bounds.x <= x && x <= bounds.x + bounds.width &&
-				bounds.y <= y && y <= bounds.y + bounds.height) {
+		if (bounds.x <= x && x < bounds.x + bounds.width &&
+				bounds.y <= y && y < bounds.y + bounds.height) {
 
 			// nested resolve
 			if (Container *container = dynamic_cast<Container *>(element)) {

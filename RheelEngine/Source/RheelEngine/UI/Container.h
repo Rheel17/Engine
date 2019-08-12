@@ -15,9 +15,7 @@ class UI;
 class RE_API Container : public Element {
 	friend class UI;
 
-	__ELEMENT__
-
-	RE_NO_MOVE(Container);
+	RE_NO_COPY(Container)
 
 private:
 	class ConstraintTreeNode {
@@ -25,8 +23,6 @@ private:
 	public:
 		std::optional<const ConstraintTreeNode *> GetNodeForAnchor(const Constraint::Anchor& anchor) const;
 		std::optional<ConstraintTreeNode *> GetNodeForAnchor(const Constraint::Anchor& anchor);
-
-		ConstraintTreeNode *Copy(ConstraintTreeNode *parent, std::map<Element *, Element *>& copies) const;
 
 		Constraint::Anchor anchor;
 		ConstraintTreeNode *parent;
@@ -53,16 +49,16 @@ public:
 	Container();
 
 	/**
-	 * Copies the given container into a new container
+	 * Moves the given container into a new container
 	 */
-	Container(const Container& container);
+	Container(Container&& container);
 
 	~Container();
 
 	/**
-	 * Copies the given container into this container
+	 * Moves the given container into this container
 	 */
-	Container& operator=(const Container& container);
+	Container& operator=(Container&& container);
 
 	/**
 	 * Adds an element to this container. The element is copied into a pointer,
@@ -72,9 +68,27 @@ public:
 	template<typename T>
 	Element *AddElement(const T& element) {
 		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class");
-		static_assert(std::is_copy_constructible<T>::value, "Element must be copy-constructible");
+		static_assert(std::is_copy_constructible<T>::value, "Element must be copy-constructible; try InsertElement with std::move()");
 
 		Element *ptr = new T(element);
+		ptr->_parent_container = this;
+		_elements.push_back(ptr);
+
+		return ptr;
+	}
+
+	/**
+	 * Inserts the element to this container. The element is moved into a
+	 * pointer, which is returned by this method. Use this pointer to reference
+	 * the element. The element reference passed to this method will no longer
+	 * be valid after this method returns.
+	 */
+	template<typename T>
+	Element *InsertElement(T&& element) {
+		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class, did you std::move()?");
+		static_assert(std::is_move_constructible<T>::value, "Element must be move-constructible");
+
+		Element *ptr = new T(std::move(element));
 		ptr->_parent_container = this;
 		_elements.push_back(ptr);
 

@@ -14,7 +14,7 @@ public:
 	/**
 	 * Sets the contents of the UI to the container.
 	 */
-	void SetContainer(const Container& container);
+	void SetContainer(Container&& container);
 
 	/**
 	 * Returns the container which contains the UI elements of this UI.
@@ -50,6 +50,8 @@ private:
 
 	unsigned _width;
 	unsigned _height;
+
+	vec2 _mouse;
 
 };
 

@@ -125,14 +125,17 @@ class SandboxGame : public Game {
 		subUI.AddConstraint(greenPtr, Constraint::TOP_LEFT, redPtr, Constraint::TOP_RIGHT);
 		subUI.AddConstraint(greenPtr, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT, -10);
 
-		Element *subUIPtr = ui.AddElement(subUI);
+		Element *subUIPtr = ui.InsertElement(std::move(subUI));
 		ui.AddConstraint(subUIPtr, Constraint::TOP, blackPtr, Constraint::TOP);
 		ui.AddHeightRelativeConstraint(subUIPtr, Constraint::LEFT, blackPtr, Constraint::RIGHT, 0.2f);
 		ui.AddHeightRelativeConstraint(subUIPtr, Constraint::RIGHT, subUIPtr, Constraint::LEFT, 0.3f);
 		ui.AddConstraint(subUIPtr, Constraint::BOTTOM, blackPtr, Constraint::BOTTOM);
 
-		Engine::GetUI().SetContainer(ui);
+		Engine::GetUI().SetContainer(std::move(ui));
 	}
+
+private:
+
 };
 
 RHEEL_ENGINE_ENTRY(SandboxGame)

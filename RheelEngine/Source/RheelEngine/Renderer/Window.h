@@ -15,14 +15,14 @@ public:
 	 * Creates a window using the given display configuration.
 	 * Use Show() to show the window.
 	 */
-	Window(DisplayConfiguration configuration);
+	Window(DisplayConfiguration& configuration);
 	~Window();
 
 	void Show();
 	void Loop();
 
 private:
-	DisplayConfiguration _configuration;
+	DisplayConfiguration& _configuration;
 
 	void *_window_handle = nullptr;
 

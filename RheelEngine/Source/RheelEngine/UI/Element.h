@@ -11,13 +11,6 @@
 #include "../Renderer/OpenGL/GLVertexArray.h"
 #include "../Renderer/OpenGL/GLTexture2D.h"
 
-#define __ELEMENT__													\
-	inline Element *_Clone() const override {						\
-		return new (std::remove_const<								\
-					std::remove_pointer<decltype(this)>::type		\
-				>::type)(*this);									\
-	}
-
 namespace rheel {
 
 class UI;
@@ -200,14 +193,11 @@ protected:
 	Element();
 
 	/**
-	 * Copies the fields of this Element superclass when copying derived
-	 * objects.
+	 * Moves the fields of this Element superclass when moving derived objects.
 	 */
-	void _CopySuperFields(const Element& element);
+	void _MoveSuperFields(Element&& element);
 
 private:
-	virtual Element *_Clone() const = 0;
-
 	Container *_parent_container;
 	Bounds _bounds;
 	bool _has_initialized_bounds = false;

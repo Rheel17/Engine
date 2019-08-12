@@ -23,7 +23,7 @@ static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y);
 static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 		GLsizei length, const GLchar *message, const void *userParam);
 
-Window::Window(DisplayConfiguration configuration) :
+Window::Window(DisplayConfiguration& configuration) :
 		_configuration(configuration) {}
 
 Window::~Window() {
@@ -68,6 +68,13 @@ void Window::Show() {
 			monitor, nullptr);
 
 	_window_handle = window;
+
+	// pass the actual window width and height back to the engine
+	int realWidth, realHeight;
+	glfwGetWindowSize(window, &realWidth, &realHeight);
+
+	_configuration.resolution.width = realWidth;
+	_configuration.resolution.height = realHeight;
 
 	// initialize callbacks
 	glfwSetKeyCallback(window, glfw_KeyCallback);

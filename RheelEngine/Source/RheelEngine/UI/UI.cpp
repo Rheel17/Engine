@@ -7,8 +7,8 @@ UI::UI(unsigned width, unsigned height) :
 	_ui_container._parent_ui = this;
 }
 
-void UI::SetContainer(const Container& container) {
-	_ui_container = container;
+void UI::SetContainer(Container&& container) {
+	_ui_container = std::move(container);
 	_ui_container.SetBounds({ 0, 0, _width, _height });
 }
 
@@ -33,7 +33,8 @@ void UI::OnCharacter(wchar_t character) {
 }
 
 void UI::OnMouseMove(float x, float y) {
-
+	_mouse.x = x;
+	_mouse.y = y;
 }
 
 void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::Modifiers mods) {

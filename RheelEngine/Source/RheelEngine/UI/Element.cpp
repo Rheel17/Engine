@@ -65,9 +65,9 @@ void Element::InitializeBounds() {
 	}
 }
 
-void Element::_CopySuperFields(const Element& element) {
+void Element::_MoveSuperFields(Element&& element) {
 	_parent_container = element._parent_container;
-	_bounds = element._bounds;
+	_bounds = std::move(element._bounds);
 	_has_initialized_bounds = element._has_initialized_bounds;
 	_default_width = element._default_width;
 	_default_height = element._default_height;
