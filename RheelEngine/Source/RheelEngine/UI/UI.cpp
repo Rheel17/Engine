@@ -16,6 +16,10 @@ const Container& UI::GetContainer() const {
 	return _ui_container;
 }
 
+Element *UI::ElementAt(unsigned x, unsigned y) {
+	return _ui_container.ElementAt(x, y);
+}
+
 void UI::Draw() const {
 	_ui_container.Draw();
 }

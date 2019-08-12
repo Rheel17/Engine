@@ -22,6 +22,14 @@ public:
 	const Container& GetContainer() const;
 
 	/**
+	 * Returns the element at the specified position. When no element was added
+	 * at the specified position, the root container of this UI is returned. If
+	 * multiple elements share the position, the top one (last added) is
+	 * returned.
+	 */
+	Element *ElementAt(unsigned x, unsigned y);
+
+	/**
 	 * Draws this UI
 	 */
 	void Draw() const;

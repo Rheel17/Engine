@@ -88,6 +88,13 @@ public:
 	void RemoveElement(Element *element);
 
 	/**
+	 * Returns the element at the specified position. When no element has been
+	 * added at the given position, this container is returned. If multiple
+	 * elements share the position, the top one (last added) is returned.
+	 */
+	Element *ElementAt(unsigned x, unsigned y);
+
+	/**
 	 * Adds a constraint between elements in this container. For more details
 	 * about constraints, look at the documentation of the Constraint class.
 	 *

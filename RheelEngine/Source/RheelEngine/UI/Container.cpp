@@ -131,15 +131,26 @@ void Container::RemoveElement(Element *element) {
 	}
 }
 
-void Container::_CheckElement(Element *element, std::string sourceOrDestination) const {
-	if (element == nullptr) {
-		return;
+Element *Container::ElementAt(unsigned x, unsigned y) {
+	for (auto iter = _elements.rbegin(); iter != _elements.rend(); iter++) {
+		Element *element = *iter;
+		const Element::Bounds& bounds = element->GetBounds();
+
+		// check if the coordinates are in the bounds of the element
+		if (bounds.x <= x && x <= bounds.x + bounds.width &&
+				bounds.y <= y && y <= bounds.y + bounds.height) {
+
+			// nested resolve
+			if (Container *container = dynamic_cast<Container *>(element)) {
+				return container->ElementAt(x, y);
+			}
+
+			// not a container: return the element
+			return element;
+		}
 	}
 
-	// check that the element is in the element list.
-	if (std::find(_elements.begin(), _elements.end(), element) == _elements.end()) {
-		throw ConstraintException(sourceOrDestination + " element not in container");
-	}
+	return this;
 }
 
 void Container::AddConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
@@ -282,6 +293,29 @@ void Container::OnResize() {
 	Layout();
 }
 
+void Container::_CheckElement(Element *element, std::string sourceOrDestination) const {
+	if (element == nullptr) {
+		return;
+	}
+
+	// check that the element is in the element list.
+	if (std::find(_elements.begin(), _elements.end(), element) == _elements.end()) {
+		throw ConstraintException(sourceOrDestination + " element not in container");
+	}
+}
+
+void Container::_DeleteConstraintTree(ConstraintTreeNode *node) {
+	if (!node) {
+		return;
+	}
+
+	for (auto child : node->children) {
+		_DeleteConstraintTree(child.first);
+	}
+
+	delete node;
+}
+
 void Container::_LayoutNode(TempBoundsMap& boundsMap, ConstraintTreeNode *node) {
 	for (auto child : node->children) {
 		if (child.first->anchor.Element() != nullptr) {
@@ -370,18 +404,6 @@ void Container::_LayoutNode(TempBoundsMap& boundsMap, const Constraint& constrai
 	move(fixed, moving, opposite, oppositeFixed, distance);
 	check(boundsMap[elem_m].left, boundsMap[elem_m].right);
 	check(boundsMap[elem_m].top, boundsMap[elem_m].bottom);
-}
-
-void Container::_DeleteConstraintTree(ConstraintTreeNode *node) {
-	if (!node) {
-		return;
-	}
-
-	for (auto child : node->children) {
-		_DeleteConstraintTree(child.first);
-	}
-
-	delete node;
 }
 
 }

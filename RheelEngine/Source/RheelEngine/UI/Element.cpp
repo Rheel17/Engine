@@ -38,7 +38,7 @@ void Element::SetDefaultSize(unsigned width, unsigned height) {
 	_default_height = height;
 }
 
-void Element::SetBounds(Bounds bounds) {
+void Element::SetBounds(Element::Bounds bounds) {
 	_has_initialized_bounds = true;
 
 	if (_bounds != bounds) {
