@@ -133,6 +133,10 @@ void Window::Loop() {
 	}
 }
 
+void Window::SetInputMode(int mode, int value) const {
+	glfwSetInputMode(getWindow(_window_handle), mode, value);
+}
+
 void Window::InitializeDisplaySystems() {
 	// initialize GLFW
 	if (!_is_glfw_initialized) {

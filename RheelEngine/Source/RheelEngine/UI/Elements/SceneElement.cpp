@@ -5,10 +5,16 @@
 namespace rheel {
 
 SceneElement::SceneElement(std::string cameraName) :
-		_use_active_scene(true), _scene(nullptr), _camera_name(cameraName) {}
+		_use_active_scene(true), _scene(nullptr), _camera_name(cameraName) {
+
+	SetFocusable(true);
+}
 
 SceneElement::SceneElement(Scene *scene, std::string cameraName) :
-		_use_active_scene(false), _scene(scene), _camera_name(cameraName) {}
+		_use_active_scene(false), _scene(scene), _camera_name(cameraName) {
+
+	SetFocusable(true);
+}
 
 void SceneElement::Draw() const {
 	const Bounds& bounds = GetBounds();
@@ -20,6 +26,10 @@ void SceneElement::Draw() const {
 
 	_scene_renderer->Render();
 	_DrawTexturedQuad(bounds, _scene_renderer->OutputTexture());
+}
+
+void SceneElement::OnFocusGained() {
+	RootContainer()->ParentUI()->GrabMouse(this);
 }
 
 void SceneElement::_InitializeRenderer(const Bounds& bounds) const {

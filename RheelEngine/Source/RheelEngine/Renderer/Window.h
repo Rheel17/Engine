@@ -21,6 +21,8 @@ public:
 	void Show();
 	void Loop();
 
+	void SetInputMode(int mode, int value) const;
+
 private:
 	DisplayConfiguration& _configuration;
 

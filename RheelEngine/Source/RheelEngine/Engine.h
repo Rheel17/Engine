@@ -18,13 +18,17 @@ namespace rheel {
 
 class RE_API Engine {
 	struct EngineInstance {
+		RE_NO_COPY(EngineInstance);
+		RE_NO_MOVE(EngineInstance);
+		EngineInstance() = default;
+
 		// display
 		DisplayConfiguration display_configuration;
-		std::shared_ptr<Window> window = nullptr;
+		Window *window = nullptr;
+		UI *ui = nullptr;
 
 		// game state
 		Scene *active_scene = nullptr;
-		UI *ui;
 
 		// register maps
 		std::unordered_map<std::string, Blueprint> register_blueprints;
@@ -51,6 +55,11 @@ public:
 	 * Returns the display configuration.
 	 */
 	static const DisplayConfiguration& GetDisplayConfiguration();
+
+	/**
+	 * Gets the game window.
+	 */
+	static Window& GetWindow();
 
 	/**
 	 * Gets the current UI

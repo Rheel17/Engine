@@ -1,5 +1,7 @@
 #include "UI.h"
 
+#include "../Engine.h"
+
 namespace rheel {
 
 UI::UI(unsigned width, unsigned height) :
@@ -24,6 +26,8 @@ void UI::RequestFocus(Element *element) {
 		return;
 	}
 
+	ReleaseMouse();
+
 	if (_focus_element && _focus) {
 		_focus_element->OnFocusLost();
 	}
@@ -37,6 +41,17 @@ void UI::RequestFocus(Element *element) {
 
 Element *UI::FocusElement() const {
 	return _focus_element;
+}
+
+void UI::GrabMouse(Element *element) {
+	Engine::GetWindow().SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	_mouseover_element = element;
+	_mouse_grabbed = true;
+}
+
+void UI::ReleaseMouse() {
+	Engine::GetWindow().SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	_mouse_grabbed = false;
 }
 
 void UI::Draw() const {
@@ -71,7 +86,7 @@ void UI::OnMouseMove(float x, float y) {
 
 	Element *newMouseOverElement = ElementAt((unsigned) x, (unsigned) y);
 
-	if (newMouseOverElement != _mouseover_element) {
+	if (newMouseOverElement != _mouseover_element && !_mouse_grabbed) {
 		if (_mouseover_element) {
 			_mouseover_element->OnMouseExit(x, y);
 		}

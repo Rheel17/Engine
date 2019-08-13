@@ -43,6 +43,22 @@ public:
 	Element *FocusElement() const;
 
 	/**
+	 * Grabs the mouse such that it is no longer capable of leaving the window.
+	 * It will also be made invisible. Use Input::ReleaseMouse() to undo this
+	 * action.
+	 *
+	 * A grabbed mouse will be restricted the given element. On a focus change,
+	 * the mouse is automatically released.
+	 */
+	void GrabMouse(Element *element);
+
+	/**
+	 * Releases the mouse such that it is visible and capable of leaving the
+	 * window again. Use Input::GrabMouse() to grab the mouse again.
+	 */
+	void ReleaseMouse();
+
+	/**
 	 * Draws this UI
 	 */
 	void Draw() const;
@@ -64,11 +80,13 @@ private:
 
 	Element *_mouseover_element = nullptr;
 	Element *_focus_element = nullptr;
+	Element *_grabbed_element = nullptr;
 
 	unsigned _width;
 	unsigned _height;
 
 	bool _focus = true;
+	bool _mouse_grabbed = false;
 	vec2 _mouse;
 
 };

@@ -31,7 +31,7 @@ void Engine::_Run(Game *game) {
 	game->Initialize();
 
 	_instance.display_configuration._CalculateActualResolution();
-	_instance.window = std::make_shared<Window>(_instance.display_configuration);
+	_instance.window = new Window(_instance.display_configuration);
 	_instance.window->Show();
 	_instance.ui = new UI(
 				_instance.display_configuration.resolution.width,
@@ -61,6 +61,10 @@ void Engine::SetDisplayConfiguration(const DisplayConfiguration& config) {
 
 const DisplayConfiguration& Engine::GetDisplayConfiguration() {
 	return _instance.display_configuration;
+}
+
+Window& Engine::GetWindow() {
+	return *_instance.window;
 }
 
 UI& Engine::GetUI() {

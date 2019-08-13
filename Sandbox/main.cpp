@@ -105,9 +105,8 @@ class SandboxGame : public Game {
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
 		Engine::GetUI().SetContainer(std::move(ui));
+		Engine::GetUI().RequestFocus(sceneElement);
 	}
-
-private:
 
 };
 

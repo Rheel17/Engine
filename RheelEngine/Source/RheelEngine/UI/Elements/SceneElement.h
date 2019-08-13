@@ -28,6 +28,8 @@ public:
 
 	void Draw() const override;
 
+	void OnFocusGained() override;
+
 private:
 	void _InitializeRenderer(const Bounds& bounds) const;
 
