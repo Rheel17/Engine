@@ -53,6 +53,21 @@ public:
 	void SetDefaultSize(unsigned width, unsigned height);
 
 	/**
+	 * Sets the focusable flag of this element.
+	 */
+	void SetFocusable(bool focusable);
+
+	/**
+	 * Returns whether this element is focusable.
+	 */
+	bool IsFocusable() const;
+
+	/**
+	 * Returns whether this element has focus.
+	 */
+	bool HasFocus() const;
+
+	/**
 	 * Set the bounds of this Element, in pixel space. If this element is a
 	 * child of a Container, this method is called when the parent container is
 	 * layed-out.
@@ -76,6 +91,16 @@ public:
 	void InitializeBounds();
 
 	/**
+	 * Returns the root container of this element.
+	 */
+	const Container *RootContainer() const;
+
+	/**
+	 * Returns the root container of this element.
+	 */
+	Container *RootContainer();
+
+	/**
 	 * Draws this UI element.
 	 */
 	virtual void Draw() const = 0;
@@ -84,6 +109,17 @@ public:
 	 * Called when this element has been resized.
 	 */
 	virtual void OnResize() {};
+
+	/**
+	 * Called when this element receives the focus in the UI.
+	 */
+	virtual void OnFocusGained() {};
+
+	/**
+	 * Called when the focus of this element is lost. This can happen because
+	 * another element receives focus, or the parent window itself looses focus.
+	 */
+	virtual void OnFocusLost() {};
 
 	/**
 	 * Called when a key on the keyboard is pressed down.
@@ -104,7 +140,7 @@ public:
 	 * 	scancode: the location of the key on the keyboard
 	 * 	mods: any modifiers that were used
 	 */
-	virtual void onKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {};
+	virtual void OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {};
 
 	/**
 	 * Called when a key on the keyboard is kept released.
@@ -204,6 +240,7 @@ private:
 
 	unsigned _default_width = 20;
 	unsigned _default_height = 20;
+	bool _focusable = false;
 
 protected:
 	/**
@@ -251,8 +288,6 @@ private:
 	static bool _initialized;
 
 };
-
-using ElementPtr = std::shared_ptr<Element>;
 
 }
 

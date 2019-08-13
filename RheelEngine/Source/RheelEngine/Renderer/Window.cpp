@@ -19,6 +19,7 @@ static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned int codepoint);
 static void glfw_MouseMoveCallback(GLFWwindow *glfw_window, double xpos, double ypos);
 static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int action, int mods);
 static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y);
+static void glfw_WindowFocusCallback(GLFWwindow *glfw_window, int focus);
 
 static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 		GLsizei length, const GLchar *message, const void *userParam);
@@ -82,6 +83,7 @@ void Window::Show() {
 	glfwSetCursorPosCallback(window, glfw_MouseMoveCallback);
 	glfwSetMouseButtonCallback(window, glfw_MouseButtonCallback);
 	glfwSetScrollCallback(window, glfw_ScrollCallback);
+	glfwSetWindowFocusCallback(window, glfw_WindowFocusCallback);
 
 	// enable or disable vsync
 	if (!_configuration.vsync) {
@@ -167,6 +169,10 @@ static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int ac
 
 static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y) {
 	Engine::GetUI().OnScroll(x, y);
+}
+
+static void glfw_WindowFocusCallback(GLFWwindow *glfw_window, int focus) {
+	Engine::GetUI().OnFocusChanged(focus);
 }
 
 static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,

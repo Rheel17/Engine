@@ -47,8 +47,11 @@ Container::TemporaryBounds::operator Element::Bounds() const  {
 }
 
 Container::Container() :
+		Container(nullptr) {}
+
+Container::Container(UI *ui) :
 		_constraint_tree(ConstraintTreeNode::NewRoot()),
-		_parent_ui(nullptr) {}
+		_parent_ui(ui) {}
 
 Container::Container(Container&& container) :
 		Container() {
@@ -95,6 +98,10 @@ Container& Container::operator=(Container&& container) {
 
 	// finish
 	return *this;
+}
+
+UI *Container::ParentUI() const {
+	return _parent_ui;
 }
 
 void Container::RemoveElement(Element *element) {

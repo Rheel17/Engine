@@ -91,6 +91,7 @@ class SandboxGame : public Game {
 		config.title = "Sandbox";
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
 		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
+		config.resolution = { 1280, 720 };
 
 		Engine::SetDisplayConfiguration(std::move(config));
 	}
@@ -100,7 +101,7 @@ class SandboxGame : public Game {
 		ColorElement white({ 1, 1, 1, 1 });
 		ColorElement red({ 1, 0, 0, 1 });
 		ColorElement green({ 0, 1, 0, 1 });
-		ColorElement black({ 0, 0, 0, 1 });
+		ColorElement black({ 0.5f, 0.5f, 0.5f, 1 });
 
 		// background: white
 		Element *whitePtr = ui.AddElement(white);

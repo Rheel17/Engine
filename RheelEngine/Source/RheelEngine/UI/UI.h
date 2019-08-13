@@ -8,6 +8,9 @@ namespace rheel {
 
 class RE_API UI {
 
+	RE_NO_COPY(UI);
+	RE_NO_MOVE(UI);
+
 public:
 	UI(unsigned width, unsigned height);
 
@@ -30,6 +33,16 @@ public:
 	Element *ElementAt(unsigned x, unsigned y);
 
 	/**
+	 * Requests that the given element be given focus in this UI.
+	 */
+	void RequestFocus(Element *element);
+
+	/**
+	 * Returns the element which is in focus (can be nullptr).
+	 */
+	Element *FocusElement() const;
+
+	/**
 	 * Draws this UI
 	 */
 	void Draw() const;
@@ -44,13 +57,18 @@ public:
 
 	void OnScroll(float x, float y);
 
+	void OnFocusChanged(bool focus);
+
 private:
-	Container _ui_container;
-	ElementPtr _focus_element;
+	Container _ui_container = Container(this);
+
+	Element *_mouseover_element = nullptr;
+	Element *_focus_element = nullptr;
 
 	unsigned _width;
 	unsigned _height;
 
+	bool _focus = true;
 	vec2 _mouse;
 
 };

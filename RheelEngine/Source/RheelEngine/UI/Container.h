@@ -61,6 +61,11 @@ public:
 	Container& operator=(Container&& container);
 
 	/**
+	 * Returns the parent UI of this container.
+	 */
+	UI *ParentUI() const;
+
+	/**
 	 * Adds an element to this container. The element is copied into a pointer,
 	 * which is returned by this method. Use this pointer to reference the
 	 * element.
@@ -180,6 +185,8 @@ public:
 
 private:
 	using TempBoundsMap = std::map<Element *, TemporaryBounds>;
+
+	Container(UI *ui);
 
 	void _CheckElement(Element *element, std::string sourceOrDestination) const;
 	void _DeleteConstraintTree(ConstraintTreeNode *node);

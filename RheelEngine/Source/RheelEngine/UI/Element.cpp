@@ -38,6 +38,18 @@ void Element::SetDefaultSize(unsigned width, unsigned height) {
 	_default_height = height;
 }
 
+void Element::SetFocusable(bool focusable) {
+	_focusable = focusable;
+}
+
+bool Element::IsFocusable() const {
+	return _focusable;
+}
+
+bool Element::HasFocus() const {
+	return RootContainer()->ParentUI()->FocusElement() == this;
+}
+
 void Element::SetBounds(Element::Bounds bounds) {
 	_has_initialized_bounds = true;
 
@@ -54,6 +66,31 @@ const Element::Bounds& Element::GetBounds() const {
 Element::Bounds& Element::GetBounds() {
 	return _bounds;
 }
+
+Container *Element::RootContainer() {
+	if (_parent_container) {
+		return _parent_container->RootContainer();
+	}
+
+	if (Container *container = dynamic_cast<Container *>(this)) {
+		return container;
+	}
+
+	return nullptr;
+}
+
+const Container *Element::RootContainer() const {
+	if (_parent_container) {
+		return _parent_container->RootContainer();
+	}
+
+	if (const Container *container = dynamic_cast<const Container *>(this)) {
+		return container;
+	}
+
+	return nullptr;
+}
+
 
 void Element::InitializeBounds() {
 	if (!_has_initialized_bounds) {
