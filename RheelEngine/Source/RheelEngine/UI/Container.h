@@ -71,11 +71,11 @@ public:
 	 * element.
 	 */
 	template<typename T>
-	Element *AddElement(const T& element) {
+	T *AddElement(const T& element) {
 		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class");
 		static_assert(std::is_copy_constructible<T>::value, "Element must be copy-constructible; try InsertElement with std::move()");
 
-		Element *ptr = new T(element);
+		T *ptr = new T(element);
 		ptr->_parent_container = this;
 		_elements.push_back(ptr);
 
@@ -89,11 +89,11 @@ public:
 	 * be valid after this method returns.
 	 */
 	template<typename T>
-	Element *InsertElement(T&& element) {
+	T *InsertElement(T&& element) {
 		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class, did you std::move()?");
 		static_assert(std::is_move_constructible<T>::value, "Element must be move-constructible");
 
-		Element *ptr = new T(std::move(element));
+		T *ptr = new T(std::move(element));
 		ptr->_parent_container = this;
 		_elements.push_back(ptr);
 
