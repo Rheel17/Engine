@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include <map>
+#include <tuple>
 
 #include "Component.h"
 
@@ -46,26 +46,19 @@ public:
 	/**
 	 * Returns a vector of all components in this blueprint.
 	 */
-	const std::vector<std::string> Components() const;
+	const std::vector<std::pair<std::string, _ComponentLoader>>& Components() const;
 
 	/**
 	 * Returns a vector of all the nested blueprints in this blueprint.
 	 */
-	const std::vector<std::string> Children() const;
-
-	/**
-	 * Returns the component loader for the specified component.
-	 */
-	const _ComponentLoader& GetLoaderForComponent(const std::string& component) const;
+	const std::vector<std::string>& Children() const;
 
 private:
 	bool _HasChild(const std::string& name) const;
 
 	std::string _name;
 
-	std::vector<std::string> _components;
-	std::map<std::string, _ComponentLoader> _component_loaders;
-
+	std::vector<std::pair<std::string, _ComponentLoader>> _components;
 	std::vector<std::string> _child_blueprints;
 
 };

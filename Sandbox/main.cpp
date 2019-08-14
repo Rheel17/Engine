@@ -55,7 +55,12 @@ static Blueprint createCubeBlueprint() {
 
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
-	description.AddScript(Script::NAME_EULER_CAMERA_CONTROLLER);
+
+	description.AddScript(Script::NAME_EULER_CAMERA_CONTROLLER, [](ScriptPtr s) {
+		EulerCameraController *script = static_cast<EulerCameraController *>(s.get());
+		script->SetCamera("main_camera");
+	});
+
 	description.AddScript("RandomRemove");
 
 	for (int i = -2; i <= 2; i++) {

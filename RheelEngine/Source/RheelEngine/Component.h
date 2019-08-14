@@ -38,7 +38,7 @@ public:
 	virtual void OnRender() {}
 
 	/**
-	 * TODO: Called when the object is removed from the scene
+	 * Called when the object is removed from the scene
 	 */
 	virtual void OnRemove() {}
 

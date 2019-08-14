@@ -8,7 +8,13 @@ namespace rheel {
 
 class RE_API EulerCameraController : public InputScript {
 
-void PreOnUpdate() override;
+public:
+	void SetCamera(const std::string& camera);
+
+	void PreOnUpdate() override;
+
+private:
+	std::string _camera;
 
 };
 

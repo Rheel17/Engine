@@ -9,8 +9,9 @@ namespace rheel {
 
 Scene::Scene(const SceneDescription& description) {
 	// first: add the scripts
-	for (const auto& script : description.Scripts()) {
-		AddScript(script);
+	for (const auto& scriptEntry : description.Scripts()) {
+		ScriptPtr script = AddScript(scriptEntry.first);
+		scriptEntry.second(script);
 	}
 
 	// second: add the objects
@@ -24,14 +25,14 @@ Scene::Scene(const SceneDescription& description) {
 	// third: add the lights
 	for (const auto& lightDescription : description.LightDescriptions()) {
 		switch (lightDescription.type) {
-			case SceneDescription::LightDescription::POINT_LIGHT:
+			case SceneDescription::_LightDescription::POINT_LIGHT:
 				AddPointLight(
 						lightDescription.name,
 						lightDescription.position,
 						lightDescription.color,
 						lightDescription.attenuation);
 				break;
-			case SceneDescription::LightDescription::SPOT_LIGHT:
+			case SceneDescription::_LightDescription::SPOT_LIGHT:
 				AddSpotLight(
 						lightDescription.name,
 						lightDescription.position,
@@ -40,7 +41,7 @@ Scene::Scene(const SceneDescription& description) {
 						lightDescription.spot_attenuation,
 						lightDescription.attenuation);
 				break;
-			case SceneDescription::LightDescription::DIRECTIONAL_LIGHT:
+			case SceneDescription::_LightDescription::DIRECTIONAL_LIGHT:
 				AddDirectionalLight(
 						lightDescription.name,
 						lightDescription.color,
@@ -52,7 +53,7 @@ Scene::Scene(const SceneDescription& description) {
 	// fourth: add the cameras
 	for (const auto& cameraDescription : description.CameraDescriptions()) {
 		switch (cameraDescription.type) {
-			case SceneDescription::CameraDescription::PERSPECTIVE_CAMERA:
+			case SceneDescription::_CameraDescription::PERSPECTIVE_CAMERA:
 				AddCamera(
 						cameraDescription.perspective_fov,
 						cameraDescription.perspective_near,
@@ -65,10 +66,11 @@ Scene::Scene(const SceneDescription& description) {
 	}
 }
 
-void Scene::AddScript(const std::string& script) {
+ScriptPtr Scene::AddScript(const std::string& script) {
 	ScriptPtr instance = Engine::CreateScript(script);
 	instance->_parent_scene = this;
 	_scripts.push_back(instance);
+	return instance;
 }
 
 const std::vector<ScriptPtr>& Scene::Scripts() const {

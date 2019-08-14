@@ -11,9 +11,9 @@ Object::Object(const Blueprint& blueprint) {
 	auto children = blueprint.Children();
 
 	// add the components
-	for (const auto& componentName : components) {
-		ComponentPtr component = Engine::CreateComponent(componentName);
-		blueprint.GetLoaderForComponent(componentName)(component);
+	for (const auto& componentEntry : components) {
+		ComponentPtr component = Engine::CreateComponent(componentEntry.first);
+		componentEntry.second(component);
 		component->_parent_object = this;
 		_components.push_back(component);
 	}

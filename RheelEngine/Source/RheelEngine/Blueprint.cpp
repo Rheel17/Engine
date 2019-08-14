@@ -14,8 +14,7 @@ void Blueprint::AddComponent(const std::string& componentName, std::function<voi
 		throw std::runtime_error("Component not registered: \"" + componentName + "\"");
 	}
 
-	_components.push_back(componentName);
-	_component_loaders.emplace(componentName, onLoad);
+	_components.push_back(std::make_pair(componentName, onLoad));
 }
 
 void Blueprint::AddChild(const std::string& blueprintName) {
@@ -34,21 +33,12 @@ void Blueprint::AddChild(const std::string& blueprintName) {
 	_child_blueprints.push_back(blueprintName);
 }
 
-const std::vector<std::string> Blueprint::Components() const {
+const std::vector<std::pair<std::string, Blueprint::_ComponentLoader>>& Blueprint::Components() const {
 	return _components;
 }
 
-const std::vector<std::string> Blueprint::Children() const {
+const std::vector<std::string>& Blueprint::Children() const {
 	return _child_blueprints;
-}
-
-const Blueprint::_ComponentLoader& Blueprint::GetLoaderForComponent(const std::string& component) const {
-	auto iter = _component_loaders.find(component);
-	if (iter == _component_loaders.end()) {
-		throw std::runtime_error("Component not in blueprint: \"" + component + "\"");
-	}
-
-	return iter->second;
 }
 
 bool Blueprint::_HasChild(const std::string& name) const {

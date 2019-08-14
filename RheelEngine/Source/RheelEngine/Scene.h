@@ -17,9 +17,10 @@ class RE_API Scene {
 
 public:
 	/**
-	 * Adds a script to the scene. The script will go into effect immediately.
+	 * Adds a script to the scene. The script will go into effect immediately. A
+	 * pointer to the script is returned.
 	 */
-	void AddScript(const std::string& script);
+	ScriptPtr AddScript(const std::string& script);
 
 	/**
 	 * Returns a shared pointer to the script of the given type. A nullptr

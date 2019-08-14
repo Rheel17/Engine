@@ -2,24 +2,30 @@
 #define SCENEDESCRIPTION_H_
 #include "_common.h"
 
+#include <functional>
 #include <string>
 #include <vector>
+#include <tuple>
 
 #include "Color.h"
+#include "Script.h"
 
 namespace rheel {
 
 class RE_API SceneDescription {
 	friend class Scene;
 
-	struct ObjectDescription {
+private:
+	using _ScriptLoader = std::function<void(ScriptPtr)>;
+
+	struct _ObjectDescription {
 		std::string blueprint;
 		vec3 position;
 		quat rotation;
 		vec3 scale;
 	};
 
-	struct LightDescription {
+	struct _LightDescription {
 		int type;
 		std::string name;
 
@@ -34,7 +40,7 @@ class RE_API SceneDescription {
 		static constexpr int DIRECTIONAL_LIGHT = 2;
 	};
 
-	struct CameraDescription {
+	struct _CameraDescription {
 		int type;
 		std::string name;
 
@@ -45,7 +51,7 @@ class RE_API SceneDescription {
 		float perspective_near;
 		float perspective_far;
 
-		CameraDescription(std::string name, vec3 position, quat rotation, float fov, float near, float far);
+		_CameraDescription(std::string name, vec3 position, quat rotation, float fov, float near, float far);
 
 		static constexpr int PERSPECTIVE_CAMERA = 0;
 	};
@@ -67,7 +73,7 @@ public:
 	 * description, the scripts are the added first, to be able to notify the
 	 * scripts of other additions to the scene.
 	 */
-	void AddScript(std::string script);
+	void AddScript(const std::string& script, _ScriptLoader onLoad = [](ScriptPtr){});
 
 	/**
 	 * See: Scene::AddObject(...). When a scene is created from this
@@ -106,29 +112,31 @@ public:
 	/**
 	 * Returns the vector of script names in this scene description.
 	 */
-	const std::vector<std::string> Scripts() const { return _scripts; }
+	const std::vector<std::pair<std::string, _ScriptLoader>>& Scripts() const;
 
 	/**
 	 * Returns the vector of object descriptions in this scene description.
 	 */
-	const std::vector<ObjectDescription> ObjectDescriptions() const { return _objects; }
+	const std::vector<_ObjectDescription>& ObjectDescriptions() const;
 
 	/**
 	 * Returns the vector of light descriptions in this scene description.
 	 */
-	const std::vector<LightDescription> LightDescriptions() const { return _lights; }
+	const std::vector<_LightDescription>& LightDescriptions() const;
 
 	/**
 	 * Returns the vector of camera descriptions in this scene description.
 	 */
-	const std::vector<CameraDescription> CameraDescriptions() const { return _cameras; }
+	const std::vector<_CameraDescription>& CameraDescriptions() const;
 
 private:
 	std::string _name;
-	std::vector<std::string> _scripts;
-	std::vector<ObjectDescription> _objects;
-	std::vector<LightDescription> _lights;
-	std::vector<CameraDescription> _cameras;
+
+	std::vector<std::pair<std::string, _ScriptLoader>> _scripts;
+	std::vector<_ObjectDescription> _objects;
+	std::vector<_LightDescription> _lights;
+	std::vector<_CameraDescription> _cameras;
+
 
 };
 

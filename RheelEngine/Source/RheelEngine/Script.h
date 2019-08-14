@@ -15,8 +15,6 @@ class RE_API Script {
 public:
 	virtual ~Script() = default;
 
-	// TODO: add script parameters
-
 	/**
 	 * Called when the scene is updated, before the scene objects are updated.
 	 */
