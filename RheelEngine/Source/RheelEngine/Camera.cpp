@@ -2,7 +2,7 @@
 
 namespace rheel {
 
-Camera::Camera(std::string name, vec3 position, quat rotation) :
+Camera::Camera(std::string name, vec3 position, vec3 rotation) :
 		_name(std::move(name)),
 		_position(std::move(position)),
 		_rotation(std::move(rotation)) {
@@ -18,6 +18,7 @@ void Camera::SetPosition(float x, float y, float z) {
 	_position.x = x;
 	_position.y = y;
 	_position.z = z;
+	_CalculateViewMatrix();
 }
 
 void Camera::Move(const vec3& position) {
@@ -28,21 +29,24 @@ void Camera::Move(float x, float y, float z) {
 	_position.x += x;
 	_position.y += y;
 	_position.z += z;
+	_CalculateViewMatrix();
 }
 
 const vec3& Camera::Position() const {
 	return _position;
 }
 
-void Camera::SetRotation(const quat& rotation) {
+void Camera::SetRotation(const vec3& rotation) {
 	_rotation = rotation;
+	_CalculateViewMatrix();
 }
 
-void Camera::Rotate(const quat& rotation) {
+void Camera::Rotate(const vec3& rotation) {
 	_rotation *= rotation;
+	_CalculateViewMatrix();
 }
 
-const quat& Camera::Rotation() const {
+const vec3& Camera::Rotation() const {
 	return _rotation;
 }
 
@@ -51,8 +55,12 @@ const mat4& Camera::_ViewMatrix() const {
 }
 
 void Camera::_CalculateViewMatrix() {
-	_view_matrix = glm::translate(
-			glm::mat4_cast(_rotation),
+	mat4 rotation = glm::identity<mat4>();
+	rotation = glm::rotate(rotation, _rotation.x, { 1, 0, 0 });
+	rotation = glm::rotate(rotation, _rotation.y, { 0, 1, 0 });
+	rotation = glm::rotate(rotation, _rotation.z, { 0, 0, 1 });
+
+	_view_matrix = glm::translate(rotation,
 			vec3(-_position.x, -_position.y, _position.z));
 }
 

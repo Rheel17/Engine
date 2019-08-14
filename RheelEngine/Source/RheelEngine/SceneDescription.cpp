@@ -4,7 +4,7 @@
 
 namespace rheel {
 
-SceneDescription::_CameraDescription::_CameraDescription(std::string name, vec3 position, quat rotation, float fov, float near, float far) :
+SceneDescription::_CameraDescription::_CameraDescription(std::string name, vec3 position, vec3 rotation, float fov, float near, float far) :
 		type(PERSPECTIVE_CAMERA), name(std::move(name)),
 		position(std::move(position)), rotation(std::move(rotation)),
 		perspective_fov(fov), perspective_near(near), perspective_far(far) {}
@@ -37,7 +37,7 @@ void SceneDescription::AddDirectionalLight(std::string name, Color color, vec3 d
 	_lights.push_back(_LightDescription { _LightDescription::DIRECTIONAL_LIGHT, std::move(name), {}, std::move(direction), std::move(color), 0, 0 });
 }
 
-void SceneDescription::AddCamera(std::string name, float fov, float near, float far, vec3 position, quat rotation) {
+void SceneDescription::AddCamera(std::string name, float fov, float near, float far, vec3 position, vec3 rotation) {
 	_cameras.push_back(_CameraDescription(std::move(name), std::move(position), std::move(rotation), fov, near, far));
 }
 

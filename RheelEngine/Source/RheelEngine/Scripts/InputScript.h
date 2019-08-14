@@ -92,6 +92,7 @@ private:
 	void _OnMouseScroll(float x, float y);
 	void _ResetDeltas();
 
+	bool _got_mouse = false;
 	vec2 _mouse;
 	vec2 _mouse_delta;
 	vec2 _scroll;

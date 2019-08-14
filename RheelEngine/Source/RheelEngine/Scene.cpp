@@ -132,7 +132,7 @@ Light *Scene::AddDirectionalLight(Color color, vec3 direction) {
 	return &light;
 }
 
-void Scene::AddCamera(float fov, float near, float far, std::string name, vec3 position, quat rotation) {
+void Scene::AddCamera(float fov, float near, float far, std::string name, vec3 position, vec3 rotation) {
 	_cameras[name] = std::make_shared<PerspectiveCamera>(name, std::move(position), std::move(rotation), fov, near, far);
 }
 

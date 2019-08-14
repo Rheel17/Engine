@@ -3,6 +3,7 @@
 #include "../_common.h"
 
 #include "InputScript.h"
+#include "../Camera.h"
 
 namespace rheel {
 
@@ -14,8 +15,9 @@ public:
 	void PreOnUpdate() override;
 
 private:
-	std::string _camera;
+	void _Rotate(CameraPtr camera);
 
+	std::string _camera;
 };
 
 }

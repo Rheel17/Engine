@@ -56,8 +56,13 @@ void InputScript::_OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 
 void InputScript::_OnMouseMove(float x, float y) {
 	vec2 newPosition = { x, y };
-	_mouse_delta = newPosition - _mouse;
+
+	if (_got_mouse) {
+		_mouse_delta = newPosition - _mouse;
+	}
+
 	_mouse = newPosition;
+	_got_mouse = true;
 
 	OnMouseMove(x, y);
 }

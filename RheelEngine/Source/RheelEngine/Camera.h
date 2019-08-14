@@ -12,7 +12,7 @@ public:
 	/**
 	 * Creates a camera object with a starting position and rotation.
 	 */
-	Camera(std::string name, vec3 position, quat rotation);
+	Camera(std::string name, vec3 position, vec3 rotation);
 
 	virtual ~Camera() = default;
 
@@ -50,17 +50,17 @@ public:
 	/**
 	 * Sets the rotation of this camera.
 	 */
-	void SetRotation(const quat& rotation);
+	void SetRotation(const vec3& rotation);
 
 	/**
 	 * Rotates this camera relative to its current rotation.
 	 */
-	void Rotate(const quat& rotation);
+	void Rotate(const vec3& rotation);
 
 	/**
 	 * Returns the rotation of this camera.
 	 */
-	const quat& Rotation() const;
+	const vec3& Rotation() const;
 
 protected:
 
@@ -75,7 +75,7 @@ private:
 
 	std::string _name;
 	vec3 _position;
-	quat _rotation;
+	vec3 _rotation;
 
 	mat4 _view_matrix;
 
