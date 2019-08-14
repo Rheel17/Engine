@@ -35,6 +35,9 @@ protected:
 private:
 	Scene *_parent_scene = nullptr;
 
+public:
+	static constexpr auto NAME_EULER_CAMERA_CONTROLLER = "engine:euler_camera_controller";
+
 };
 
 using ScriptPtr = std::shared_ptr<Script>;

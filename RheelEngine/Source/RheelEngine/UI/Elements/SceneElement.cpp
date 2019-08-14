@@ -34,6 +34,10 @@ void SceneElement::OnFocusGained() {
 }
 
 void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+	if (!_scene) {
+		return;
+	}
+
 	for (const auto& script : _scene->Scripts()) {
 		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
 			inputScript->_OnKeyPress(key, scancode, mods);
@@ -42,6 +46,10 @@ void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::M
 }
 
 void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+	if (!_scene) {
+		return;
+	}
+
 	for (const auto& script : _scene->Scripts()) {
 		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
 			inputScript->_OnKeyRelease(key, scancode, mods);
@@ -50,6 +58,10 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 }
 
 void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
+	if (!_scene) {
+		return;
+	}
+
 	for (const auto& script : _scene->Scripts()) {
 		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
 			inputScript->_OnMouseButtonPress(button, mods);
@@ -58,6 +70,10 @@ void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifier
 }
 
 void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
+	if (!_scene) {
+		return;
+	}
+
 	for (const auto& script : _scene->Scripts()) {
 		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
 			inputScript->_OnMouseButtonRelease(button, mods);
@@ -66,6 +82,10 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 }
 
 void SceneElement::OnMouseMove(float x, float y) {
+	if (!_scene) {
+		return;
+	}
+
 	for (const auto& script : _scene->Scripts()) {
 		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
 			inputScript->_OnMouseMove(x, y);
@@ -74,6 +94,10 @@ void SceneElement::OnMouseMove(float x, float y) {
 }
 
 void SceneElement::OnMouseScroll(float x, float y) {
+	if (!_scene) {
+		return;
+	}
+
 	for (const auto& script : _scene->Scripts()) {
 		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
 			inputScript->_OnMouseScroll(x, y);

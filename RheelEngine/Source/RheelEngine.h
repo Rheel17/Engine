@@ -8,6 +8,8 @@
 
 #include "RheelEngine/Components/ModelRenderComponent.h"
 
+#include "RheelEngine/Scripts/EulerCameraController.h"
+
 #include "RheelEngine/UI/Elements/ColorElement.h"
 #include "RheelEngine/UI/Elements/EmptyElement.h"
 #include "RheelEngine/UI/Elements/SceneElement.h"
