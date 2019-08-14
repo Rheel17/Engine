@@ -68,6 +68,18 @@ public:
 	bool HasFocus() const;
 
 	/**
+	 * Sets the drag-enabled flag for this element. If this is set to true, the
+	 * OnMouseDrag() method will be called when the mouse is moved while a
+	 * button is pressed.
+	 */
+	void SetDragEnabled(bool drag);
+
+	/**
+	 * Returns whether the drag is enabled for this element.
+	 */
+	bool IsDragEnabled() const;
+
+	/**
 	 * Set the bounds of this Element, in pixel space. If this element is a
 	 * child of a Container, this method is called when the parent container is
 	 * layed-out.
@@ -241,6 +253,7 @@ private:
 	unsigned _default_width = 20;
 	unsigned _default_height = 20;
 	bool _focusable = false;
+	bool _drag_enabled = false;
 
 protected:
 	/**

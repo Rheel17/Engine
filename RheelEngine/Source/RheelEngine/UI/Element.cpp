@@ -50,6 +50,14 @@ bool Element::HasFocus() const {
 	return RootContainer()->ParentUI()->FocusElement() == this;
 }
 
+void Element::SetDragEnabled(bool drag) {
+	_drag_enabled = drag;
+}
+
+bool Element::IsDragEnabled() const {
+	return _drag_enabled;
+}
+
 void Element::SetBounds(Element::Bounds bounds) {
 	_has_initialized_bounds = true;
 

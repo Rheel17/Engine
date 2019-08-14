@@ -1,6 +1,7 @@
 #include "SceneElement.h"
 
 #include "../../Engine.h"
+#include "../../Scripts/InputScript.h"
 
 namespace rheel {
 
@@ -30,6 +31,54 @@ void SceneElement::Draw() const {
 
 void SceneElement::OnFocusGained() {
 	RootContainer()->ParentUI()->GrabMouse(this);
+}
+
+void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+	for (const auto& script : _scene->Scripts()) {
+		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+			inputScript->_OnKeyPress(key, scancode, mods);
+		}
+	}
+}
+
+void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+	for (const auto& script : _scene->Scripts()) {
+		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+			inputScript->_OnKeyRelease(key, scancode, mods);
+		}
+	}
+}
+
+void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
+	for (const auto& script : _scene->Scripts()) {
+		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+			inputScript->_OnMouseButtonPress(button, mods);
+		}
+	}
+}
+
+void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
+	for (const auto& script : _scene->Scripts()) {
+		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+			inputScript->_OnMouseButtonRelease(button, mods);
+		}
+	}
+}
+
+void SceneElement::OnMouseMove(float x, float y) {
+	for (const auto& script : _scene->Scripts()) {
+		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+			inputScript->_OnMouseMove(x, y);
+		}
+	}
+}
+
+void SceneElement::OnMouseScroll(float x, float y) {
+	for (const auto& script : _scene->Scripts()) {
+		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+			inputScript->_OnMouseScroll(x, y);
+		}
+	}
 }
 
 void SceneElement::_InitializeRenderer(const Bounds& bounds) const {

@@ -39,6 +39,11 @@ public:
 	}
 
 	/**
+	 * Returns all the scripts currently in this scene
+	 */
+	const std::vector<ScriptPtr>& Scripts() const;
+
+	/**
 	 * Adds an object to the scene with the given blueprint. A position and
 	 * rotation can be specified, but if not, the default (origin, no rotation)
 	 * are used.

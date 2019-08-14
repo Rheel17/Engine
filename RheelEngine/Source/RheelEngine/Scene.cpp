@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "PerspectiveCamera.h"
 #include "Renderer/SceneRenderManager.h"
+#include "Scripts/InputScript.h"
 
 namespace rheel {
 
@@ -68,6 +69,10 @@ void Scene::AddScript(const std::string& script) {
 	ScriptPtr instance = Engine::CreateScript(script);
 	instance->_parent_scene = this;
 	_scripts.push_back(instance);
+}
+
+const std::vector<ScriptPtr>& Scene::Scripts() const {
+	return _scripts;
 }
 
 void Scene::AddObject(const std::string& blueprintName, const vec3& position, const quat& rotation, const vec3& scale) {
@@ -174,6 +179,13 @@ void Scene::Update() {
 
 	SceneRenderManager& renderManager = Engine::GetSceneRenderManager(this);
 	renderManager.Update();
+
+	// reset the input scripts
+	for (auto script : _scripts) {
+		if (auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+			inputScript->_ResetDeltas();
+		}
+	}
 }
 
 }
