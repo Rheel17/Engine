@@ -34,7 +34,7 @@ void SceneElement::OnFocusGained() {
 }
 
 void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
-	if (!_scene) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
@@ -46,7 +46,7 @@ void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::M
 }
 
 void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
-	if (!_scene) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
@@ -58,7 +58,7 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 }
 
 void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
-	if (!_scene) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
@@ -70,7 +70,7 @@ void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifier
 }
 
 void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
-	if (!_scene) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
@@ -81,26 +81,26 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 	}
 }
 
-void SceneElement::OnMouseMove(float x, float y) {
-	if (!_scene) {
+void SceneElement::OnMouseMove(const vec2& position) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
 		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
-			inputScript->_OnMouseMove(x, y);
+			inputScript->_OnMouseMove(position);
 		}
 	}
 }
 
-void SceneElement::OnMouseScroll(float x, float y) {
-	if (!_scene) {
+void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
 		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
-			inputScript->_OnMouseScroll(x, y);
+			inputScript->_OnMouseScroll(scrollComponents);
 		}
 	}
 }

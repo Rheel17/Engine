@@ -1,7 +1,5 @@
 #include "ColorElement.h"
 
-#include <iostream>
-
 namespace rheel {
 
 ColorElement::ColorElement(Color color) :

@@ -84,22 +84,28 @@ void UI::OnMouseMove(float x, float y) {
 	_mouse.x = x;
 	_mouse.y = y;
 
+	if (_mouse_down_count > 0) {
+		// a mouse button is down, so we drag
+		_mouseover_element->OnMouseDrag(_mouse_down_position, _mouse);
+		return;
+	}
+
 	Element *newMouseOverElement = ElementAt((unsigned) x, (unsigned) y);
 
 	if (newMouseOverElement != _mouseover_element && !_mouse_grabbed) {
 		if (_mouseover_element) {
-			_mouseover_element->OnMouseExit(x, y);
+			_mouseover_element->OnMouseExit(_mouse);
 		}
 
 		_mouseover_element = newMouseOverElement;
 
 		if (_mouseover_element) {
-			_mouseover_element->OnMouseEnter(x, y);
+			_mouseover_element->OnMouseEnter(_mouse);
 		}
 	}
 
 	if (_mouseover_element) {
-		_mouseover_element->OnMouseMove(x, y);
+		_mouseover_element->OnMouseMove(_mouse);
 	}
 }
 
@@ -107,6 +113,10 @@ void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::M
 	if (_mouseover_element) {
 		switch (action) {
 			case Input::Action::PRESS:
+				if (++_mouse_down_count == 1) {
+					_mouse_down_position = _mouse;
+				}
+
 				if (_mouseover_element->IsFocusable()) {
 					RequestFocus(_mouseover_element);
 				}
@@ -116,6 +126,7 @@ void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::M
 			case Input::Action::REPEAT:
 				break;
 			case Input::Action::RELEASE:
+				_mouse_down_count--;
 				_mouseover_element->OnMouseButtonRelease(button, mods);
 				break;
 		}
@@ -124,9 +135,9 @@ void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::M
 
 void UI::OnScroll(float x, float y) {
 	if (_mouseover_element) {
-		_mouseover_element->OnMouseScroll(x, y);
+		_mouseover_element->OnMouseScroll({ x, y });
 	} else if (_focus_element) {
-		_focus_element->OnMouseScroll(x, y);
+		_focus_element->OnMouseScroll({ x, y });
 	}
 }
 

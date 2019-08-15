@@ -35,8 +35,8 @@ public:
 	void OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) override;
 	void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) override;
 	void OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) override;
-	void OnMouseMove(float x, float y) override;
-	void OnMouseScroll(float x, float y) override;
+	void OnMouseMove(const vec2& position) override;
+	void OnMouseScroll(const vec2& scrollComponents) override;
 
 private:
 	void _InitializeRenderer(const Bounds& bounds) const;

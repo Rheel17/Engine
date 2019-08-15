@@ -54,23 +54,21 @@ void InputScript::_OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 	OnMouseButtonRelease(button, mods);
 }
 
-void InputScript::_OnMouseMove(float x, float y) {
-	vec2 newPosition = { x, y };
-
+void InputScript::_OnMouseMove(const vec2& position) {
 	if (_got_mouse) {
-		_mouse_delta = newPosition - _mouse;
+		_mouse_delta = position - _mouse;
 	}
 
-	_mouse = newPosition;
+	_mouse = position;
 	_got_mouse = true;
 
-	OnMouseMove(x, y);
+	OnMouseMove(position);
 }
 
-void InputScript::_OnMouseScroll(float x, float y) {
-	_scroll = { x, y };
+void InputScript::_OnMouseScroll(const vec2& scrollComponents) {
+	_scroll = scrollComponents;
 
-	OnMouseScroll(x, y);
+	OnMouseScroll(scrollComponents);
 }
 
 void InputScript::_ResetDeltas() {

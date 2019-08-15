@@ -89,6 +89,9 @@ private:
 	bool _mouse_grabbed = false;
 	vec2 _mouse;
 
+	unsigned _mouse_down_count = 0;
+	vec2 _mouse_down_position;
+
 };
 
 using UIPtr = std::shared_ptr<UI>;
