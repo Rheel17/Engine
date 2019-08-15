@@ -16,9 +16,9 @@ public:
 
 
 public:
-	Light(vec3 position, Color_t color, float attenuation);
-	Light(vec3 position, Color_t color, vec3 direction, float spotAttenuation, float attenuation);
-	Light(Color_t color, vec3 direction);
+	Light(vec3 position, Color_t color, float attenuation, bool castsShadows);
+	Light(vec3 position, Color_t color, vec3 direction, float spotAttenuation, float attenuation, bool castsShadows);
+	Light(Color_t color, vec3 direction, bool castsShadows);
 
 	LightType Type() const;
 	const vec3& Position() const;
@@ -26,6 +26,7 @@ public:
 	const Color_t& Color() const;
 	float Attenuation() const;
 	float SpotAttenuation() const;
+	bool CastsShadows() const;
 
 private:
 	LightType _type;
@@ -34,6 +35,7 @@ private:
 	Color_t _color;
 	float _attenuation = 0.0f;
 	float _spot_attenuation = 0.0f;
+	bool _casts_shadows = false;
 
 };
 

@@ -95,38 +95,19 @@ void Scene::RemoveObject(ObjectPtr ptr) {
 	_objects.erase(_objects.begin() + index);
 }
 
-void Scene::AddPointLight(const std::string& name, vec3 position, Color color, float attenuation) {
-	Light& light = _lights.emplace_back(std::move(position), std::move(color), attenuation);
+void Scene::AddPointLight(const std::string& name, vec3 position, Color color, bool castsShadows, float attenuation) {
+	Light& light = _lights.emplace_back(std::move(position), std::move(color), attenuation, castsShadows);
 	_light_map.insert({ name, &light });
 }
 
-Light *Scene::AddPointLight(vec3 position, Color color, float attenuation) {
-	Light& light = _lights.emplace_back(std::move(position), std::move(color), attenuation);
-	return &light;
-}
-
-void Scene::AddSpotLight(const std::string& name, vec3 position, Color color, vec3 direction, float spotAttenuation, float attenuation) {
-	Light& light = _lights.emplace_back(std::move(position), std::move(color), std::move(direction), spotAttenuation, attenuation);
+void Scene::AddSpotLight(const std::string& name, vec3 position, Color color, vec3 direction, bool castsShadows, float spotAttenuation, float attenuation) {
+	Light& light = _lights.emplace_back(std::move(position), std::move(color), std::move(direction), spotAttenuation, attenuation, castsShadows);
 	_light_map.insert({ name, &light });
 }
 
-Light *Scene::AddSpotLight(vec3 position, Color color, vec3 direction, float spotAttenuation, float attenuation) {
-	Light& light = _lights.emplace_back(std::move(position), std::move(color), std::move(direction), spotAttenuation, attenuation);
-	return &light;
-}
-
-void Scene::AddDirectionalLight(const std::string& name, Color color, vec3 direction) {
-	Light& light = _lights.emplace_back(std::move(color), glm::normalize(std::move(direction)));
+void Scene::AddDirectionalLight(const std::string& name, Color color, vec3 direction, bool castsShadows) {
+	Light& light = _lights.emplace_back(std::move(color), glm::normalize(std::move(direction)), castsShadows);
 	_light_map.insert({ name, &light });
-}
-
-Light *Scene::AddDirectionalLight(Color color, vec3 direction) {
-	Light& light = _lights.emplace_back(std::move(color), std::move(direction));
-	return &light;
-}
-
-void Scene::AddCamera(float fov, float near, float far, std::string name, vec3 position, vec3 rotation) {
-	_cameras[name] = std::make_shared<PerspectiveCamera>(name, std::move(position), std::move(rotation), fov, near, far);
 }
 
 Light *Scene::GetLight(const std::string& lightName) {
@@ -138,6 +119,14 @@ Light *Scene::GetLight(const std::string& lightName) {
 	return iter->second;
 }
 
+const std::vector<Light>& Scene::Lights() const {
+	return _lights;
+}
+
+void Scene::AddCamera(float fov, float near, float far, std::string name, vec3 position, vec3 rotation) {
+	_cameras[name] = std::make_shared<PerspectiveCamera>(name, std::move(position), std::move(rotation), fov, near, far);
+}
+
 CameraPtr Scene::GetCamera(const std::string& cameraName) {
 	auto iter = _cameras.find(cameraName);
 	if (iter == _cameras.end()) {
@@ -145,10 +134,6 @@ CameraPtr Scene::GetCamera(const std::string& cameraName) {
 	}
 
 	return iter->second;
-}
-
-const std::vector<Light>& Scene::Lights() const {
-	return _lights;
 }
 
 void Scene::Update(float dt) {

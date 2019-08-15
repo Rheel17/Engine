@@ -59,35 +59,17 @@ public:
 	/**
 	 * Adds a named point light to the scene.
 	 */
-	void AddPointLight(const std::string& name, vec3 position, Color color, float attenuation = 0.0f);
-
-	/**
-	 * Adds an unnamed point light to the scene. Returns a pointer to the
-	 * generated light.
-	 */
-	Light *AddPointLight(vec3 position, Color color, float attenuation = 0.0f);
+	void AddPointLight(const std::string& name, vec3 position, Color color, bool castsShadows = false, float attenuation = 0.0f);
 
 	/**
 	 * Adds a named spot light to the scene.
 	 */
-	void AddSpotLight(const std::string& name, vec3 position, Color color, vec3 direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
-
-	/**
-	 * Adds an unnamed spot light to the scene. Returns a pointer to the
-	 * generated light.
-	 */
-	Light *AddSpotLight(vec3 position, Color color, vec3 direction, float spotAttenuation = 0.0f, float attenuation = 0.0f);
+	void AddSpotLight(const std::string& name, vec3 position, Color color, vec3 direction, bool castsShadows = false, float spotAttenuation = 1.0f, float attenuation = 0.0f);
 
 	/**
 	 * Adds a named directional (sun-like) light to the scene.
 	 */
-	void AddDirectionalLight(const std::string& name, Color color, vec3 direction);
-
-	/**
-	 * Adds an unnamed directional (sun-like) light to the scene. Returns a
-	 * pointer to the generated light.
-	 */
-	Light *AddDirectionalLight(Color color, vec3 direction);
+	void AddDirectionalLight(const std::string& name, Color color, vec3 direction, bool castsShadows = false);
 
 	/**
 	 * Returns a pointer to the light in this scene with the given name, or

@@ -48,6 +48,8 @@ private:
 		float attenuation;
 		float spot_attenuation;
 
+		bool casts_shadows;
+
 		static constexpr int POINT_LIGHT = 0;
 		static constexpr int SPOT_LIGHT = 1;
 		static constexpr int DIRECTIONAL_LIGHT = 2;
@@ -104,21 +106,21 @@ public:
 	 * description, the lights are added after the objects and before the
 	 * cameras.
 	 */
-	void AddPointLight(std::string name, vec3 position, Color color, float attenuation = 0.0f);
+	void AddPointLight(std::string name, vec3 position, Color color, bool castsShadows = false, float attenuation = 0.0f);
 
 	/**
 	 * See: Scene::AddSpotLight(...). When a scene is created from this
 	 * description, the lights are added after the objects and before the
 	 * cameras.
 	 */
-	void AddSpotLight(std::string name, vec3 position, Color color, vec3 direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
+	void AddSpotLight(std::string name, vec3 position, Color color, vec3 direction, bool castsShadows = false, float spotAttenuation = 1.0f, float attenuation = 0.0f);
 
 	/**
 	 * See: Scene::AddDirectionalLight(...). When a scene is created from this
 	 * description, the lights are added after the objects and before the
 	 * cameras.
 	 */
-	void AddDirectionalLight(std::string name, Color color, vec3 direction);
+	void AddDirectionalLight(std::string name, Color color, vec3 direction, bool castsShadows = false);
 
 	/**
 	 * See: Scene::AddCamera(...). When a scene is created from this

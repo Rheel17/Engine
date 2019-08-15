@@ -33,16 +33,16 @@ SceneDescription::ObjectDescription& SceneDescription::AddObject(std::string blu
 	return _objects.emplace_back(description);
 }
 
-void SceneDescription::AddPointLight(std::string name, vec3 position, Color color, float attenuation) {
-	_lights.push_back(_LightDescription { _LightDescription::POINT_LIGHT, std::move(name), std::move(position), {}, std::move(color), attenuation, 0 });
+void SceneDescription::AddPointLight(std::string name, vec3 position, Color color, bool castsShadows, float attenuation) {
+	_lights.push_back(_LightDescription { _LightDescription::POINT_LIGHT, std::move(name), std::move(position), {}, std::move(color), attenuation, 0, castsShadows });
 }
 
-void SceneDescription::AddSpotLight(std::string name, vec3 position, Color color, vec3 direction, float spotAttenuation, float attenuation) {
-	_lights.push_back(_LightDescription { _LightDescription::SPOT_LIGHT, std::move(name), std::move(position), std::move(direction), std::move(color), attenuation, spotAttenuation });
+void SceneDescription::AddSpotLight(std::string name, vec3 position, Color color, vec3 direction, bool castsShadows, float spotAttenuation, float attenuation) {
+	_lights.push_back(_LightDescription { _LightDescription::SPOT_LIGHT, std::move(name), std::move(position), std::move(direction), std::move(color), attenuation, spotAttenuation, castsShadows });
 }
 
-void SceneDescription::AddDirectionalLight(std::string name, Color color, vec3 direction) {
-	_lights.push_back(_LightDescription { _LightDescription::DIRECTIONAL_LIGHT, std::move(name), {}, std::move(direction), std::move(color), 0, 0 });
+void SceneDescription::AddDirectionalLight(std::string name, Color color, vec3 direction, bool castsShadows) {
+	_lights.push_back(_LightDescription { _LightDescription::DIRECTIONAL_LIGHT, std::move(name), {}, std::move(direction), std::move(color), 0, 0, castsShadows });
 }
 
 void SceneDescription::AddCamera(std::string name, float fov, float near, float far, vec3 position, vec3 rotation) {
