@@ -101,7 +101,7 @@ public:
 	/**
 	 * Updates all the scenes.
 	 */
-	static void UpdateScenes();
+	static void UpdateScenes(float dt);
 
 	/**
 	 * Registers a blueprint for future use.

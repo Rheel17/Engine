@@ -96,9 +96,9 @@ Scene *Engine::GetActiveScene() {
 	return _instance.active_scene;
 }
 
-void Engine::UpdateScenes() {
+void Engine::UpdateScenes(float dt) {
 	for (auto scene : _instance.scenes) {
-		scene->Update();
+		scene->Update(dt);
 	}
 }
 

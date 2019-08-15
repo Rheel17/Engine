@@ -114,7 +114,7 @@ public:
 	/**
 	 * Updates the scene and all the objects in the scene.
 	 */
-	void Update();
+	void Update(float dt);
 
 private:
 	Scene() = default;

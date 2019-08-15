@@ -158,9 +158,10 @@ const std::vector<Light>& Scene::Lights() const {
 	return _lights;
 }
 
-void Scene::Update() {
+void Scene::Update(float dt) {
 	// pre-update the scripts
 	for (auto script : _scripts) {
+		script->_dt = dt;
 		script->PreOnUpdate();
 	}
 

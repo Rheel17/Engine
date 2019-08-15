@@ -62,22 +62,30 @@ public:
 	 */
 	const vec3& Rotation() const;
 
-protected:
+	/**
+	 * Returns the rotation matrix of this camera.
+	 */
+	const mat4& RotationMatrix() const;
 
 	/**
 	 * Returns the view matrix of this camera, defined by the position and
 	 * rotation.
 	 */
-	const mat4& _ViewMatrix() const;
+	const mat4& ViewMatrix() const;
 
 private:
-	void _CalculateViewMatrix();
+	void _CalculateRotationMatrix() const;
+	void _CalculateViewMatrix() const;
 
 	std::string _name;
 	vec3 _position;
 	vec3 _rotation;
 
-	mat4 _view_matrix;
+	mutable mat4 _rotation_matrix;
+	mutable mat4 _view_matrix;
+
+	mutable bool _rotation_dirty;
+	mutable bool _position_dirty;
 
 };
 

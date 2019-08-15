@@ -29,9 +29,11 @@ protected:
 	Script() = default;
 
 	Scene& Parent() { return *_parent_scene; }
+	float TimeDelta() { return _dt; }
 
 private:
 	Scene *_parent_scene = nullptr;
+	float _dt = 0.016f;
 
 public:
 	static constexpr auto NAME_EULER_CAMERA_CONTROLLER = "engine:euler_camera_controller";

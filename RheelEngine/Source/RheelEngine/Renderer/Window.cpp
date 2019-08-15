@@ -121,14 +121,32 @@ void Window::Show() {
 void Window::Loop() {
 	GLFWwindow *window = getWindow(_window_handle);
 
-	// run the window
-	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	double time = 0.0;
 
-		Engine::UpdateScenes();
+	while (!glfwWindowShouldClose(window)) {
+		// handle all input events
+		glfwPollEvents();
+
+		// calculate the time delta
+		float dt;
+		double newTime = glfwGetTime();
+
+		if (time == 0.0) {
+			dt = 1.0f / 60.0f;
+		} else {
+			dt = static_cast<float>(newTime - time);
+		}
+
+		time = newTime;
+
+		// update the scenes
+		Engine::UpdateScenes(dt);
+
+		// draw the game
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Engine::GetUI().Draw();
 
+		// finish the update/render cycle
 		glfwSwapBuffers(window);
 	}
 }
