@@ -176,7 +176,7 @@ public:
 	/**
 	 * Draws the container.
 	 */
-	void Draw() const override;
+	void Draw(float dt) const override;
 
 	/**
 	 * Called when this element has been resized.

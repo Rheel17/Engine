@@ -18,7 +18,7 @@ class RE_API SceneRenderer {
 public:
 	void SetSize(unsigned width, unsigned height);
 
-	void Render() const;
+	void Render(float dt) const;
 
 	const GLTexture2D& OutputTexture() const;
 

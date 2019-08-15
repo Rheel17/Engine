@@ -26,7 +26,7 @@ public:
 	 */
 	SceneElement(Scene *scene, std::string cameraName);
 
-	void Draw() const override;
+	void Draw(float dt) const override;
 
 	void OnFocusGained() override;
 

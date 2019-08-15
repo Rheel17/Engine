@@ -144,7 +144,7 @@ void Window::Loop() {
 
 		// draw the game
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		Engine::GetUI().Draw();
+		Engine::GetUI().Draw(dt);
 
 		// finish the update/render cycle
 		glfwSwapBuffers(window);

@@ -14,7 +14,7 @@ public:
 	 */
 	EmptyElement(unsigned width, unsigned height);
 
-	void Draw() const override {}
+	void Draw(float dt) const override {}
 
 };
 

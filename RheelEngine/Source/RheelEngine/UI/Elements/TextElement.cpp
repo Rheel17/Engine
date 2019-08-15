@@ -42,7 +42,7 @@ TextElement::TextElement(std::wstring text, Font& font, unsigned size) :
 	}
 }
 
-void TextElement::Draw() const {
+void TextElement::Draw(float dt) const {
 	const Bounds& bounds = GetBounds();
 
 	unsigned textBounds = _font_ascend + _font_descend;

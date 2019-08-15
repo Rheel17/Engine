@@ -115,7 +115,7 @@ public:
 	/**
 	 * Draws this UI element.
 	 */
-	virtual void Draw() const = 0;
+	virtual void Draw(float dt) const = 0;
 
 	/**
 	 * Called when this element has been resized.

@@ -61,7 +61,7 @@ public:
 	/**
 	 * Draws this UI
 	 */
-	void Draw() const;
+	void Draw(float dt) const;
 
 	void OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, Input::Modifiers mods);
 

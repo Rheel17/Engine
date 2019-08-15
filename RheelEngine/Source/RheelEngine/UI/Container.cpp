@@ -265,9 +265,9 @@ void Container::Layout() {
 	}
 }
 
-void Container::Draw() const {
+void Container::Draw(float dt) const {
 	for (auto elem : _elements) {
-		elem->Draw();
+		elem->Draw(dt);
 	}
 }
 

@@ -17,7 +17,7 @@ SceneElement::SceneElement(Scene *scene, std::string cameraName) :
 	SetFocusable(true);
 }
 
-void SceneElement::Draw() const {
+void SceneElement::Draw(float dt) const {
 	const Bounds& bounds = GetBounds();
 	_InitializeRenderer(bounds);
 
@@ -25,7 +25,7 @@ void SceneElement::Draw() const {
 		return;
 	}
 
-	_scene_renderer->Render();
+	_scene_renderer->Render(dt);
 	_DrawTexturedQuad(bounds, _scene_renderer->OutputTexture());
 }
 

@@ -32,7 +32,7 @@ public:
 	 */
 	TextElement(std::wstring text, Font& font, unsigned size);
 
-	void Draw() const override;
+	void Draw(float dt) const override;
 
 private:
 	std::string _text;

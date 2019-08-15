@@ -54,8 +54,8 @@ void UI::ReleaseMouse() {
 	_mouse_grabbed = false;
 }
 
-void UI::Draw() const {
-	_ui_container.Draw();
+void UI::Draw(float dt) const {
+	_ui_container.Draw(dt);
 }
 
 void UI::OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, Input::Modifiers mods) {

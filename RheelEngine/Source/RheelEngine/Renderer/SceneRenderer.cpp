@@ -36,7 +36,7 @@ void SceneRenderer::SetSize(unsigned width, unsigned height) {
 	_result_buffer = _result_buffer.ResizedCopy(width, height);
 }
 
-void SceneRenderer::Render() const {
+void SceneRenderer::Render(float dt) const {
 	// get the camera
 	CameraPtr camera = _manager->Scene()->GetCamera(_camera_name);
 
