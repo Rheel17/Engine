@@ -45,7 +45,6 @@ static Blueprint createCubeBlueprint() {
 	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](ComponentPtr c) {
 		ModelRenderComponent *component = static_cast<ModelRenderComponent *>(c.get());
 		component->SetModel(model);
-		component->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 1.0f));
 	});
 
 //	blueprint.AddComponent("RandomRemove");
@@ -65,12 +64,22 @@ static SceneDescription createSceneDescription() {
 
 	for (int i = -2; i <= 2; i++) {
 		for (int j = -2; j <= 2; j++) {
-			description.AddObject("cube", { 4 * i, 0, 4 * j });
+			auto& cube = description.AddObject("cube", { 4 * i, 0, 4 * j });
+			cube.loader = [](ObjectPtr object) {
+				auto renderer = object->GetComponent<ModelRenderComponent>();
+				renderer->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 1.0f));
+			};
 		}
 	}
 
-	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0, -1, -1 });
-	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 2, -10 });
+	auto& floor = description.AddObject("cube", { 0, -2, 0 }, quat(), { 20, 1, 20 });
+	floor.loader = [](ObjectPtr object) {
+		auto renderer = object->GetComponent<ModelRenderComponent>();
+		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 1.0f));
+	};
+
+	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0, -2, -1 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 3, -20 });
 
 	return description;
 }

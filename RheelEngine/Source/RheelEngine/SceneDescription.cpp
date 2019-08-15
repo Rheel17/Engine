@@ -4,6 +4,13 @@
 
 namespace rheel {
 
+SceneDescription::ObjectDescription::ObjectDescription(const std::string& blueprint, const vec3& position, const quat& rotation, const vec3& scale) :
+		_blueprint(blueprint), _position(position), _rotation(rotation), _scale(scale) {
+
+	loader = [](ObjectPtr){};
+}
+
+
 SceneDescription::_CameraDescription::_CameraDescription(std::string name, vec3 position, vec3 rotation, float fov, float near, float far) :
 		type(PERSPECTIVE_CAMERA), name(std::move(name)),
 		position(std::move(position)), rotation(std::move(rotation)),
@@ -17,12 +24,13 @@ void SceneDescription::AddScript(const std::string& script, _ScriptLoader onLoad
 	_scripts.push_back(std::make_pair(script, onLoad));
 }
 
-void SceneDescription::AddObject(std::string blueprint, vec3 position, quat rotation, vec3 scale) {
+SceneDescription::ObjectDescription& SceneDescription::AddObject(std::string blueprint, vec3 position, quat rotation, vec3 scale) {
 	if (!Engine::HasBlueprint(blueprint)) {
 		throw std::runtime_error("Blueprint not registered: \"" + blueprint + "\"");
 	}
 
-	_objects.push_back({ std::move(blueprint), std::move(position), std::move(rotation), std::move(scale) });
+	ObjectDescription description = ObjectDescription(blueprint, position, rotation, scale);
+	return _objects.emplace_back(description);
 }
 
 void SceneDescription::AddPointLight(std::string name, vec3 position, Color color, float attenuation) {
@@ -45,7 +53,7 @@ const std::vector<std::pair<std::string, SceneDescription::_ScriptLoader>>& Scen
 	return _scripts;
 }
 
-const std::vector<SceneDescription::_ObjectDescription>& SceneDescription::ObjectDescriptions() const {
+const std::vector<SceneDescription::ObjectDescription>& SceneDescription::ObjectDescriptions() const {
 	return _objects;
 }
 

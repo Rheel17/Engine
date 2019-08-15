@@ -9,22 +9,35 @@
 
 #include "Color.h"
 #include "Script.h"
+#include "ObjectPtr.h"
 
 namespace rheel {
 
 class RE_API SceneDescription {
 	friend class Scene;
 
-private:
 	using _ScriptLoader = std::function<void(ScriptPtr)>;
+	using _ObjectLoader = std::function<void(ObjectPtr)>;
 
-	struct _ObjectDescription {
-		std::string blueprint;
-		vec3 position;
-		quat rotation;
-		vec3 scale;
-	};
+public:
+	class ObjectDescription {
+			friend class SceneDescription;
+			friend class Scene;
 
+		public:
+			ObjectDescription(const std::string& blueprint, const vec3& position, const quat& rotation, const vec3& scale);
+
+			_ObjectLoader loader;
+
+		private:
+			std::string _blueprint;
+			vec3 _position;
+			quat _rotation;
+			vec3 _scale;
+
+		};
+
+private:
 	struct _LightDescription {
 		int type;
 		std::string name;
@@ -79,8 +92,12 @@ public:
 	 * See: Scene::AddObject(...). When a scene is created from this
 	 * description, the objects are added after the scripts and before the
 	 * lights.
+	 *
+	 * This methods returns a reference to the created object description. This
+	 * can be used to set parameters. Storing this reference will lead to
+	 * invalid memory.
 	 */
-	void AddObject(std::string blueprint, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0), vec3 scale = { 1, 1, 1 });
+	SceneDescription::ObjectDescription& AddObject(std::string blueprint, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0), vec3 scale = { 1, 1, 1 });
 
 	/**
 	 * See: Scene::AddPointLight(...). When a scene is create from this
@@ -117,7 +134,7 @@ public:
 	/**
 	 * Returns the vector of object descriptions in this scene description.
 	 */
-	const std::vector<_ObjectDescription>& ObjectDescriptions() const;
+	const std::vector<ObjectDescription>& ObjectDescriptions() const;
 
 	/**
 	 * Returns the vector of light descriptions in this scene description.
@@ -133,7 +150,7 @@ private:
 	std::string _name;
 
 	std::vector<std::pair<std::string, _ScriptLoader>> _scripts;
-	std::vector<_ObjectDescription> _objects;
+	std::vector<ObjectDescription> _objects;
 	std::vector<_LightDescription> _lights;
 	std::vector<_CameraDescription> _cameras;
 

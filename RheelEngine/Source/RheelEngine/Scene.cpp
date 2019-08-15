@@ -16,10 +16,7 @@ Scene::Scene(const SceneDescription& description) {
 
 	// second: add the objects
 	for (const auto& objectDescription : description.ObjectDescriptions()) {
-		AddObject(objectDescription.blueprint,
-				objectDescription.position,
-				objectDescription.rotation,
-				objectDescription.scale);
+		_AddObject(objectDescription);
 	}
 
 	// third: add the lights
@@ -78,15 +75,11 @@ const std::vector<ScriptPtr>& Scene::Scripts() const {
 }
 
 void Scene::AddObject(const std::string& blueprintName, const vec3& position, const quat& rotation, const vec3& scale) {
-	const Blueprint& blueprint = Engine::GetBlueprint(blueprintName);
-	Object& object = _objects.emplace_back(blueprint);
-	object._SetParentScene(this);
+	SceneDescription::ObjectDescription object = SceneDescription::ObjectDescription(
+			blueprintName, position, rotation, scale
+	);
 
-	object.SetPosition(position);
-	object.SetRotation(rotation);
-	object.SetScale(scale);
-
-	object.FireEvent(Object::ON_ADD);
+	_AddObject(object);
 }
 
 void Scene::RemoveObject(ObjectPtr ptr) {
@@ -189,6 +182,22 @@ void Scene::Update(float dt) {
 			inputScript->_ResetDeltas();
 		}
 	}
+}
+
+void Scene::_AddObject(const SceneDescription::ObjectDescription& description) {
+	const Blueprint& blueprint = Engine::GetBlueprint(description._blueprint);
+	Object& object = _objects.emplace_back(blueprint);
+	object._SetParentScene(this);
+
+	object.SetPosition(description._position);
+	object.SetRotation(description._rotation);
+	object.SetScale(description._scale);
+
+	ObjectPtr ptr;
+	ptr = &object;
+	description.loader(ptr);
+
+	object.FireEvent(Object::ON_ADD);
 }
 
 }

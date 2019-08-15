@@ -117,6 +117,8 @@ public:
 	void Update(float dt);
 
 private:
+	void _AddObject(const SceneDescription::ObjectDescription& description);
+
 	Scene() = default;
 	Scene(const SceneDescription& description);
 
