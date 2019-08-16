@@ -63,6 +63,12 @@ Scene::Scene(const SceneDescription& description) {
 	}
 }
 
+Scene::~Scene() {
+	for (auto pair : _lights) {
+		delete pair.second;
+	}
+}
+
 ScriptPtr Scene::AddScript(const std::string& script) {
 	ScriptPtr instance = Engine::CreateScript(script);
 	instance->_parent_scene = this;
@@ -96,31 +102,28 @@ void Scene::RemoveObject(ObjectPtr ptr) {
 }
 
 void Scene::AddPointLight(const std::string& name, vec3 position, Color color, bool castsShadows, float attenuation) {
-	Light& light = _lights.emplace_back(std::move(position), std::move(color), attenuation, castsShadows);
-	_light_map.insert({ name, &light });
+	_AddLight(name, new Light(std::move(position), std::move(color), attenuation, castsShadows));
 }
 
 void Scene::AddSpotLight(const std::string& name, vec3 position, Color color, vec3 direction, bool castsShadows, float spotAttenuation, float attenuation) {
-	Light& light = _lights.emplace_back(std::move(position), std::move(color), std::move(direction), spotAttenuation, attenuation, castsShadows);
-	_light_map.insert({ name, &light });
+	_AddLight(name, new Light(std::move(position), std::move(color), std::move(direction), spotAttenuation, attenuation, castsShadows));
 }
 
 void Scene::AddDirectionalLight(const std::string& name, Color color, vec3 direction, bool castsShadows) {
-	Light& light = _lights.emplace_back(std::move(color), glm::normalize(std::move(direction)), castsShadows);
-	_light_map.insert({ name, &light });
+	_AddLight(name, new Light(std::move(color), glm::normalize(std::move(direction)), castsShadows));
 }
 
 Light *Scene::GetLight(const std::string& lightName) {
-	auto iter = _light_map.find(lightName);
-	if (iter == _light_map.end()) {
+	auto iter = _lights.find(lightName);
+	if (iter == _lights.end()) {
 		return nullptr;
 	}
 
 	return iter->second;
 }
 
-const std::vector<Light>& Scene::Lights() const {
-	return _lights;
+const std::vector<std::string>& Scene::Lights() const {
+	return _light_names;
 }
 
 void Scene::AddCamera(float fov, float near, float far, std::string name, vec3 position, vec3 rotation) {
@@ -183,6 +186,16 @@ void Scene::_AddObject(const SceneDescription::ObjectDescription& description) {
 	description.loader(ptr);
 
 	object.FireEvent(Object::ON_ADD);
+}
+
+void Scene::_AddLight(const std::string& name, Light *light) {
+	if (_lights.find(name) != _lights.end()) {
+		delete light;
+		throw std::runtime_error("Light with name \"" + name + "\" already exists.");
+	}
+
+	_lights[name] = light;
+	_light_names.push_back(name);
 }
 
 }

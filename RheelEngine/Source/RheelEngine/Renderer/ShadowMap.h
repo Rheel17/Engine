@@ -4,22 +4,24 @@
 
 #include <vector>
 
-#include "OpenGL/GLTexture2D.h"
+#include "OpenGL/GLFramebuffer.h"
 
 namespace rheel {
 
 class SceneRenderManager;
 
 class RE_API ShadowMap {
+	friend class SceneRenderManager;
 
 public:
-	ShadowMap(SceneRenderManager *manager);
+	ShadowMap(SceneRenderManager *manager, const std::string& light);
 
 	void Update();
 
 private:
 	SceneRenderManager *_manager;
-	std::vector<GLTexture2D> _shadow_textures;
+	std::shared_ptr<GLFramebuffer> _shadow_buffer;
+
 };
 
 }

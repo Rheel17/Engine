@@ -16,6 +16,12 @@ public:
 	SceneRenderManager(Scene_t *scene);
 
 	/**
+	 * Returns true only if shadows are enabled and at least one light in the
+	 * scene casts shadows.
+	 */
+	bool ShouldDrawShadows() const;
+
+	/**
 	 * Updates this render manager from the scene.
 	 */
 	void Update();
@@ -64,7 +70,6 @@ private:
 	std::vector<vec4> _lights_color;
 	std::vector<float> _lights_attenuation;
 	std::vector<float> _lights_spot_attenuation;
-
 
 private:
 	static void _Initialize();

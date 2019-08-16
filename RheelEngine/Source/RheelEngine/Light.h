@@ -14,7 +14,6 @@ public:
 		PointLight = 0, SpotLight = 1, DirectionalLight = 2
 	};
 
-
 public:
 	Light(vec3 position, Color_t color, float attenuation, bool castsShadows);
 	Light(vec3 position, Color_t color, vec3 direction, float spotAttenuation, float attenuation, bool castsShadows);

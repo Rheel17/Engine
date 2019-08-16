@@ -15,7 +15,12 @@ namespace rheel {
 class RE_API Scene {
 	friend class Engine;
 
+	RE_NO_COPY(Scene);
+	RE_NO_MOVE(Scene);
+
 public:
+	~Scene();
+
 	/**
 	 * Adds a script to the scene. The script will go into effect immediately. A
 	 * pointer to the script is returned.
@@ -80,7 +85,7 @@ public:
 	/**
 	 * Returns a vector of all lights in the scene.
 	 */
-	const std::vector<Light>& Lights() const;
+	const std::vector<std::string>& Lights() const;
 
 	/**
 	 * Adds a camera to the scene with the given camera parameters
@@ -100,14 +105,15 @@ public:
 
 private:
 	void _AddObject(const SceneDescription::ObjectDescription& description);
+	void _AddLight(const std::string& name, Light *light);
 
 	Scene() = default;
 	Scene(const SceneDescription& description);
 
 	std::vector<Object> _objects;
 	std::vector<ScriptPtr> _scripts;
-	std::vector<Light> _lights;
-	std::map<std::string, Light *> _light_map;
+	std::vector<std::string> _light_names;
+	std::map<std::string, Light *> _lights;
 	std::map<std::string, CameraPtr> _cameras;
 
 };

@@ -19,21 +19,21 @@ class RE_API SceneRenderer {
 public:
 	void SetSize(unsigned width, unsigned height);
 
-	void Render(float dt) const;
+	void Render(float dt);
 
 	const GLTexture2D& OutputTexture() const;
 
-	const ShadowMap& Shadows() const;
-
 private:
 	SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height);
+
+	void _CorrectShadowMaps();
 
 	SceneRenderManager *_manager;
 	std::string _camera_name;
 	unsigned _width;
 	unsigned _height;
 
-	std::shared_ptr<ShadowMap> _shadow_map;
+	std::map<std::string, ShadowMap *> _shadow_maps;
 	GLFramebuffer _g_buffer;
 	GLFramebuffer _result_buffer;
 

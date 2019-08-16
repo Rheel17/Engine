@@ -78,7 +78,7 @@ static SceneDescription createSceneDescription() {
 		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 1.0f));
 	};
 
-	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0, -2, -1 });
+	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0, -2, -1 }, true);
 	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 3, -20 });
 
 	return description;

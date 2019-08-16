@@ -1,6 +1,7 @@
 #include "SceneRenderManager.h"
 
 #include "ModelRenderer.h"
+#include "../Engine.h"
 #include "../Resources.h"
 
 #include <unordered_set>
@@ -18,6 +19,24 @@ SceneRenderManager::SceneRenderManager(Scene_t *scene) :
 	_Initialize();
 }
 
+/**
+ * Returns true only if shadows are enabled and at least one light in the
+ * scene casts shadows.
+ */
+bool SceneRenderManager::ShouldDrawShadows() const {
+	if (Engine::GetDisplayConfiguration().shadow_quality == DisplayConfiguration::SHADOW_OFF) {
+		return false;
+	}
+
+	for (const std::string& light : _scene->Lights()) {
+		if (_scene->GetLight(light)->CastsShadows()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void SceneRenderManager::Update() {
 	_lights_type.clear();
 	_lights_position.clear();
@@ -26,13 +45,15 @@ void SceneRenderManager::Update() {
 	_lights_attenuation.clear();
 	_lights_spot_attenuation.clear();
 
-	for (const Light& light : _scene->Lights()) {
-		_lights_type.push_back(light.Type());
-		_lights_position.push_back(light.Position());
-		_lights_direction.push_back(light.Direction());
-		_lights_color.push_back(light.Color());
-		_lights_attenuation.push_back(light.Attenuation());
-		_lights_spot_attenuation.push_back(light.SpotAttenuation());
+	for (const std::string& lightName : _scene->Lights()) {
+		Light *light = _scene->GetLight(lightName);
+
+		_lights_type.push_back(light->Type());
+		_lights_position.push_back(light->Position());
+		_lights_direction.push_back(light->Direction());
+		_lights_color.push_back(light->Color());
+		_lights_attenuation.push_back(light->Attenuation());
+		_lights_spot_attenuation.push_back(light->SpotAttenuation());
 	}
 }
 
