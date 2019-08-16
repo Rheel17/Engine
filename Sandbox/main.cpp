@@ -106,6 +106,7 @@ class SandboxGame : public Game {
 		config.title = "Sandbox";
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
 		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
+		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
 
 		Engine::SetDisplayConfiguration(std::move(config));
 	}

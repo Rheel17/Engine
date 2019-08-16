@@ -2,11 +2,12 @@
 #define SCENERENDERER_H_
 #include "../_common.h"
 
-#include "../Scene.h"
+#include "ShadowMap.h"
 #include "OpenGL/GLFramebuffer.h"
 #include "OpenGL/GLShaderProgram.h"
 #include "OpenGL/GLVertexArray.h"
 #include "OpenGL/GLBuffer.h"
+#include "../Scene.h"
 
 namespace rheel {
 
@@ -22,6 +23,8 @@ public:
 
 	const GLTexture2D& OutputTexture() const;
 
+	const ShadowMap& Shadows() const;
+
 private:
 	SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height);
 
@@ -30,6 +33,7 @@ private:
 	unsigned _width;
 	unsigned _height;
 
+	std::shared_ptr<ShadowMap> _shadow_map;
 	GLFramebuffer _g_buffer;
 	GLFramebuffer _result_buffer;
 

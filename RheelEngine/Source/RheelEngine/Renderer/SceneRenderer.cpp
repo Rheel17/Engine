@@ -13,6 +13,8 @@ SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName
 		_g_buffer(width, height, Engine::GetDisplayConfiguration().SampleCount(), true),
 		_result_buffer(width, height) {
 
+	_shadow_map = std::make_shared<ShadowMap>(manager);
+
 	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT); // color
 	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB,  GL_FLOAT); // position
 	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB,  GL_FLOAT); // normal
@@ -44,6 +46,11 @@ void SceneRenderer::Render(float dt) const {
 	// new to the buffer.
 	if (!camera) {
 		return;
+	}
+
+	if (Engine::GetDisplayConfiguration().shadow_quality != DisplayConfiguration::SHADOW_OFF) {
+		// update the shadow map
+		_shadow_map->Update();
 	}
 
 	// send the camera matrix to the model shader
@@ -81,6 +88,10 @@ void SceneRenderer::Render(float dt) const {
 
 const GLTexture2D& SceneRenderer::OutputTexture() const {
 	return _result_buffer.Textures()[0];
+}
+
+const ShadowMap& SceneRenderer::Shadows() const {
+	return *_shadow_map;
 }
 
 }

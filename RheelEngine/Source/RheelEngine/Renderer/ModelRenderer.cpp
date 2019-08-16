@@ -9,7 +9,8 @@
 namespace rheel {
 
 GLShaderProgram ModelRenderer::_model_shader;
-bool ModelRenderer::_is_model_shader_initialized = false;
+GLShaderProgram ModelRenderer::_opaque_shader;
+bool ModelRenderer::_are_shaders_initialized = false;
 
 ModelRenderer::ObjectData::ObjectData() :
 		_ptr(nullptr) {}
@@ -109,8 +110,13 @@ void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectDataPtr
 }
 
 GLShaderProgram& ModelRenderer::GetModelShader() {
-	_InitializeShader();
+	_InitializeShaders();
 	return _model_shader;
+}
+
+GLShaderProgram& ModelRenderer::GetOpaqueShader() {
+	_InitializeShaders();
+	return _opaque_shader;
 }
 
 void ModelRenderer::RenderObjects() const {
@@ -141,8 +147,8 @@ void ModelRenderer::_Remove(_ObjectDataVector& objects, ObjectDataPtr&& data) {
 	objects.erase(objects.begin() + index);
 }
 
-void ModelRenderer::_InitializeShader() {
-	if (_is_model_shader_initialized) {
+void ModelRenderer::_InitializeShaders() {
+	if (_are_shaders_initialized) {
 		return;
 	}
 
@@ -153,7 +159,11 @@ void ModelRenderer::_InitializeShader() {
 	_model_shader["diffuseTexture"] = 1;
 	_model_shader["specularTexture"] = 2;
 
-	_is_model_shader_initialized = true;
+	_opaque_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_opaqueshader_vert_glsl));
+	_opaque_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_opaqueshader_frag_glsl));
+	_opaque_shader.Link();
+
+	_are_shaders_initialized = true;
 }
 
 }

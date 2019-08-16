@@ -88,12 +88,14 @@ private:
 
 public:
 	static GLShaderProgram& GetModelShader();
+	static GLShaderProgram& GetOpaqueShader();
 
 private:
-	static void _InitializeShader();
+	static void _InitializeShaders();
 
 	static GLShaderProgram _model_shader;
-	static bool _is_model_shader_initialized;
+	static GLShaderProgram _opaque_shader;
+	static bool _are_shaders_initialized;
 
 };
 
