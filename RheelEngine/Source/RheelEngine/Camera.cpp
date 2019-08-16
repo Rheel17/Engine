@@ -5,7 +5,9 @@ namespace rheel {
 Camera::Camera(std::string name, vec3 position, vec3 rotation) :
 		_name(std::move(name)),
 		_position(std::move(position)),
-		_rotation(std::move(rotation)) {
+		_rotation(std::move(rotation)),
+		_rotation_dirty(true),
+		_position_dirty(true) {
 
 	_CalculateViewMatrix();
 }
