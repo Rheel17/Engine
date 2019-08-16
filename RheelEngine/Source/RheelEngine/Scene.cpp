@@ -27,6 +27,7 @@ Scene::Scene(const SceneDescription& description) {
 						lightDescription.name,
 						lightDescription.position,
 						lightDescription.color,
+						lightDescription.casts_shadows,
 						lightDescription.attenuation);
 				break;
 			case SceneDescription::_LightDescription::SPOT_LIGHT:
@@ -35,6 +36,7 @@ Scene::Scene(const SceneDescription& description) {
 						lightDescription.position,
 						lightDescription.color,
 						lightDescription.direction,
+						lightDescription.casts_shadows,
 						lightDescription.spot_attenuation,
 						lightDescription.attenuation);
 				break;
@@ -42,7 +44,8 @@ Scene::Scene(const SceneDescription& description) {
 				AddDirectionalLight(
 						lightDescription.name,
 						lightDescription.color,
-						lightDescription.direction);
+						lightDescription.direction,
+						lightDescription.casts_shadows);
 				break;
 		}
 	}

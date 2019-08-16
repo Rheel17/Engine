@@ -5,10 +5,7 @@
 namespace rheel {
 
 ShadowMap::ShadowMap(SceneRenderManager *manager, const std::string& light) :
-		_manager(manager) {
-
-	std::cout << "ShadowMap()" << std::endl;
-}
+		_manager(manager) {}
 
 void ShadowMap::Update() {
 

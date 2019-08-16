@@ -49,10 +49,12 @@ void SceneRenderer::Render(float dt) {
 	}
 
 	// update the shadow maps
-	_CorrectShadowMaps();
+	if (_manager->ShouldDrawShadows()) {
+		_CorrectShadowMaps();
 
-	for (auto iter : _shadow_maps) {
-		iter.second->Update();
+		for (auto iter : _shadow_maps) {
+			iter.second.Update();
+		}
 	}
 
 	// send the camera matrix to the model shader
@@ -94,9 +96,26 @@ const GLTexture2D& SceneRenderer::OutputTexture() const {
 
 void SceneRenderer::_CorrectShadowMaps() {
 	std::set<std::string> lightNames;
+	for (auto pair : _shadow_maps) {
+		lightNames.insert(pair.first);
+	}
 
 	for (const std::string& lightName : _manager->Scene()->Lights()) {
+		Light *light = _manager->Scene()->GetLight(lightName);
 
+		if (!light->CastsShadows()) {
+			continue;
+		}
+
+		lightNames.erase(lightName);
+
+		if (_shadow_maps.find(lightName) == _shadow_maps.end()) {
+			_shadow_maps.insert({ lightName, ShadowMap(_manager, lightName) });
+		}
+	}
+
+	for (const std::string& lightName : lightNames) {
+		_shadow_maps.erase(lightName);
 	}
 }
 
