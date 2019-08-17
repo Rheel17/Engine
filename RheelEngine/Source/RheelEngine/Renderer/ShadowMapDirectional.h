@@ -17,6 +17,8 @@ public:
 private:
 	ShadowMapDirectional(SceneRenderManager *manager, Light *light);
 
+	mat4 _CalculateViewProjectionMatrix(const mat4& cameraMatrixInv) const;
+
 };
 
 }
