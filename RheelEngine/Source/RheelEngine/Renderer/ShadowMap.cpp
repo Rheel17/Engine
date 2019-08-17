@@ -2,13 +2,23 @@
 
 #include "SceneRenderManager.h"
 
+#include "ShadowMapDirectional.h"
+
 namespace rheel {
 
-ShadowMap::ShadowMap(SceneRenderManager *manager, const std::string& light) :
-		_manager(manager) {}
+ShadowMap::ShadowMap(SceneRenderManager *manager, Light *light) :
+		_manager(manager), _light(light) {}
 
-void ShadowMap::Update() {
+Light *ShadowMap::GetLight() const {
+	return _light;
+}
 
+std::shared_ptr<ShadowMap> ShadowMap::CreateShadowMap(SceneRenderManager *manager, Light *light) {
+	if (light->Type() == Light::DirectionalLight) {
+		return std::shared_ptr<ShadowMapDirectional>(new ShadowMapDirectional(manager, light));
+	}
+
+	return nullptr;
 }
 
 }

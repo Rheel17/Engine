@@ -33,7 +33,7 @@ private:
 	unsigned _width;
 	unsigned _height;
 
-	std::map<std::string, ShadowMap> _shadow_maps;
+	std::map<std::string, std::shared_ptr<ShadowMap>> _shadow_maps;
 	GLFramebuffer _g_buffer;
 	GLFramebuffer _result_buffer;
 

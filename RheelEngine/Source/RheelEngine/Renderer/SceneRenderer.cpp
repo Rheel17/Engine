@@ -48,18 +48,21 @@ void SceneRenderer::Render(float dt) {
 		return;
 	}
 
+	// calculate the camera matrix
+	mat4 cameraMatrix = camera->CreateMatrix(_width, _height);
+	mat4 cameraMatrixInv = glm::inverse(cameraMatrix);
+
 	// update the shadow maps
 	if (_manager->ShouldDrawShadows()) {
 		_CorrectShadowMaps();
 
 		for (auto iter : _shadow_maps) {
-			iter.second.Update();
+			iter.second->Update(cameraMatrix, cameraMatrixInv);
 		}
 	}
 
 	// send the camera matrix to the model shader
 	GLShaderProgram& modelShader = ModelRenderer::GetModelShader();
-	mat4 cameraMatrix = camera->CreateMatrix(_width, _height);
 	modelShader["cameraMatrix"] = cameraMatrix;
 
 	// write the scene to the g-buffer.
@@ -110,7 +113,7 @@ void SceneRenderer::_CorrectShadowMaps() {
 		lightNames.erase(lightName);
 
 		if (_shadow_maps.find(lightName) == _shadow_maps.end()) {
-			_shadow_maps.insert({ lightName, ShadowMap(_manager, lightName) });
+			_shadow_maps.insert({ lightName, ShadowMap::CreateShadowMap(_manager, light) });
 		}
 	}
 
