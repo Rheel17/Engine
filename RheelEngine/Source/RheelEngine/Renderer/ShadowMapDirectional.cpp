@@ -5,12 +5,21 @@
 namespace rheel {
 
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *light) :
-		ShadowMap(manager, light) {}
+		ShadowMap(manager, light) {
+
+	_shadow_buffer = std::make_shared<GLFramebuffer>(1024, 1024);
+	_shadow_buffer->AddTexture(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
+	_shadow_buffer->Create();
+}
 
 ShadowMapDirectional::~ShadowMapDirectional() {}
 
 void ShadowMapDirectional::Update(const mat4& cameraMatrix, const mat4& cameraMatrixInv) {
 	mat4 matrix = _CalculateViewProjectionMatrix(cameraMatrixInv);
+}
+
+const GLTexture2D& ShadowMapDirectional::Texture() const {
+	return _shadow_buffer->Textures()[0];
 }
 
 mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(const mat4& cameraMatrixInv) const {

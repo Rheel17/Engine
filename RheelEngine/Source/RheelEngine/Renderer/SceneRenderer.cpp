@@ -15,17 +15,17 @@ SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName
 		_g_buffer(width, height, Engine::GetDisplayConfiguration().SampleCount(), true),
 		_result_buffer(width, height) {
 
-	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT); // color
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB,  GL_FLOAT); // position
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB,  GL_FLOAT); // normal
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB,  GL_FLOAT); // material:ambient
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB,  GL_FLOAT); // material:diffuse
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB,  GL_FLOAT); // material:specular
-	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT); // material:parameters
+	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA); // color
+	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // position
+	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // normal
+	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // material:ambient
+	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // material:diffuse
+	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // material:specular
+	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA); // material:parameters
 	_g_buffer.AddRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 	_g_buffer.Create();
 
-	_result_buffer.AddTexture(GL_RGB32F, GL_RGB, GL_FLOAT);
+	_result_buffer.AddTexture(GL_RGB32F, GL_RGB);
 	_result_buffer.Create();
 }
 

@@ -23,6 +23,10 @@ public:
 
 	const GLTexture2D& OutputTexture() const;
 
+	const std::map<std::string, std::shared_ptr<ShadowMap>>& ShadowMaps() const {
+		return _shadow_maps;
+	}
+
 private:
 	SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height);
 

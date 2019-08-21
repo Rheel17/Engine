@@ -28,7 +28,6 @@ protected:
 private:
 	SceneRenderManager *_manager;
 	Light *_light;
-	std::shared_ptr<GLFramebuffer> _shadow_buffer;
 
 public:
 	static std::shared_ptr<ShadowMap> CreateShadowMap(SceneRenderManager *manager, Light *lightName);

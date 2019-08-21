@@ -7,7 +7,7 @@
 namespace rheel {
 
 GLFramebuffer::GLFramebuffer(GLuint width, GLuint height, GLuint samples, bool forceMultisampled) :
-		_width(width), _height(height), _samples(samples), _texture_count(0),
+		_width(width), _height(height), _samples(samples),
 		_is_multisampled(samples != 1 || forceMultisampled), _created(false) {
 
 	if (_width <= 0) {
@@ -67,9 +67,41 @@ void GLFramebuffer::ClearBindingForDrawing() {
 	GL::ClearFramebufferBinding(GL::FramebufferTarget::DRAW);
 }
 
-void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum type) {
+void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format) {
+	// get the maximum color attachment
+	int maxColorAttachments;
+	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
+	// find an unused color attachment
+	for (int i = 0; i < maxColorAttachments; i++) {
+		if (_used_color_attachments.find(GL_COLOR_ATTACHMENT0 + i) == _used_color_attachments.end()) {
+			AddTexture(internalFormat, format, GL_COLOR_ATTACHMENT0 + i);
+			return;
+		}
+	}
+
+	throw std::runtime_error("Ran out of color attachments (max=" + std::to_string(maxColorAttachments) + ")");
+}
+
+void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attachment) {
 	if (_created) {
 		throw std::runtime_error("Framebuffer already created");
+	}
+
+	// check for a valid attachment
+	bool color = _IsColorAttachment(attachment);
+	if (color) {
+		if (_used_color_attachments.find(attachment) != _used_color_attachments.end()) {
+			throw std::runtime_error("Attachment " + std::to_string(attachment) + " already in use.");
+		}
+	} else {
+		if (attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT) {
+			throw std::runtime_error("Invalid attachment");
+		}
+
+		if (_used_other_attachments.find(attachment) != _used_other_attachments.end()) {
+			throw std::runtime_error("Attachment " + std::to_string(attachment) + " already in use.");
+		}
 	}
 
 	Bind();
@@ -83,7 +115,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum type)
 		texture.Initialize(internalFormat);
 
 		// add the texture to the framebuffer
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _texture_count, GL_TEXTURE_2D_MULTISAMPLE, texture.GetID(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D_MULTISAMPLE, texture.GetID(), 0);
 
 		_multisample_textures.push_back(texture);
 	} else {
@@ -98,21 +130,42 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum type)
 		texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
 
 		// upload empty texture data
-		texture.InitializeEmpty();
+		texture.InitializeEmpty(format);
 
 		// add the texture to the framebuffer
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _texture_count, GL_TEXTURE_2D, texture.GetID(), 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, attachment, texture.GetID(), 0);
 
 		_textures.push_back(texture);
 	}
 
-	_texture_add_info.push_back({ internalFormat, format, type });
-	_texture_count++;
+	_texture_add_info.push_back({ internalFormat, format, attachment });
+
+	if (color) {
+		_used_color_attachments.insert(attachment);
+	} else {
+		_used_other_attachments.insert(attachment);
+	}
 }
 
 void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
 	if (_created) {
 		throw std::runtime_error("Framebuffer already created");
+	}
+
+	// check for a valid attachment
+	bool color = _IsColorAttachment(attachment);
+	if (color) {
+		if (_used_color_attachments.find(attachment) != _used_color_attachments.end()) {
+			throw std::runtime_error("Attachment " + std::to_string(attachment) + " already in use.");
+		}
+	} else {
+		if (attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT) {
+			throw std::runtime_error("Invalid attachment");
+		}
+
+		if (_used_other_attachments.find(attachment) != _used_other_attachments.end()) {
+			throw std::runtime_error("Attachment " + std::to_string(attachment) + " already in use.");
+		}
 	}
 
 	Bind();
@@ -126,6 +179,12 @@ void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
 
 	_renderbuffers.push_back(renderbuffer);
 	_renderbuffer_add_info.push_back({ internalFormat, attachment });
+
+	if (color) {
+		_used_color_attachments.insert(attachment);
+	} else {
+		_used_other_attachments.insert(attachment);
+	}
 }
 
 void GLFramebuffer::Create() {
@@ -133,17 +192,16 @@ void GLFramebuffer::Create() {
 		return;
 	}
 
-	// collect the attachments
-	std::vector<GLuint> attachments;
-	for (unsigned int i = 0; i < _texture_count; i++) {
-		attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
-	}
-
 	// bind the framebuffer
 	Bind();
 
-	// add the attachments
-	glDrawBuffers(attachments.size(), attachments.data());
+	// set the color buffers
+	std::vector<GLenum> colorAttachments;
+	for (GLenum colorAttachment : _used_color_attachments) {
+		colorAttachments.push_back(colorAttachment);
+	}
+
+	glDrawBuffers(colorAttachments.size(), colorAttachments.data());
 
 	// check if the framebuffer is finished
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -165,6 +223,17 @@ const std::vector<GLTexture2D>& GLFramebuffer::Textures() const {
 
 const std::vector<GLRenderbuffer>& GLFramebuffer::Renderbuffers() const {
 	return _renderbuffers;
+}
+
+bool GLFramebuffer::_IsColorAttachment(GLenum attachment) {
+	if (attachment < GL_COLOR_ATTACHMENT0) {
+		return false;
+	}
+
+	int maxColorAttachments;
+	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
+	return attachment < (GLenum) (GL_COLOR_ATTACHMENT0 + maxColorAttachments);
 }
 
 }

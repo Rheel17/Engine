@@ -2,6 +2,7 @@
 
 #include "../../Engine.h"
 #include "../../Scripts/InputScript.h"
+#include "../../Renderer/ShadowMapDirectional.h"
 
 namespace rheel {
 
@@ -27,6 +28,23 @@ void SceneElement::Draw(float dt) const {
 
 	_scene_renderer->Render(dt);
 	_DrawTexturedQuad(bounds, _scene_renderer->OutputTexture());
+
+	const auto& shadowMaps = _scene_renderer->ShadowMaps();
+	if (shadowMaps.empty()) {
+		return;
+	}
+
+	auto shadowMap = shadowMaps.begin()->second;
+
+	if (auto shadow = std::dynamic_pointer_cast<ShadowMapDirectional>(shadowMap)) {
+		Bounds shadowBounds = bounds;
+		shadowBounds.width = shadowBounds.height / 2;
+		shadowBounds.height = shadowBounds.width;
+		shadowBounds.x += 10;
+		shadowBounds.y += 10;
+
+		_DrawTexturedQuad(shadowBounds, shadow->Texture());
+	}
 }
 
 void SceneElement::OnFocusGained() {

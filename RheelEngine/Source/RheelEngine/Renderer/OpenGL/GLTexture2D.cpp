@@ -40,9 +40,9 @@ void GLTexture2D::SetWrapParameterT(GL::WrapParameter parameter) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GLint(parameter));
 }
 
-void GLTexture2D::InitializeEmpty() {
-	std::vector<GLubyte> zeroBytes(_width * _height * 4, 0);
-	SetData(GL_RGBA, GL_UNSIGNED_BYTE, zeroBytes.data());
+void GLTexture2D::InitializeEmpty(GLenum format) {
+	std::vector<GLubyte> zeroBytes(_width * _height * 16, 0);
+	SetData(format, GL_UNSIGNED_BYTE, zeroBytes.data());
 }
 
 void GLTexture2D::SetData(GLenum format, GLenum type, const void *data) {
@@ -54,7 +54,7 @@ void GLTexture2D::SetData(GLenum format, GLenum type, const void *data) {
 
 void GLTexture2D::SetPartialData(int x, int y, unsigned width, unsigned height, GLenum format, GLenum type, const void *data) {
 	if (!_has_initialized) {
-		InitializeEmpty();
+		InitializeEmpty(format);
 	}
 
 	Bind();

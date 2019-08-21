@@ -79,7 +79,7 @@ static SceneDescription createSceneDescription() {
 	};
 
 	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }, true);
-	description.AddCamera("main_camera", 75.0f, 0.01f, 1000.0f, { 0, 3, -20 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 3, -20 });
 
 	return description;
 }

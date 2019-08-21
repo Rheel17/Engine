@@ -45,7 +45,7 @@ public:
 	 * Initializes this texture with empty data. All-zero bytes will be written
 	 * to the complete texture.
 	 */
-	void InitializeEmpty();
+	void InitializeEmpty(GLenum format);
 
 	/**
 	 * Sets the data of this texture.

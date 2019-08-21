@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <tuple>
+#include <set>
 
 #include "GLTexture2D.h"
 #include "GLTexture2DMultisample.h"
@@ -75,7 +76,13 @@ public:
 	 * Adds a texture to the framebuffer. Can only be done before creating
 	 * (using Create()).
 	 */
-	void AddTexture(GLint internalFormat, GLenum format, GLenum type);
+	void AddTexture(GLint internalFormat, GLenum format);
+
+	/**
+	 * Adds a texture to the framebuffer, where the caller can specify the
+	 * attachment used. Can only be done before creating (using Create()).
+	 */
+	void AddTexture(GLint internalFormat, GLenum format, GLenum attachment);
 
 	/**
 	 * Adds a renderbuffer to the framebuffer. Can only be done before creating.
@@ -113,9 +120,10 @@ private:
 	GLuint _height;
 	GLuint _samples;
 
-	GLuint _texture_count;
 	std::vector<GLTexture2D> _textures;
 	std::vector<GLRenderbuffer> _renderbuffers;
+	std::set<GLenum> _used_color_attachments;
+	std::set<GLenum> _used_other_attachments;
 
 	bool _is_multisampled;
 	std::vector<GLTexture2DMultisample> _multisample_textures;
@@ -125,6 +133,8 @@ private:
 
 	bool _created;
 
+private:
+	static bool _IsColorAttachment(GLenum attachment);
 
 };
 
