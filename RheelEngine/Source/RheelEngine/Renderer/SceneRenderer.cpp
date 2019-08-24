@@ -48,20 +48,17 @@ void SceneRenderer::Render(float dt) {
 		return;
 	}
 
-	// calculate the camera matrix
-	mat4 cameraMatrix = camera->CreateMatrix(_width, _height);
-	mat4 cameraMatrixInv = glm::inverse(cameraMatrix);
-
 	// update the shadow maps
 	if (_manager->ShouldDrawShadows()) {
 		_CorrectShadowMaps();
 
 		for (auto iter : _shadow_maps) {
-			iter.second->Update(cameraMatrix, cameraMatrixInv);
+			iter.second->Update(camera, _width, _height);
 		}
 	}
 
 	// send the camera matrix to the model shader
+	mat4 cameraMatrix = camera->CreateMatrix(_width, _height);
 	GLShaderProgram& modelShader = ModelRenderer::GetModelShader();
 	modelShader["cameraMatrix"] = cameraMatrix;
 

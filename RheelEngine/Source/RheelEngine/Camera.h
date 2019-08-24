@@ -23,6 +23,12 @@ public:
 	virtual mat4 CreateMatrix(unsigned width, unsigned height) const = 0;
 
 	/**
+	 * Returns an array of 8 vertices at the corners of the view space of this
+	 * camera.
+	 */
+	virtual std::array<vec3, 8> ViewspaceCorners(unsigned width, unsigned height) const = 0;
+
+	/**
 	 * Sets the position of this camera.
 	 */
 	void SetPosition(const vec3& position);
@@ -83,9 +89,7 @@ private:
 
 	mutable mat4 _rotation_matrix;
 	mutable mat4 _view_matrix;
-
 	mutable bool _rotation_dirty;
-	mutable bool _position_dirty;
 
 };
 

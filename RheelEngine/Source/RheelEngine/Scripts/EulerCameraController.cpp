@@ -48,8 +48,8 @@ void EulerCameraController::_Rotate(CameraPtr camera, float dt) {
 	float pitch = glm::radians(mouse.y * dt * _velocity_pitch);
 
 	vec3 angles = camera->Rotation();
-	angles.x += pitch;
-	angles.y += yaw;
+	angles.x -= pitch;
+	angles.y -= yaw;
 
 	// prevent more than 90 degrees look up/down
 	if (angles.x >= 0.499f * M_PI) {
@@ -71,8 +71,8 @@ void EulerCameraController::_Move(CameraPtr camera, float dt) {
 	vec4 movement = vec4();
 	bool hasMovement = false;
 
-	if (IsKeyPressed(Input::Key::KEY_W)) { movement.z += _velocity_z; hasMovement = true; }
-	if (IsKeyPressed(Input::Key::KEY_S)) { movement.z -= _velocity_z; hasMovement = true; }
+	if (IsKeyPressed(Input::Key::KEY_W)) { movement.z -= _velocity_z; hasMovement = true; }
+	if (IsKeyPressed(Input::Key::KEY_S)) { movement.z += _velocity_z; hasMovement = true; }
 	if (IsKeyPressed(Input::Key::KEY_A)) { movement.x -= _velocity_x; hasMovement = true; }
 	if (IsKeyPressed(Input::Key::KEY_D)) { movement.x += _velocity_x; hasMovement = true; }
 

@@ -18,11 +18,12 @@ class RE_API ShadowMap {
 public:
 	virtual ~ShadowMap() = default;
 
-	virtual void Update(const mat4& cameraMatrix, const mat4& cameraMatrixInv) = 0;
+	virtual void Update(CameraPtr camera, unsigned width, unsigned height) = 0;
 
 protected:
 	ShadowMap(SceneRenderManager *manager, Light *light);
 
+	SceneRenderManager *Manager() const;
 	Light *GetLight() const;
 
 private:

@@ -12,14 +12,14 @@ class RE_API ShadowMapDirectional : public ShadowMap {
 public:
 	~ShadowMapDirectional();
 
-	void Update(const mat4& cameraMatrix, const mat4& cameraMatrixInv) override;
+	void Update(CameraPtr camera, unsigned width, unsigned height) override;
 
 	const GLTexture2D& Texture() const;
 
 private:
 	ShadowMapDirectional(SceneRenderManager *manager, Light *light);
 
-	mat4 _CalculateViewProjectionMatrix(const mat4& cameraMatrixInv) const;
+	mat4 _CalculateViewProjectionMatrix(CameraPtr camera, unsigned width, unsigned height) const;
 
 	std::shared_ptr<GLFramebuffer> _shadow_buffer;
 

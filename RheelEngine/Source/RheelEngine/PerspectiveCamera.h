@@ -13,6 +13,8 @@ public:
 
 	mat4 CreateMatrix(unsigned width, unsigned height) const override;
 
+	std::array<vec3, 8> ViewspaceCorners(unsigned width, unsigned height) const override;
+
 private:
 	float _fov;
 	float _near;
