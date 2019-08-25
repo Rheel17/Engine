@@ -20,6 +20,8 @@ private:
 	float _near;
 	float _far;
 
+	mat4 _perspective_matrix;
+
 };
 
 }

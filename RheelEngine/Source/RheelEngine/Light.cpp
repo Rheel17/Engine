@@ -48,4 +48,32 @@ bool Light::CastsShadows() const {
 	return _casts_shadows;
 }
 
+void Light::SetPosition(const vec3& position) {
+	assert(_type != DirectionalLight);
+	_position = position;
+}
+
+void Light::SetDirection(const vec3& direction) {
+	assert(_type != PointLight);
+	_direction = direction;
+}
+
+void Light::SetColor(const Color_t& color) {
+	_color = color;
+}
+
+void Light::SetAttenuation(float attenutation) {
+	assert(_type != DirectionalLight);
+	_attenuation = attenutation;
+}
+
+void Light::SetSpotAttenuation(float spotAttenuation) {
+	assert(_type == SpotLight);
+	_spot_attenuation = spotAttenuation;
+}
+
+void Light::SetCastsShadows(bool castsShadows) {
+	_casts_shadows = castsShadows;
+}
+
 }

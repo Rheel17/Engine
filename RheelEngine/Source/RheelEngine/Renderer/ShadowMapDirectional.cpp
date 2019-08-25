@@ -26,8 +26,7 @@ void ShadowMapDirectional::Update(CameraPtr camera, unsigned width, unsigned hei
 	GLShaderProgram& opaqueShader = ModelRenderer::GetOpaqueShader();
 	mat4 matrix = _CalculateViewProjectionMatrix(camera, width, height);
 	opaqueShader["lightspaceMatrix"] = matrix;
-
-	std::cout << matrix << std::endl;
+	light_matrix = matrix;
 
 	for (const auto& pair : Manager()->RenderMap()) {
 		pair.second.RenderObjects();
@@ -41,13 +40,26 @@ const GLTexture2D& ShadowMapDirectional::Texture() const {
 }
 
 mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsigned width, unsigned height) const {
-	std::cout << "======================" << std::endl;
-
 	// calculate the light coordinate system axis
-	vec3 forward = GetLight()->Direction();
-	vec3 right = glm::normalize(vec3(-forward.z, 0, forward.x));
-	vec3 up = glm::cross(right, forward);
-	mat4 lightMatrix = mat4(mat3(forward, right, up));
+	vec3 zplus = -GetLight()->Direction();
+	vec3 xplus;
+
+	if (zplus.x == 0 && zplus.z == 0) {
+		xplus = vec3(1, 0, 0);
+	} else {
+		xplus = glm::normalize(vec3(zplus.z, 0, -zplus.x));
+	}
+
+	vec3 yplus = glm::cross(zplus, xplus);
+
+//	std::cout << "x+: " << xplus << std::endl;
+//	std::cout << "y+: " << yplus << std::endl;
+//	std::cout << "z+: " << zplus << std::endl << std::endl;
+
+	mat4 lightMatrix = mat4(glm::transpose(mat3(xplus, yplus, zplus)));
+
+	std::cout << lightMatrix << std::endl;
+
 	mat4 lightMatrixInv = glm::inverse(lightMatrix);
 
 	// calculate the AABB of the camera frustum in light space
@@ -59,7 +71,6 @@ mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsi
 
 	for (vec3 corner : corners) {
 		vec4 c = lightMatrix * vec4(corner, 1.0);
-		std::cout << corner << " c: " << c << std::endl;
 
 		xMin = std::min(xMin, c.x);
 		xMax = std::max(xMax, c.x);
@@ -76,14 +87,11 @@ mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsi
 	vec3 center = vec3(xMax + xMin, yMax + yMin, zMax + zMin) / 2.0f;
 	vec4 centerWorldSpace = lightMatrixInv * vec4(center, 1.0f);
 
-	mat4 viewMatrix = glm::translate(lightMatrix, vec3(centerWorldSpace));
+	mat4 viewMatrix = glm::translate(lightMatrix, -vec3(centerWorldSpace));
 	mat4 projectionMatrix = glm::ortho(
 			-aabbHalfDim.x, aabbHalfDim.x,
 			-aabbHalfDim.y, aabbHalfDim.y,
 			-aabbHalfDim.z, aabbHalfDim.z);
-
-	std::cout << aabbHalfDim << std::endl;
-	std::cout << centerWorldSpace << std::endl;
 
 	return projectionMatrix * viewMatrix;
 }

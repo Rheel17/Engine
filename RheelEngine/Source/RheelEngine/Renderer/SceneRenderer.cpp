@@ -2,6 +2,7 @@
 
 #include <set>
 
+#include "ShadowMapDirectional.h"
 #include "SceneRenderManager.h"
 #include "../Engine.h"
 #include "../Resources.h"
@@ -49,16 +50,22 @@ void SceneRenderer::Render(float dt) {
 	}
 
 	// update the shadow maps
+	mat4 lightMatrix = camera->CreateMatrix(_width, _height);
+
 	if (_manager->ShouldDrawShadows()) {
 		_CorrectShadowMaps();
 
 		for (auto iter : _shadow_maps) {
 			iter.second->Update(camera, _width, _height);
+
+			if (auto smd = std::dynamic_pointer_cast<ShadowMapDirectional>(iter.second)) {
+				lightMatrix = smd->light_matrix;
+			}
 		}
 	}
 
 	// send the camera matrix to the model shader
-	mat4 cameraMatrix = camera->CreateMatrix(_width, _height);
+	mat4 cameraMatrix = lightMatrix;//camera->CreateMatrix(_width, _height);
 	GLShaderProgram& modelShader = ModelRenderer::GetModelShader();
 	modelShader["cameraMatrix"] = cameraMatrix;
 

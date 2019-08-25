@@ -2,6 +2,16 @@
 
 using namespace rheel;
 
+class LightRotationScript : public Script {
+
+public:
+	void PreOnUpdate() override {
+//		Light *light = Parent().GetLight("main_light");
+//		light->SetDirection({ std::sin(Time() / 10), 0, -std::cos(Time() / 10) });
+	}
+
+};
+
 class RandomRemoveScript : public Script {
 
 public:
@@ -61,13 +71,14 @@ static SceneDescription createSceneDescription() {
 	});
 
 //	description.AddScript("RandomRemove");
+	description.AddScript("LightRotation");
 
 	for (int i = -2; i <= 2; i++) {
 		for (int j = -2; j <= 2; j++) {
 			auto& cube = description.AddObject("cube", { 4 * i, 0, 4 * j });
 			cube.loader = [](ObjectPtr object) {
 				auto renderer = object->GetComponent<ModelRenderComponent>();
-				renderer->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 1.0f));
+				renderer->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.9f, 0.0f));
 			};
 		}
 	}
@@ -75,10 +86,11 @@ static SceneDescription createSceneDescription() {
 	auto& floor = description.AddObject("cube", { 0, -2, 0 }, quat(), { 20, 1, 20 });
 	floor.loader = [](ObjectPtr object) {
 		auto renderer = object->GetComponent<ModelRenderComponent>();
-		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 1.0f));
+		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.9f, 0.0f));
 	};
 
 	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }, true);
+//	description.AddDirectionalLight("main_light", { 1, 1, 1, 1 }, { 0, 1, 0 }, true);
 	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 3, 20 });
 
 	return description;
@@ -91,6 +103,7 @@ class SandboxGame : public Game {
 
 	void RegisterScripts() override {
 		Engine::RegisterScript<RandomRemoveScript>("RandomRemove");
+		Engine::RegisterScript<LightRotationScript>("LightRotation");
 	}
 
 	void RegisterBlueprints() override {

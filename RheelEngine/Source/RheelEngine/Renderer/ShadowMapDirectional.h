@@ -16,6 +16,7 @@ public:
 
 	const GLTexture2D& Texture() const;
 
+	mat4 light_matrix;
 private:
 	ShadowMapDirectional(SceneRenderManager *manager, Light *light);
 

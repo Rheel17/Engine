@@ -143,9 +143,13 @@ CameraPtr Scene::GetCamera(const std::string& cameraName) {
 }
 
 void Scene::Update(float dt) {
+	// add the time
+	_time += dt;
+
 	// pre-update the scripts
 	for (auto script : _scripts) {
 		script->_dt = dt;
+		script->_time = _time;
 		script->PreOnUpdate();
 	}
 

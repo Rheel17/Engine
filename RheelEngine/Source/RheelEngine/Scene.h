@@ -116,6 +116,8 @@ private:
 	std::map<std::string, Light *> _lights;
 	std::map<std::string, CameraPtr> _cameras;
 
+	float _time = 0.0f;
+
 };
 
 }

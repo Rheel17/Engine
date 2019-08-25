@@ -1,9 +1,17 @@
 #version 330 core
 
+// per-vertex data
 layout (location = 0) in vec3 vert_Position;
 
+// per-instance data
+layout (location = 3) in mat4 inst_ModelMatrix;
+ 
 uniform mat4 lightspaceMatrix;
 
 void main(void) {
-	gl_Position = lightspaceMatrix * vec4(vert_Position, 1.0);
+	// calculate the position
+	vec4 position = inst_ModelMatrix * vec4(vert_Position, 1.0);
+
+	// set the position
+	gl_Position = lightspaceMatrix * position;
 }

@@ -27,6 +27,13 @@ public:
 	float SpotAttenuation() const;
 	bool CastsShadows() const;
 
+	void SetPosition(const vec3& position);
+	void SetDirection(const vec3& direction);
+	void SetColor(const Color_t& color);
+	void SetAttenuation(float attenutation);
+	void SetSpotAttenuation(float spotAttenuation);
+	void SetCastsShadows(bool castsShadows);
+
 private:
 	LightType _type;
 	vec3 _position;
