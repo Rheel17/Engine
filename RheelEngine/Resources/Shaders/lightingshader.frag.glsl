@@ -13,6 +13,10 @@ uniform sampler2DMS gBufferDiffuse;
 uniform sampler2DMS gBufferSpecular;
 uniform sampler2DMS gBufferMaterialParameters;
 
+// shadow objects
+uniform sampler2D shadowMap;
+uniform mat4 lightspaceMatrix;
+
 // g-buffer parameters
 uniform ivec2 gBufferTextureSize;
 uniform int sampleCount;
@@ -42,6 +46,19 @@ struct Material {
 	vec3 specular;
 	float specularExponent;
 };
+
+float getShadowFactor(vec3 P) {
+	// transform the position to light-space.
+	vec4 positionLightspaceClip = lightspaceMatrix * vec4(P, 1.0);
+	P = positionLightspaceClip.xyz / positionLightspaceClip.w;
+	P = (P + 1.0) / 2.0;
+	
+	// get the depths
+	float opaqueDepth = texture(shadowMap, P.xy).r;
+	float positionDepth = P.z;
+
+	return positionDepth > opaqueDepth ? 0.0 : 1.0;
+}
 
 vec3 abstractLight(Material material, vec3 P, vec3 N, vec3 L, vec4 color) {
 	// calculate vectors
@@ -95,7 +112,7 @@ vec3 spotLight(Material material, vec3 P, vec3 N, vec3 position, vec3 direction,
 }
 
 vec3 directionalLight(Material material, vec3 P, vec3 N, vec3 direction, vec4 color) {
-	return abstractLight(material, P, N, -direction, color);
+	return abstractLight(material, P, N, -direction, color) * getShadowFactor(P);
 }
 
 vec3 calculateColor(int sample) {

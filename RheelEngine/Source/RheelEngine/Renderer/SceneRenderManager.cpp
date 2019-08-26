@@ -110,6 +110,7 @@ void SceneRenderManager::_Initialize() {
 	_lighting_shader["gBufferDiffuse"] = 4;
 	_lighting_shader["gBufferSpecular"] = 5;
 	_lighting_shader["gBufferMaterialParameters"] = 6;
+	_lighting_shader["shadowMap"] = 7;
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
 	_lighting_quad_vbo = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);

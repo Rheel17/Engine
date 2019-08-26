@@ -16,13 +16,15 @@ public:
 
 	const GLTexture2D& Texture() const;
 
-	mat4 light_matrix;
+	const mat4& LightMatrix() const;
+
 private:
 	ShadowMapDirectional(SceneRenderManager *manager, Light *light);
 
 	mat4 _CalculateViewProjectionMatrix(CameraPtr camera, unsigned width, unsigned height) const;
 
 	std::shared_ptr<GLFramebuffer> _shadow_buffer;
+	mat4 _light_matrix;
 
 };
 

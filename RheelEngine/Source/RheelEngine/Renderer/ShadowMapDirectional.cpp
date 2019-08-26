@@ -10,7 +10,7 @@ namespace rheel {
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *light) :
 		ShadowMap(manager, light) {
 
-	_shadow_buffer = std::make_shared<GLFramebuffer>(1024, 1024);
+	_shadow_buffer = std::make_shared<GLFramebuffer>(2048, 2048);
 	_shadow_buffer->AddTexture(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 	_shadow_buffer->Create();
 }
@@ -20,13 +20,16 @@ ShadowMapDirectional::~ShadowMapDirectional() {}
 void ShadowMapDirectional::Update(CameraPtr camera, unsigned width, unsigned height) {
 	// enable the shadow buffer
 	GL::PushState();
-	_shadow_buffer->BindForDrawing();
 
 	// set the lightspace matrix
-	GLShaderProgram& opaqueShader = ModelRenderer::GetOpaqueShader();
-	mat4 matrix = _CalculateViewProjectionMatrix(camera, width, height);
-	opaqueShader["lightspaceMatrix"] = matrix;
-	light_matrix = matrix;
+	_light_matrix = _CalculateViewProjectionMatrix(camera, width, height);
+
+	GLShaderProgram& modelShader = ModelRenderer::GetOpaqueShader();
+	modelShader["lightspaceMatrix"] = _light_matrix;
+
+	// write the scene to the framebuffer.
+	_shadow_buffer->Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	for (const auto& pair : Manager()->RenderMap()) {
 		pair.second.RenderObjects();
@@ -37,6 +40,10 @@ void ShadowMapDirectional::Update(CameraPtr camera, unsigned width, unsigned hei
 
 const GLTexture2D& ShadowMapDirectional::Texture() const {
 	return _shadow_buffer->Textures()[0];
+}
+
+const mat4& ShadowMapDirectional::LightMatrix() const {
+	return _light_matrix;
 }
 
 mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsigned width, unsigned height) const {
@@ -52,14 +59,7 @@ mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsi
 
 	vec3 yplus = glm::cross(zplus, xplus);
 
-//	std::cout << "x+: " << xplus << std::endl;
-//	std::cout << "y+: " << yplus << std::endl;
-//	std::cout << "z+: " << zplus << std::endl << std::endl;
-
 	mat4 lightMatrix = mat4(glm::transpose(mat3(xplus, yplus, zplus)));
-
-	std::cout << lightMatrix << std::endl;
-
 	mat4 lightMatrixInv = glm::inverse(lightMatrix);
 
 	// calculate the AABB of the camera frustum in light space
