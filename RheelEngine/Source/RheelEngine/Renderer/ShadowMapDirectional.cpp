@@ -30,11 +30,13 @@ void ShadowMapDirectional::Update(CameraPtr camera, unsigned width, unsigned hei
 	// write the scene to the framebuffer.
 	_shadow_buffer->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glCullFace(GL_FRONT);
 
 	for (const auto& pair : Manager()->RenderMap()) {
 		pair.second.RenderObjects();
 	}
 
+	glCullFace(GL_BACK);
 	GL::PopState();
 }
 

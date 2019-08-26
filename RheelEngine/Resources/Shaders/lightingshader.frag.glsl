@@ -53,6 +53,11 @@ float getShadowFactor(vec3 P) {
 	P = positionLightspaceClip.xyz / positionLightspaceClip.w;
 	P = (P + 1.0) / 2.0;
 	
+	// check for the bounds
+	if (P.x < 0 || P.y < 0 || P.x > 1 || P.y > 1) {
+		return 1.0;
+	}
+
 	// get the depths
 	float opaqueDepth = texture(shadowMap, P.xy).r;
 	float positionDepth = P.z;

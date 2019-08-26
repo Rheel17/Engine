@@ -50,11 +50,17 @@ void SceneRenderer::Render(float dt) {
 	}
 
 	// update the shadow maps
+	mat4 matrix;
+
 	if (_manager->ShouldDrawShadows()) {
 		_CorrectShadowMaps();
 
 		for (auto iter : _shadow_maps) {
 			iter.second->Update(camera, _width, _height);
+
+			if (auto d = std::dynamic_pointer_cast<ShadowMapDirectional>(iter.second)) {
+				matrix = d->LightMatrix();
+			}
 		}
 	}
 
