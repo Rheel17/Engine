@@ -67,7 +67,7 @@ void SceneRenderManager::Update() {
 			_lights_attenuation.push_back(spotLight->Attenuation());
 			_lights_spot_attenuation.push_back(spotLight->SpotAttenuation());
 		} else if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light)) {
-			_lights_type.push_back(1);
+			_lights_type.push_back(2);
 			_lights_position.push_back(vec3());
 			_lights_direction.push_back(directionalLight->Direction());
 			_lights_attenuation.push_back(0.0f);
