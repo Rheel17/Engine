@@ -11,8 +11,10 @@ mat4 PerspectiveCamera::CreateMatrix(unsigned width, unsigned height) const {
 }
 
 std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned height) const {
-	vec3 forward = RotationMatrix() * vec4(0, 0, -1, 0);
-	vec3 up = RotationMatrix() * vec4(0, 1, 0, 0);
+	quat rotation = quat(Rotation());
+
+	vec3 forward = rotation * vec4(0, 0, -1, 0);
+	vec3 up = rotation * vec4(0, 1, 0, 0);
 	vec3 right = glm::cross(forward, up);
 
 	float tanfov = std::tan(_fov);

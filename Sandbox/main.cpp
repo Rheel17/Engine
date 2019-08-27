@@ -78,7 +78,7 @@ static SceneDescription createSceneDescription() {
 			auto& cube = description.AddObject("cube", { 4 * i, 0, 4 * j });
 			cube.loader = [](ObjectPtr object) {
 				auto renderer = object->GetComponent<ModelRenderComponent>();
-				renderer->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.9f, 0.0f));
+				renderer->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.0f));
 			};
 		}
 	}
@@ -86,12 +86,11 @@ static SceneDescription createSceneDescription() {
 	auto& floor = description.AddObject("cube", { 0, -4, 0 }, quat(), { 20, 1, 20 });
 	floor.loader = [](ObjectPtr object) {
 		auto renderer = object->GetComponent<ModelRenderComponent>();
-		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.9f, 0.0f));
+		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.0f));
 	};
 
-//	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
-	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0, -1, 0 }), 100.0f);
-	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, -1, 0 });
+	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
+	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 2, 30 });
 
 	return description;
 }

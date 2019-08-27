@@ -50,22 +50,18 @@ void SceneRenderer::Render(float dt) {
 	}
 
 	// update the shadow maps
-	mat4 matrix;
+	mat4 matrix = camera->CreateMatrix(_width, _height);
 
 	if (_manager->ShouldDrawShadows()) {
 		_CorrectShadowMaps();
 
 		for (auto iter : _shadow_maps) {
 			iter.second->Update(camera, _width, _height);
-
-			if (auto d = std::dynamic_pointer_cast<ShadowMapDirectional>(iter.second)) {
-				matrix = d->LightMatrix();
-			}
 		}
 	}
 
 	// send the camera matrix to the model shader
-	mat4 cameraMatrix = camera->CreateMatrix(_width, _height);
+	mat4 cameraMatrix = matrix;//camera->CreateMatrix(_width, _height);
 	GLShaderProgram& modelShader = ModelRenderer::GetModelShader();
 	modelShader["cameraMatrix"] = cameraMatrix;
 
