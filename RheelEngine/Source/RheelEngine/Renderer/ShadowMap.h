@@ -21,17 +21,18 @@ public:
 	virtual void Update(CameraPtr camera, unsigned width, unsigned height) = 0;
 
 protected:
-	ShadowMap(SceneRenderManager *manager, Light *light);
+	ShadowMap(SceneRenderManager *manager, LightPtr light);
 
 	SceneRenderManager *Manager() const;
-	Light *GetLight() const;
+
+	template<typename T>
+	std::shared_ptr<T> GetLight() const {
+		return std::dynamic_pointer_cast<T>(_light);
+	}
 
 private:
 	SceneRenderManager *_manager;
-	Light *_light;
-
-public:
-	static std::shared_ptr<ShadowMap> CreateShadowMap(SceneRenderManager *manager, Light *lightName);
+	LightPtr _light;
 
 };
 

@@ -19,8 +19,6 @@ class RE_API Scene {
 	RE_NO_MOVE(Scene);
 
 public:
-	~Scene();
-
 	/**
 	 * Adds a script to the scene. The script will go into effect immediately. A
 	 * pointer to the script is returned.
@@ -62,25 +60,34 @@ public:
 	void RemoveObject(ObjectPtr object);
 
 	/**
-	 * Adds a named point light to the scene.
+	 * Adds a light to this scene.
 	 */
-	void AddPointLight(const std::string& name, vec3 position, Color color, bool castsShadows = false, float attenuation = 0.0f);
+	template<typename T>
+	void AddLight(const std::string& name, const T& light) {
+		static_assert(std::is_base_of<Light, T>::value, "Type must be a light");
+		_AddLight(name, std::make_shared<T>(light));
+	}
 
 	/**
-	 * Adds a named spot light to the scene.
+	 * Adds a light to this scene. A shadow distance parameter can be specified
+	 * with this overload of the method. If the light already had a shadow
+	 * distance set, this function will overwrite it.
 	 */
-	void AddSpotLight(const std::string& name, vec3 position, Color color, vec3 direction, bool castsShadows = false, float spotAttenuation = 1.0f, float attenuation = 0.0f);
+	template<typename T>
+	void AddLight(const std::string& name, const T& light, float shadowDistance) {
+		static_assert(std::is_base_of<Light, T>::value, "Type must be a light");
 
-	/**
-	 * Adds a named directional (sun-like) light to the scene.
-	 */
-	void AddDirectionalLight(const std::string& name, Color color, vec3 direction, bool castsShadows = false);
+		auto lightPtr = std::make_shared<T>(light);
+		std::static_pointer_cast<Light>(lightPtr)->SetShadowDistance(shadowDistance);
+
+		_AddLight(name, lightPtr);
+	}
 
 	/**
 	 * Returns a pointer to the light in this scene with the given name, or
 	 * nullptr when a light with the given name does not exist in this scene.
 	 */
-	Light *GetLight(const std::string& lightName);
+	LightPtr GetLight(const std::string& lightName);
 
 	/**
 	 * Returns a vector of all lights in the scene.
@@ -105,7 +112,7 @@ public:
 
 private:
 	void _AddObject(const SceneDescription::ObjectDescription& description);
-	void _AddLight(const std::string& name, Light *light);
+	void _AddLight(const std::string& name, LightPtr light);
 
 	Scene() = default;
 	Scene(const SceneDescription& description);
@@ -113,7 +120,7 @@ private:
 	std::vector<Object> _objects;
 	std::vector<ScriptPtr> _scripts;
 	std::vector<std::string> _light_names;
-	std::map<std::string, Light *> _lights;
+	std::map<std::string, LightPtr> _lights;
 	std::map<std::string, CameraPtr> _cameras;
 
 	float _time = 0.0f;

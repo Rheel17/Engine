@@ -4,46 +4,36 @@
 
 #include "Color.h"
 
+#include <memory>
+
 namespace rheel {
 
 class RE_API Light {
+
+protected:
 	using Color_t = rheel::Color;
 
 public:
-	enum LightType {
-		PointLight = 0, SpotLight = 1, DirectionalLight = 2
-	};
+	virtual ~Light();
 
-public:
-	Light(vec3 position, Color_t color, float attenuation, bool castsShadows);
-	Light(vec3 position, Color_t color, vec3 direction, float spotAttenuation, float attenuation, bool castsShadows);
-	Light(Color_t color, vec3 direction, bool castsShadows);
-
-	LightType Type() const;
-	const vec3& Position() const;
-	const vec3& Direction() const;
+	void SetColor(const Color_t& color);
 	const Color_t& Color() const;
-	float Attenuation() const;
-	float SpotAttenuation() const;
+
+	void SetShadowDistance(float shadowDistance);
+	float ShadowDistance() const;
 	bool CastsShadows() const;
 
-	void SetPosition(const vec3& position);
-	void SetDirection(const vec3& direction);
-	void SetColor(const Color_t& color);
-	void SetAttenuation(float attenutation);
-	void SetSpotAttenuation(float spotAttenuation);
-	void SetCastsShadows(bool castsShadows);
+protected:
+	Light(const Color_t& color);
+	Light(const Color_t& color, float shadowDistance);
 
 private:
-	LightType _type;
-	vec3 _position;
-	vec3 _direction;
 	Color_t _color;
-	float _attenuation = 0.0f;
-	float _spot_attenuation = 0.0f;
-	bool _casts_shadows = false;
+	float _shadow_distance;
 
 };
+
+using LightPtr = std::shared_ptr<Light>;
 
 }
 

@@ -2,6 +2,9 @@
 
 #include "Engine.h"
 #include "PerspectiveCamera.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "DirectionalLight.h"
 #include "Renderer/SceneRenderManager.h"
 #include "Scripts/InputScript.h"
 
@@ -23,29 +26,23 @@ Scene::Scene(const SceneDescription& description) {
 	for (const auto& lightDescription : description.LightDescriptions()) {
 		switch (lightDescription.type) {
 			case SceneDescription::_LightDescription::POINT_LIGHT:
-				AddPointLight(
-						lightDescription.name,
-						lightDescription.position,
+				AddLight(lightDescription.name, PointLight(
 						lightDescription.color,
-						lightDescription.casts_shadows,
-						lightDescription.attenuation);
+						lightDescription.position,
+						lightDescription.attenuation), lightDescription.shadow_distance);
 				break;
 			case SceneDescription::_LightDescription::SPOT_LIGHT:
-				AddSpotLight(
-						lightDescription.name,
-						lightDescription.position,
+				AddLight(lightDescription.name, SpotLight(
 						lightDescription.color,
+						lightDescription.position,
 						lightDescription.direction,
-						lightDescription.casts_shadows,
 						lightDescription.spot_attenuation,
-						lightDescription.attenuation);
+						lightDescription.attenuation), lightDescription.shadow_distance);
 				break;
 			case SceneDescription::_LightDescription::DIRECTIONAL_LIGHT:
-				AddDirectionalLight(
-						lightDescription.name,
+				AddLight(lightDescription.name, DirectionalLight(
 						lightDescription.color,
-						lightDescription.direction,
-						lightDescription.casts_shadows);
+						lightDescription.direction), lightDescription.shadow_distance);
 				break;
 		}
 	}
@@ -63,12 +60,6 @@ Scene::Scene(const SceneDescription& description) {
 						cameraDescription.rotation);
 				break;
 		}
-	}
-}
-
-Scene::~Scene() {
-	for (auto pair : _lights) {
-		delete pair.second;
 	}
 }
 
@@ -104,19 +95,7 @@ void Scene::RemoveObject(ObjectPtr ptr) {
 	_objects.erase(_objects.begin() + index);
 }
 
-void Scene::AddPointLight(const std::string& name, vec3 position, Color color, bool castsShadows, float attenuation) {
-	_AddLight(name, new Light(std::move(position), std::move(color), attenuation, castsShadows));
-}
-
-void Scene::AddSpotLight(const std::string& name, vec3 position, Color color, vec3 direction, bool castsShadows, float spotAttenuation, float attenuation) {
-	_AddLight(name, new Light(std::move(position), std::move(color), std::move(direction), spotAttenuation, attenuation, castsShadows));
-}
-
-void Scene::AddDirectionalLight(const std::string& name, Color color, vec3 direction, bool castsShadows) {
-	_AddLight(name, new Light(std::move(color), glm::normalize(std::move(direction)), castsShadows));
-}
-
-Light *Scene::GetLight(const std::string& lightName) {
+LightPtr Scene::GetLight(const std::string& lightName) {
 	auto iter = _lights.find(lightName);
 	if (iter == _lights.end()) {
 		return nullptr;
@@ -195,13 +174,12 @@ void Scene::_AddObject(const SceneDescription::ObjectDescription& description) {
 	object.FireEvent(Object::ON_ADD);
 }
 
-void Scene::_AddLight(const std::string& name, Light *light) {
+void Scene::_AddLight(const std::string& name, LightPtr light) {
 	if (_lights.find(name) != _lights.end()) {
-		delete light;
 		throw std::runtime_error("Light with name \"" + name + "\" already exists.");
 	}
 
-	_lights[name] = light;
+	_lights[name] = std::shared_ptr<Light>(light);
 	_light_names.push_back(name);
 }
 

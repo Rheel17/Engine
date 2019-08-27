@@ -39,6 +39,11 @@ public:
 	SceneRenderer CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height);
 
 	/**
+	 * Creates and returns a shadow map for the given light.
+	 */
+	std::shared_ptr<ShadowMap> CreateShadowMap(const std::string& lightName);
+
+	/**
 	 * Returns the scene of this render manager.
 	 */
 	Scene_t *Scene();

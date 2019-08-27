@@ -10,6 +10,9 @@
 #include "Color.h"
 #include "Script.h"
 #include "ObjectPtr.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "DirectionalLight.h"
 
 namespace rheel {
 
@@ -42,13 +45,13 @@ private:
 		int type;
 		std::string name;
 
+		Color color;
+		bool shadow_distance;
+
 		vec3 position;
 		vec3 direction;
-		Color color;
 		float attenuation;
 		float spot_attenuation;
-
-		bool casts_shadows;
 
 		static constexpr int POINT_LIGHT = 0;
 		static constexpr int SPOT_LIGHT = 1;
@@ -102,25 +105,22 @@ public:
 	SceneDescription::ObjectDescription& AddObject(std::string blueprint, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0), vec3 scale = { 1, 1, 1 });
 
 	/**
-	 * See: Scene::AddPointLight(...). When a scene is create from this
-	 * description, the lights are added after the objects and before the
-	 * cameras.
+	 * See: Scene::AddLight(...). When a scene is created from this description,
+	 * the lights are added after the objects and before the cameras.
 	 */
-	void AddPointLight(std::string name, vec3 position, Color color, bool castsShadows = false, float attenuation = 0.0f);
+	void AddLight(const std::string& name, const PointLight& light, float shadowDistance = 0.0f);
 
 	/**
-	 * See: Scene::AddSpotLight(...). When a scene is created from this
-	 * description, the lights are added after the objects and before the
-	 * cameras.
+	 * See: Scene::AddLight(...). When a scene is created from this description,
+	 * the lights are added after the objects and before the cameras.
 	 */
-	void AddSpotLight(std::string name, vec3 position, Color color, vec3 direction, bool castsShadows = false, float spotAttenuation = 1.0f, float attenuation = 0.0f);
+	void AddLight(const std::string& name, const SpotLight& light, float shadowDistance = 0.0f);
 
 	/**
-	 * See: Scene::AddDirectionalLight(...). When a scene is created from this
-	 * description, the lights are added after the objects and before the
-	 * cameras.
+	 * See: Scene::AddLight(...). When a scene is created from this description,
+	 * the lights are added after the objects and before the cameras.
 	 */
-	void AddDirectionalLight(std::string name, Color color, vec3 direction, bool castsShadows = false);
+	void AddLight(const std::string& name, const DirectionalLight& light, float shadowDistance = 0.0f);
 
 	/**
 	 * See: Scene::AddCamera(...). When a scene is created from this

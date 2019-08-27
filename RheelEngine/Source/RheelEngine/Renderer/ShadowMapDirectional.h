@@ -7,7 +7,7 @@
 namespace rheel {
 
 class RE_API ShadowMapDirectional : public ShadowMap {
-	friend class ShadowMap;
+	friend class SceneRenderManager;
 
 public:
 	~ShadowMapDirectional();
@@ -19,7 +19,7 @@ public:
 	const mat4& LightMatrix() const;
 
 private:
-	ShadowMapDirectional(SceneRenderManager *manager, Light *light);
+	ShadowMapDirectional(SceneRenderManager *manager, LightPtr light);
 
 	mat4 _CalculateViewProjectionMatrix(CameraPtr camera, unsigned width, unsigned height) const;
 

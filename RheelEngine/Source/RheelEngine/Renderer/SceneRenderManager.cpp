@@ -1,6 +1,10 @@
 #include "SceneRenderManager.h"
 
 #include "ModelRenderer.h"
+#include "ShadowMapDirectional.h"
+#include "../PointLight.h"
+#include "../SpotLight.h"
+#include "../DirectionalLight.h"
 #include "../Engine.h"
 #include "../Resources.h"
 
@@ -46,14 +50,29 @@ void SceneRenderManager::Update() {
 	_lights_spot_attenuation.clear();
 
 	for (const std::string& lightName : _scene->Lights()) {
-		Light *light = _scene->GetLight(lightName);
+		LightPtr light = _scene->GetLight(lightName);
 
-		_lights_type.push_back(light->Type());
-		_lights_position.push_back(light->Position());
-		_lights_direction.push_back(light->Direction());
 		_lights_color.push_back(light->Color());
-		_lights_attenuation.push_back(light->Attenuation());
-		_lights_spot_attenuation.push_back(light->SpotAttenuation());
+
+		if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
+			_lights_type.push_back(0);
+			_lights_position.push_back(pointLight->Position());
+			_lights_direction.push_back(vec3());
+			_lights_attenuation.push_back(pointLight->Attenuation());
+			_lights_spot_attenuation.push_back(0.0f);
+		} else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light)) {
+			_lights_type.push_back(1);
+			_lights_position.push_back(spotLight->Position());
+			_lights_direction.push_back(spotLight->Direction());
+			_lights_attenuation.push_back(spotLight->Attenuation());
+			_lights_spot_attenuation.push_back(spotLight->SpotAttenuation());
+		} else if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light)) {
+			_lights_type.push_back(1);
+			_lights_position.push_back(vec3());
+			_lights_direction.push_back(directionalLight->Direction());
+			_lights_attenuation.push_back(0.0f);
+			_lights_spot_attenuation.push_back(0.0f);
+		}
 	}
 }
 
@@ -69,6 +88,20 @@ ModelRenderer& SceneRenderManager::GetModelRenderer(ModelPtr model) {
 
 SceneRenderer SceneRenderManager::CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height) {
 	return SceneRenderer(this, std::move(cameraName), width, height);
+}
+
+std::shared_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(const std::string& lightName) {
+	LightPtr light = _scene->GetLight(lightName);
+
+	if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
+
+	} else if (auto spoLight = std::dynamic_pointer_cast<SpotLight>(light)) {
+
+	} else if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light)) {
+		return std::shared_ptr<ShadowMapDirectional>(new ShadowMapDirectional(this, light));
+	}
+
+	return nullptr;
 }
 
 SceneRenderManager::Scene_t *SceneRenderManager::Scene() {

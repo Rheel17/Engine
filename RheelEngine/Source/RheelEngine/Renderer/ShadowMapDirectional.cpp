@@ -4,10 +4,11 @@
 
 #include "ModelRenderer.h"
 #include "SceneRenderManager.h"
+#include "../DirectionalLight.h"
 
 namespace rheel {
 
-ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *light) :
+ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr light) :
 		ShadowMap(manager, light) {
 
 	_shadow_buffer = std::make_shared<GLFramebuffer>(2048, 2048);
@@ -50,7 +51,7 @@ const mat4& ShadowMapDirectional::LightMatrix() const {
 
 mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsigned width, unsigned height) const {
 	// calculate the light coordinate system axis
-	vec3 zplus = -GetLight()->Direction();
+	vec3 zplus = -GetLight<DirectionalLight>()->Direction();
 	vec3 xplus;
 
 	if (zplus.x == 0 && zplus.z == 0) {

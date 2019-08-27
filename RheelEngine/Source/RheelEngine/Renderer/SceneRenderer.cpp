@@ -113,7 +113,7 @@ void SceneRenderer::_CorrectShadowMaps() {
 	}
 
 	for (const std::string& lightName : _manager->Scene()->Lights()) {
-		Light *light = _manager->Scene()->GetLight(lightName);
+		LightPtr light = _manager->Scene()->GetLight(lightName);
 
 		if (!light->CastsShadows()) {
 			continue;
@@ -122,7 +122,7 @@ void SceneRenderer::_CorrectShadowMaps() {
 		lightNames.erase(lightName);
 
 		if (_shadow_maps.find(lightName) == _shadow_maps.end()) {
-			_shadow_maps.insert({ lightName, ShadowMap::CreateShadowMap(_manager, light) });
+			_shadow_maps.insert({ lightName, _manager->CreateShadowMap(lightName) });
 		}
 	}
 

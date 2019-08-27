@@ -2,78 +2,29 @@
 
 namespace rheel {
 
-Light::Light(vec3 position, Color_t color, float attenuation, bool castsShadows) :
-		_type(PointLight),
-		_position(std::move(position)), _color(std::move(color)),
-		_attenuation(attenuation),
-		_casts_shadows(castsShadows) {}
+Light::Light(const Color_t& color) :
+		_color(color), _shadow_distance(0.0f) {}
 
-Light::Light(vec3 position, Color_t color, vec3 direction, float spotAttenuation, float attenuation, bool castsShadows) :
-		_type(SpotLight),
-		_position(std::move(position)), _direction(std::move(direction)),
-		_color(std::move(color)),
-		_attenuation(attenuation), _spot_attenuation(spotAttenuation),
-		_casts_shadows(castsShadows) {}
+Light::~Light() {}
 
-Light::Light(Color_t color, vec3 direction, bool castsShadows) :
-		_type(DirectionalLight), _direction(std::move(direction)),
-		_color(std::move(color)),
-		_casts_shadows(castsShadows) {}
-
-Light::LightType Light::Type() const {
-	return _type;
-}
-
-const vec3& Light::Position() const {
-	return _position;
-}
-
-const vec3& Light::Direction() const {
-	return _direction;
+void Light::SetColor(const Color_t& color) {
+	_color = color;
 }
 
 const Light::Color_t& Light::Color() const {
 	return _color;
 }
 
-float Light::Attenuation() const {
-	return _attenuation;
+void Light::SetShadowDistance(float shadowDistance) {
+	_shadow_distance = shadowDistance;
 }
 
-float Light::SpotAttenuation() const {
-	return _spot_attenuation;
+float Light::ShadowDistance() const {
+	return _shadow_distance;
 }
 
 bool Light::CastsShadows() const {
-	return _casts_shadows;
-}
-
-void Light::SetPosition(const vec3& position) {
-	assert(_type != DirectionalLight);
-	_position = position;
-}
-
-void Light::SetDirection(const vec3& direction) {
-	assert(_type != PointLight);
-	_direction = direction;
-}
-
-void Light::SetColor(const Color_t& color) {
-	_color = color;
-}
-
-void Light::SetAttenuation(float attenutation) {
-	assert(_type != DirectionalLight);
-	_attenuation = attenutation;
-}
-
-void Light::SetSpotAttenuation(float spotAttenuation) {
-	assert(_type == SpotLight);
-	_spot_attenuation = spotAttenuation;
-}
-
-void Light::SetCastsShadows(bool castsShadows) {
-	_casts_shadows = castsShadows;
+	return _shadow_distance > 0.0f;
 }
 
 }
