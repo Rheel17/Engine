@@ -95,6 +95,7 @@ void SceneRenderer::Render(float dt) {
 
 	_manager->DrawLightingQuad();
 
+	GLShaderProgram::ClearUse();
 	GLFramebuffer::ClearBinding();
 }
 

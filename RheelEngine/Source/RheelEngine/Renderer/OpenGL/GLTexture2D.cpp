@@ -8,7 +8,7 @@ GLTexture2D::GLTexture2D(GLuint width, GLuint height, GLuint internalFormat) :
 	_id = GL::GenTexture();
 }
 
-GLuint GLTexture2D::GetID() const {
+GLuint GLTexture2D::ID() const {
 	return _id;
 }
 

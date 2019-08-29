@@ -11,9 +11,15 @@ namespace rheel {
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr light) :
 		ShadowMap(manager, light) {
 
-	_shadow_buffer = std::make_shared<GLFramebuffer>(2048, 2048);
+	_shadow_buffer = std::make_shared<GLFramebuffer>(4096, 4096);
 	_shadow_buffer->AddTexture(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 	_shadow_buffer->Create();
+
+	GLTexture2D texture = _shadow_buffer->Textures()[0];
+	texture.Bind();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 0);
 }
 
 ShadowMapDirectional::~ShadowMapDirectional() {}
@@ -30,7 +36,7 @@ void ShadowMapDirectional::Update(CameraPtr camera, unsigned width, unsigned hei
 
 	// write the scene to the framebuffer.
 	_shadow_buffer->Bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glCullFace(GL_FRONT);
 
 	for (const auto& pair : Manager()->RenderMap()) {

@@ -32,7 +32,7 @@ public:
 	/**
 	 * Returns the internal OpenGL ID of this buffer.
 	 */
-	GLuint GetID() const;
+	GLuint ID() const;
 
 	/**
 	 * Returns the binding target of this buffer.

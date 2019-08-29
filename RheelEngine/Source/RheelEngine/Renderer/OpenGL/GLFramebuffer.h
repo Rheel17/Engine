@@ -27,7 +27,7 @@ public:
 	/**
 	 * Returns the internal OpenGL ID of this texture.
 	 */
-	GLuint GetID() const;
+	GLuint ID() const;
 
 	/**
 	 * Resizes the framebuffer to the specified dimensions. Note that both

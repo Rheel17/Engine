@@ -68,7 +68,7 @@ GLVertexArray::GLVertexArray() {
 	}
 }
 
-GLuint GLVertexArray::GetID() const {
+GLuint GLVertexArray::ID() const {
 	return _id;
 }
 

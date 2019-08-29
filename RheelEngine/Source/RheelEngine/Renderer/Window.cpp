@@ -142,8 +142,11 @@ void Window::Loop() {
 		// update the scenes
 		Engine::UpdateScenes(dt);
 
-		// draw the game
+		// initialize OpenGL state
+		GLShaderProgram::ClearUse();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// draw the game
 		Engine::GetUI().Draw(dt);
 
 		// finish the update/render cycle

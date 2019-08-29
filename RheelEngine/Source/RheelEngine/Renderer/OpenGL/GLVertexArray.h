@@ -51,7 +51,7 @@ public:
 	/**
 	 * Returns the internal OpenGL ID of this buffer.
 	 */
-	GLuint GetID() const;
+	GLuint ID() const;
 
 	/**
 	 * Binds this buffer to the previously specified target.

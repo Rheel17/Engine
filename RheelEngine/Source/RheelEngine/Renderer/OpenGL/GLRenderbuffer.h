@@ -24,7 +24,7 @@ public:
 	/**
 	 * Returns the internal OpenGL ID of this renderbuffer.
 	 */
-	GLuint GetID() const;
+	GLuint ID() const;
 
 	/**
 	 * Binds this renderbuffer.

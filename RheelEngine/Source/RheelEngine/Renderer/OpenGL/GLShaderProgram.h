@@ -137,6 +137,11 @@ public:
 	inline void Use() const { GLShaderProgramBindings::Use((GLuint) _id); }
 
 	/**
+	 * Clears the use of any shader program
+	 */
+	static void ClearUse() { GLShaderProgramBindings::Use(0); }
+
+	/**
 	 * This operator can be used as a shorthand for setting uniform variables.
 	 * Note that the shader will be in use after A uniform is set, but not
 	 * necessarily after this operator call.

@@ -14,7 +14,7 @@ public:
 	/**
 	 * Returns the internal OpenGL ID of this texture.
 	 */
-	GLuint GetID() const;
+	GLuint ID() const;
 
 	/**
 	 * Binds this texture to the specified texture unit.

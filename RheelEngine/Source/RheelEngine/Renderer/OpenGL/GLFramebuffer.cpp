@@ -21,7 +21,7 @@ GLFramebuffer::GLFramebuffer(GLuint width, GLuint height, GLuint samples, bool f
 	_id = GL::GenFramebuffer();
 }
 
-GLuint GLFramebuffer::GetID() const {
+GLuint GLFramebuffer::ID() const {
 	return _id;
 }
 
@@ -115,7 +115,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attac
 		texture.Initialize(internalFormat);
 
 		// add the texture to the framebuffer
-		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D_MULTISAMPLE, texture.GetID(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D_MULTISAMPLE, texture.ID(), 0);
 
 		_multisample_textures.push_back(texture);
 	} else {
@@ -133,7 +133,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attac
 		texture.InitializeEmpty(format);
 
 		// add the texture to the framebuffer
-		glFramebufferTexture(GL_FRAMEBUFFER, attachment, texture.GetID(), 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, attachment, texture.ID(), 0);
 
 		_textures.push_back(texture);
 	}
@@ -175,7 +175,7 @@ void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
 	renderbuffer.Bind();
 
 	// add the renderbuffer to the framebuffer
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer.GetID());
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer.ID());
 
 	_renderbuffers.push_back(renderbuffer);
 	_renderbuffer_add_info.push_back({ internalFormat, attachment });

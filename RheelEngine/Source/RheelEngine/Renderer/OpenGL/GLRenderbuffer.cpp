@@ -14,7 +14,7 @@ GLRenderbuffer::GLRenderbuffer(GLuint width, GLuint height, GLenum internalForma
 	}
 }
 
-GLuint GLRenderbuffer::GetID() const {
+GLuint GLRenderbuffer::ID() const {
 	return _id;
 }
 

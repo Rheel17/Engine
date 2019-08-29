@@ -83,7 +83,7 @@ static SceneDescription createSceneDescription() {
 		}
 	}
 
-	auto& floor = description.AddObject("cube", { 0, -4, 0 }, quat(), { 20, 1, 20 });
+	auto& floor = description.AddObject("cube", { 0, -2, 0 }, quat(), { 20, 1, 20 });
 	floor.loader = [](ObjectPtr object) {
 		auto renderer = object->GetComponent<ModelRenderComponent>();
 		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.0f));

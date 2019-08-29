@@ -8,7 +8,7 @@ GLBuffer::GLBuffer(GL::BufferTarget target)
 	_id = GL::GenBuffer();
 }
 
-GLuint GLBuffer::GetID() const {
+GLuint GLBuffer::ID() const {
 	return _id;
 }
 

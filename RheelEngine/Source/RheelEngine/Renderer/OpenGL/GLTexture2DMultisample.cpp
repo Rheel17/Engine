@@ -8,7 +8,7 @@ GLTexture2DMultisample::GLTexture2DMultisample(GLuint width, GLuint height, GLui
 	_id = GL::GenTexture();
 }
 
-GLuint GLTexture2DMultisample::GetID() const {
+GLuint GLTexture2DMultisample::ID() const {
 	return _id;
 }
 
