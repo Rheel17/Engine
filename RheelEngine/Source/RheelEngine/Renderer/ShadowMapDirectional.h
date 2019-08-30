@@ -14,17 +14,21 @@ public:
 
 	void Update(CameraPtr camera, unsigned width, unsigned height) override;
 
-	const GLTexture2D& Texture() const;
+	std::vector<GLTexture2D> Textures() const;
 
-	const mat4& LightMatrix() const;
+	const std::vector<mat4>& LightMatrices() const;
 
 private:
 	ShadowMapDirectional(SceneRenderManager *manager, LightPtr light);
 
-	mat4 _CalculateViewProjectionMatrix(CameraPtr camera, unsigned width, unsigned height) const;
+	void _CalculateViewProjectionMatrices(CameraPtr camera, unsigned width, unsigned height);
 
-	std::shared_ptr<GLFramebuffer> _shadow_buffer;
-	mat4 _light_matrix;
+	std::vector<unsigned> _csm_split;
+	std::vector<float> _csm_borders;
+	unsigned _csm_count;
+
+	std::vector<GLFramebuffer> _shadow_buffers;
+	std::vector<mat4> _light_matrices;
 
 };
 

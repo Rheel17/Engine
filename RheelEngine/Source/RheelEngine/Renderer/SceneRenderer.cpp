@@ -90,8 +90,8 @@ void SceneRenderer::Render(float dt) {
 
 	// bind the shadow objects
 	auto sm = std::dynamic_pointer_cast<ShadowMapDirectional>(_shadow_maps.begin()->second);
-	sm->Texture().Bind(index++);
-	shader["lightspaceMatrix"] = sm->LightMatrix();
+	sm->Textures()[0].Bind(index++);
+	shader["lightspaceMatrix"] = sm->LightMatrices()[0];
 
 	_manager->DrawLightingQuad();
 
