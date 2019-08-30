@@ -26,7 +26,7 @@ public:
 	 * Returns an array of 8 vertices at the corners of the view space of this
 	 * camera.
 	 */
-	virtual std::array<vec3, 8> ViewspaceCorners(unsigned width, unsigned height) const = 0;
+	virtual std::array<vec3, 8> ViewspaceCorners(unsigned width, unsigned height, float near, float far) const = 0;
 
 	/**
 	 * Sets the position of this camera.

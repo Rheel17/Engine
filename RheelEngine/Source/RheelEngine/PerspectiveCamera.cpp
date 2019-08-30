@@ -10,7 +10,7 @@ mat4 PerspectiveCamera::CreateMatrix(unsigned width, unsigned height) const {
 	return glm::perspective(_fov, float(width) / float(height), _near, _far) * ViewMatrix();
 }
 
-std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned height) const {
+std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned height, float near, float far) const {
 	quat rotation = quat(Rotation());
 
 	vec3 forward = rotation * vec4(0, 0, -1, 0);
@@ -20,13 +20,16 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	float tanfov = std::tan(_fov);
 	float aspect = float(width) / float(height);
 
-	float farWidth = _far * tanfov;
-	float nearWidth = _near * tanfov;
+	near = std::max(near, _near);
+	far = std::min(far, _far);
+
+	float farWidth = far * tanfov;
+	float nearWidth = near * tanfov;
 	float farHeight = farWidth / aspect;
 	float nearHeight = nearWidth / aspect;
 
-	vec3 centerNear = Position() + _near * forward;
-	vec3 centerFar = Position() + _far * forward;
+	vec3 centerNear = Position() + near * forward;
+	vec3 centerFar = Position() + far * forward;
 
 	vec3 farTop = centerFar + farHeight * up;
 	vec3 farBottom = centerFar - farHeight * up;

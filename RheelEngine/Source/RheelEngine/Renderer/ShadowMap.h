@@ -30,6 +30,10 @@ protected:
 		return std::dynamic_pointer_cast<T>(_light);
 	}
 
+	std::shared_ptr<Light> GetLight() const {
+		return _light;
+	}
+
 private:
 	SceneRenderManager *_manager;
 	LightPtr _light;

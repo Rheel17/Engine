@@ -17,27 +17,6 @@ uniform sampler2DMS gBufferMaterialParameters;
 uniform sampler2DShadow shadowMap;
 uniform mat4 lightspaceMatrix;
 
-const int shadowSamples = 16;
-const vec2 poissonDisk[16] = vec2[] (
-	/* courtesy of http://www.opengl-tutorial.org */
-	vec2(-0.94201624, -0.39906216), 
-	vec2( 0.94558609, -0.76890725), 
-	vec2(-0.09418410, -0.92938870), 
-	vec2( 0.34495938,  0.29387760), 
-	vec2(-0.91588581,  0.45771432), 
-	vec2(-0.81544232, -0.87912464), 
-	vec2(-0.38277543,  0.27676845), 
-	vec2( 0.97484398,  0.75648379), 
-	vec2( 0.44323325, -0.97511554), 
-	vec2( 0.53742981, -0.47373420), 
-	vec2(-0.26496911, -0.41893023), 
-	vec2( 0.79197514,  0.19090188), 
-	vec2(-0.24188840,  0.99706507), 
-	vec2(-0.81409955,  0.91437590), 
-	vec2( 0.19984126,  0.78641367), 
-	vec2( 0.14383161, -0.14100790) 
-);
-
 // g-buffer parameters
 uniform ivec2 gBufferTextureSize;
 uniform int sampleCount;
@@ -68,35 +47,34 @@ struct Material {
 	float specularExponent;
 };
 
-float random(vec3 seed, int i){
-	vec4 seed4 = vec4(seed, i);
-	float dot_product = dot(seed4, vec4(12.9898, 78.233, 45.164, 94.673));
-	return fract(sin(dot_product) * 43758.5453);
-}
-
 float getShadowFactor(vec3 P, vec3 N, vec3 L) {
 	// transform the position to light-space.
 	vec4 positionLightspaceClip = lightspaceMatrix * vec4(P, 1.0);
-	P = positionLightspaceClip.xyz / positionLightspaceClip.w;
-	P = (P + 1.0) / 2.0;
+	vec3 Plight = positionLightspaceClip.xyz / positionLightspaceClip.w;
+	Plight = (Plight + 1.0) / 2.0;
 	
 	// check for the bounds
-	if (P.x < 0 || P.y < 0 || P.x > 1 || P.y > 1) {
+	if (Plight.x < 0 || Plight.y < 0 || Plight.z < 0 || Plight.x > 1 || Plight.y > 1 || Plight.z > 1) {
 		return 1.0;
 	}
 
 	// set the bias
 	float cosAngle = max(dot(N, L), 0.0);
-	float bias = 0.01;
+	float bias = 0.005;
 	bias = clamp(bias * tan(acos(cosAngle)), 0.0, 2.0 * bias);
 
-	// sample the shadow map using Poisson PCF
+	// sample the shadow map using PCF
 	float shadowFactor = 1.0;
-	float sampleFactor = 1.0 / shadowSamples;
+	const float pcfLevel = 8.0;
+	float pcfOffset = (pcfLevel - 1.0) / 2.0;
+	float sampleFactor = 1.0 / (pcfLevel * pcfLevel);
+	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 
-	for (int i = 0; i < shadowSamples; i++) {
-		int index = int(16.0 * random(floor(P * 1000.0), i)) % 16;
-		shadowFactor -= sampleFactor * (1.0 - texture(shadowMap, vec3(P.xy + poissonDisk[i] / 6000.0, P.z), bias));
+	for (float dx = -pcfOffset; dx <= pcfOffset; dx += 1.0) {
+		for (float dy = -pcfOffset; dy <= pcfOffset; dy += 1.0) {
+			vec2 offset = vec2(dx, dy) * pixelSize;
+			shadowFactor -= sampleFactor * (1.0 - texture(shadowMap, vec3(Plight.xy + offset, Plight.z), bias));
+		}
 	}
 
 	return shadowFactor;

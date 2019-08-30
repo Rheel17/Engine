@@ -46,7 +46,7 @@ private:
 		std::string name;
 
 		Color color;
-		bool shadow_distance;
+		float shadow_distance;
 
 		vec3 position;
 		vec3 direction;

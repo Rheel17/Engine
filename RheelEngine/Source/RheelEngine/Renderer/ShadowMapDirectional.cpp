@@ -68,18 +68,18 @@ mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsi
 
 	vec3 yplus = glm::cross(zplus, xplus);
 
-	mat4 lightMatrix = mat4(glm::transpose(mat3(xplus, yplus, zplus)));
-	mat4 lightMatrixInv = glm::inverse(lightMatrix);
+	mat3 lightMatrix = glm::transpose(mat3(xplus, yplus, zplus));
+	mat3 lightMatrixInv = glm::inverse(lightMatrix);
 
 	// calculate the AABB of the camera frustum in light space
-	auto corners = camera->ViewspaceCorners(width, height);
+	auto corners = camera->ViewspaceCorners(width, height, 0.0f, GetLight()->ShadowDistance());
 
-	float min = std::numeric_limits<float>::min();
+	float min = std::numeric_limits<float>::lowest();
 	float max = std::numeric_limits<float>::max();
 	float xMin = max, xMax = min, yMin = max, yMax = min, zMin = max, zMax = min;
 
 	for (vec3 corner : corners) {
-		vec4 c = lightMatrix * vec4(corner, 1.0);
+		vec3 c = lightMatrix * corner;
 
 		xMin = std::min(xMin, c.x);
 		xMax = std::max(xMax, c.x);
@@ -91,12 +91,16 @@ mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsi
 		zMax = std::max(zMax, c.z);
 	}
 
-	// calculate the light view and projection matrices
-	vec3 aabbHalfDim = vec3(xMax - xMin, yMax - yMin, zMax - xMin) / 2.0f;
-	vec3 center = vec3(xMax + xMin, yMax + yMin, zMax + zMin) / 2.0f;
-	vec4 centerWorldSpace = lightMatrixInv * vec4(center, 1.0f);
+	// increase the depth bounds to include off-screen objects as well
+	zMin -= 200;
+	zMax += 200;
 
-	mat4 viewMatrix = glm::translate(lightMatrix, -vec3(centerWorldSpace));
+	// calculate the light view and projection matrices
+	vec3 aabbHalfDim = vec3(xMax - xMin, yMax - yMin, zMax - zMin) / 2.0f;
+	vec3 center = vec3(xMax + xMin, yMax + yMin, zMax + zMin) / 2.0f;
+	vec3 centerWorldSpace = lightMatrixInv * center;
+
+	mat4 viewMatrix = glm::translate(mat4(lightMatrix), -centerWorldSpace);
 	mat4 projectionMatrix = glm::ortho(
 			-aabbHalfDim.x, aabbHalfDim.x,
 			-aabbHalfDim.y, aabbHalfDim.y,
