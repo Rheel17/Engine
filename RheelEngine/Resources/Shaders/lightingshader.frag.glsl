@@ -59,8 +59,9 @@ float getShadowFactor(vec3 P, vec3 N, vec3 L) {
 	}
 
 	// set the bias
+	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 	float cosAngle = max(dot(N, L), 0.0);
-	float bias = 0.005;
+	float bias = 0.25 * max(pixelSize.x, pixelSize.y);
 	bias = clamp(bias * tan(acos(cosAngle)), 0.0, 2.0 * bias);
 
 	// sample the shadow map using PCF
@@ -68,12 +69,11 @@ float getShadowFactor(vec3 P, vec3 N, vec3 L) {
 	const float pcfLevel = 8.0;
 	float pcfOffset = (pcfLevel - 1.0) / 2.0;
 	float sampleFactor = 1.0 / (pcfLevel * pcfLevel);
-	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 
 	for (float dx = -pcfOffset; dx <= pcfOffset; dx += 1.0) {
 		for (float dy = -pcfOffset; dy <= pcfOffset; dy += 1.0) {
 			vec2 offset = vec2(dx, dy) * pixelSize;
-			shadowFactor -= sampleFactor * (1.0 - texture(shadowMap, vec3(Plight.xy + offset, Plight.z), bias));
+			shadowFactor -= sampleFactor * (1.0 - texture(shadowMap, vec3(Plight.xy + offset, Plight.z - bias)));
 		}
 	}
 

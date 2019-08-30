@@ -17,7 +17,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr
 
 	GLTexture2D texture = _shadow_buffer->Textures()[0];
 	texture.Bind();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 0);
 }
@@ -37,13 +37,11 @@ void ShadowMapDirectional::Update(CameraPtr camera, unsigned width, unsigned hei
 	// write the scene to the framebuffer.
 	_shadow_buffer->Bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
-	glCullFace(GL_FRONT);
 
 	for (const auto& pair : Manager()->RenderMap()) {
 		pair.second.RenderObjects();
 	}
 
-	glCullFace(GL_BACK);
 	GL::PopState();
 }
 
@@ -91,12 +89,12 @@ mat4 ShadowMapDirectional::_CalculateViewProjectionMatrix(CameraPtr camera, unsi
 		zMax = std::max(zMax, c.z);
 	}
 
-	// increase the depth bounds to include off-screen objects as well
-	zMin -= 200;
-	zMax += 200;
-
 	// calculate the light view and projection matrices
 	vec3 aabbHalfDim = vec3(xMax - xMin, yMax - yMin, zMax - zMin) / 2.0f;
+	aabbHalfDim.x = std::max(aabbHalfDim.x, aabbHalfDim.y);
+	aabbHalfDim.y = aabbHalfDim.x;
+	aabbHalfDim.z += 200;
+
 	vec3 center = vec3(xMax + xMin, yMax + yMin, zMax + zMin) / 2.0f;
 	vec3 centerWorldSpace = lightMatrixInv * center;
 
