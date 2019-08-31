@@ -42,6 +42,20 @@ TextElement::TextElement(std::wstring text, Font& font, unsigned size) :
 	}
 }
 
+void TextElement::SetText(std::string text) {
+	_text = text;
+	_wide = false;
+
+	SetDefaultSize(_font.StringWidth(_text, _size), _font_ascend + _font_descend);
+}
+
+void TextElement::SetText(std::wstring text) {
+	_w_text = text;
+	_wide = false;
+
+	SetDefaultSize(_font.StringWidth(_w_text, _size), _font_ascend + _font_descend);
+}
+
 void TextElement::Draw(float dt) const {
 	const Bounds& bounds = GetBounds();
 

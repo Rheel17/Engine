@@ -32,7 +32,18 @@ public:
 	 */
 	TextElement(std::wstring text, Font& font, unsigned size);
 
+	/**
+	 * Sets the text displayed by this element
+	 */
+	void SetText(std::string text);
+
+	/**
+	 * Sets the text displayed by this element
+	 */
+	void SetText(std::wstring text);
+
 	void Draw(float dt) const override;
+
 
 private:
 	std::string _text;

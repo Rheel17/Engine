@@ -2,48 +2,28 @@
 
 using namespace rheel;
 
-class LightRotationScript : public Script {
+class FpsUpdaterScript : public Script {
 
 public:
-	void PreOnUpdate() override {
-//		Light *light = Parent().GetLight("main_light");
-//		light->SetDirection({ std::sin(Time() / 10), 0, -std::cos(Time() / 10) });
+	void SetElement(TextElement *textElement) {
+		_element = textElement;
 	}
 
-};
-
-class RandomRemoveScript : public Script {
-
-public:
 	void PreOnUpdate() override {
-		_timer++;
-		_timer %= 60;
 
-		if (_timer == 0 && !_objects.empty()) {
-			unsigned index = rand() % _objects.size();
-			ObjectPtr object = _objects[index];
-			_objects.erase(_objects.begin() + index);
+		if (_element) {
+			const int freq = 30;
 
-			Parent().RemoveObject(object);
+			if (++_frame_counter == freq) {
+				_element->SetText(std::to_string(int(1.0f / TimeDelta())) + " FPS");
+				_frame_counter %= freq;
+			}
 		}
 	}
 
-	void AddObject(ObjectPtr object) {
-		_objects.push_back(object);
-	}
-
 private:
-	std::vector<ObjectPtr> _objects;
-	unsigned _timer;
-
-};
-
-class RandomRemoveComponent : public Component {
-
-public:
-	void OnAdd() override {
-		Parent()->ParentScene()->GetScript<RandomRemoveScript>()->AddObject(Parent());
-	}
+	TextElement *_element;
+	int _frame_counter;
 
 };
 
@@ -57,8 +37,6 @@ static Blueprint createCubeBlueprint() {
 		component->SetModel(model);
 	});
 
-//	blueprint.AddComponent("RandomRemove");
-
 	return blueprint;
 }
 
@@ -70,8 +48,7 @@ static SceneDescription createSceneDescription() {
 		script->SetCamera("main_camera");
 	});
 
-//	description.AddScript("RandomRemove");
-	description.AddScript("LightRotation");
+	description.AddScript("FpsUpdaterScript");
 
 	for (int i = -2; i <= 2; i++) {
 		for (int j = -2; j <= 2; j++) {
@@ -96,13 +73,10 @@ static SceneDescription createSceneDescription() {
 }
 
 class SandboxGame : public Game {
-	void RegisterComponents() override {
-		Engine::RegisterComponent<RandomRemoveComponent>("RandomRemove");
-	}
+	void RegisterComponents() override {}
 
 	void RegisterScripts() override {
-		Engine::RegisterScript<RandomRemoveScript>("RandomRemove");
-		Engine::RegisterScript<LightRotationScript>("LightRotation");
+		Engine::RegisterScript<FpsUpdaterScript>("FpsUpdaterScript");
 	}
 
 	void RegisterBlueprints() override {
@@ -119,6 +93,7 @@ class SandboxGame : public Game {
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
 		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
 		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
+		config.vsync = false;
 
 		Engine::SetDisplayConfiguration(std::move(config));
 	}
@@ -132,8 +107,13 @@ class SandboxGame : public Game {
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
+		TextElement *fpsElement = ui.InsertElement(TextElement("0 FPS", 16));
+		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
+
 		Engine::GetUI().SetContainer(std::move(ui));
 		Engine::GetUI().RequestFocus(sceneElement);
+
+		Engine::GetActiveScene()->GetScript<FpsUpdaterScript>()->SetElement(fpsElement);
 	}
 
 };

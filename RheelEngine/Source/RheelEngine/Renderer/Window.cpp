@@ -85,15 +85,15 @@ void Window::Show() {
 	glfwSetScrollCallback(window, glfw_ScrollCallback);
 	glfwSetWindowFocusCallback(window, glfw_WindowFocusCallback);
 
-	// enable or disable vsync
-	if (!_configuration.vsync) {
-		glfwSwapInterval(0);
-	}
-
 	// initialize OpenGL
 	glfwMakeContextCurrent(window);
 	if (glewInit() != GLEW_OK) {
 		throw std::runtime_error("Failed to initialize GLEW.");
+	}
+
+	// enable or disable vsync
+	if (!_configuration.vsync) {
+		glfwSwapInterval(0);
 	}
 
 #ifdef RE_DEBUG
