@@ -14,8 +14,14 @@ uniform sampler2DMS gBufferSpecular;
 uniform sampler2DMS gBufferMaterialParameters;
 
 // shadow objects
-uniform sampler2DShadow shadowMap;
-uniform mat4 lightspaceMatrix;
+uniform sampler2DShadow shadowMap0;
+uniform sampler2DShadow shadowMap1;
+uniform sampler2DShadow shadowMap2;
+uniform sampler2DShadow shadowMap3;
+uniform mat4 lightspaceMatrix0;
+uniform mat4 lightspaceMatrix1;
+uniform mat4 lightspaceMatrix2;
+uniform mat4 lightspaceMatrix3;
 
 // g-buffer parameters
 uniform ivec2 gBufferTextureSize;
@@ -47,7 +53,7 @@ struct Material {
 	float specularExponent;
 };
 
-float getShadowFactor(vec3 P, vec3 N, vec3 L) {
+float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, mat4 lightspaceMatrix, float biasFactor) {
 	// transform the position to light-space.
 	vec4 positionLightspaceClip = lightspaceMatrix * vec4(P, 1.0);
 	vec3 Plight = positionLightspaceClip.xyz / positionLightspaceClip.w;
@@ -55,13 +61,13 @@ float getShadowFactor(vec3 P, vec3 N, vec3 L) {
 	
 	// check for the bounds
 	if (Plight.x < 0 || Plight.y < 0 || Plight.z < 0 || Plight.x > 1 || Plight.y > 1 || Plight.z > 1) {
-		return 1.0;
+		return 2.0;
 	}
 
 	// set the bias
 	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 	float cosAngle = max(dot(N, L), 0.0);
-	float bias = 0.25 * max(pixelSize.x, pixelSize.y);
+	float bias = max(pixelSize.x, pixelSize.y) / biasFactor;
 	bias = clamp(bias * tan(acos(cosAngle)), 0.0, 2.0 * bias);
 
 	// sample the shadow map using PCF
@@ -78,6 +84,32 @@ float getShadowFactor(vec3 P, vec3 N, vec3 L) {
 	}
 
 	return shadowFactor;
+}
+
+float getShadowFactor(vec3 P, vec3 N, vec3 L) {
+	float shadowFactor;
+	
+	shadowFactor = calculateShadowFactor(P, N, L, shadowMap0, lightspaceMatrix0, 8.0);
+	if (shadowFactor <= 1.0) {
+		return shadowFactor;
+	}
+
+	shadowFactor = calculateShadowFactor(P, N, L, shadowMap1, lightspaceMatrix1, 4.0);
+	if (shadowFactor <= 1.0) {
+		return shadowFactor;
+	}
+
+	shadowFactor = calculateShadowFactor(P, N, L, shadowMap2, lightspaceMatrix2, 2.0);
+	if (shadowFactor <= 1.0) {
+		return shadowFactor;
+	}
+
+	shadowFactor = calculateShadowFactor(P, N, L, shadowMap3, lightspaceMatrix3, 1.0);
+	if (shadowFactor <= 1.0) {
+		return shadowFactor;
+	}
+
+	return 1.0;
 }
 
 vec3 abstractLight(Material material, vec3 P, vec3 N, vec3 L, vec4 color) {

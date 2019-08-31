@@ -17,7 +17,7 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	vec3 up = rotation * vec4(0, 1, 0, 0);
 	vec3 right = glm::cross(forward, up);
 
-	float tanfov = std::tan(_fov);
+	float tanfov = std::tan(_fov / 2.0f);
 	float aspect = float(width) / float(height);
 
 	near = std::max(near, _near);

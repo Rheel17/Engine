@@ -9,7 +9,7 @@ namespace rheel {
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr light) :
 		ShadowMap(manager, light) {
 
-	_csm_split = { 5, 15, 30, 50 };
+	_csm_split = { 10, 10, 30, 50 };
 	_csm_count = _csm_split.size();
 
 	_shadow_buffers.reserve(_csm_count);
@@ -110,6 +110,7 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(CameraPtr camera, un
 		float min = std::numeric_limits<float>::lowest();
 		float max = std::numeric_limits<float>::max();
 		float xMin = max, xMax = min, yMin = max, yMax = min, zMin = max, zMax = min;
+
 
 		for (vec3 corner : corners) {
 			vec3 c = lightMatrix * corner;
