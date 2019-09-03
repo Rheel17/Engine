@@ -30,7 +30,7 @@ private:
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
-	ModelPtr model = Model::LoadCollada("cube.dae");
+	ModelPtr model = Model::LoadCollada("suzanne_hires.dae");
 
 	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](ComponentPtr c) {
 		ModelRenderComponent *component = static_cast<ModelRenderComponent *>(c.get());
@@ -91,7 +91,7 @@ class SandboxGame : public Game {
 		DisplayConfiguration config;
 		config.title = "Sandbox";
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
-		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
+		config.window_mode = DisplayConfiguration::FULLSCREEN;
 		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
 		config.vsync = false;
 

@@ -14,6 +14,7 @@ uniform sampler2DMS gBufferSpecular;
 uniform sampler2DMS gBufferMaterialParameters;
 
 // shadow objects
+uniform bool enableShadows;
 uniform sampler2DShadow shadowMap0;
 uniform sampler2DShadow shadowMap1;
 uniform sampler2DShadow shadowMap2;
@@ -87,6 +88,10 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 }
 
 float getShadowFactor(vec3 P, vec3 N, vec3 L) {
+	if (!enableShadows) {
+		return 1.0;
+	}
+
 	float shadowFactor;
 	
 	shadowFactor = calculateShadowFactor(P, N, L, shadowMap0, lightspaceMatrix0, 8.0);

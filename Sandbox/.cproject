@@ -90,7 +90,7 @@
 								<option defaultValue="gnu.cpp.compiler.debugging.level.none" id="gnu.cpp.compiler.mingw.exe.release.option.debugging.level.62324900" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.release.option.debugging.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.806434297" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RheelEngine/Source}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glfw-3.2.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glfw-3.3\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glew-2.1.0\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glm\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\bullet3-2.88\build\include&quot;"/>
@@ -155,7 +155,7 @@
 								<option defaultValue="gnu.cpp.compiler.debugging.level.max" id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.386851646" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.1403892935" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RheelEngine/Source}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glfw-3.2.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glfw-3.3\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glew-2.1.0\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\glm\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\bullet3-2.88\build\include&quot;"/>

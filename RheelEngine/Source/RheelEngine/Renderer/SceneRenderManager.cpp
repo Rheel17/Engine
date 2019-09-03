@@ -120,6 +120,7 @@ GLShaderProgram& SceneRenderManager::InitializedLightingShader() const {
 	_lighting_shader["lights_attenuation"] = _lights_attenuation;
 	_lighting_shader["lights_spot_attenuation"] = _lights_spot_attenuation;
 	_lighting_shader["lightCount"] = (GLint) _lights_type.size();
+	_lighting_shader["enableShadows"] = (GLint) ShouldDrawShadows();
 	return _lighting_shader;
 }
 

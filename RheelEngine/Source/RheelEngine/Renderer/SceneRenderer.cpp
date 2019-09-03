@@ -19,9 +19,9 @@ SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName
 	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA); // color
 	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // position
 	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // normal
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // material:ambient
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // material:diffuse
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // material:specular
+	_g_buffer.AddTexture(GL_RGB8,    GL_RGB ); // material:ambient
+	_g_buffer.AddTexture(GL_RGB8,    GL_RGB ); // material:diffuse
+	_g_buffer.AddTexture(GL_RGB8,    GL_RGB ); // material:specular
 	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA); // material:parameters
 	_g_buffer.AddRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 	_g_buffer.Create();
@@ -50,7 +50,8 @@ void SceneRenderer::Render(float dt) {
 	}
 
 	// update the shadow maps
-	if (_manager->ShouldDrawShadows()) {
+	bool drawShadows = _manager->ShouldDrawShadows();
+	if (drawShadows) {
 		_CorrectShadowMaps();
 
 		for (auto iter : _shadow_maps) {
@@ -87,11 +88,13 @@ void SceneRenderer::Render(float dt) {
 	shader["cameraPosition"] = camera->Position();
 
 	// bind the shadow objects
-	auto sm = std::dynamic_pointer_cast<ShadowMapDirectional>(_shadow_maps.begin()->second);
+	if (drawShadows) {
+		auto sm = std::dynamic_pointer_cast<ShadowMapDirectional>(_shadow_maps.begin()->second);
 
-	for (int i = 0; i < 4; i++) {
-		sm->Textures()[i].Bind(index++);
-		shader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
+		for (int i = 0; i < 4; i++) {
+			sm->Textures()[i].Bind(index++);
+			shader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
+		}
 	}
 
 	_manager->DrawLightingQuad();
