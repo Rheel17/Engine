@@ -17,34 +17,23 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	vec3 up = rotation * vec4(0, 1, 0, 0);
 	vec3 right = glm::cross(forward, up);
 
-	float tanfov = std::tan(_fov / 2.0f);
-	float aspect = float(width) / float(height);
-
 	near = std::max(near, _near);
 	far = std::min(far, _far);
 
-	float farWidth = far * tanfov;
-	float nearWidth = near * tanfov;
-	float farHeight = farWidth / aspect;
-	float nearHeight = nearWidth / aspect;
-
-	vec3 centerNear = Position() + near * forward;
-	vec3 centerFar = Position() + far * forward;
-
-	vec3 farTop = centerFar + farHeight * up;
-	vec3 farBottom = centerFar - farHeight * up;
-	vec3 nearTop = centerNear + nearHeight * up;
-	vec3 nearBottom = centerNear - nearHeight * up;
+	const auto position = [forward, up, right, this](const vec2& ndc, float t) {
+		vec3 direction = glm::normalize(ndc.x * right + ndc.y * up + forward);
+		return Position() + t * direction;
+	};
 
 	return std::array<vec3, 8> {{
-		farTop + right * farWidth,
-		farTop - right * farWidth,
-		farBottom + right * farWidth,
-		farBottom - right * farWidth,
-		nearTop + right * nearWidth,
-		nearTop - right * nearWidth,
-		nearBottom + right * nearWidth,
-		nearBottom - right * nearWidth,
+		position({ -1, -1 }, near),
+		position({ -1,  1 }, near),
+		position({  1, -1 }, near),
+		position({  1,  1 }, near),
+		position({ -1, -1 }, far),
+		position({ -1,  1 }, far),
+		position({  1, -1 }, far),
+		position({  1,  1 }, far),
 	}};
 }
 
