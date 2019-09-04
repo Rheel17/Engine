@@ -73,7 +73,7 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 
 	// sample the shadow map using PCF
 	float shadowFactor = 1.0;
-	const float pcfLevel = 8.0;
+	const float pcfLevel = 5.0;
 	float pcfOffset = (pcfLevel - 1.0) / 2.0;
 	float sampleFactor = 1.0 / (pcfLevel * pcfLevel);
 
@@ -169,7 +169,13 @@ vec3 spotLight(Material material, vec3 P, vec3 N, vec3 position, vec3 direction,
 }
 
 vec3 directionalLight(Material material, vec3 P, vec3 N, vec3 direction, vec4 color) {
-	return abstractLight(material, P, N, -direction, color) * getShadowFactor(P, N, direction);
+	vec3 light = abstractLight(material, P, N, -direction, color);
+
+	if (light.r <= 0 || light.g <= 0 || light.b <= 0) {
+		return light;
+	}
+
+	return light * getShadowFactor(P, N, direction);
 }
 
 vec3 calculateColor(int sample) {

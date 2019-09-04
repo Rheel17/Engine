@@ -24,7 +24,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr
 		accumulator += _csm_split[i];
 
 		// initialize the buffer
-		GLFramebuffer buffer(4096, 4096);
+		GLFramebuffer buffer(2048, 2048);
 		buffer.AddTexture(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 		buffer.Create();
 

@@ -30,7 +30,7 @@ private:
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
-	ModelPtr model = Model::LoadCollada("suzanne_hires.dae");
+	ModelPtr model = Model::LoadCollada("cube.dae");
 
 	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](ComponentPtr c) {
 		ModelRenderComponent *component = static_cast<ModelRenderComponent *>(c.get());
@@ -67,7 +67,8 @@ static SceneDescription createSceneDescription() {
 	};
 
 	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
-	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 2, 12 });
+//	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 2, 12 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0.6708f, 0.2747f, 5.6670f }, { -0.5382f, 2.0107f, 0.0f });
 
 	return description;
 }
@@ -91,7 +92,7 @@ class SandboxGame : public Game {
 		DisplayConfiguration config;
 		config.title = "Sandbox";
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
-		config.window_mode = DisplayConfiguration::FULLSCREEN;
+		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
 		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
 		config.vsync = false;
 
