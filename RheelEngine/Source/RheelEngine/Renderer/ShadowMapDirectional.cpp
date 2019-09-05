@@ -19,16 +19,19 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr
 			abort();
 			break;
 		case DisplayConfiguration::SHADOW_LOW:
-			_csm_split = { 25, 75 };
 			textureSize = 1024;
+			_bias = 0.005f;
+			_csm_split = { 25, 75 };
 			break;
 		case DisplayConfiguration::SHADOW_MEDIUM:
-			_csm_split = { 10, 30, 60 };
 			textureSize = 1024;
+			_bias = 0.005f;
+			_csm_split = { 10, 30, 60 };
 			break;
 		case DisplayConfiguration::SHADOW_HIGH:
-			_csm_split = { 10, 10, 30, 50 };
 			textureSize = 2048;
+			_bias = 0.001f;
+			_csm_split = { 10, 10, 30, 50 };
 			break;
 	}
 
@@ -104,6 +107,10 @@ std::vector<GLTexture2D> ShadowMapDirectional::Textures() const {
 
 const std::vector<mat4>& ShadowMapDirectional::LightMatrices() const {
 	return _light_matrices;
+}
+
+float ShadowMapDirectional::Bias() const {
+	return _bias;
 }
 
 void ShadowMapDirectional::_CalculateViewProjectionMatrices(CameraPtr camera, unsigned width, unsigned height) {

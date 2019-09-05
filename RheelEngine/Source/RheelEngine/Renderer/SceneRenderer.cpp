@@ -106,6 +106,7 @@ void SceneRenderer::Render(float dt) {
 			}
 
 			shader["shadowMapCount"] = shadowMapCount;
+			shader["baseBias"] = sm->Bias();
 		}
 	}
 

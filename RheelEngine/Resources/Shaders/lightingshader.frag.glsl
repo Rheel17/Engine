@@ -16,6 +16,7 @@ uniform sampler2DMS gBufferMaterialParameters;
 // shadow objects
 uniform int shadowLevel;
 uniform int shadowMapCount;
+uniform float baseBias;
 uniform sampler2DShadow shadowMap0;
 uniform sampler2DShadow shadowMap1;
 uniform sampler2DShadow shadowMap2;
@@ -69,7 +70,7 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 	// set the bias
 	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 	float cosAngle = max(dot(N, L), 0.0);
-	float bias = 0.001 / biasFactor;
+	float bias = baseBias / biasFactor;
 	bias += clamp(bias * cosAngle, 0.0, 2.14 * bias);
 
 	// calculating the PCF parameters

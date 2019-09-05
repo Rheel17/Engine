@@ -18,6 +18,8 @@ public:
 
 	const std::vector<mat4>& LightMatrices() const;
 
+	float Bias() const;
+
 private:
 	ShadowMapDirectional(SceneRenderManager *manager, LightPtr light);
 
@@ -26,6 +28,7 @@ private:
 	std::vector<unsigned> _csm_split;
 	std::vector<float> _csm_borders;
 	unsigned _csm_count;
+	float _bias;
 
 	std::vector<GLFramebuffer> _shadow_buffers;
 	std::vector<mat4> _light_matrices;

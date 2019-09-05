@@ -66,7 +66,7 @@ static SceneDescription createSceneDescription() {
 		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.0f));
 	};
 
-	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }));
+	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
 	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 2, 12 });
 
 	return description;
@@ -92,7 +92,7 @@ class SandboxGame : public Game {
 		config.title = "Sandbox";
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
 		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
-		config.shadow_quality = DisplayConfiguration::SHADOW_LOW;
+		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
 		config.vsync = false;
 
 		Engine::SetDisplayConfiguration(std::move(config));
