@@ -7,6 +7,8 @@
 
 namespace rheel {
 
+std::shared_ptr<GLTexture2D> ShadowMapDirectional::_empty_shadow_map;
+
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr light) :
 		ShadowMap(manager, light) {
 
@@ -161,6 +163,18 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(CameraPtr camera, un
 
 		_light_matrices[i] = projectionMatrix * viewMatrix;
 	}
+}
+
+const GLTexture2D& ShadowMapDirectional::EmptyShadowMap() {
+	if (!_empty_shadow_map) {
+		_empty_shadow_map = std::make_shared<GLTexture2D>(1, 1, GL_DEPTH_COMPONENT32);
+		_empty_shadow_map->InitializeEmpty(GL_DEPTH_COMPONENT);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	}
+
+	return *_empty_shadow_map;
 }
 
 }

@@ -30,6 +30,12 @@ private:
 	std::vector<GLFramebuffer> _shadow_buffers;
 	std::vector<mat4> _light_matrices;
 
+public:
+	static const GLTexture2D& EmptyShadowMap();
+
+private:
+	static std::shared_ptr<GLTexture2D> _empty_shadow_map;
+
 };
 
 }

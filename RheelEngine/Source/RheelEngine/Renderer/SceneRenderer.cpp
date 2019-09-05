@@ -1,5 +1,6 @@
 #include "SceneRenderer.h"
 
+#include <algorithm>
 #include <set>
 
 #include "ShadowMapDirectional.h"
@@ -77,9 +78,9 @@ void SceneRenderer::Render(float dt) {
 	_result_buffer.Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	unsigned index = 0;
+	unsigned textureUnit = 0;
 	for (const auto& texture : _g_buffer.MultisampleTextures()) {
-		texture.Bind(index++);
+		texture.Bind(textureUnit++);
 	}
 
 	GLShaderProgram& shader = _manager->InitializedLightingShader();
@@ -88,23 +89,31 @@ void SceneRenderer::Render(float dt) {
 	shader["cameraPosition"] = camera->Position();
 
 	// bind the shadow objects
+	int shadowMapCount = 0;
+
 	if (drawShadows) {
-		auto sm = std::dynamic_pointer_cast<ShadowMapDirectional>(_shadow_maps.begin()->second);
-		int shadowMapCount = sm->Textures().size();
+		auto iter = std::find_if(_shadow_maps.begin(), _shadow_maps.end(), [](auto entry) {
+			return (bool) std::dynamic_pointer_cast<ShadowMapDirectional>(entry.second);
+		});
 
-		for (int i = 0; i < shadowMapCount; i++) {
-			sm->Textures()[i].Bind(index++);
-			shader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
+		if (iter != _shadow_maps.end()) {
+			auto sm = std::dynamic_pointer_cast<ShadowMapDirectional>(iter->second);
+			shadowMapCount = sm->Textures().size();
+
+			for (int i = 0; i < shadowMapCount; i++) {
+				sm->Textures()[i].Bind(textureUnit++);
+				shader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
+			}
+
+			shader["shadowMapCount"] = shadowMapCount;
 		}
+	}
 
-		// Bind the first shadow map texture to the remaining (if any) texture
-		// units, to make sure OpenGL doesn't complain about non-depth textures
-		// bound to sampler2DShadow uniforms.
-		for (int i = shadowMapCount; i <= 4; i++) {
-			sm->Textures()[0].Bind(index++);
-		}
-
-		shader["shadowMapCount"] = shadowMapCount;
+	// Bind empty shadow map textures to the remaining (if any) shadow map
+	// texture units, to make sure OpenGL doesn't complain about non-depth
+	// textures bound to sampler2DShadow uniforms.
+	for (int i = shadowMapCount; i <= 4; i++) {
+		ShadowMapDirectional::EmptyShadowMap().Bind(textureUnit++);
 	}
 
 	_manager->DrawLightingQuad();
