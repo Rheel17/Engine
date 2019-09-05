@@ -15,10 +15,10 @@ uniform sampler2DMS gBufferMaterialParameters;
 
 // shadow objects
 uniform bool enableShadows;
-uniform sampler2DShadow shadowMap0;
-uniform sampler2DShadow shadowMap1;
-uniform sampler2DShadow shadowMap2;
-uniform sampler2DShadow shadowMap3;
+uniform sampler2D shadowMap0;
+uniform sampler2D shadowMap1;
+uniform sampler2D shadowMap2;
+uniform sampler2D shadowMap3;
 uniform mat4 lightspaceMatrix0;
 uniform mat4 lightspaceMatrix1;
 uniform mat4 lightspaceMatrix2;
@@ -54,7 +54,7 @@ struct Material {
 	float specularExponent;
 };
 
-float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, mat4 lightspaceMatrix, float biasFactor) {
+float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2D shadowMap, mat4 lightspaceMatrix, float biasFactor) {
 	// transform the position to light-space.
 	vec4 positionLightspaceClip = lightspaceMatrix * vec4(P, 1.0);
 	vec3 Plight = positionLightspaceClip.xyz / positionLightspaceClip.w;
@@ -68,8 +68,8 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 	// set the bias
 	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 	float cosAngle = max(dot(N, L), 0.0);
-	float bias = max(pixelSize.x, pixelSize.y) / biasFactor;
-	bias = clamp(bias * tan(acos(cosAngle)), 0.0, 2.0 * bias);
+	float bias = 0.001 / biasFactor;
+	bias += clamp(bias * cosAngle, 0.0, 2.14 * bias);
 
 	// sample the shadow map using PCF
 	float shadowFactor = 1.0;
@@ -80,7 +80,11 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 	for (float dx = -pcfOffset; dx <= pcfOffset; dx += 1.0) {
 		for (float dy = -pcfOffset; dy <= pcfOffset; dy += 1.0) {
 			vec2 offset = vec2(dx, dy) * pixelSize;
-			shadowFactor -= sampleFactor * (1.0 - texture(shadowMap, vec3(Plight.xy + offset, Plight.z - bias)));
+			float textureDepth = texture(shadowMap, Plight.xy + offset).r;
+
+			if (textureDepth <= Plight.z - bias) {
+				shadowFactor -= sampleFactor;
+			}
 		}
 	}
 

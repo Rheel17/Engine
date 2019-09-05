@@ -28,12 +28,6 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr
 		buffer.AddTexture(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 		buffer.Create();
 
-		// set the texture paramters
-		GLTexture2D texture = buffer.Textures()[0];
-		texture.Bind();
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-
 		_shadow_buffers.emplace_back(buffer);
 	}
 
@@ -110,7 +104,6 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(CameraPtr camera, un
 		float min = std::numeric_limits<float>::lowest();
 		float max = std::numeric_limits<float>::max();
 		float xMin = max, xMax = min, yMin = max, yMax = min, zMin = max, zMax = min;
-
 
 		for (vec3 corner : corners) {
 			vec3 c = lightMatrix * corner;
