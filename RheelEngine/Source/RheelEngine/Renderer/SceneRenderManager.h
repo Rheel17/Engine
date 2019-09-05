@@ -66,6 +66,8 @@ public:
 	void DrawLightingQuad() const;
 
 private:
+	int _ShadowLevel();
+
 	Scene_t *_scene;
 	std::unordered_map<ModelPtr, ModelRenderer> _render_map;
 
@@ -75,6 +77,7 @@ private:
 	std::vector<vec4> _lights_color;
 	std::vector<float> _lights_attenuation;
 	std::vector<float> _lights_spot_attenuation;
+	int _shadow_level;
 
 private:
 	static void _Initialize();

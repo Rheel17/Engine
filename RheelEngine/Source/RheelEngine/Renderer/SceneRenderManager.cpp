@@ -23,22 +23,8 @@ SceneRenderManager::SceneRenderManager(Scene_t *scene) :
 	_Initialize();
 }
 
-/**
- * Returns true only if shadows are enabled and at least one light in the
- * scene casts shadows.
- */
 bool SceneRenderManager::ShouldDrawShadows() const {
-	if (Engine::GetDisplayConfiguration().shadow_quality == DisplayConfiguration::SHADOW_OFF) {
-		return false;
-	}
-
-	for (const std::string& light : _scene->Lights()) {
-		if (_scene->GetLight(light)->CastsShadows()) {
-			return true;
-		}
-	}
-
-	return false;
+	return _shadow_level > 0;
 }
 
 void SceneRenderManager::Update() {
@@ -74,6 +60,8 @@ void SceneRenderManager::Update() {
 			_lights_spot_attenuation.push_back(0.0f);
 		}
 	}
+
+	_shadow_level = _ShadowLevel();
 }
 
 ModelRenderer& SceneRenderManager::GetModelRenderer(ModelPtr model) {
@@ -120,13 +108,23 @@ GLShaderProgram& SceneRenderManager::InitializedLightingShader() const {
 	_lighting_shader["lights_attenuation"] = _lights_attenuation;
 	_lighting_shader["lights_spot_attenuation"] = _lights_spot_attenuation;
 	_lighting_shader["lightCount"] = (GLint) _lights_type.size();
-	_lighting_shader["enableShadows"] = (GLint) ShouldDrawShadows();
+	_lighting_shader["shadowLevel"] = (GLint) _shadow_level;
 	return _lighting_shader;
 }
 
 void SceneRenderManager::DrawLightingQuad() const {
 	_lighting_quad_vao->Bind();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+int SceneRenderManager::_ShadowLevel() {
+	for (const std::string& light : _scene->Lights()) {
+		if (_scene->GetLight(light)->CastsShadows()) {
+			return Engine::GetDisplayConfiguration().shadow_quality;
+		}
+	}
+
+	return 0;
 }
 
 void SceneRenderManager::_Initialize() {

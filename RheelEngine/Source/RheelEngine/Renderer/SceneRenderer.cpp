@@ -90,11 +90,21 @@ void SceneRenderer::Render(float dt) {
 	// bind the shadow objects
 	if (drawShadows) {
 		auto sm = std::dynamic_pointer_cast<ShadowMapDirectional>(_shadow_maps.begin()->second);
+		int shadowMapCount = sm->Textures().size();
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < shadowMapCount; i++) {
 			sm->Textures()[i].Bind(index++);
 			shader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
 		}
+
+		// Bind the first shadow map texture to the remaining (if any) texture
+		// units, to make sure OpenGL doesn't complain about non-depth textures
+		// bound to sampler2DShadow uniforms.
+		for (int i = shadowMapCount; i <= 4; i++) {
+			sm->Textures()[0].Bind(index++);
+		}
+
+		shader["shadowMapCount"] = shadowMapCount;
 	}
 
 	_manager->DrawLightingQuad();

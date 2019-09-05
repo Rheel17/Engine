@@ -14,11 +14,12 @@ uniform sampler2DMS gBufferSpecular;
 uniform sampler2DMS gBufferMaterialParameters;
 
 // shadow objects
-uniform bool enableShadows;
-uniform sampler2D shadowMap0;
-uniform sampler2D shadowMap1;
-uniform sampler2D shadowMap2;
-uniform sampler2D shadowMap3;
+uniform int shadowLevel;
+uniform int shadowMapCount;
+uniform sampler2DShadow shadowMap0;
+uniform sampler2DShadow shadowMap1;
+uniform sampler2DShadow shadowMap2;
+uniform sampler2DShadow shadowMap3;
 uniform mat4 lightspaceMatrix0;
 uniform mat4 lightspaceMatrix1;
 uniform mat4 lightspaceMatrix2;
@@ -54,7 +55,7 @@ struct Material {
 	float specularExponent;
 };
 
-float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2D shadowMap, mat4 lightspaceMatrix, float biasFactor) {
+float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, mat4 lightspaceMatrix, float biasFactor) {
 	// transform the position to light-space.
 	vec4 positionLightspaceClip = lightspaceMatrix * vec4(P, 1.0);
 	vec3 Plight = positionLightspaceClip.xyz / positionLightspaceClip.w;
@@ -71,20 +72,18 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2D shadowMap, mat4 li
 	float bias = 0.001 / biasFactor;
 	bias += clamp(bias * cosAngle, 0.0, 2.14 * bias);
 
+	// calculating the PCF parameters
+	float pcfLevel = 2.0 * shadowLevel - 1.0;
+	float pcfOffset = (pcfLevel - 1.0) / 2.0;
+	
 	// sample the shadow map using PCF
 	float shadowFactor = 1.0;
-	const float pcfLevel = 5.0;
-	float pcfOffset = (pcfLevel - 1.0) / 2.0;
 	float sampleFactor = 1.0 / (pcfLevel * pcfLevel);
 
 	for (float dx = -pcfOffset; dx <= pcfOffset; dx += 1.0) {
 		for (float dy = -pcfOffset; dy <= pcfOffset; dy += 1.0) {
 			vec2 offset = vec2(dx, dy) * pixelSize;
-			float textureDepth = texture(shadowMap, Plight.xy + offset).r;
-
-			if (textureDepth <= Plight.z - bias) {
-				shadowFactor -= sampleFactor;
-			}
+			shadowFactor -= sampleFactor * (1.0 - texture(shadowMap, vec3(Plight.xy + offset, Plight.z - bias)));
 		}
 	}
 
@@ -92,31 +91,27 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2D shadowMap, mat4 li
 }
 
 float getShadowFactor(vec3 P, vec3 N, vec3 L) {
-	if (!enableShadows) {
+	if (shadowLevel <= 0) {
 		return 1.0;
 	}
 
 	float shadowFactor;
 	
 	shadowFactor = calculateShadowFactor(P, N, L, shadowMap0, lightspaceMatrix0, 8.0);
-	if (shadowFactor <= 1.0) {
-		return shadowFactor;
-	}
+	if (shadowFactor <= 1.0) { return shadowFactor; }
+	if (shadowMapCount <= 1) { return 1.0; }
 
 	shadowFactor = calculateShadowFactor(P, N, L, shadowMap1, lightspaceMatrix1, 4.0);
-	if (shadowFactor <= 1.0) {
-		return shadowFactor;
-	}
+	if (shadowFactor <= 1.0) { return shadowFactor; }
+	if (shadowMapCount <= 2) { return 1.0; }
 
 	shadowFactor = calculateShadowFactor(P, N, L, shadowMap2, lightspaceMatrix2, 2.0);
-	if (shadowFactor <= 1.0) {
-		return shadowFactor;
-	}
+	if (shadowFactor <= 1.0) { return shadowFactor; }
+	if (shadowMapCount <= 3) { return 1.0; }
 
 	shadowFactor = calculateShadowFactor(P, N, L, shadowMap3, lightspaceMatrix3, 1.0);
-	if (shadowFactor <= 1.0) {
-		return shadowFactor;
-	}
+	if (shadowFactor <= 1.0) { return shadowFactor; }
+	if (shadowMapCount <= 4) { return 1.0; }
 
 	return 1.0;
 }

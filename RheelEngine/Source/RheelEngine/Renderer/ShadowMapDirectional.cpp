@@ -3,13 +3,33 @@
 #include "ModelRenderer.h"
 #include "SceneRenderManager.h"
 #include "../DirectionalLight.h"
+#include "../Engine.h"
 
 namespace rheel {
 
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr light) :
 		ShadowMap(manager, light) {
 
-	_csm_split = { 10, 10, 30, 50 };
+	unsigned textureSize;
+
+	switch (Engine::GetDisplayConfiguration().shadow_quality) {
+		case DisplayConfiguration::SHADOW_OFF:
+			abort();
+			break;
+		case DisplayConfiguration::SHADOW_LOW:
+			_csm_split = { 25, 75 };
+			textureSize = 1024;
+			break;
+		case DisplayConfiguration::SHADOW_MEDIUM:
+			_csm_split = { 10, 30, 60 };
+			textureSize = 1024;
+			break;
+		case DisplayConfiguration::SHADOW_HIGH:
+			_csm_split = { 10, 10, 30, 50 };
+			textureSize = 2048;
+			break;
+	}
+
 	_csm_count = _csm_split.size();
 
 	_shadow_buffers.reserve(_csm_count);
@@ -24,9 +44,15 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr
 		accumulator += _csm_split[i];
 
 		// initialize the buffer
-		GLFramebuffer buffer(2048, 2048);
+		GLFramebuffer buffer(textureSize, textureSize);
 		buffer.AddTexture(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 		buffer.Create();
+
+		// set the texture paramters
+		GLTexture2D texture = buffer.Textures()[0];
+		texture.Bind();
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
 		_shadow_buffers.emplace_back(buffer);
 	}
