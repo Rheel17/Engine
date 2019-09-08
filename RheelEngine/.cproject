@@ -91,8 +91,9 @@
 					<sourceEntries>
 						<entry excluding="Source/RheelEngine|Source|Resources2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="RheelEngine" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source"/>
-						<entry excluding="Scripts|UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
+						<entry excluding="Physics|UI|Components|Util|Renderer|Scripts" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Physics"/>
 						<entry excluding="Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
@@ -195,8 +196,9 @@
 					<sourceEntries>
 						<entry excluding="Source/RheelEngine|Source|Resources2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="RheelEngine" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source"/>
-						<entry excluding="Scripts|UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
+						<entry excluding="Physics|UI|Components|Util|Renderer|Scripts" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Physics"/>
 						<entry excluding="Text|OpenGL|Text.old" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
@@ -302,8 +304,9 @@
 					<sourceEntries>
 						<entry excluding="Source/RheelEngine|Source|Resources2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="RheelEngine" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source"/>
-						<entry excluding="Scripts|UI|Util|Components|Renderer" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
+						<entry excluding="Physics|UI|Components|Util|Renderer|Scripts" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Physics"/>
 						<entry excluding="Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>

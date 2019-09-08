@@ -39,6 +39,7 @@ private:
 
 public:
 	static constexpr auto NAME_EULER_CAMERA_CONTROLLER = "engine:euler_camera_controller";
+	static constexpr auto NAME_PHYSICS_WORLD = "engine:physics_world";
 
 };
 

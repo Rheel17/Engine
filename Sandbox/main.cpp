@@ -2,35 +2,15 @@
 
 using namespace rheel;
 
-class FpsUpdaterScript : public Script {
-
-public:
-	void SetElement(TextElement *textElement) {
-		_element = textElement;
-	}
-
-	void PreOnUpdate() override {
-
-		if (_element) {
-			const int freq = 30;
-
-			if (++_frame_counter == freq) {
-				_element->SetText(std::to_string(TimeDelta() * 1000) + " ms");
-				_frame_counter %= freq;
-			}
-		}
-	}
-
-private:
-	TextElement *_element;
-	int _frame_counter;
-
-};
-
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
 	ModelPtr model = Model::LoadCollada("cube.dae");
+
+	blueprint.AddComponent(Component::NAME_RIGIDBODY, [](ComponentPtr c) {
+		RigidbodyComponent *component = static_cast<RigidbodyComponent *>(c.get());
+		component->SetShape(nullptr);
+	});
 
 	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](ComponentPtr c) {
 		ModelRenderComponent *component = static_cast<ModelRenderComponent *>(c.get());
@@ -43,20 +23,21 @@ static Blueprint createCubeBlueprint() {
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
+	description.AddScript(Script::NAME_PHYSICS_WORLD);
 	description.AddScript(Script::NAME_EULER_CAMERA_CONTROLLER, [](ScriptPtr s) {
 		EulerCameraController *script = static_cast<EulerCameraController *>(s.get());
 		script->SetCamera("main_camera");
 	});
 
-	description.AddScript("FpsUpdaterScript");
-
 	for (int i = -2; i <= 2; i++) {
 		for (int j = -2; j <= 2; j++) {
-			auto& cube = description.AddObject("cube", { 4 * i, 0, 4 * j });
-			cube.loader = [](ObjectPtr object) {
-				auto renderer = object->GetComponent<ModelRenderComponent>();
-				renderer->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.0f));
-			};
+			for (int k = 0; k < 5; k++) {
+				auto& cube = description.AddObject("cube", { 4 * i, 4 * k, 4 * j });
+				cube.loader = [](ObjectPtr object) {
+					auto renderer = object->GetComponent<ModelRenderComponent>();
+					renderer->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.0f));
+				};
+			}
 		}
 	}
 
@@ -75,9 +56,7 @@ static SceneDescription createSceneDescription() {
 class SandboxGame : public Game {
 	void RegisterComponents() override {}
 
-	void RegisterScripts() override {
-		Engine::RegisterScript<FpsUpdaterScript>("FpsUpdaterScript");
-	}
+	void RegisterScripts() override {}
 
 	void RegisterBlueprints() override {
 		Engine::RegisterBlueprint(createCubeBlueprint());
@@ -108,13 +87,8 @@ class SandboxGame : public Game {
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
-		TextElement *fpsElement = ui.InsertElement(TextElement("0 ms", 16));
-		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
-
 		Engine::GetUI().SetContainer(std::move(ui));
 		Engine::GetUI().RequestFocus(sceneElement);
-
-		Engine::GetActiveScene()->GetScript<FpsUpdaterScript>()->SetElement(fpsElement);
 	}
 
 };

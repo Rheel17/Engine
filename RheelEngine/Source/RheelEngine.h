@@ -7,6 +7,7 @@
 #include "RheelEngine/Engine.h"
 
 #include "RheelEngine/Components/ModelRenderComponent.h"
+#include "RheelEngine/Components/RigidbodyComponent.h"
 
 #include "RheelEngine/Scripts/EulerCameraController.h"
 
@@ -14,8 +15,6 @@
 #include "RheelEngine/UI/Elements/EmptyElement.h"
 #include "RheelEngine/UI/Elements/SceneElement.h"
 #include "RheelEngine/UI/Elements/TextElement.h"
-
-#include "RheelEngine/Util/Math.h"
 
 // includes for entry point
 #include <type_traits>

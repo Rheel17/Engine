@@ -1,4 +1,4 @@
-#include "ModelRenderComponent.h"
+#include "../Components/ModelRenderComponent.h"
 
 #include <iostream>
 

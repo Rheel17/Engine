@@ -1,7 +1,7 @@
+#include "../Components/ModelRenderComponent.h"
+#include "../Components/RigidbodyComponent.h"
 #include "../Engine.h"
 
-#include "ModelRenderComponent.h"
-#include "RigidbodyComponent.h"
 
 namespace rheel {
 

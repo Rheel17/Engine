@@ -1,8 +1,7 @@
 #ifndef MODELRENDERCOMPONENT_H_
 #define MODELRENDERCOMPONENT_H_
 #include "../_common.h"
-
-#include "RenderComponent.h"
+#include "../Components/RenderComponent.h"
 #include "../Material.h"
 #include "../Model.h"
 #include "../Renderer/ModelRenderer.h"
