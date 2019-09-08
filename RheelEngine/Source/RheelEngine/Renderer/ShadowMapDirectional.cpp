@@ -58,6 +58,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr
 		texture.Bind();
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D);
 
 		_shadow_buffers.emplace_back(buffer);
 	}

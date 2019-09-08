@@ -128,6 +128,10 @@ GLShaderProgram& ModelRenderer::GetOpaqueShader() {
 void ModelRenderer::RenderObjects() const {
 	_vao.Bind();
 
+	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 0);
+	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 1);
+	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 2);
+
 	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
 
