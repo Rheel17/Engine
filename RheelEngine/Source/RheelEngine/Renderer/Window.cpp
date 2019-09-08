@@ -52,8 +52,7 @@ void Window::Show() {
 			throw std::runtime_error("window mode not supported by OpenGLWindow.");
 	}
 
-	glfwWindowHint(GLFW_SAMPLES, _configuration.SampleCount());
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 

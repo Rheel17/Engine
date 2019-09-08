@@ -96,6 +96,16 @@ public:
 	void Create();
 
 	/**
+	 * Returns the width of the framebuffer
+	 */
+	unsigned Width() const;
+
+	/**
+	 * Returns the height of the framebuffer
+	 */
+	unsigned Height() const;
+
+	/**
 	 * Returns a vector of all the multisample textures attached to this
 	 * framebuffer. If the framebuffer is not multisampled, this always returns
 	 * and empty vector.

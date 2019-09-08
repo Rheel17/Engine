@@ -38,7 +38,6 @@ uniform vec3 lights_direction[64];
 uniform vec4 lights_color[64];
 uniform float lights_attenuation[64];
 uniform float lights_spot_attenuation[64];
-
 uniform int lightCount;
 
 // light type definitions

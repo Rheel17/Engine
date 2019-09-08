@@ -1,6 +1,7 @@
 #include "SceneRenderManager.h"
 
-#include "ModelRenderer.h"
+#include "DeferredSceneRenderer.h"
+#include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
 #include "../PointLight.h"
 #include "../SpotLight.h"
@@ -9,10 +10,11 @@
 #include "../Resources.h"
 
 #include <unordered_set>
+#include "ModelRenderer.h"
 
 namespace rheel {
 
-GLShaderProgram SceneRenderManager::_lighting_shader;
+GLShaderProgram SceneRenderManager::_deferred_lighting_shader;
 std::shared_ptr<GLVertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
 std::shared_ptr<GLBuffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
 bool SceneRenderManager::_lighting_quad_initialized = false;
@@ -74,8 +76,19 @@ ModelRenderer& SceneRenderManager::GetModelRenderer(ModelPtr model) {
 	return iter->second;
 }
 
-SceneRenderer SceneRenderManager::CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height) {
-	return SceneRenderer(this, std::move(cameraName), width, height);
+std::shared_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height) {
+	SceneRenderer *renderer;
+
+	switch (Engine::GetDisplayConfiguration().render_mode) {
+		case DisplayConfiguration::FORWARD:
+			renderer = new ForwardSceneRenderer(this, std::move(cameraName), width, height);
+			break;
+		case DisplayConfiguration::DEFERRED:
+			renderer = new DeferredSceneRenderer(this, std::move(cameraName), width, height);
+			break;
+	}
+
+	return std::shared_ptr<SceneRenderer>(renderer);
 }
 
 std::shared_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(const std::string& lightName) {
@@ -100,19 +113,23 @@ const std::unordered_map<ModelPtr, ModelRenderer>& SceneRenderManager::RenderMap
 	return _render_map;
 }
 
-GLShaderProgram& SceneRenderManager::InitializedLightingShader() const {
-	_lighting_shader["lights_type"] = _lights_type;
-	_lighting_shader["lights_position"] = _lights_position;
-	_lighting_shader["lights_direction"] = _lights_direction;
-	_lighting_shader["lights_color"] = _lights_color;
-	_lighting_shader["lights_attenuation"] = _lights_attenuation;
-	_lighting_shader["lights_spot_attenuation"] = _lights_spot_attenuation;
-	_lighting_shader["lightCount"] = (GLint) _lights_type.size();
-	_lighting_shader["shadowLevel"] = (GLint) _shadow_level;
-	return _lighting_shader;
+GLShaderProgram& SceneRenderManager::InitializedDeferredLightingShader() const {
+	InitializeShaderLights(_deferred_lighting_shader);
+	return _deferred_lighting_shader;
 }
 
-void SceneRenderManager::DrawLightingQuad() const {
+void SceneRenderManager::InitializeShaderLights(GLShaderProgram& shaderProgram) const {
+	shaderProgram["lights_type"] = _lights_type;
+	shaderProgram["lights_position"] = _lights_position;
+	shaderProgram["lights_direction"] = _lights_direction;
+	shaderProgram["lights_color"] = _lights_color;
+	shaderProgram["lights_attenuation"] = _lights_attenuation;
+	shaderProgram["lights_spot_attenuation"] = _lights_spot_attenuation;
+	shaderProgram["lightCount"] = (GLint) _lights_type.size();
+	shaderProgram["shadowLevel"] = (GLint) _shadow_level;
+}
+
+void SceneRenderManager::DrawDeferredLightingQuad() const {
 	_lighting_quad_vao->Bind();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
@@ -132,20 +149,20 @@ void SceneRenderManager::_Initialize() {
 		return;
 	}
 
-	_lighting_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_lightingshader_vert_glsl));
-	_lighting_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_lightingshader_frag_glsl));
-	_lighting_shader.Link();
-	_lighting_shader["gBufferColor"] = 0;
-	_lighting_shader["gBufferPosition"] = 1;
-	_lighting_shader["gBufferNormal"] = 2;
-	_lighting_shader["gBufferAmbient"] = 3;
-	_lighting_shader["gBufferDiffuse"] = 4;
-	_lighting_shader["gBufferSpecular"] = 5;
-	_lighting_shader["gBufferMaterialParameters"] = 6;
-	_lighting_shader["shadowMap0"] = 7;
-	_lighting_shader["shadowMap1"] = 8;
-	_lighting_shader["shadowMap2"] = 9;
-	_lighting_shader["shadowMap3"] = 10;
+	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_deferred_lightingshader_vert_glsl));
+	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_deferred_lightingshader_frag_glsl));
+	_deferred_lighting_shader.Link();
+	_deferred_lighting_shader["gBufferColor"] = 0;
+	_deferred_lighting_shader["gBufferPosition"] = 1;
+	_deferred_lighting_shader["gBufferNormal"] = 2;
+	_deferred_lighting_shader["gBufferAmbient"] = 3;
+	_deferred_lighting_shader["gBufferDiffuse"] = 4;
+	_deferred_lighting_shader["gBufferSpecular"] = 5;
+	_deferred_lighting_shader["gBufferMaterialParameters"] = 6;
+	_deferred_lighting_shader["shadowMap0"] = 7;
+	_deferred_lighting_shader["shadowMap1"] = 8;
+	_deferred_lighting_shader["shadowMap2"] = 9;
+	_deferred_lighting_shader["shadowMap3"] = 10;
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
 	_lighting_quad_vbo = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);

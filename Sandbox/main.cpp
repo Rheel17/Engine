@@ -15,7 +15,7 @@ public:
 			const int freq = 30;
 
 			if (++_frame_counter == freq) {
-				_element->SetText(std::to_string(int(1.0f / TimeDelta())) + " FPS");
+				_element->SetText(std::to_string(TimeDelta() * 1000) + " ms");
 				_frame_counter %= freq;
 			}
 		}
@@ -90,9 +90,10 @@ class SandboxGame : public Game {
 	void Initialize() override {
 		DisplayConfiguration config;
 		config.title = "Sandbox";
-		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
 		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
+		config.render_mode = DisplayConfiguration::FORWARD;
 		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
+		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
 		config.vsync = false;
 
 		Engine::SetDisplayConfiguration(std::move(config));
@@ -107,7 +108,7 @@ class SandboxGame : public Game {
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
-		TextElement *fpsElement = ui.InsertElement(TextElement("0 FPS", 16));
+		TextElement *fpsElement = ui.InsertElement(TextElement("0 ms", 16));
 		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
 
 		Engine::GetUI().SetContainer(std::move(ui));

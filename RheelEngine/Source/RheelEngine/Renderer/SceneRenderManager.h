@@ -3,9 +3,10 @@
 #include "../_common.h"
 
 #include "../Scene.h"
-#include "OpenGL/GLFramebuffer.h"
 #include "ModelRenderer.h"
 #include "SceneRenderer.h"
+#include "ShadowMap.h"
+#include "OpenGL/GLFramebuffer.h"
 
 namespace rheel {
 
@@ -27,16 +28,15 @@ public:
 	void Update();
 
 	/**
-	 * Returns a ModelRenderer instance to render the specified model.
-	 * Multiple calls with the same model will result in the same
-	 * model renderer.
+	 * Returns a ModelRenderer instance to render the specified model. Multiple
+	 * calls with the same model will result in the same model renderer.
 	 */
 	ModelRenderer& GetModelRenderer(ModelPtr model);
 
 	/**
 	 * Creates and returns a SceneRenderer managed by this manager.
 	 */
-	SceneRenderer CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height);
+	std::shared_ptr<SceneRenderer> CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height);
 
 	/**
 	 * Creates and returns a shadow map for the given light.
@@ -49,21 +49,25 @@ public:
 	Scene_t *Scene();
 
 	/**
-	 * Returns the render map containing all models and their renderers
-	 * in the scene managed by this render manager.
+	 * Returns the render map containing all models and their renderers in the
+	 * scene managed by this render manager.
 	 */
 	const std::unordered_map<ModelPtr, ModelRenderer>& RenderMap() const;
 
 	/**
-	 * Returns a reference to the lighting shader, with all lights
-	 * initialized.
+	 * Returns a reference to the lighting shader, with all lights initialized.
 	 */
-	GLShaderProgram& InitializedLightingShader() const;
+	GLShaderProgram& InitializedDeferredLightingShader() const;
+
+	/**
+	 * Initializes all lights in the shader program.
+	 */
+	void InitializeShaderLights(GLShaderProgram& shaderProgram) const;
 
 	/**
 	 * Binds and draws the VAO of the lighting quad.
 	 */
-	void DrawLightingQuad() const;
+	void DrawDeferredLightingQuad() const;
 
 private:
 	int _ShadowLevel();
@@ -82,7 +86,7 @@ private:
 private:
 	static void _Initialize();
 
-	static GLShaderProgram _lighting_shader;
+	static GLShaderProgram _deferred_lighting_shader;
 	static std::shared_ptr<GLVertexArray> _lighting_quad_vao;
 	static std::shared_ptr<GLBuffer> _lighting_quad_vbo;
 	static bool _lighting_quad_initialized;

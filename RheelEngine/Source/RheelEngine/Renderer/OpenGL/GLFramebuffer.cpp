@@ -213,6 +213,14 @@ void GLFramebuffer::Create() {
 	_created = true;
 }
 
+unsigned GLFramebuffer::Width() const {
+	return _width;
+}
+
+unsigned GLFramebuffer::Height() const {
+	return _height;
+}
+
 const std::vector<GLTexture2DMultisample>& GLFramebuffer::MultisampleTextures() const {
 	return _multisample_textures;
 }

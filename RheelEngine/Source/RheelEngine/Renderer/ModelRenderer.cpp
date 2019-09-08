@@ -8,7 +8,8 @@
 
 namespace rheel {
 
-GLShaderProgram ModelRenderer::_model_shader;
+GLShaderProgram ModelRenderer::_forward_model_shader;
+GLShaderProgram ModelRenderer::_deferred_model_shader;
 GLShaderProgram ModelRenderer::_opaque_shader;
 bool ModelRenderer::_are_shaders_initialized = false;
 
@@ -109,9 +110,14 @@ void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectDataPtr
 	_Remove(_textured_objects[material], std::move(object));
 }
 
-GLShaderProgram& ModelRenderer::GetModelShader() {
+GLShaderProgram& ModelRenderer::GetForwardModelShader() {
 	_InitializeShaders();
-	return _model_shader;
+	return _forward_model_shader;
+}
+
+GLShaderProgram& ModelRenderer::GetDeferredModelShader() {
+	_InitializeShaders();
+	return _deferred_model_shader;
 }
 
 GLShaderProgram& ModelRenderer::GetOpaqueShader() {
@@ -152,12 +158,23 @@ void ModelRenderer::_InitializeShaders() {
 		return;
 	}
 
-	_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_modelshader_vert_glsl));
-	_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_modelshader_frag_glsl));
-	_model_shader.Link();
-	_model_shader["ambientTexture"] = 0;
-	_model_shader["diffuseTexture"] = 1;
-	_model_shader["specularTexture"] = 2;
+	_forward_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_forward_modelshader_vert_glsl));
+	_forward_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_forward_modelshader_frag_glsl));
+	_forward_model_shader.Link();
+	_forward_model_shader["ambientTexture"] = 0;
+	_forward_model_shader["diffuseTexture"] = 1;
+	_forward_model_shader["specularTexture"] = 2;
+	_forward_model_shader["shadowMap0"] = 3;
+	_forward_model_shader["shadowMap1"] = 4;
+	_forward_model_shader["shadowMap2"] = 5;
+	_forward_model_shader["shadowMap3"] = 6;
+
+	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_deferred_modelshader_vert_glsl));
+	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_deferred_modelshader_frag_glsl));
+	_deferred_model_shader.Link();
+	_deferred_model_shader["ambientTexture"] = 0;
+	_deferred_model_shader["diffuseTexture"] = 1;
+	_deferred_model_shader["specularTexture"] = 2;
 
 	_opaque_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_opaqueshader_vert_glsl));
 	_opaque_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_opaqueshader_frag_glsl));

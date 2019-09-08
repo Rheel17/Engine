@@ -27,7 +27,17 @@ void SceneElement::Draw(float dt) const {
 	}
 
 	_scene_renderer->Render(dt);
-	_DrawTexturedQuad(bounds, _scene_renderer->OutputTexture());
+	const auto& result = _scene_renderer->ResultBuffer();
+
+	GL::ClearFramebufferBinding(GL::FramebufferTarget::DRAW);
+	result.BindForReading();
+
+	glBlitFramebuffer(
+			0, 0, result.Width(), result.Height(),
+			bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height,
+			GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+	GL::ClearFramebufferBinding(GL::FramebufferTarget::READ);
 }
 
 void SceneElement::OnFocusGained() {
@@ -122,7 +132,7 @@ void SceneElement::_InitializeRenderer(const Bounds& bounds) const {
 		return;
 	}
 
-	_scene_renderer = std::make_shared<SceneRenderer>(Engine::GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_name, bounds.width, bounds.height));
+	_scene_renderer = Engine::GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_name, bounds.width, bounds.height);
 }
 
 }

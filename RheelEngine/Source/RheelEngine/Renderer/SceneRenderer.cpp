@@ -1,133 +1,76 @@
 #include "SceneRenderer.h"
 
-#include <algorithm>
-#include <set>
-
-#include "ShadowMapDirectional.h"
 #include "SceneRenderManager.h"
 #include "../Engine.h"
-#include "../Resources.h"
 
 namespace rheel {
 
-SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName,
-		unsigned width, unsigned height) :
+SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount, bool depthComponent) :
 		_manager(manager), _camera_name(std::move(cameraName)),
 		_width(width), _height(height),
-		_g_buffer(width, height, Engine::GetDisplayConfiguration().SampleCount(), true),
-		_result_buffer(width, height) {
+		_result_buffer(width, height, sampleCount) {
 
-	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA); // color
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // position
-	_g_buffer.AddTexture(GL_RGB32F,  GL_RGB ); // normal
-	_g_buffer.AddTexture(GL_RGB8,    GL_RGB ); // material:ambient
-	_g_buffer.AddTexture(GL_RGB8,    GL_RGB ); // material:diffuse
-	_g_buffer.AddTexture(GL_RGB8,    GL_RGB ); // material:specular
-	_g_buffer.AddTexture(GL_RGBA32F, GL_RGBA); // material:parameters
-	_g_buffer.AddRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
-	_g_buffer.Create();
+	_result_buffer.AddTexture(GL_RGB8, GL_RGB);
 
-	_result_buffer.AddTexture(GL_RGB32F, GL_RGB);
+	if (depthComponent) {
+		_result_buffer.AddRenderbuffer(GL_DEPTH_COMPONENT32, GL_DEPTH_ATTACHMENT);
+	}
+
 	_result_buffer.Create();
 }
+
+SceneRenderer::~SceneRenderer() {}
 
 void SceneRenderer::SetSize(unsigned width, unsigned height) {
 	if (_width == width && _height == height) {
 		return;
 	}
 
-	_g_buffer = _g_buffer.ResizedCopy(width, height);
+	_width = width;
+	_height = height;
+
 	_result_buffer = _result_buffer.ResizedCopy(width, height);
+	Resize(width, height);
 }
 
-void SceneRenderer::Render(float dt) {
-	// get the camera
-	CameraPtr camera = _manager->Scene()->GetCamera(_camera_name);
+const GLFramebuffer& SceneRenderer::ResultBuffer() const {
+	return _result_buffer;
+}
 
-	// if no camera with the given name was found: don't render anything
-	// new to the buffer.
-	if (!camera) {
+void SceneRenderer::_RenderShadowMaps() {
+	CameraPtr camera = Camera();
+	if (!camera || ! _manager->ShouldDrawShadows()) {
 		return;
 	}
 
-	// update the shadow maps
-	bool drawShadows = _manager->ShouldDrawShadows();
-	if (drawShadows) {
-		_CorrectShadowMaps();
+	_CorrectShadowMapList();
 
-		for (auto iter : _shadow_maps) {
-			iter.second->Update(camera, _width, _height);
-		}
+	for (auto iter : _shadow_maps) {
+		iter.second->Update(camera, _width, _height);
 	}
-
-	// send the camera matrix to the model shader
-	mat4 cameraMatrix = camera->CreateMatrix(_width, _height);
-	GLShaderProgram& modelShader = ModelRenderer::GetModelShader();
-	modelShader["cameraMatrix"] = cameraMatrix;
-
-	// write the scene to the g-buffer.
-	_g_buffer.Bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	for (const auto& pair : _manager->RenderMap()) {
-		pair.second.RenderObjects();
-	}
-
-	// write the g-buffer to the result buffer with the
-	// lighting shader
-	_result_buffer.Bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	unsigned textureUnit = 0;
-	for (const auto& texture : _g_buffer.MultisampleTextures()) {
-		texture.Bind(textureUnit++);
-	}
-
-	GLShaderProgram& shader = _manager->InitializedLightingShader();
-	shader["gBufferTextureSize"] = ivec2 { _width, _height };
-	shader["sampleCount"] = (GLint) Engine::GetDisplayConfiguration().SampleCount();
-	shader["cameraPosition"] = camera->Position();
-
-	// bind the shadow objects
-	int shadowMapCount = 0;
-
-	if (drawShadows) {
-		auto iter = std::find_if(_shadow_maps.begin(), _shadow_maps.end(), [](auto entry) {
-			return (bool) std::dynamic_pointer_cast<ShadowMapDirectional>(entry.second);
-		});
-
-		if (iter != _shadow_maps.end()) {
-			auto sm = std::dynamic_pointer_cast<ShadowMapDirectional>(iter->second);
-			shadowMapCount = sm->Textures().size();
-
-			for (int i = 0; i < shadowMapCount; i++) {
-				sm->Textures()[i].Bind(textureUnit++);
-				shader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
-			}
-
-			shader["shadowMapCount"] = shadowMapCount;
-			shader["baseBias"] = sm->Bias();
-		}
-	}
-
-	// Bind empty shadow map textures to the remaining (if any) shadow map
-	// texture units, to make sure OpenGL doesn't complain about non-depth
-	// textures bound to sampler2DShadow uniforms.
-	for (int i = shadowMapCount; i <= 4; i++) {
-		ShadowMapDirectional::EmptyShadowMap().Bind(textureUnit++);
-	}
-
-	_manager->DrawLightingQuad();
-
-	GLShaderProgram::ClearUse();
-	GLFramebuffer::ClearBinding();
 }
 
-const GLTexture2D& SceneRenderer::OutputTexture() const {
-	return _result_buffer.Textures()[0];
+SceneRenderManager *SceneRenderer::Manager() const {
+	return _manager;
 }
 
-void SceneRenderer::_CorrectShadowMaps() {
+CameraPtr SceneRenderer::Camera() const {
+	return _manager->Scene()->GetCamera(_camera_name);
+}
+
+unsigned SceneRenderer::Width() const {
+	return _width;
+}
+
+unsigned SceneRenderer::Height() const {
+	return _height;
+}
+
+const std::map<std::string, std::shared_ptr<ShadowMap>> SceneRenderer::ShadowMaps() const {
+	return _shadow_maps;
+}
+
+void SceneRenderer::_CorrectShadowMapList() {
 	std::set<std::string> lightNames;
 	for (auto pair : _shadow_maps) {
 		lightNames.insert(pair.first);

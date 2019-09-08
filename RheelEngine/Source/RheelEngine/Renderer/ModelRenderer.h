@@ -87,13 +87,15 @@ private:
 	std::map<Material, _ObjectDataVector, _MaterialTextureCompare> _textured_objects;
 
 public:
-	static GLShaderProgram& GetModelShader();
+	static GLShaderProgram& GetForwardModelShader();
+	static GLShaderProgram& GetDeferredModelShader();
 	static GLShaderProgram& GetOpaqueShader();
 
 private:
 	static void _InitializeShaders();
 
-	static GLShaderProgram _model_shader;
+	static GLShaderProgram _forward_model_shader;
+	static GLShaderProgram _deferred_model_shader;
 	static GLShaderProgram _opaque_shader;
 	static bool _are_shaders_initialized;
 

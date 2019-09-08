@@ -4,42 +4,50 @@
 
 #include "ShadowMap.h"
 #include "OpenGL/GLFramebuffer.h"
-#include "OpenGL/GLShaderProgram.h"
-#include "OpenGL/GLVertexArray.h"
-#include "OpenGL/GLBuffer.h"
-#include "../Scene.h"
 
 namespace rheel {
 
 class SceneRenderManager;
 
 class RE_API SceneRenderer {
-	friend class SceneRenderManager;
 
 public:
+	virtual ~SceneRenderer();
+
 	void SetSize(unsigned width, unsigned height);
 
-	void Render(float dt);
+	const GLFramebuffer& ResultBuffer() const;
 
-	const GLTexture2D& OutputTexture() const;
+	virtual void Render(float dt) = 0;
 
-	const std::map<std::string, std::shared_ptr<ShadowMap>>& ShadowMaps() const {
-		return _shadow_maps;
-	}
+protected:
+	SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height, unsigned samples, bool depthComponent);
+
+	void _RenderShadowMaps();
+
+	SceneRenderManager *Manager() const;
+
+	CameraPtr Camera() const;
+
+	unsigned Width() const;
+
+	unsigned Height() const;
+
+	const std::map<std::string, std::shared_ptr<ShadowMap>> ShadowMaps() const;
+
+	virtual void Resize(unsigned width, unsigned height) = 0;
 
 private:
-	SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height);
-
-	void _CorrectShadowMaps();
+	void _CorrectShadowMapList();
 
 	SceneRenderManager *_manager;
 	std::string _camera_name;
 	unsigned _width;
 	unsigned _height;
 
-	std::map<std::string, std::shared_ptr<ShadowMap>> _shadow_maps;
-	GLFramebuffer _g_buffer;
 	GLFramebuffer _result_buffer;
+
+	std::map<std::string, std::shared_ptr<ShadowMap>> _shadow_maps;
 
 };
 
