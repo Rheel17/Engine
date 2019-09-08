@@ -5,6 +5,7 @@
 #include <resources.h>
 
 #include <string>
+#include <set>
 
 namespace rheel {
 
@@ -17,6 +18,9 @@ public:
 	static std::string PreprocessShader(const std::string& resourceName);
 
 private:
+	static std::string _PreprocessShader(const std::string& resourceName, std::set<std::string>& includedResources);
+	static bool _IsShaderIncludeLine(const std::string& line, std::string& resource);
+
 	static ___res___ _resources;
 
 };
