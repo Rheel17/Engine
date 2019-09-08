@@ -9,6 +9,9 @@ namespace rheel {
 
 class RE_API Material {
 
+private:
+	using _ImagePtr = std::shared_ptr<Image>;
+
 public:
 	enum MaterialType {
 		Colored, Textured
@@ -35,20 +38,20 @@ public:
 	 * specular values will be clamped between 0.0 and 1.0. Ambient will be
 	 * calculated using 1.0f - diffuse.
 	 */
-	Material(ImagePtr texture, float diffuse, float specular, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(_ImagePtr texture, float diffuse, float specular, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
 	/**
 	 * Creates a fully-textured material, with separate textures for the
 	 * ambient, diffuse, and specular components.
 	 */
-	Material(ImagePtr ambientTexture, ImagePtr diffuseTexture, ImagePtr specularTexture, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(_ImagePtr ambientTexture, _ImagePtr diffuseTexture, _ImagePtr specularTexture, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
 	/**
 	 * Creates a fully-textured material, with separate textures for the
 	 * ambient, diffuse, and specular components. This constructor also allows
 	 * a factor to be set for each of these textures.
 	 */
-	Material(ImagePtr ambientTexture, ImagePtr diffuseTexture, ImagePtr specularTexture,
+	Material(_ImagePtr ambientTexture, _ImagePtr diffuseTexture, _ImagePtr specularTexture,
 			float ambientFactor, float diffuseFactor, float specularFactor,
 			float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
@@ -81,26 +84,26 @@ public:
 	/**
 	 * Returns the ambient texture of this material, if present.
 	 */
-	const ImagePtr AmbientTexture() const;
+	const _ImagePtr AmbientTexture() const;
 
 	/**
 	 * Returns the diffuse texture of this material, if present.
 	 */
-	const ImagePtr DiffuseTexture() const;
+	const _ImagePtr DiffuseTexture() const;
 
 	/**
 	 * Returns the specular texture of this material, if present.
 	 */
-	const ImagePtr SpecularTexture() const;
+	const _ImagePtr SpecularTexture() const;
 
 private:
 	MaterialType _type;
 
 	Color _color;
 
-	ImagePtr _ambient_texture;
-	ImagePtr _diffuse_texture;
-	ImagePtr _specular_texture;
+	_ImagePtr _ambient_texture;
+	_ImagePtr _diffuse_texture;
+	_ImagePtr _specular_texture;
 
 	float _ambient_factor;
 	float _diffuse_factor;
@@ -110,7 +113,7 @@ private:
 public:
 	static constexpr float DEFAULT_SPECULAR_EXPONENT = 50.0f;
 
-	static ImagePtr UV_TEST_TEXTURE;
+	static _ImagePtr UV_TEST_TEXTURE;
 	static const Material UV_TEST_MATERIAL;
 
 };

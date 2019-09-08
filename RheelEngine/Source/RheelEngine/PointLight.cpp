@@ -2,9 +2,9 @@
 
 namespace rheel {
 
-PointLight::PointLight(const Color_t& color, const vec3& position, float attenuation) :
-		Light(color),
-		_position(position), _attenuation(attenuation) {}
+PointLight::PointLight(Color color, vec3 position, float attenuation) :
+		Light(std::move(color)),
+		_position(std::move(position)), _attenuation(attenuation) {}
 
 PointLight::~PointLight() {}
 

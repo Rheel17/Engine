@@ -45,7 +45,7 @@ private:
 	mutable Scene *_scene;
 	std::string _camera_name;
 
-	mutable std::shared_ptr<SceneRenderer> _scene_renderer;
+	mutable std::unique_ptr<SceneRenderer> _scene_renderer;
 
 };
 

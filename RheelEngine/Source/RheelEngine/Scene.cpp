@@ -13,7 +13,7 @@ namespace rheel {
 Scene::Scene(const SceneDescription& description) {
 	// first: add the scripts
 	for (const auto& scriptEntry : description.Scripts()) {
-		ScriptPtr script = AddScript(scriptEntry.first);
+		Script& script = AddScript(scriptEntry.first);
 		scriptEntry.second(script);
 	}
 
@@ -63,14 +63,15 @@ Scene::Scene(const SceneDescription& description) {
 	}
 }
 
-ScriptPtr Scene::AddScript(const std::string& script) {
-	ScriptPtr instance = Engine::CreateScript(script);
+Script& Scene::AddScript(const std::string& script) {
+	std::unique_ptr<Script> instance = Engine::CreateScript(script);
+	Script *ptr = instance.get();
 	instance->_parent_scene = this;
-	_scripts.push_back(instance);
-	return instance;
+	_scripts.push_back(std::move(instance));
+	return *ptr;
 }
 
-const std::vector<ScriptPtr>& Scene::Scripts() const {
+const std::vector<std::unique_ptr<Script>>& Scene::Scripts() const {
 	return _scripts;
 }
 
@@ -95,13 +96,13 @@ void Scene::RemoveObject(ObjectPtr ptr) {
 	_objects.erase(_objects.begin() + index);
 }
 
-LightPtr Scene::GetLight(const std::string& lightName) {
+Light *Scene::GetLight(const std::string& lightName) {
 	auto iter = _lights.find(lightName);
 	if (iter == _lights.end()) {
 		return nullptr;
 	}
 
-	return iter->second;
+	return iter->second.get();
 }
 
 const std::vector<std::string>& Scene::Lights() const {
@@ -109,16 +110,16 @@ const std::vector<std::string>& Scene::Lights() const {
 }
 
 void Scene::AddCamera(float fov, float near, float far, std::string name, vec3 position, vec3 rotation) {
-	_cameras[name] = std::make_shared<PerspectiveCamera>(name, std::move(position), std::move(rotation), fov, near, far);
+	_cameras[name] = std::make_unique<PerspectiveCamera>(name, std::move(position), std::move(rotation), fov, near, far);
 }
 
-CameraPtr Scene::GetCamera(const std::string& cameraName) {
+Camera *Scene::GetCamera(const std::string& cameraName) {
 	auto iter = _cameras.find(cameraName);
 	if (iter == _cameras.end()) {
 		return nullptr;
 	}
 
-	return iter->second;
+	return iter->second.get();
 }
 
 void Scene::Update(float dt) {
@@ -126,7 +127,7 @@ void Scene::Update(float dt) {
 	_time += dt;
 
 	// pre-update the scripts
-	for (auto script : _scripts) {
+	for (auto& script : _scripts) {
 		script->_dt = dt;
 		script->_time = _time;
 		script->PreOnUpdate();
@@ -138,7 +139,7 @@ void Scene::Update(float dt) {
 	}
 
 	// post-update the scripts
-	for (auto script : _scripts) {
+	for (auto& script : _scripts) {
 		script->PostOnUpdate();
 	}
 
@@ -151,8 +152,8 @@ void Scene::Update(float dt) {
 	renderManager.Update();
 
 	// reset the input scripts
-	for (auto script : _scripts) {
-		if (auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+	for (auto& script : _scripts) {
+		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
 			inputScript->_ResetDeltas();
 		}
 	}
@@ -174,12 +175,12 @@ void Scene::_AddObject(const SceneDescription::ObjectDescription& description) {
 	object.FireEvent(Object::ON_ADD);
 }
 
-void Scene::_AddLight(const std::string& name, LightPtr light) {
+void Scene::_AddLight(const std::string& name, Light *light) {
 	if (_lights.find(name) != _lights.end()) {
 		throw std::runtime_error("Light with name \"" + name + "\" already exists.");
 	}
 
-	_lights[name] = std::shared_ptr<Light>(light);
+	_lights[name] = std::unique_ptr<Light>(light);
 	_light_names.push_back(name);
 }
 

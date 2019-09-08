@@ -19,7 +19,7 @@ namespace rheel {
 class RE_API SceneDescription {
 	friend class Scene;
 
-	using _ScriptLoader = std::function<void(ScriptPtr)>;
+	using _ScriptLoader = std::function<void(Script&)>;
 	using _ObjectLoader = std::function<void(ObjectPtr)>;
 
 public:
@@ -91,7 +91,7 @@ public:
 	 * description, the scripts are the added first, to be able to notify the
 	 * scripts of other additions to the scene.
 	 */
-	void AddScript(const std::string& script, _ScriptLoader onLoad = [](ScriptPtr){});
+	void AddScript(const std::string& script, _ScriptLoader onLoad = [](Script&){});
 
 	/**
 	 * See: Scene::AddObject(...). When a scene is created from this

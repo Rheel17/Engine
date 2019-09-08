@@ -2,8 +2,6 @@
 #define RIGIDSHAPE_H_
 #include "../_common.h"
 
-#include <btBulletDynamicsCommon.h>
-
 #include <memory>
 
 namespace rheel {

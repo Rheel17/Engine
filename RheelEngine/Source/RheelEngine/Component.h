@@ -56,8 +56,6 @@ public:
 
 };
 
-using ComponentPtr = std::shared_ptr<Component>;
-
 }
 
 #endif

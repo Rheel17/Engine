@@ -57,8 +57,8 @@ private:
 
 	void AddGeometry(const Geometry& geometry, const mat4& transform);
 
-	std::shared_ptr<_XmlFile> _xml_file;
-	std::shared_ptr<_XmlDocument> _xml_document;
+	std::unique_ptr<_XmlFile> _xml_file;
+	std::unique_ptr<_XmlDocument> _xml_document;
 
 	std::unordered_map<std::string, Geometry> _geometries;
 	std::vector<Model::Vertex> _vertices;
@@ -67,7 +67,7 @@ private:
 	char _up = 'y';
 
 public:
-	static ModelPtr ParseCollada(const std::string& filename);
+	static void ParseCollada(Model& model, const std::string& filename);
 
 private:
 	static std::vector<unsigned> _CreateVectorUnsigned(_XmlNode *node, int size = -1);

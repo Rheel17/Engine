@@ -34,15 +34,15 @@ SceneDescription::ObjectDescription& SceneDescription::AddObject(std::string blu
 }
 
 void SceneDescription::AddLight(const std::string& name, const PointLight& light, float shadowDistance) {
-	_lights.push_back(_LightDescription { _LightDescription::POINT_LIGHT, name, light.Color(), shadowDistance, light.Position(), vec3(), light.Attenuation(), 0.0f });
+	_lights.push_back(_LightDescription { _LightDescription::POINT_LIGHT, name, light.GetColor(), shadowDistance, light.Position(), vec3(), light.Attenuation(), 0.0f });
 }
 
 void SceneDescription::AddLight(const std::string& name, const SpotLight& light, float shadowDistance) {
-	_lights.push_back(_LightDescription { _LightDescription::SPOT_LIGHT, name, light.Color(), shadowDistance, light.Position(), light.Direction(), light.Attenuation(), light.SpotAttenuation() });
+	_lights.push_back(_LightDescription { _LightDescription::SPOT_LIGHT, name, light.GetColor(), shadowDistance, light.Position(), light.Direction(), light.Attenuation(), light.SpotAttenuation() });
 }
 
 void SceneDescription::AddLight(const std::string& name, const DirectionalLight& light, float shadowDistance) {
-	_lights.push_back(_LightDescription { _LightDescription::DIRECTIONAL_LIGHT, name, light.Color(), shadowDistance, vec3(), light.Direction(), 0.0f, 0.0f });
+	_lights.push_back(_LightDescription { _LightDescription::DIRECTIONAL_LIGHT, name, light.GetColor(), shadowDistance, vec3(), light.Direction(), 0.0f, 0.0f });
 }
 
 void SceneDescription::AddCamera(std::string name, float fov, float near, float far, vec3 position, vec3 rotation) {

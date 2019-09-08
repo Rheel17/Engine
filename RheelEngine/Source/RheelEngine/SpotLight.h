@@ -9,7 +9,7 @@ namespace rheel {
 class RE_API SpotLight : public Light {
 
 public:
-	SpotLight(const Color_t& color, const vec3& position, const vec3& direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
+	SpotLight(Color color, vec3 position, vec3 direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
 
 	~SpotLight();
 

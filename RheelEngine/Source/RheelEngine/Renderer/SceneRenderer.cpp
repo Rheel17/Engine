@@ -38,15 +38,15 @@ const GLFramebuffer& SceneRenderer::ResultBuffer() const {
 }
 
 void SceneRenderer::_RenderShadowMaps() {
-	CameraPtr camera = Camera();
-	if (!camera || ! _manager->ShouldDrawShadows()) {
+	Camera *camera = GetCamera();
+	if (!camera || !_manager->ShouldDrawShadows()) {
 		return;
 	}
 
 	_CorrectShadowMapList();
 
-	for (auto iter : _shadow_maps) {
-		iter.second->Update(camera, _width, _height);
+	for (auto& iter : _shadow_maps) {
+		iter.second->Update(*camera, _width, _height);
 	}
 }
 
@@ -54,8 +54,8 @@ SceneRenderManager *SceneRenderer::Manager() const {
 	return _manager;
 }
 
-CameraPtr SceneRenderer::Camera() const {
-	return _manager->Scene()->GetCamera(_camera_name);
+Camera *SceneRenderer::GetCamera() const {
+	return _manager->GetScene()->GetCamera(_camera_name);
 }
 
 unsigned SceneRenderer::Width() const {
@@ -66,20 +66,20 @@ unsigned SceneRenderer::Height() const {
 	return _height;
 }
 
-const std::map<std::string, std::shared_ptr<ShadowMap>> SceneRenderer::ShadowMaps() const {
+const std::map<std::string, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
 	return _shadow_maps;
 }
 
 void SceneRenderer::_CorrectShadowMapList() {
 	std::set<std::string> lightNames;
-	for (auto pair : _shadow_maps) {
+	for (const auto& pair : _shadow_maps) {
 		lightNames.insert(pair.first);
 	}
 
-	for (const std::string& lightName : _manager->Scene()->Lights()) {
-		LightPtr light = _manager->Scene()->GetLight(lightName);
+	for (const std::string& lightName : _manager->GetScene()->Lights()) {
+		Light& light = *(_manager->GetScene()->GetLight(lightName));
 
-		if (!light->CastsShadows()) {
+		if (!light.CastsShadows()) {
 			continue;
 		}
 

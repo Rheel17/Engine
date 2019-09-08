@@ -16,6 +16,8 @@ class RE_API Object {
 	friend class Scene;
 	friend class ObjectPtr;
 
+	RE_NO_COPY(Object);
+
 public:
 	enum EventType {
 		ON_ADD, ON_REMOVE, ON_UPDATE, ON_UPDATE_RENDERER, ON_RENDER
@@ -27,9 +29,9 @@ public:
 	Object(const Blueprint& blueprint);
 
 	/**
-	 * Copies this object.
+	 * Moves this object.
 	 */
-	Object(const Object& object);
+	Object(Object&& object) noexcept;
 
 	/**
 	 * Moves this object.
@@ -121,11 +123,11 @@ public:
 	 * shared pointer is returned if no such component exists in this object.
 	 */
 	template<typename T>
-	std::shared_ptr<T> GetComponent() {
+	T *GetComponent() {
 		static_assert(std::is_base_of<Component, T>::value, "Type must be a component");
 
-		for (auto component : _components) {
-			if (auto ptr = std::dynamic_pointer_cast<T>(component)) {
+		for (const auto& component : _components) {
+			if (auto ptr = dynamic_cast<T *>(component.get())) {
 				return ptr;
 			}
 		}
@@ -145,7 +147,7 @@ private:
 	quat _rotation = quat(1, 0, 0, 0);
 	vec3 _scale = vec3(1, 1, 1);
 
-	std::vector<ComponentPtr> _components;
+	std::vector<std::unique_ptr<Component>> _components;
 	std::vector<Object> _children;
 };
 

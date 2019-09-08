@@ -25,6 +25,12 @@ private:
 		Character character_data;
 	};
 
+	struct _DeleteFreeTypeLibrary {
+		void operator()(FT_Library *ft) {
+			FT_Done_FreeType(*ft);
+		};
+	};
+
 public:
 	Font(FT_Face face);
 	~Font();
@@ -61,7 +67,7 @@ public:
 private:
 	static void _InitializeFreeType();
 
-	static std::shared_ptr<FT_Library> _ft;
+	static std::unique_ptr<FT_Library, _DeleteFreeTypeLibrary> _ft;
 	static std::unordered_map<std::string, Font> _registered_fonts;
 
 };

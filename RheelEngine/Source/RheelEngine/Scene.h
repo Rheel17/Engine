@@ -3,6 +3,7 @@
 #include "_common.h"
 
 #include <map>
+#include <memory>
 
 #include "Camera.h"
 #include "SceneDescription.h"
@@ -21,20 +22,20 @@ class RE_API Scene {
 public:
 	/**
 	 * Adds a script to the scene. The script will go into effect immediately. A
-	 * pointer to the script is returned.
+	 * reference to the script is returned.
 	 */
-	ScriptPtr AddScript(const std::string& script);
+	Script& AddScript(const std::string& script);
 
 	/**
 	 * Returns a shared pointer to the script of the given type. A nullptr
 	 * shared pointer is returned if no such script exists in this object.
 	 */
 	template<typename T>
-	std::shared_ptr<T> GetScript() {
+	T *GetScript() {
 		static_assert(std::is_base_of<Script, T>::value, "Type must be a script");
 
-		for (auto script : _scripts) {
-			if (auto ptr = std::dynamic_pointer_cast<T>(script)) {
+		for (const auto& script : _scripts) {
+			if (auto ptr = dynamic_cast<T *>(script.get())) {
 				return ptr;
 			}
 		}
@@ -45,7 +46,7 @@ public:
 	/**
 	 * Returns all the scripts currently in this scene
 	 */
-	const std::vector<ScriptPtr>& Scripts() const;
+	const std::vector<std::unique_ptr<Script>>& Scripts() const;
 
 	/**
 	 * Adds an object to the scene with the given blueprint. A position and
@@ -65,7 +66,7 @@ public:
 	template<typename T>
 	void AddLight(const std::string& name, const T& light) {
 		static_assert(std::is_base_of<Light, T>::value, "Type must be a light");
-		_AddLight(name, std::make_shared<T>(light));
+		_AddLight(name, new T(light));
 	}
 
 	/**
@@ -77,8 +78,8 @@ public:
 	void AddLight(const std::string& name, const T& light, float shadowDistance) {
 		static_assert(std::is_base_of<Light, T>::value, "Type must be a light");
 
-		auto lightPtr = std::make_shared<T>(light);
-		std::static_pointer_cast<Light>(lightPtr)->SetShadowDistance(shadowDistance);
+		T *lightPtr = new T(light);
+		lightPtr->SetShadowDistance(shadowDistance);
 
 		_AddLight(name, lightPtr);
 	}
@@ -87,7 +88,7 @@ public:
 	 * Returns a pointer to the light in this scene with the given name, or
 	 * nullptr when a light with the given name does not exist in this scene.
 	 */
-	LightPtr GetLight(const std::string& lightName);
+	Light *GetLight(const std::string& lightName);
 
 	/**
 	 * Returns a vector of all lights in the scene.
@@ -103,7 +104,7 @@ public:
 	 * Returns the camera in this scene with the given name, or nullptr when a
 	 * camera with the given name does not exist in this scene.
 	 */
-	CameraPtr GetCamera(const std::string& cameraName);
+	Camera *GetCamera(const std::string& cameraName);
 
 	/**
 	 * Updates the scene and all the objects in the scene.
@@ -112,16 +113,16 @@ public:
 
 private:
 	void _AddObject(const SceneDescription::ObjectDescription& description);
-	void _AddLight(const std::string& name, LightPtr light);
+	void _AddLight(const std::string& name, Light *light);
 
 	Scene() = default;
 	Scene(const SceneDescription& description);
 
 	std::vector<Object> _objects;
-	std::vector<ScriptPtr> _scripts;
+	std::vector<std::unique_ptr<Script>> _scripts;
 	std::vector<std::string> _light_names;
-	std::map<std::string, LightPtr> _lights;
-	std::map<std::string, CameraPtr> _cameras;
+	std::map<std::string, std::unique_ptr<Light>> _lights;
+	std::map<std::string, std::unique_ptr<Camera>> _cameras;
 
 	float _time = 0.0f;
 

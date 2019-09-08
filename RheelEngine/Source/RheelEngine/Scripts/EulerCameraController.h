@@ -47,8 +47,8 @@ public:
 	void PreOnUpdate() override;
 
 private:
-	void _Rotate(CameraPtr camera, float dt);
-	void _Move(CameraPtr camera, float dt);
+	void _Rotate(Camera& camera, float dt);
+	void _Move(Camera& camera, float dt);
 
 	std::string _camera;
 	float _velocity_yaw = 10.0f;

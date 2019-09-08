@@ -2,13 +2,18 @@
 #define PHYSICSWORLD_H_
 #include "../_common.h"
 
-#include <btBulletDynamicsCommon.h>
-
 #include "../Script.h"
 
 namespace rheel {
 
 class RE_API PhysicsWorld : public Script {
+
+private:
+	struct _DeleterCollisionConfiguration {	void operator()(void *ptr); };
+	struct _DeleterDispatcher			  {	void operator()(void *ptr); };
+	struct _DeleterBroadphase			  {	void operator()(void *ptr); };
+	struct _DeleterSolver				  {	void operator()(void *ptr); };
+	struct _DeleterWorld				  {	void operator()(void *ptr); };
 
 public:
 	PhysicsWorld();
@@ -16,11 +21,11 @@ public:
 	void PreOnUpdate() override;
 
 private:
-	std::shared_ptr<btCollisionConfiguration> _collisionConfiguration;
-	std::shared_ptr<btCollisionDispatcher> _dispatcher;
-	std::shared_ptr<btBroadphaseInterface> _broadphase;
-	std::shared_ptr<btConstraintSolver> _solver;
-	std::shared_ptr<btDynamicsWorld> _world;
+	std::unique_ptr<void, _DeleterCollisionConfiguration> _collision_configuration;
+	std::unique_ptr<void, _DeleterDispatcher> _dispatcher;
+	std::unique_ptr<void, _DeleterBroadphase> _broadphase;
+	std::unique_ptr<void, _DeleterSolver> _solver;
+	std::unique_ptr<void, _DeleterWorld> _world;
 
 };
 

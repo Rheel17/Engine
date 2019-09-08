@@ -9,10 +9,10 @@
 
 namespace rheel {
 
-std::shared_ptr<GLBuffer> TextRenderer::_triangle_buffer(nullptr);
-std::shared_ptr<GLVertexArray> TextRenderer::_vao(nullptr);
-std::shared_ptr<GLBuffer> TextRenderer::_screenquad_vbo(nullptr);
-std::shared_ptr<GLVertexArray> TextRenderer::_screenquad_vao(nullptr);
+std::unique_ptr<GLBuffer> TextRenderer::_triangle_buffer(nullptr);
+std::unique_ptr<GLVertexArray> TextRenderer::_vao(nullptr);
+std::unique_ptr<GLBuffer> TextRenderer::_screenquad_vbo(nullptr);
+std::unique_ptr<GLVertexArray> TextRenderer::_screenquad_vao(nullptr);
 GLShaderProgram TextRenderer::_shader;
 bool TextRenderer::_initialized(false);
 
@@ -47,17 +47,17 @@ void TextRenderer::_Initialize() {
 	_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_fontshader_vert_glsl"));
 	_shader.Link();
 
-	_triangle_buffer = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);
+	_triangle_buffer = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);
 	_triangle_buffer->SetData(nullptr, 0);
 
-	_vao = std::make_shared<GLVertexArray>();
+	_vao = std::make_unique<GLVertexArray>();
 	_vao->SetVertexAttributes<vec3>(*_triangle_buffer);
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
-	_screenquad_vbo = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);
+	_screenquad_vbo = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);
 	_screenquad_vbo->SetData(triangles, sizeof(triangles));
 
-	_screenquad_vao = std::make_shared<GLVertexArray>();
+	_screenquad_vao = std::make_unique<GLVertexArray>();
 	_screenquad_vao->SetVertexAttributes<vec2>(*_screenquad_vbo);
 
 	_initialized = true;

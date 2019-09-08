@@ -62,7 +62,7 @@ private:
 	};
 
 public:
-	ModelRenderer(ModelPtr model);
+	ModelRenderer(const Model& model);
 
 	ObjectDataPtr AddObject();
 	ObjectDataPtr AddTexturedObject(const Material& material);

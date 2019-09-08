@@ -33,8 +33,8 @@ class RE_API Engine {
 		// register maps
 		std::unordered_map<std::string, Blueprint> register_blueprints;
 		std::unordered_map<std::string, SceneDescription> register_scene_descriptions;
-		std::unordered_map<std::string, std::function<ComponentPtr()>> register_components;
-		std::unordered_map<std::string, std::function<ScriptPtr()>> register_scripts;
+		std::unordered_map<std::string, std::function<std::unique_ptr<Component>()>> register_components;
+		std::unordered_map<std::string, std::function<std::unique_ptr<Script>()>> register_scripts;
 
 		// render maps
 		std::unordered_map<Scene *, SceneRenderManager> render_map_scene;
@@ -142,8 +142,8 @@ public:
 		static_assert(std::is_base_of<Component, T>::value, "Registered component is not derived from Component");
 		static_assert(std::is_default_constructible<T>::value, "Components must be Default-Constructable");
 
-		_instance.register_components.insert({ name, []() -> ComponentPtr {
-			return std::make_shared<T>();
+		_instance.register_components.insert({ name, []() {
+			return std::make_unique<T>();
 		} });
 	}
 
@@ -155,7 +155,7 @@ public:
 	/**
 	 * Creates a new component instance of the given name.
 	 */
-	static ComponentPtr CreateComponent(const std::string& name);
+	static std::unique_ptr<Component> CreateComponent(const std::string& name);
 
 	/**
 	 * Registers a script for future use.
@@ -165,8 +165,8 @@ public:
 		static_assert(std::is_base_of<Script, T>::value, "Registered script is not derived from Script");
 		static_assert(std::is_default_constructible<T>::value, "Scripts must be Default-Constructable");
 
-		_instance.register_scripts.insert({ name, []() -> ScriptPtr {
-			return std::make_shared<T>();
+		_instance.register_scripts.insert({ name, []() {
+			return std::make_unique<T>();
 		} });
 	}
 
@@ -178,7 +178,7 @@ public:
 	/**
 	 * Creates a new script instance of the given name.
 	 */
-	static ScriptPtr CreateScript(const std::string& name);
+	static std::unique_ptr<Script> CreateScript(const std::string& name);
 
 	/**
 	 * Returns a GetSceneRenderManager instance to render the specified scene.

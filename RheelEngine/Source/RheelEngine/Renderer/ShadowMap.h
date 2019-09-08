@@ -18,25 +18,25 @@ class RE_API ShadowMap {
 public:
 	virtual ~ShadowMap() = default;
 
-	virtual void Update(CameraPtr camera, unsigned width, unsigned height) = 0;
+	virtual void Update(const Camera& camera, unsigned width, unsigned height) = 0;
 
 protected:
-	ShadowMap(SceneRenderManager *manager, LightPtr light);
+	ShadowMap(SceneRenderManager *manager, Light& light);
 
 	SceneRenderManager *Manager() const;
 
 	template<typename T>
-	std::shared_ptr<T> GetLight() const {
-		return std::dynamic_pointer_cast<T>(_light);
+	T& GetLight() const {
+		return dynamic_cast<T&>(_light);
 	}
 
-	std::shared_ptr<Light> GetLight() const {
+	Light& GetLight() const {
 		return _light;
 	}
 
 private:
 	SceneRenderManager *_manager;
-	LightPtr _light;
+	Light& _light;
 
 };
 

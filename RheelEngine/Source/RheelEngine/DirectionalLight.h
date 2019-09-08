@@ -9,7 +9,7 @@ namespace rheel {
 class RE_API DirectionalLight : public Light {
 
 public:
-	DirectionalLight(const Color_t& color, const vec3& direction);
+	DirectionalLight(Color color, vec3 direction);
 
 	~DirectionalLight();
 

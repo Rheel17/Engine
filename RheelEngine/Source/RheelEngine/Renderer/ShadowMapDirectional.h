@@ -12,7 +12,7 @@ class RE_API ShadowMapDirectional : public ShadowMap {
 public:
 	~ShadowMapDirectional();
 
-	void Update(CameraPtr camera, unsigned width, unsigned height) override;
+	void Update(const Camera& camera, unsigned width, unsigned height) override;
 
 	std::vector<GLTexture2D> Textures() const;
 
@@ -21,9 +21,9 @@ public:
 	float Bias() const;
 
 private:
-	ShadowMapDirectional(SceneRenderManager *manager, LightPtr light);
+	ShadowMapDirectional(SceneRenderManager *manager, Light& light);
 
-	void _CalculateViewProjectionMatrices(CameraPtr camera, unsigned width, unsigned height);
+	void _CalculateViewProjectionMatrices(const Camera& camera, unsigned width, unsigned height);
 
 	std::vector<unsigned> _csm_split;
 	std::vector<float> _csm_borders;
@@ -37,7 +37,7 @@ public:
 	static const GLTexture2D& EmptyShadowMap();
 
 private:
-	static std::shared_ptr<GLTexture2D> _empty_shadow_map;
+	static std::unique_ptr<GLTexture2D> _empty_shadow_map;
 
 };
 

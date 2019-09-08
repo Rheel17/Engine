@@ -11,10 +11,9 @@
 namespace rheel {
 
 class RE_API SceneRenderManager {
-	using Scene_t = rheel::Scene;
 
 public:
-	SceneRenderManager(Scene_t *scene);
+	SceneRenderManager(Scene *scene);
 
 	/**
 	 * Returns true only if shadows are enabled and at least one light in the
@@ -31,28 +30,28 @@ public:
 	 * Returns a ModelRenderer instance to render the specified model. Multiple
 	 * calls with the same model will result in the same model renderer.
 	 */
-	ModelRenderer& GetModelRenderer(ModelPtr model);
+	ModelRenderer& GetModelRenderer(Model *model);
 
 	/**
 	 * Creates and returns a SceneRenderer managed by this manager.
 	 */
-	std::shared_ptr<SceneRenderer> CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height);
+	std::unique_ptr<SceneRenderer> CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height);
 
 	/**
 	 * Creates and returns a shadow map for the given light.
 	 */
-	std::shared_ptr<ShadowMap> CreateShadowMap(const std::string& lightName);
+	std::unique_ptr<ShadowMap> CreateShadowMap(const std::string& lightName);
 
 	/**
 	 * Returns the scene of this render manager.
 	 */
-	Scene_t *Scene();
+	Scene *GetScene();
 
 	/**
 	 * Returns the render map containing all models and their renderers in the
 	 * scene managed by this render manager.
 	 */
-	const std::unordered_map<ModelPtr, ModelRenderer>& RenderMap() const;
+	const std::unordered_map<Model *, ModelRenderer>& RenderMap() const;
 
 	/**
 	 * Returns a reference to the lighting shader, with all lights initialized.
@@ -72,8 +71,8 @@ public:
 private:
 	int _ShadowLevel();
 
-	Scene_t *_scene;
-	std::unordered_map<ModelPtr, ModelRenderer> _render_map;
+	Scene *_scene;
+	std::unordered_map<Model *, ModelRenderer> _render_map;
 
 	std::vector<int> _lights_type;
 	std::vector<vec3> _lights_position;
@@ -87,8 +86,8 @@ private:
 	static void _Initialize();
 
 	static GLShaderProgram _deferred_lighting_shader;
-	static std::shared_ptr<GLVertexArray> _lighting_quad_vao;
-	static std::shared_ptr<GLBuffer> _lighting_quad_vbo;
+	static std::unique_ptr<GLVertexArray> _lighting_quad_vao;
+	static std::unique_ptr<GLBuffer> _lighting_quad_vbo;
 	static bool _lighting_quad_initialized;
 
 };

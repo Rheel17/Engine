@@ -7,7 +7,7 @@
 
 namespace rheel {
 
-void ModelRenderComponent::SetModel(ModelPtr model) {
+void ModelRenderComponent::SetModel(std::shared_ptr<Model> model) {
 	if (_object_data) {
 		throw std::runtime_error("Model cannot be set after initialization");
 	}
@@ -35,11 +35,11 @@ void ModelRenderComponent::SetMaterial(Material material) {
 
 void ModelRenderComponent::OnAdd() {
 	if (_material.Type() == Material::Textured) {
-		_object_data = Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(_model).AddTexturedObject(_material);
+		_object_data = Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(_model.get()).AddTexturedObject(_material);
 		_object_data.SetMaterialVector(_material.MaterialVector());
 		_object_data.SetMaterialColor(_material.MaterialColor());
 	} else {
-		_object_data = Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(_model).AddObject();
+		_object_data = Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(_model.get()).AddObject();
 		_object_data.SetMaterialVector(_material.MaterialVector());
 		_object_data.SetMaterialColor(_material.MaterialColor());
 	}
@@ -51,9 +51,9 @@ void ModelRenderComponent::OnUpdateRenderers() {
 
 void ModelRenderComponent::OnRemove() {
 	if (_material.Type() == Material::Textured) {
-		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(_model).RemoveTexturedObject(_material, std::move(_object_data));
+		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(_model.get()).RemoveTexturedObject(_material, std::move(_object_data));
 	} else {
-		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(_model).RemoveObject(std::move(_object_data));
+		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(_model.get()).RemoveObject(std::move(_object_data));
 	}
 }
 

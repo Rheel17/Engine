@@ -8,13 +8,14 @@
 
 namespace rheel {
 
-class Model;
-using ModelPtr = std::shared_ptr<Model>;
-
 class RE_API Model {
 	friend class ColladaParser;
 
 public:
+	enum ModelFormat {
+		FormatCollada
+	};
+
 	struct Vertex {
 		vec3 position;
 		vec3 normal;
@@ -22,17 +23,14 @@ public:
 	};
 
 public:
+	Model(const std::string& filename, ModelFormat format);
+
 	const std::vector<Vertex>& Vertices() const;
 	const std::vector<unsigned>& Indices() const;
 
 private:
-	Model() = default;
-
 	std::vector<Vertex> _vertices;
 	std::vector<unsigned> _indices;
-
-public:
-	static ModelPtr LoadCollada(const std::string& filename);
 
 };
 

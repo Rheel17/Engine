@@ -15,11 +15,11 @@
 namespace rheel {
 
 GLShaderProgram SceneRenderManager::_deferred_lighting_shader;
-std::shared_ptr<GLVertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
-std::shared_ptr<GLBuffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
+std::unique_ptr<GLVertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
+std::unique_ptr<GLBuffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
 bool SceneRenderManager::_lighting_quad_initialized = false;
 
-SceneRenderManager::SceneRenderManager(Scene_t *scene) :
+SceneRenderManager::SceneRenderManager(Scene *scene) :
 		_scene(scene) {
 
 	_Initialize();
@@ -38,23 +38,23 @@ void SceneRenderManager::Update() {
 	_lights_spot_attenuation.clear();
 
 	for (const std::string& lightName : _scene->Lights()) {
-		LightPtr light = _scene->GetLight(lightName);
+		Light *light = _scene->GetLight(lightName);
 
-		_lights_color.push_back(light->Color());
+		_lights_color.push_back(light->GetColor());
 
-		if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
+		if (auto pointLight = dynamic_cast<PointLight *>(light)) {
 			_lights_type.push_back(0);
 			_lights_position.push_back(pointLight->Position());
 			_lights_direction.push_back(vec3());
 			_lights_attenuation.push_back(pointLight->Attenuation());
 			_lights_spot_attenuation.push_back(0.0f);
-		} else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light)) {
+		} else if (auto spotLight = dynamic_cast<SpotLight *>(light)) {
 			_lights_type.push_back(1);
 			_lights_position.push_back(spotLight->Position());
 			_lights_direction.push_back(spotLight->Direction());
 			_lights_attenuation.push_back(spotLight->Attenuation());
 			_lights_spot_attenuation.push_back(spotLight->SpotAttenuation());
-		} else if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light)) {
+		} else if (auto directionalLight = dynamic_cast<DirectionalLight *>(light)) {
 			_lights_type.push_back(2);
 			_lights_position.push_back(vec3());
 			_lights_direction.push_back(directionalLight->Direction());
@@ -66,17 +66,17 @@ void SceneRenderManager::Update() {
 	_shadow_level = _ShadowLevel();
 }
 
-ModelRenderer& SceneRenderManager::GetModelRenderer(ModelPtr model) {
+ModelRenderer& SceneRenderManager::GetModelRenderer(Model *model) {
 	auto iter = _render_map.find(model);
 
 	if (iter == _render_map.end()) {
-		iter = _render_map.emplace(model, model).first;
+		iter = _render_map.emplace(model, *model).first;
 	}
 
 	return iter->second;
 }
 
-std::shared_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height) {
+std::unique_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height) {
 	SceneRenderer *renderer;
 
 	switch (Engine::GetDisplayConfiguration().render_mode) {
@@ -88,28 +88,28 @@ std::shared_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(std::stri
 			break;
 	}
 
-	return std::shared_ptr<SceneRenderer>(renderer);
+	return std::unique_ptr<SceneRenderer>(renderer);
 }
 
-std::shared_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(const std::string& lightName) {
-	LightPtr light = _scene->GetLight(lightName);
+std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(const std::string& lightName) {
+	Light *light = _scene->GetLight(lightName);
 
-	if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
+	if (dynamic_cast<PointLight *>(light)) {
 
-	} else if (auto spoLight = std::dynamic_pointer_cast<SpotLight>(light)) {
+	} else if (dynamic_cast<SpotLight *>(light)) {
 
-	} else if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light)) {
-		return std::shared_ptr<ShadowMapDirectional>(new ShadowMapDirectional(this, light));
+	} else if (dynamic_cast<DirectionalLight *>(light)) {
+		return std::unique_ptr<ShadowMapDirectional>(new ShadowMapDirectional(this, *light));
 	}
 
 	return nullptr;
 }
 
-SceneRenderManager::Scene_t *SceneRenderManager::Scene() {
+Scene *SceneRenderManager::GetScene() {
 	return _scene;
 }
 
-const std::unordered_map<ModelPtr, ModelRenderer>& SceneRenderManager::RenderMap() const {
+const std::unordered_map<Model *, ModelRenderer>& SceneRenderManager::RenderMap() const {
 	return _render_map;
 }
 
@@ -165,10 +165,10 @@ void SceneRenderManager::_Initialize() {
 	_deferred_lighting_shader["shadowMap3"] = 10;
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
-	_lighting_quad_vbo = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);
+	_lighting_quad_vbo = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);
 	_lighting_quad_vbo->SetData(triangles, sizeof(triangles));
 
-	_lighting_quad_vao = std::make_shared<GLVertexArray>();
+	_lighting_quad_vao = std::make_unique<GLVertexArray>();
 	_lighting_quad_vao->SetVertexAttributes<vec2>(*_lighting_quad_vbo);
 
 	_lighting_quad_initialized = true;

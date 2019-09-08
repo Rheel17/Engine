@@ -50,7 +50,7 @@ void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::M
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
 			inputScript->_OnKeyPress(key, scancode, mods);
 		}
 	}
@@ -62,7 +62,7 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
 			inputScript->_OnKeyRelease(key, scancode, mods);
 		}
 	}
@@ -74,7 +74,7 @@ void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifier
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
 			inputScript->_OnMouseButtonPress(button, mods);
 		}
 	}
@@ -86,7 +86,7 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
 			inputScript->_OnMouseButtonRelease(button, mods);
 		}
 	}
@@ -98,7 +98,7 @@ void SceneElement::OnMouseMove(const vec2& position) {
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
 			inputScript->_OnMouseMove(position);
 		}
 	}
@@ -110,7 +110,7 @@ void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (const auto inputScript = std::dynamic_pointer_cast<InputScript>(script)) {
+		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
 			inputScript->_OnMouseScroll(scrollComponents);
 		}
 	}

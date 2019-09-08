@@ -152,8 +152,8 @@ std::vector<float> ColladaParser::Geometry::_ReadSource(_XmlNode *source) {
 
 ColladaParser::ColladaParser(const std::string& filename) {
 	// create the document
-	_xml_file = std::make_shared<_XmlFile>(filename.c_str());
-	_xml_document = std::make_shared<_XmlDocument>();
+	_xml_file = std::make_unique<_XmlFile>(filename.c_str());
+	_xml_document = std::make_unique<_XmlDocument>();
 	_xml_document->parse<0>(_xml_file->data());
 
 	ParseCOLLADA();
@@ -236,14 +236,11 @@ void ColladaParser::AddGeometry(const Geometry& geometry, const mat4& transform)
 	}
 }
 
-ModelPtr ColladaParser::ParseCollada(const std::string& filename) {
+void ColladaParser::ParseCollada(Model& model, const std::string& filename) {
 	ColladaParser parser(filename);
-	ModelPtr model = ModelPtr(new Model);
 
-	model->_vertices = std::move(parser._vertices);
-	model->_indices = std::move(parser._indices);
-
-	return model;
+	model._vertices = std::move(parser._vertices);
+	model._indices = std::move(parser._indices);
 }
 
 std::vector<unsigned> ColladaParser::_CreateVectorUnsigned(_XmlNode *node, int size) {

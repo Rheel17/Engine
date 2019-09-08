@@ -2,9 +2,9 @@
 
 namespace rheel {
 
-DirectionalLight::DirectionalLight(const Color_t& color, const vec3& direction) :
-		Light(color),
-		_direction(glm::normalize(direction)) {}
+DirectionalLight::DirectionalLight(Color color, vec3 direction) :
+		Light(std::move(color)),
+		_direction(glm::normalize(std::move(direction))) {}
 
 DirectionalLight::~DirectionalLight() {}
 

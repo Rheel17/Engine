@@ -28,7 +28,7 @@ DeferredSceneRenderer::DeferredSceneRenderer(SceneRenderManager *manager, std::s
 
 void DeferredSceneRenderer::Render(float dt) {
 	// get the camera
-	CameraPtr camera = Camera();
+	Camera *camera = GetCamera();
 
 	// if no camera with the given name was found: don't render anything
 	// new to the buffer.
@@ -71,21 +71,21 @@ void DeferredSceneRenderer::Render(float dt) {
 	if (Manager()->ShouldDrawShadows()) {
 		const auto& shadowMaps = ShadowMaps();
 
-		auto iter = std::find_if(shadowMaps.begin(), shadowMaps.end(), [](auto entry) {
-			return (bool) std::dynamic_pointer_cast<ShadowMapDirectional>(entry.second);
+		auto iter = std::find_if(shadowMaps.begin(), shadowMaps.end(), [](const auto& entry) {
+			return (bool) dynamic_cast<ShadowMapDirectional *>(entry.second.get());
 		});
 
 		if (iter != shadowMaps.end()) {
-			auto sm = std::dynamic_pointer_cast<ShadowMapDirectional>(iter->second);
+			auto sm = dynamic_cast<ShadowMapDirectional *>(iter->second.get());
 			shadowMapCount = sm->Textures().size();
 
 			for (int i = 0; i < shadowMapCount; i++) {
 				sm->Textures()[i].Bind(textureUnit++);
-				shader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
+				modelShader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
 			}
 
-			shader["shadowMapCount"] = shadowMapCount;
-			shader["baseBias"] = sm->Bias();
+			modelShader["shadowMapCount"] = shadowMapCount;
+			modelShader["baseBias"] = sm->Bias();
 		}
 	}
 

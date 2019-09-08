@@ -8,7 +8,7 @@
 
 namespace rheel {
 
-ImagePtr Material::UV_TEST_TEXTURE = Image::LoadFromMemory(
+Material::_ImagePtr Material::UV_TEST_TEXTURE = std::make_shared<Image>(
 		Resources::Start("Textures_uv_grid_png"),
 		Resources::Length("Textures_uv_grid_png"),
 		Image::FormatPNG);
@@ -26,7 +26,7 @@ Material::Material(Color color, float diffuse, float specular, float specularExp
 	_specular_factor = std::min(1.0f, std::max(0.0f, specular));
 }
 
-Material::Material(ImagePtr texture, float diffuse, float specular, float specularExponent) :
+Material::Material(_ImagePtr texture, float diffuse, float specular, float specularExponent) :
 		_type(Textured), _color({ 0.0f, 0.0f, 0.0f, -1.0f }),
 		_ambient_texture(texture), _diffuse_texture(texture),
 		_specular_texture(texture), _specular_exponent(specularExponent) {
@@ -36,10 +36,10 @@ Material::Material(ImagePtr texture, float diffuse, float specular, float specul
 	_specular_factor = std::min(1.0f, std::max(0.0f, specular));
 }
 
-Material::Material(ImagePtr ambientTexture, ImagePtr diffuseTexture, ImagePtr specularTexture, float specularExponent) :
+Material::Material(_ImagePtr ambientTexture, _ImagePtr diffuseTexture, _ImagePtr specularTexture, float specularExponent) :
 		Material(ambientTexture, diffuseTexture, specularTexture, 1.0f, 1.0f, 1.0f, specularExponent) {}
 
-Material::Material(ImagePtr ambientTexture, ImagePtr diffuseTexture, ImagePtr specularTexture, float ambientFactor, float diffuseFactor, float specularFactor, float specularExponent) :
+Material::Material(_ImagePtr ambientTexture, _ImagePtr diffuseTexture, _ImagePtr specularTexture, float ambientFactor, float diffuseFactor, float specularFactor, float specularExponent) :
 		_type(Textured), _color({ 0.0f, 0.0f, 0.0f, -1.0f }),
 		_ambient_texture(ambientTexture), _diffuse_texture(diffuseTexture),
 		_specular_texture(specularTexture), _ambient_factor(ambientFactor),
@@ -64,15 +64,15 @@ void Material::BindTextures() const {
 	ImageTexture::Get(_specular_texture.get()).Bind(2);
 }
 
-const ImagePtr Material::AmbientTexture() const {
+const Material::_ImagePtr Material::AmbientTexture() const {
 	return _ambient_texture;
 }
 
-const ImagePtr Material::DiffuseTexture() const {
+const Material::_ImagePtr Material::DiffuseTexture() const {
 	return _diffuse_texture;
 }
 
-const ImagePtr Material::SpecularTexture() const {
+const Material::_ImagePtr Material::SpecularTexture() const {
 	return _specular_texture;
 }
 

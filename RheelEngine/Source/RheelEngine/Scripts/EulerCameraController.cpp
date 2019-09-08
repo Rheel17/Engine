@@ -31,23 +31,23 @@ void EulerCameraController::SetVelocity(float forwardsBackwardsVelocity, float s
 
 void EulerCameraController::PreOnUpdate() {
 	// get the camera
-	CameraPtr camera = Parent().GetCamera(_camera);
+	Camera *camera = Parent().GetCamera(_camera);
 
 	if (!camera) {
 		return;
 	}
 
-	_Rotate(camera, TimeDelta());
-	_Move(camera, TimeDelta());
+	_Rotate(*camera, TimeDelta());
+	_Move(*camera, TimeDelta());
 }
 
-void EulerCameraController::_Rotate(CameraPtr camera, float dt) {
+void EulerCameraController::_Rotate(Camera& camera, float dt) {
 	vec2 mouse = InputMouseDelta();
 
 	float yaw = glm::radians(mouse.x * _velocity_yaw / 100.0f);
 	float pitch = glm::radians(mouse.y * _velocity_pitch / 100.0f);
 
-	vec3 angles = camera->Rotation();
+	vec3 angles = camera.Rotation();
 	angles.x -= pitch;
 	angles.y -= yaw;
 
@@ -63,10 +63,10 @@ void EulerCameraController::_Rotate(CameraPtr camera, float dt) {
 	// get the yaw in the [-pi, pi] range
 	angles.y = std::fmod(std::fmod(angles.y, 2 * M_PI) + 3 * M_PI, 2 * M_PI) - M_PI;
 
-	camera->SetRotation(angles);
+	camera.SetRotation(angles);
 }
 
-void EulerCameraController::_Move(CameraPtr camera, float dt) {
+void EulerCameraController::_Move(Camera& camera, float dt) {
 	// get the movement
 	vec4 movement = vec4();
 	bool hasMovement = false;
@@ -79,8 +79,8 @@ void EulerCameraController::_Move(CameraPtr camera, float dt) {
 	if (hasMovement) {
 		// rotate the movement vector so that it is pointed in the direction
 		// the camera is facing
-		movement = quat(camera->Rotation()) * movement;
-		camera->Move(movement * dt);
+		movement = quat(camera.Rotation()) * movement;
+		camera.Move(movement * dt);
 	}
 }
 

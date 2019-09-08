@@ -7,15 +7,15 @@
 namespace rheel {
 
 Object::Object(const Blueprint& blueprint) {
-	auto components = blueprint.Components();
-	auto children = blueprint.Children();
+	auto components = blueprint.GetComponents();
+	auto children = blueprint.GetChildren();
 
 	// add the components
 	for (const auto& componentEntry : components) {
-		ComponentPtr component = Engine::CreateComponent(componentEntry.first);
-		componentEntry.second(component);
+		auto component = Engine::CreateComponent(componentEntry.first);
+		componentEntry.second(*component);
 		component->_parent_object = this;
-		_components.push_back(component);
+		_components.push_back(std::move(component));
 	}
 
 	// add the children
@@ -25,15 +25,15 @@ Object::Object(const Blueprint& blueprint) {
 	}
 }
 
-Object::Object(const Object& object) :
+Object::Object(Object&& object) noexcept :
 		_parent_scene(object._parent_scene),
 		_parent_object(object._parent_object),
 		_alive(object._alive),
-		_position(object._position),
-		_rotation(object._rotation),
-		_scale(object._scale),
-		_components(object._components),
-		_children(object._children) {
+		_position(std::move(object._position)),
+		_rotation(std::move(object._rotation)),
+		_scale(std::move(object._scale)),
+		_components(std::move(object._components)),
+		_children(std::move(object._children)) {
 
 	// re-initialize the components
 	for (auto& component : _components) {
@@ -46,7 +46,7 @@ Object::Object(const Object& object) :
 	}
 }
 
-Object& Object::operator=(Object&& object)  {
+Object& Object::operator=(Object&& object) {
 	// move fields
 	_parent_scene = std::move(object._parent_scene);
 	_parent_object = std::move(object._parent_object);
@@ -141,7 +141,7 @@ void Object::FireEvent(EventType type, bool recursive) {
 		}
 	}
 
-	for (auto component : _components) {
+	for (const auto& component : _components) {
 		switch (type) {
 			case ON_ADD:             component->OnAdd();             break;
 			case ON_REMOVE:          component->OnRemove();          break;

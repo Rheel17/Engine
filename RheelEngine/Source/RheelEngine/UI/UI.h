@@ -94,8 +94,6 @@ private:
 
 };
 
-using UIPtr = std::shared_ptr<UI>;
-
 }
 
 #endif

@@ -141,7 +141,7 @@ bool Engine::HasComponent(const std::string& name) {
 	return _instance.register_components.find(name) != _instance.register_components.end();
 }
 
-ComponentPtr Engine::CreateComponent(const std::string& name) {
+std::unique_ptr<Component> Engine::CreateComponent(const std::string& name) {
 	auto iter = _instance.register_components.find(name);
 	if (iter == _instance.register_components.end()) {
 		throw std::runtime_error("Component \"" + name + "\" does not exist.");
@@ -154,7 +154,7 @@ bool Engine::HasScript(const std::string& name) {
 	return _instance.register_scripts.find(name) != _instance.register_scripts.end();
 }
 
-ScriptPtr Engine::CreateScript(const std::string& name) {
+std::unique_ptr<Script> Engine::CreateScript(const std::string& name) {
 	auto iter = _instance.register_scripts.find(name);
 	if (iter == _instance.register_scripts.end()) {
 		throw std::runtime_error("Script \"" + name = "\" does not exist.");

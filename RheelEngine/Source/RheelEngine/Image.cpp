@@ -13,6 +13,22 @@ Image::Image(unsigned width, unsigned height) :
 	_pixels.resize(width * height);
 }
 
+Image::Image(const std::string& filename) {
+	_LoadFromFile(filename);
+}
+
+Image::Image(const std::string& filename, ImageFormat format) {
+	_LoadFromFile(filename, format);
+}
+
+Image::Image(const char *data, unsigned length, ImageFormat format) {
+	_LoadFromMemory(data, length, format);
+}
+
+Image::Image(std::istream& input, ImageFormat format) {
+	_LoadFromStream(input, format);
+}
+
 Image::~Image() {
 	ImageTexture::_DestroyTexture(this);
 }
@@ -33,7 +49,7 @@ const float *Image::Data() const {
 	return reinterpret_cast<const float *>(_pixels.data());
 }
 
-ImagePtr Image::LoadFromFile(const std::string& filename) {
+void Image::_LoadFromFile(const std::string& filename) {
 	auto pos = filename.find_last_of('.');
 
 	if (pos == std::string::npos) {
@@ -43,40 +59,37 @@ ImagePtr Image::LoadFromFile(const std::string& filename) {
 	std::string extension = filename.substr(pos + 1);
 
 	if (extension == "png") {
-		return LoadFromFile(filename, FormatPNG);
+		_LoadFromFile(filename, FormatPNG);
+		return;
 	}
 
 	throw std::runtime_error("Error while reading image file (file extension not supported): " + filename);
 }
 
-ImagePtr Image::LoadFromFile(const std::string& filename, ImageFormat format) {
+void Image::_LoadFromFile(const std::string& filename, ImageFormat format) {
 	std::ifstream f(filename);
 
 	if (!f) {
 		throw std::runtime_error("Error while reading image file: " + filename);
 	}
 
-	return LoadFromStream(f, format);
+	_LoadFromStream(f, format);
 }
 
-ImagePtr Image::LoadFromMemory(const char *data, unsigned length, ImageFormat format) {
+void Image::_LoadFromMemory(const char *data, unsigned length, ImageFormat format) {
 	std::stringstream input(std::ios::binary | std::ios::in | std::ios::out);
 	input.write(data, length);
 	input.seekg(0);
 
-	return LoadFromStream(input, format);
+	_LoadFromStream(input, format);
 }
 
-ImagePtr Image::LoadFromStream(std::istream& input, ImageFormat format) {
-	auto image = std::shared_ptr<Image>(new Image());
-
+void Image::_LoadFromStream(std::istream& input, ImageFormat format) {
 	switch (format) {
 		case FormatPNG:
-			image->_LoadPNG(input);
+			_LoadPNG(input);
 			break;
 	}
-
-	return image;
 }
 
 }

@@ -8,9 +8,9 @@ namespace rheel {
 #define MODE_COLORED    1
 #define MODE_TEXTURED   2
 
-std::shared_ptr<GLShaderProgram> Element::_ui_shader(nullptr);
-std::shared_ptr<GLVertexArray> Element::_ui_vao(nullptr);
-std::shared_ptr<GLBuffer> Element::_ui_vertex_data(nullptr);
+std::unique_ptr<GLShaderProgram> Element::_ui_shader(nullptr);
+std::unique_ptr<GLVertexArray> Element::_ui_vao(nullptr);
+std::unique_ptr<GLBuffer> Element::_ui_vertex_data(nullptr);
 bool Element::_initialized = false;
 
 bool Element::Bounds::operator==(const Bounds& bounds) const {
@@ -168,7 +168,7 @@ void Element::_Initialize() {
 		return;
 	}
 
-	_ui_shader = std::make_shared<GLShaderProgram>();
+	_ui_shader = std::make_unique<GLShaderProgram>();
 	_ui_shader->AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_uishader_vert_glsl"));
 	_ui_shader->AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_uishader_frag_glsl"));
 	_ui_shader->Link();
@@ -176,8 +176,8 @@ void Element::_Initialize() {
 	const DisplayConfiguration::Resolution& screenDimension = Engine::GetDisplayConfiguration().resolution;
 	_ui_shader->GetUniform("screenDimensions") = vec2 { screenDimension.width, screenDimension.height };
 
-	_ui_vertex_data = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);
-	_ui_vao = std::make_shared<GLVertexArray>();
+	_ui_vertex_data = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);
+	_ui_vao = std::make_unique<GLVertexArray>();
 	_ui_vao->SetVertexAttributes<vec2, vec4, vec2>(*_ui_vertex_data);
 
 	_initialized = true;

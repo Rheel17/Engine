@@ -43,8 +43,6 @@ public:
 
 };
 
-using ScriptPtr = std::shared_ptr<Script>;
-
 }
 
 

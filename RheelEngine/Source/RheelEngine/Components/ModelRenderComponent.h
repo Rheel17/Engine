@@ -14,7 +14,7 @@ namespace rheel {
 class RE_API ModelRenderComponent : public RenderComponent {
 
 public:
-	void SetModel(ModelPtr model);
+	void SetModel(std::shared_ptr<Model> model);
 
 	void SetMaterial(Material material);
 
@@ -25,7 +25,7 @@ public:
 	void OnRemove() override;
 
 private:
-	ModelPtr _model;
+	std::shared_ptr<Model> _model;
 	Material _material;
 	ModelRenderer::ObjectDataPtr _object_data;
 

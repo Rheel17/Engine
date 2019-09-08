@@ -13,18 +13,18 @@ namespace rheel {
 
 class RE_API Blueprint {
 
-	using _ComponentLoader = std::function<void(ComponentPtr)>;
+	using _ComponentLoader = std::function<void(Component&)>;
 
 public:
 	/**
 	 * Constructs a blueprint object.
 	 */
-	Blueprint(std::string name);
+	explicit Blueprint(std::string name);
 
 	/**
 	 * Returns the name of this blueprint.
 	 */
-	const std::string& Name() { return _name; }
+	const std::string& Name() const;
 
 	/**
 	 * Adds a component to this blueprint.
@@ -35,7 +35,7 @@ public:
 	 * blueprint is instantiated. The second argument can be omitted for a no-op
 	 * initializer.
 	 */
-	void AddComponent(const std::string& componentName, _ComponentLoader onLoad = [](ComponentPtr){});
+	void AddComponent(const std::string& componentName, _ComponentLoader onLoad = [](Component&){});
 
 	/**
 	 * Adds a nested blueprint. When an instance of this blueprint is created,
@@ -46,12 +46,12 @@ public:
 	/**
 	 * Returns a vector of all components in this blueprint.
 	 */
-	const std::vector<std::pair<std::string, _ComponentLoader>>& Components() const;
+	const std::vector<std::pair<std::string, _ComponentLoader>>& GetComponents() const;
 
 	/**
 	 * Returns a vector of all the nested blueprints in this blueprint.
 	 */
-	const std::vector<std::string>& Children() const;
+	const std::vector<std::string>& GetChildren() const;
 
 private:
 	bool _HasChild(const std::string& name) const;

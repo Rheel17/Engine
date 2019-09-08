@@ -4,7 +4,7 @@
 
 namespace rheel {
 
-std::shared_ptr<FT_Library> Font::_ft;
+std::unique_ptr<FT_Library, Font::_DeleteFreeTypeLibrary> Font::_ft;
 std::unordered_map<std::string, Font> Font::_registered_fonts;
 
 Font::Font(FT_Face face) :
@@ -158,9 +158,7 @@ Font& Font::GetDefaultFont() {
 void Font::_InitializeFreeType() {
 	if (!_ft) {
 		FT_Library *library = new FT_Library;
-		_ft = std::shared_ptr<FT_Library>(library, [](FT_Library *ft) {
-			FT_Done_FreeType(*ft);
-		});
+		_ft = std::unique_ptr<FT_Library, _DeleteFreeTypeLibrary>(library);
 
 		if (FT_Init_FreeType(_ft.get())) {
 			throw std::runtime_error("FreeType initialization failed.");

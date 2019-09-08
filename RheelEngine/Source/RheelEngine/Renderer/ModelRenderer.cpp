@@ -79,14 +79,14 @@ bool ModelRenderer::_MaterialTextureCompare::operator()(const Material& mat1, co
 			std::tie(mat2.AmbientTexture(), mat2.DiffuseTexture(), mat2.SpecularTexture());
 }
 
-ModelRenderer::ModelRenderer(ModelPtr model) :
+ModelRenderer::ModelRenderer(const Model& model) :
 		_vertex_buffer_object(GL::BufferTarget::ARRAY),
 		_element_array_buffer(GL::BufferTarget::ELEMENT_ARRAY),
 		_object_data_buffer(GL::BufferTarget::ARRAY),
-		_index_count(model->Indices().size()) {
+		_index_count(model.Indices().size()) {
 
-	_vertex_buffer_object.SetData(model->Vertices());
-	_element_array_buffer.SetData(model->Indices());
+	_vertex_buffer_object.SetData(model.Vertices());
+	_element_array_buffer.SetData(model.Indices());
 	_object_data_buffer.SetData(std::vector<ObjectData>());
 
 	_vao.SetVertexAttributes<vec3, vec3, vec2>(_vertex_buffer_object);

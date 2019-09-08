@@ -295,9 +295,9 @@ private:
 	static void _Draw(const std::vector<Vertex>& vertices, int mode);
 	static void _Initialize();
 
-	static std::shared_ptr<GLShaderProgram> _ui_shader;
-	static std::shared_ptr<GLVertexArray> _ui_vao;
-	static std::shared_ptr<GLBuffer> _ui_vertex_data;
+	static std::unique_ptr<GLShaderProgram> _ui_shader;
+	static std::unique_ptr<GLVertexArray> _ui_vao;
+	static std::unique_ptr<GLBuffer> _ui_vertex_data;
 	static bool _initialized;
 
 };

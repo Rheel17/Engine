@@ -9,9 +9,6 @@
 
 namespace rheel {
 
-class Image;
-using ImagePtr = std::shared_ptr<Image>;
-
 class RE_API Image {
 
 public:
@@ -20,7 +17,32 @@ public:
 	};
 
 public:
+	/**
+	 * Creates an empty image with the given dimensions
+	 */
 	Image(unsigned width, unsigned height);
+
+	/**
+	 * Creates the image based on an image file in the file system.
+	 */
+	Image(const std::string& filename);
+
+	/**
+	 * Creates the image based on an image file in the file system. This method
+	 * overload allows for custom filename extensions.
+	 */
+	Image(const std::string& filename, ImageFormat format);
+
+	/**
+	 * Creates the image from memory.
+	 */
+	Image(const char *data, unsigned length, ImageFormat format);
+
+	/**
+	 * Creates the image from a std::istream&.
+	 */
+	Image(std::istream& input, ImageFormat format);
+
 	~Image();
 
 	unsigned Width() const;
@@ -35,32 +57,15 @@ private:
 
 	void _LoadPNG(std::istream& input);
 
+	void _LoadFromFile(const std::string& filename);
+	void _LoadFromFile(const std::string& filename, ImageFormat format);
+	void _LoadFromMemory(const char *data, unsigned length, ImageFormat format);
+	void _LoadFromStream(std::istream& input, ImageFormat format);
+
 	unsigned _width = 0;
 	unsigned _height = 0;
 
 	std::vector<Color> _pixels;
-
-public:
-	/**
-	 * Creates the image based on an image file in the file system.
-	 */
-	static ImagePtr LoadFromFile(const std::string& filename);
-
-	/**
-	 * Creates the image based on an image file in the file system. This method
-	 * overload allows for custom filename extensions.
-	 */
-	static ImagePtr LoadFromFile(const std::string& filename, ImageFormat format);
-
-	/**
-	 * Creates the image from memory.
-	 */
-	static ImagePtr LoadFromMemory(const char *data, unsigned length, ImageFormat format);
-
-	/**
-	 * Creates the image from a std::istream&.
-	 */
-	static ImagePtr LoadFromStream(std::istream& input, ImageFormat format);
 
 };
 

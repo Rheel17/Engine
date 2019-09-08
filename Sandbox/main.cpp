@@ -5,16 +5,14 @@ using namespace rheel;
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
-	ModelPtr model = Model::LoadCollada("cube.dae");
+	std::shared_ptr<Model> model = std::make_shared<Model>("cube.dae", Model::FormatCollada);
 
-	blueprint.AddComponent(Component::NAME_RIGIDBODY, [](ComponentPtr c) {
-		RigidbodyComponent *component = static_cast<RigidbodyComponent *>(c.get());
-		component->SetShape(nullptr);
+	blueprint.AddComponent(Component::NAME_RIGIDBODY, [](Component& c) {
 	});
 
-	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](ComponentPtr c) {
-		ModelRenderComponent *component = static_cast<ModelRenderComponent *>(c.get());
-		component->SetModel(model);
+	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](Component& c) {
+		ModelRenderComponent& component = static_cast<ModelRenderComponent&>(c);
+		component.SetModel(model);
 	});
 
 	return blueprint;
@@ -23,10 +21,10 @@ static Blueprint createCubeBlueprint() {
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
-	description.AddScript(Script::NAME_PHYSICS_WORLD);
-	description.AddScript(Script::NAME_EULER_CAMERA_CONTROLLER, [](ScriptPtr s) {
-		EulerCameraController *script = static_cast<EulerCameraController *>(s.get());
-		script->SetCamera("main_camera");
+//	description.AddScript(Script::NAME_PHYSICS_WORLD);
+	description.AddScript(Script::NAME_EULER_CAMERA_CONTROLLER, [](Script& s) {
+		EulerCameraController& script = static_cast<EulerCameraController&>(s);
+		script.SetCamera("main_camera");
 	});
 
 	for (int i = -2; i <= 2; i++) {

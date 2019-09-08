@@ -7,9 +7,9 @@
 
 namespace rheel {
 
-std::shared_ptr<GLTexture2D> ShadowMapDirectional::_empty_shadow_map;
+std::unique_ptr<GLTexture2D> ShadowMapDirectional::_empty_shadow_map;
 
-ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr light) :
+ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light& light) :
 		ShadowMap(manager, light) {
 
 	unsigned textureSize;
@@ -72,7 +72,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, LightPtr
 
 ShadowMapDirectional::~ShadowMapDirectional() {}
 
-void ShadowMapDirectional::Update(CameraPtr camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::Update(const Camera& camera, unsigned width, unsigned height) {
 	GL::PushState();
 
 	// set the lightspace matrices
@@ -114,9 +114,9 @@ float ShadowMapDirectional::Bias() const {
 	return _bias;
 }
 
-void ShadowMapDirectional::_CalculateViewProjectionMatrices(CameraPtr camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::_CalculateViewProjectionMatrices(const Camera& camera, unsigned width, unsigned height) {
 	// calculate the light coordinate system axis
-	vec3 zplus = -GetLight<DirectionalLight>()->Direction();
+	vec3 zplus = -GetLight<DirectionalLight>().Direction();
 	vec3 xplus;
 
 	if (zplus.x == 0 && zplus.z == 0) {
@@ -132,10 +132,10 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(CameraPtr camera, un
 
 	for (unsigned i = 0; i < _csm_count; i++) {
 		// calculate the AABB of the camera frustum in light space
-		auto corners = camera->ViewspaceCorners(
+		auto corners = camera.ViewspaceCorners(
 				width, height,
-				_csm_borders[i]     * GetLight()->ShadowDistance(),
-				_csm_borders[i + 1] * GetLight()->ShadowDistance());
+				_csm_borders[i]     * GetLight().ShadowDistance(),
+				_csm_borders[i + 1] * GetLight().ShadowDistance());
 
 		float min = std::numeric_limits<float>::lowest();
 		float max = std::numeric_limits<float>::max();
@@ -175,7 +175,7 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(CameraPtr camera, un
 
 const GLTexture2D& ShadowMapDirectional::EmptyShadowMap() {
 	if (!_empty_shadow_map) {
-		_empty_shadow_map = std::make_shared<GLTexture2D>(1, 1, GL_DEPTH_COMPONENT32);
+		_empty_shadow_map = std::make_unique<GLTexture2D>(1, 1, GL_DEPTH_COMPONENT32);
 		_empty_shadow_map->InitializeEmpty(GL_DEPTH_COMPONENT);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);

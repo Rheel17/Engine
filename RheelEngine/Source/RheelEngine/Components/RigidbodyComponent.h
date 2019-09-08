@@ -13,6 +13,9 @@ namespace rheel {
  */
 class RE_API RigidbodyComponent : public Component {
 
+private:
+	struct _DeleterBody { void operator()(void *ptr); };
+
 public:
 	void OnAdd() override;
 
@@ -21,7 +24,7 @@ public:
 	void OnRemove() override;
 
 private:
-	std::shared_ptr<btRigidBody> _body;
+	std::unique_ptr<void, _DeleterBody> _body;
 
 };
 
