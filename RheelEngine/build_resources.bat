@@ -21,13 +21,9 @@ echo // THIS IS A MACHINE GENERATED FILE. DO NOT EDIT^^! > resources.h
 echo #ifndef ___RE_RESOURCES_H >> resources.h
 echo #define ___RE_RESOURCES_H >> resources.h
 echo:>> resources.h
-echo #define RESOURCE_START(resource) ___binary___ ## resource ## _start >> resources.h
-echo #define RESOURCE_END(resource) ___binary___ ## resource ## _end >> resources.h
-echo #define RESOURCE_LENGTH(resource) (RESOURCE_END(resource) - RESOURCE_START(resource)) >> resources.h
+echo #include ^<unordered_map^> >> resources.h
 echo:>> resources.h
-echo #ifdef __cplusplus >> resources.h
 echo extern "C" { >> resources.h
-echo #endif >> resources.h
 echo:>> resources.h
 
 for /f "delims=" %%i in ('
@@ -43,9 +39,25 @@ for /f "delims=" %%i in ('
 )
 
 echo:>> resources.h
-echo #ifdef __cplusplus >> resources.h
 echo } >> resources.h
-echo #endif >> resources.h
+echo:>> resources.h
+echo struct ___res___ { >> resources.h
+echo 	std::unordered_map^<std::string, char *^> resources_pointers { >> resources.h
+
+for /f "delims=" %%i in ('
+	"objdump -t resources.o | egrep -oh _binary___.*_start"
+') do ( 
+	echo 		{ "__%%i", __%%i }, >> resources.h
+)
+
+for /f "delims=" %%i in ('
+	"objdump -t resources.o | egrep -oh _binary___.*_end"
+') do ( 
+	echo 		{ "__%%i", __%%i }, >> resources.h
+)
+
+echo 	}; >> resources.h
+echo }; >> resources.h
 echo:>> resources.h
 echo #endif >> resources.h
 endlocal

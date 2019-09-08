@@ -6,8 +6,22 @@
 
 #include <string>
 
-#define RESOURCE_AS_STRING(resource) \
-	std::string(RESOURCE_START(resource), RESOURCE_END(resource))
+namespace rheel {
+
+class RE_API Resources {
+
+public:
+	static const char *Start(const std::string& resourceName);
+	static size_t Length(const std::string& resourceName);
+	static std::string AsString(const std::string& resourceName);
+	static std::string PreprocessShader(const std::string& resourceName);
+
+private:
+	static ___res___ _resources;
+
+};
+
+}
 
 
 #endif

@@ -9,8 +9,8 @@
 namespace rheel {
 
 ImagePtr Material::UV_TEST_TEXTURE = Image::LoadFromMemory(
-		RESOURCE_START(Textures_uv_grid_png),
-		RESOURCE_LENGTH(Textures_uv_grid_png),
+		Resources::Start("Textures_uv_grid_png"),
+		Resources::Length("Textures_uv_grid_png"),
 		Image::FormatPNG);
 
 const Material Material::UV_TEST_MATERIAL(UV_TEST_TEXTURE, 0.0f, 0.0f);

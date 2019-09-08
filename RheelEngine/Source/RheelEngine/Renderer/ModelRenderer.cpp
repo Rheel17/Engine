@@ -158,8 +158,8 @@ void ModelRenderer::_InitializeShaders() {
 		return;
 	}
 
-	_forward_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_forward_modelshader_vert_glsl));
-	_forward_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_forward_modelshader_frag_glsl));
+	_forward_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_forward_modelshader_vert_glsl"));
+	_forward_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_forward_modelshader_frag_glsl"));
 	_forward_model_shader.Link();
 	_forward_model_shader["ambientTexture"] = 0;
 	_forward_model_shader["diffuseTexture"] = 1;
@@ -169,15 +169,15 @@ void ModelRenderer::_InitializeShaders() {
 	_forward_model_shader["shadowMap2"] = 5;
 	_forward_model_shader["shadowMap3"] = 6;
 
-	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_deferred_modelshader_vert_glsl));
-	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_deferred_modelshader_frag_glsl));
+	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_deferred_modelshader_vert_glsl"));
+	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_deferred_modelshader_frag_glsl"));
 	_deferred_model_shader.Link();
 	_deferred_model_shader["ambientTexture"] = 0;
 	_deferred_model_shader["diffuseTexture"] = 1;
 	_deferred_model_shader["specularTexture"] = 2;
 
-	_opaque_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_opaqueshader_vert_glsl));
-	_opaque_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_opaqueshader_frag_glsl));
+	_opaque_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
+	_opaque_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
 	_opaque_shader.Link();
 
 	_are_shaders_initialized = true;

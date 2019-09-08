@@ -43,8 +43,8 @@ void TextRenderer::_Initialize() {
 		return;
 	}
 
-	_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_fontshader_frag_glsl));
-	_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_fontshader_vert_glsl));
+	_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_fontshader_frag_glsl"));
+	_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_fontshader_vert_glsl"));
 	_shader.Link();
 
 	_triangle_buffer = std::make_shared<GLBuffer>(GL::BufferTarget::ARRAY);

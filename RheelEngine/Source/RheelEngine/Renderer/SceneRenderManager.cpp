@@ -149,8 +149,8 @@ void SceneRenderManager::_Initialize() {
 		return;
 	}
 
-	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::VERTEX, RESOURCE_AS_STRING(Shaders_deferred_lightingshader_vert_glsl));
-	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, RESOURCE_AS_STRING(Shaders_deferred_lightingshader_frag_glsl));
+	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_deferred_lightingshader_vert_glsl"));
+	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_deferred_lightingshader_frag_glsl"));
 	_deferred_lighting_shader.Link();
 	_deferred_lighting_shader["gBufferColor"] = 0;
 	_deferred_lighting_shader["gBufferPosition"] = 1;
