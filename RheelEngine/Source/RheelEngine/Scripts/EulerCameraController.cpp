@@ -44,8 +44,8 @@ void EulerCameraController::PreOnUpdate() {
 void EulerCameraController::_Rotate(CameraPtr camera, float dt) {
 	vec2 mouse = InputMouseDelta();
 
-	float yaw = glm::radians(mouse.x * dt * _velocity_yaw);
-	float pitch = glm::radians(mouse.y * dt * _velocity_pitch);
+	float yaw = glm::radians(mouse.x * _velocity_yaw / 100.0f);
+	float pitch = glm::radians(mouse.y * _velocity_pitch / 100.0f);
 
 	vec3 angles = camera->Rotation();
 	angles.x -= pitch;
