@@ -125,7 +125,7 @@ public:
 	void Update(float dt);
 
 private:
-	void _AddObject(const SceneDescription::ObjectDescription& description);
+	void _AddObject(const SceneDescription::_ObjectDescription& description);
 	void _AddLight(const std::string& name, Light *light);
 
 	Scene() = default;

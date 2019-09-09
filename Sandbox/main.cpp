@@ -27,19 +27,13 @@ static SceneDescription createSceneDescription() {
 		for (int j = -2; j <= 2; j++) {
 			for (int k = 0; k < 5; k++) {
 				auto& cube = description.AddObject("cube", { 4 * i, 4 * k, 4 * j });
-				cube.loader = [](ObjectPtr object) {
-					auto renderer = object->GetComponent<ModelRenderComponent>();
-					renderer->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.0f));
-				};
+				cube.GetComponent<ModelRenderComponent>()->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.0f));
 			}
 		}
 	}
 
 	auto& floor = description.AddObject("cube", { 0, -2, 0 }, quat(), { 20, 1, 20 });
-	floor.loader = [](ObjectPtr object) {
-		auto renderer = object->GetComponent<ModelRenderComponent>();
-		renderer->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.0f));
-	};
+	floor.GetComponent<ModelRenderComponent>()->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.0f));
 
 	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
 	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 2, 12 });

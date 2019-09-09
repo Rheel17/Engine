@@ -9,6 +9,15 @@ namespace rheel {
 Blueprint::Blueprint(std::string name) :
 		_name(std::move(name)) {}
 
+Blueprint::Blueprint(const Blueprint& blueprint) :
+		_name(blueprint._name),
+		_child_blueprints(blueprint._child_blueprints) {
+
+	for (const auto& component : blueprint._components) {
+		_components.emplace_back(component->__CloneHeap());
+	}
+}
+
 const std::string& Blueprint::Name() const {
 	return _name;
 }

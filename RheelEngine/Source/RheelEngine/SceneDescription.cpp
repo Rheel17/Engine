@@ -4,25 +4,18 @@
 
 namespace rheel {
 
-SceneDescription::ObjectDescription::ObjectDescription(const std::string& blueprint, const vec3& position, const quat& rotation, const vec3& scale) :
-		_blueprint(blueprint), _position(position), _rotation(rotation), _scale(scale) {
-
-	loader = [](ObjectPtr){};
-}
-
-
 SceneDescription::_CameraDescription::_CameraDescription(std::string name, vec3 position, vec3 rotation, float fov, float near, float far) :
 		type(PERSPECTIVE_CAMERA), name(std::move(name)),
 		position(std::move(position)), rotation(std::move(rotation)),
 		perspective_fov(fov), perspective_near(near), perspective_far(far) {}
 
-SceneDescription::ObjectDescription& SceneDescription::AddObject(std::string blueprint, vec3 position, quat rotation, vec3 scale) {
+Blueprint& SceneDescription::AddObject(const std::string& blueprint, vec3 position, quat rotation, vec3 scale) {
 	if (!Engine::HasBlueprint(blueprint)) {
 		throw std::runtime_error("Blueprint not registered: \"" + blueprint + "\"");
 	}
 
-	ObjectDescription description = ObjectDescription(blueprint, position, rotation, scale);
-	return _objects.emplace_back(description);
+	_ObjectDescription& description = _objects.emplace_back(_ObjectDescription { Engine::GetBlueprint(blueprint), std::move(position), std::move(rotation), std::move(scale) } );
+	return description.blueprint;
 }
 
 void SceneDescription::AddLight(const std::string& name, const PointLight& light, float shadowDistance) {
@@ -45,7 +38,7 @@ const std::vector<std::unique_ptr<Script>>& SceneDescription::Scripts() const {
 	return _scripts;
 }
 
-const std::vector<SceneDescription::ObjectDescription>& SceneDescription::ObjectDescriptions() const {
+const std::vector<SceneDescription::_ObjectDescription>& SceneDescription::ObjectDescriptions() const {
 	return _objects;
 }
 

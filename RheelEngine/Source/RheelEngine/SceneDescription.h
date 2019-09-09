@@ -2,14 +2,11 @@
 #define SCENEDESCRIPTION_H_
 #include "_common.h"
 
-#include <functional>
 #include <string>
 #include <vector>
-#include <tuple>
 
-#include "Color.h"
+#include "Blueprint.h"
 #include "Script.h"
-#include "ObjectPtr.h"
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "DirectionalLight.h"
@@ -19,27 +16,14 @@ namespace rheel {
 class RE_API SceneDescription {
 	friend class Scene;
 
-	using _ObjectLoader = std::function<void(ObjectPtr)>;
-
-public:
-	class ObjectDescription {
-			friend class SceneDescription;
-			friend class Scene;
-
-		public:
-			ObjectDescription(const std::string& blueprint, const vec3& position, const quat& rotation, const vec3& scale);
-
-			_ObjectLoader loader;
-
-		private:
-			std::string _blueprint;
-			vec3 _position;
-			quat _rotation;
-			vec3 _scale;
-
-		};
-
 private:
+	struct _ObjectDescription {
+		Blueprint blueprint;
+		vec3 position;
+		quat rotation;
+		vec3 scale;
+	};
+
 	struct _LightDescription {
 		int type;
 		std::string name;
@@ -109,11 +93,10 @@ public:
 	 * description, the objects are added after the scripts and before the
 	 * lights.
 	 *
-	 * This methods returns a reference to the created object description. This
-	 * can be used to set parameters. Storing this reference will lead to
-	 * invalid memory.
+	 * This methods returns a reference to the copied blueprint. This can be
+	 * used to access components and preset parameters.
 	 */
-	SceneDescription::ObjectDescription& AddObject(std::string blueprint, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0), vec3 scale = { 1, 1, 1 });
+	Blueprint& AddObject(const std::string& blueprint, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0), vec3 scale = { 1, 1, 1 });
 
 	/**
 	 * See: Scene::AddLight(...). When a scene is created from this description,
@@ -141,14 +124,14 @@ public:
 
 private:
 	const std::vector<std::unique_ptr<Script>>& Scripts() const;
-	const std::vector<ObjectDescription>& ObjectDescriptions() const;
+	const std::vector<_ObjectDescription>& ObjectDescriptions() const;
 	const std::vector<_LightDescription>& LightDescriptions() const;
 	const std::vector<_CameraDescription>& CameraDescriptions() const;
 
 	std::string _name;
 
 	std::vector<std::unique_ptr<Script>> _scripts;
-	std::vector<ObjectDescription> _objects;
+	std::vector<_ObjectDescription> _objects;
 	std::vector<_LightDescription> _lights;
 	std::vector<_CameraDescription> _cameras;
 

@@ -16,6 +16,7 @@ private:
 namespace rheel {
 
 class RE_API Component {
+	friend class Blueprint;
 	friend class Object;
 
 public:

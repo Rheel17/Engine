@@ -18,6 +18,11 @@ public:
 	explicit Blueprint(std::string name);
 
 	/**
+	 * Creates a deep copy of this blueprint.
+	 */
+	Blueprint(const Blueprint& blueprint);
+
+	/**
 	 * Returns the name of this blueprint.
 	 */
 	const std::string& Name() const;
@@ -42,6 +47,23 @@ public:
 
 		_components.push_back(std::move(ptr));
 		return ref;
+	}
+
+	/**
+	 * Returns a pointer to the component of the given type. A nullptr is
+	 * returned if no such component exists in this object.
+	 */
+	template<typename T>
+	T *GetComponent() {
+		static_assert(std::is_base_of<Component, T>::value, "Type must be a component");
+
+		for (const auto& component : _components) {
+			if (auto ptr = dynamic_cast<T *>(component.get())) {
+				return ptr;
+			}
+		}
+
+		return nullptr;
 	}
 
 	/**

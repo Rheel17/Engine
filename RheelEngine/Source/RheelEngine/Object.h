@@ -4,6 +4,7 @@
 
 #include "Blueprint.h"
 #include "ObjectPtr.h"
+#include "SceneDescription.h"
 
 #include <memory>
 
