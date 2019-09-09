@@ -8,8 +8,6 @@ namespace rheel {
 
 Engine::EngineInstance Engine::_instance;
 
-extern void registerScripts();
-
 Engine::EngineInstance::~EngineInstance() {
 	for (Scene *scene : scenes) {
 		delete scene;
@@ -21,8 +19,6 @@ Engine::EngineInstance::~EngineInstance() {
 void Engine::_Initialize() {
 	Window::InitializeDisplaySystems();
 	Font::Initialize();
-
-	registerScripts();
 }
 
 void Engine::_Run(Game *game) {
@@ -39,8 +35,6 @@ void Engine::_Run(Game *game) {
 			_instance.display_configuration.resolution.width,
 			_instance.display_configuration.resolution.height);
 
-	game->RegisterComponents();
-	game->RegisterScripts();
 	game->RegisterBlueprints();
 	game->RegisterSceneDescriptions();
 
@@ -133,19 +127,6 @@ const SceneDescription& Engine::GetSceneDescription(const std::string& name) {
 	}
 
 	return iter->second;
-}
-
-bool Engine::HasScript(const std::string& name) {
-	return _instance.register_scripts.find(name) != _instance.register_scripts.end();
-}
-
-std::unique_ptr<Script> Engine::CreateScript(const std::string& name) {
-	auto iter = _instance.register_scripts.find(name);
-	if (iter == _instance.register_scripts.end()) {
-		throw std::runtime_error("Script \"" + name = "\" does not exist.");
-	}
-
-	return iter->second();
 }
 
 SceneRenderManager& Engine::GetSceneRenderManager(Scene *scene) {

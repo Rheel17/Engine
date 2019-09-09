@@ -24,7 +24,9 @@ void PhysicsWorld::_DeleterWorld::operator()(void *ptr) {
 	delete static_cast<btDynamicsWorld *>(ptr);
 }
 
-PhysicsWorld::PhysicsWorld() {
+PhysicsWorld::PhysicsWorld(const PhysicsWorld& script) {}
+
+void PhysicsWorld::Initialize() {
 	btCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration;
 	btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	btBroadphaseInterface *broadphase = new btDbvtBroadphase;
@@ -40,6 +42,14 @@ PhysicsWorld::PhysicsWorld() {
 
 void PhysicsWorld::PreOnUpdate() {
 	static_cast<btDynamicsWorld *>(_world.get())->stepSimulation(TimeDelta());
+}
+
+void PhysicsWorld::Destroy() {
+	_world = nullptr;
+	_solver = nullptr;
+	_broadphase = nullptr;
+	_dispatcher = nullptr;
+	_collision_configuration = nullptr;
 }
 
 }

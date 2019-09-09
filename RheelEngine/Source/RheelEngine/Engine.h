@@ -134,29 +134,6 @@ public:
 	static const SceneDescription& GetSceneDescription(const std::string& name);
 
 	/**
-	 * Registers a script for future use.
-	 */
-	template<typename T>
-	static void RegisterScript(const std::string& name) {
-		static_assert(std::is_base_of<Script, T>::value, "Registered script is not derived from Script");
-		static_assert(std::is_default_constructible<T>::value, "Scripts must be Default-Constructable");
-
-		_instance.register_scripts.insert({ name, []() {
-			return std::make_unique<T>();
-		} });
-	}
-
-	/**
-	 * Return true only if a script with the given name has been registered.
-	 */
-	static bool HasScript(const std::string& name);
-
-	/**
-	 * Creates a new script instance of the given name.
-	 */
-	static std::unique_ptr<Script> CreateScript(const std::string& name);
-
-	/**
 	 * Returns a GetSceneRenderManager instance to render the specified scene.
 	 * Multiple calls with the same scene will result in the same scene render
 	 * manager.

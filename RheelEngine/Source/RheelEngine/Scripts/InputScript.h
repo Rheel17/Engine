@@ -13,6 +13,8 @@ namespace rheel {
  * A general base class for scripts that require mouse/keyboard input
  */
 class RE_API InputScript : public Script {
+	SCRIPT_INIT(InputScript)
+
 	friend class SceneElement;
 	friend class Scene;
 

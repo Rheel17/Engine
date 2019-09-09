@@ -24,11 +24,24 @@ public:
 	 * Adds a script to the scene. The script will go into effect immediately. A
 	 * reference to the script is returned.
 	 */
-	Script& AddScript(const std::string& script);
+	template<typename T>
+	T& AddScript() {
+		static_assert(std::is_base_of<Script, T>::value, "Class is not derived from Script");
+		static_assert(std::is_default_constructible<T>::value, "Scripts must be Default-Constructable");
+
+		std::unique_ptr<T> ptr = std::make_unique<T>();
+		T& ref = *ptr;
+
+		_scripts.push_back(std::move(ptr));
+		ref._parent_scene = this;
+		ref.Initialize();
+
+		return ref;
+	}
 
 	/**
-	 * Returns a shared pointer to the script of the given type. A nullptr
-	 * shared pointer is returned if no such script exists in this object.
+	 * Returns a pointer to the script of the given type. A nullptr is returned
+	 * if no such script exists in this object.
 	 */
 	template<typename T>
 	T *GetScript() {

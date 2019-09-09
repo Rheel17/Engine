@@ -18,11 +18,10 @@ static Blueprint createCubeBlueprint() {
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
-//	description.AddScript(Script::NAME_PHYSICS_WORLD);
-	description.AddScript(Script::NAME_EULER_CAMERA_CONTROLLER, [](Script& s) {
-		EulerCameraController& script = static_cast<EulerCameraController&>(s);
-		script.SetCamera("main_camera");
-	});
+	description.AddScript<PhysicsWorld>();
+
+	auto& eulerCameraController = description.AddScript<EulerCameraController>();
+	eulerCameraController.SetCamera("main_camera");
 
 	for (int i = -2; i <= 2; i++) {
 		for (int j = -2; j <= 2; j++) {
@@ -49,10 +48,6 @@ static SceneDescription createSceneDescription() {
 }
 
 class SandboxGame : public Game {
-	void RegisterComponents() override {}
-
-	void RegisterScripts() override {}
-
 	void RegisterBlueprints() override {
 		Engine::RegisterBlueprint(createCubeBlueprint());
 	};

@@ -34,13 +34,14 @@ public:
 	 */
 	template<typename T>
 	T& AddComponent() {
-		static_assert(std::is_base_of<Component, T>::value, "Registered component is not derived from Component");
+		static_assert(std::is_base_of<Component, T>::value, "Class is not derived from Component");
 		static_assert(std::is_default_constructible<T>::value, "Components must be Default-Constructable");
 
-		T* ptr = new T();
-		_components.emplace_back(std::unique_ptr<T>(ptr));
+		std::unique_ptr<T> ptr = std::make_unique<T>();
+		T& ref = *ptr;
 
-		return *ptr;
+		_components.push_back(std::move(ptr));
+		return ref;
 	}
 
 	/**

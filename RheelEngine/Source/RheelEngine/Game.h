@@ -9,8 +9,6 @@ class RE_API Game {
 public:
 	virtual ~Game() = default;
 
-	virtual void RegisterComponents() {}
-	virtual void RegisterScripts() {}
 	virtual void RegisterBlueprints() {}
 	virtual void RegisterSceneDescriptions() {}
 

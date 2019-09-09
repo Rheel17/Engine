@@ -8,6 +8,7 @@
 namespace rheel {
 
 class RE_API EulerCameraController : public InputScript {
+	SCRIPT_INIT(EulerCameraController)
 
 public:
 	/**

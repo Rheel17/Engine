@@ -16,14 +16,6 @@ SceneDescription::_CameraDescription::_CameraDescription(std::string name, vec3 
 		position(std::move(position)), rotation(std::move(rotation)),
 		perspective_fov(fov), perspective_near(near), perspective_far(far) {}
 
-void SceneDescription::AddScript(const std::string& script, _ScriptLoader onLoad) {
-	if (!Engine::HasScript(script)) {
-		throw std::runtime_error("Script not registered: \"" + script + "\"");
-	}
-
-	_scripts.push_back(std::make_pair(script, onLoad));
-}
-
 SceneDescription::ObjectDescription& SceneDescription::AddObject(std::string blueprint, vec3 position, quat rotation, vec3 scale) {
 	if (!Engine::HasBlueprint(blueprint)) {
 		throw std::runtime_error("Blueprint not registered: \"" + blueprint + "\"");
@@ -49,7 +41,7 @@ void SceneDescription::AddCamera(std::string name, float fov, float near, float 
 	_cameras.push_back(_CameraDescription(std::move(name), std::move(position), std::move(rotation), fov, near, far));
 }
 
-const std::vector<std::pair<std::string, SceneDescription::_ScriptLoader>>& SceneDescription::Scripts() const {
+const std::vector<std::unique_ptr<Script>>& SceneDescription::Scripts() const {
 	return _scripts;
 }
 

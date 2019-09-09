@@ -19,7 +19,6 @@ namespace rheel {
 class RE_API SceneDescription {
 	friend class Scene;
 
-	using _ScriptLoader = std::function<void(Script&)>;
 	using _ObjectLoader = std::function<void(ObjectPtr)>;
 
 public:
@@ -87,11 +86,23 @@ public:
 	const std::string& Name() { return _name; }
 
 	/**
+	 * See:
+	 *
 	 * Adds a script to the scene description. When a scene is created from this
 	 * description, the scripts are the added first, to be able to notify the
 	 * scripts of other additions to the scene.
 	 */
-	void AddScript(const std::string& script, _ScriptLoader onLoad = [](Script&){});
+	template<typename T>
+	T& AddScript() {
+		static_assert(std::is_base_of<Script, T>::value, "Class is not derived from Script");
+		static_assert(std::is_default_constructible<T>::value, "Scripts must be Default-Constructable");
+
+		std::unique_ptr<T> ptr = std::make_unique<T>();
+		T& ref = *ptr;
+
+		_scripts.push_back(std::move(ptr));
+		return ref;
+	}
 
 	/**
 	 * See: Scene::AddObject(...). When a scene is created from this
@@ -128,30 +139,15 @@ public:
 	 */
 	void AddCamera(std::string name, float fov, float near, float far, vec3 position = { 0, 0, 0 }, vec3 rotation = { 0, 0, 0 });
 
-	/**
-	 * Returns the vector of script names in this scene description.
-	 */
-	const std::vector<std::pair<std::string, _ScriptLoader>>& Scripts() const;
-
-	/**
-	 * Returns the vector of object descriptions in this scene description.
-	 */
+private:
+	const std::vector<std::unique_ptr<Script>>& Scripts() const;
 	const std::vector<ObjectDescription>& ObjectDescriptions() const;
-
-	/**
-	 * Returns the vector of light descriptions in this scene description.
-	 */
 	const std::vector<_LightDescription>& LightDescriptions() const;
-
-	/**
-	 * Returns the vector of camera descriptions in this scene description.
-	 */
 	const std::vector<_CameraDescription>& CameraDescriptions() const;
 
-private:
 	std::string _name;
 
-	std::vector<std::pair<std::string, _ScriptLoader>> _scripts;
+	std::vector<std::unique_ptr<Script>> _scripts;
 	std::vector<ObjectDescription> _objects;
 	std::vector<_LightDescription> _lights;
 	std::vector<_CameraDescription> _cameras;

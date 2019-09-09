@@ -5,6 +5,13 @@
 #include <memory>
 #include <string>
 
+#define SCRIPT_INIT(Class)						\
+protected:										\
+	Script *__CloneHeap() const override {		\
+		return new Class(*this); 				\
+	}											\
+private:
+
 namespace rheel {
 
 class Scene;
@@ -16,6 +23,12 @@ public:
 	virtual ~Script() = default;
 
 	/**
+	 * Called when this script is first put in use, either when the scene it
+	 * belongs to is initialized, or when it is added to an active scene.
+	 */
+	virtual void Initialize() {}
+
+	/**
 	 * Called when the scene is updated, before the scene objects are updated.
 	 */
 	virtual void PreOnUpdate() {}
@@ -25,8 +38,15 @@ public:
 	 */
 	virtual void PostOnUpdate() {}
 
+	/**
+	 * Called when the script is removed from use.
+	 */
+	virtual void Destroy() {}
+
 protected:
 	Script() = default;
+
+	virtual Script *__CloneHeap() const = 0;
 
 	Scene& Parent() { return *_parent_scene; }
 	float TimeDelta() { return _dt; }
@@ -36,10 +56,6 @@ private:
 	Scene *_parent_scene = nullptr;
 	float _dt = 0.016f;
 	float _time = 0.0f;
-
-public:
-	static constexpr auto NAME_EULER_CAMERA_CONTROLLER = "engine:euler_camera_controller";
-	static constexpr auto NAME_PHYSICS_WORLD = "engine:physics_world";
 
 };
 

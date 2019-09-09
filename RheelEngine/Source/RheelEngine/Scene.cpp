@@ -12,9 +12,13 @@ namespace rheel {
 
 Scene::Scene(const SceneDescription& description) {
 	// first: add the scripts
-	for (const auto& scriptEntry : description.Scripts()) {
-		Script& script = AddScript(scriptEntry.first);
-		scriptEntry.second(script);
+	for (const auto& script : description.Scripts()) {
+		std::unique_ptr<Script> scriptCopy(script->__CloneHeap());
+		Script& ref = *scriptCopy;
+
+		_scripts.push_back(std::move(scriptCopy));
+		ref._parent_scene = this;
+		ref.Initialize();
 	}
 
 	// second: add the objects
@@ -61,14 +65,6 @@ Scene::Scene(const SceneDescription& description) {
 				break;
 		}
 	}
-}
-
-Script& Scene::AddScript(const std::string& script) {
-	std::unique_ptr<Script> instance = Engine::CreateScript(script);
-	Script *ptr = instance.get();
-	instance->_parent_scene = this;
-	_scripts.push_back(std::move(instance));
-	return *ptr;
 }
 
 const std::vector<std::unique_ptr<Script>>& Scene::Scripts() const {

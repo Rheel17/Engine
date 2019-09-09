@@ -119,8 +119,8 @@ public:
 	void FireEvent(EventType type, bool recursive = true);
 
 	/**
-	 * Returns a shared pointer to the component of the given type. A nullptr
-	 * shared pointer is returned if no such component exists in this object.
+	 * Returns a pointer to the component of the given type. A nullptr is
+	 * returned if no such component exists in this object.
 	 */
 	template<typename T>
 	T *GetComponent() {
