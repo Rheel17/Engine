@@ -3,7 +3,7 @@
 #include "../../_common.h"
 
 #include <typeindex>
-#include <unordered_set>
+#include <set>
 
 #include "GLBuffer.h"
 
@@ -101,7 +101,7 @@ private:
 	GLuint _FirstUnusedIndex(GLuint consecutive = 1) const;
 
 	GLhandle _id;
-	std::unordered_set<GLuint> _unused_attribute_indices;
+	std::set<GLuint> _unused_attribute_indices;
 
 };
 
