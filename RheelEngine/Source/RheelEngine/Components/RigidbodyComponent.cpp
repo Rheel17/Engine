@@ -1,21 +1,20 @@
-#include "RigidbodyComponent.h"
-
 #include <btBulletDynamicsCommon.h>
 
 #include "../Object.h"
+#include "RigidBodyComponent.h"
 
 namespace rheel {
 
-RigidbodyComponent::RigidbodyComponent(const RigidbodyComponent& component) {}
+RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& component) {}
 
-void RigidbodyComponent::OnAdd() {
+void RigidBodyComponent::OnAdd() {
 	// TODO implement
 }
 
-void RigidbodyComponent::OnUpdate() {
+void RigidBodyComponent::OnUpdate() {
 }
 
-void RigidbodyComponent::OnRemove() {
+void RigidBodyComponent::OnRemove() {
 	// TODO implement
 }
 

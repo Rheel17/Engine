@@ -7,10 +7,10 @@
 #include "RheelEngine/Engine.h"
 
 #include "RheelEngine/Components/ModelRenderComponent.h"
-#include "RheelEngine/Components/RigidbodyComponent.h"
+#include "RheelEngine/Components/RigidBodyComponent.h"
 
 #include "RheelEngine/Scripts/EulerCameraController.h"
-#include "RheelEngine/Scripts/PhysicsWorld.h"
+#include "RheelEngine/Scripts/PhysicsScene.h"
 
 #include "RheelEngine/UI/Elements/ColorElement.h"
 #include "RheelEngine/UI/Elements/EmptyElement.h"

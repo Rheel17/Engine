@@ -35,11 +35,6 @@ public:
 	 */
 	virtual void PostOnUpdate() {}
 
-	/**
-	 * Called when the script is removed from use.
-	 */
-	virtual void Destroy() {}
-
 protected:
 	Script() = default;
 

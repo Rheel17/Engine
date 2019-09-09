@@ -7,7 +7,7 @@ static Blueprint createCubeBlueprint() {
 
 	std::shared_ptr<Model> model = std::make_shared<Model>("cube.dae", Model::FormatCollada);
 
-	blueprint.AddComponent<RigidbodyComponent>();
+	blueprint.AddComponent<RigidBodyComponent>();
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetModel(model);
@@ -18,7 +18,7 @@ static Blueprint createCubeBlueprint() {
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
-	description.AddScript<PhysicsWorld>();
+	description.AddScript<PhysicsScene>();
 
 	auto& eulerCameraController = description.AddScript<EulerCameraController>();
 	eulerCameraController.SetCamera("main_camera");
