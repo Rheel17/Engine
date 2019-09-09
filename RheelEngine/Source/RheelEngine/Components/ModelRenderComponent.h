@@ -12,8 +12,14 @@ namespace rheel {
  * A component that renders a Model
  */
 class RE_API ModelRenderComponent : public RenderComponent {
+	COMPONENT_INIT(ModelRenderComponent)
+
+private:
+	ModelRenderComponent(const ModelRenderComponent& modelRenderComponent);
 
 public:
+	ModelRenderComponent() = default;
+
 	void SetModel(std::shared_ptr<Model> model);
 
 	void SetMaterial(Material material);

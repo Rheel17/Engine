@@ -13,14 +13,6 @@ const std::string& Blueprint::Name() const {
 	return _name;
 }
 
-void Blueprint::AddComponent(const std::string& componentName, std::function<void(Component&)> onLoad) {
-	if (!Engine::HasComponent(componentName)) {
-		throw std::runtime_error("Component not registered: \"" + componentName + "\"");
-	}
-
-	_components.push_back(std::make_pair(componentName, onLoad));
-}
-
 void Blueprint::AddChild(const std::string& blueprintName) {
 	if (_name == blueprintName) {
 		throw std::runtime_error("A blueprint cannot be child of itself");
@@ -37,11 +29,11 @@ void Blueprint::AddChild(const std::string& blueprintName) {
 	_child_blueprints.push_back(blueprintName);
 }
 
-const std::vector<std::pair<std::string, Blueprint::_ComponentLoader>>& Blueprint::GetComponents() const {
+const std::vector<std::unique_ptr<Component>>& Blueprint::_Components() const {
 	return _components;
 }
 
-const std::vector<std::string>& Blueprint::GetChildren() const {
+const std::vector<std::string>& Blueprint::_Children() const {
 	return _child_blueprints;
 }
 

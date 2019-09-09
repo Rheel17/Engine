@@ -2,10 +2,16 @@
 #define COMPONENT_H_
 #include "_common.h"
 
+#include <string>
+
 #include "ObjectPtr.h"
 
-#include <memory>
-#include <string>
+#define COMPONENT_INIT(Class)						\
+protected:											\
+	Component *__CloneHeap() const override {		\
+		return new Class(*this); 					\
+	}												\
+private:
 
 namespace rheel {
 
@@ -33,11 +39,6 @@ public:
 	virtual void OnUpdateRenderers() {}
 
 	/**
-	 * TODO: Called every time the object is rendered.
-	 */
-	virtual void OnRender() {}
-
-	/**
 	 * Called when the object is removed from the scene
 	 */
 	virtual void OnRemove() {}
@@ -45,14 +46,12 @@ public:
 protected:
 	Component() = default;
 
+	virtual Component *__CloneHeap() const = 0;
+
 	ObjectPtr Parent() { return _parent_object; }
 
 private:
 	ObjectPtr _parent_object;
-
-public:
-	static constexpr auto NAME_MODELRENDER = "engine:meshrender";
-	static constexpr auto NAME_RIGIDBODY = "engine:rigidbody";
 
 };
 

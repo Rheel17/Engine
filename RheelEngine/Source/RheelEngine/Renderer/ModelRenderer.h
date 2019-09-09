@@ -39,7 +39,7 @@ public:
 		RE_NO_COPY(ObjectDataPtr)
 
 	public:
-		ObjectDataPtr();
+		ObjectDataPtr() = default;
 		ObjectDataPtr(ObjectData *data);
 
 		void SetTransform(vec3 position, quat rotation, vec3 scale);
@@ -50,7 +50,7 @@ public:
 		ObjectDataPtr& operator=(ObjectDataPtr&& ptr);
 
 	private:
-		ObjectData *_data;
+		ObjectData *_data = nullptr;
 
 	};
 

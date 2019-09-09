@@ -42,9 +42,6 @@ ModelRenderer::ObjectData& ModelRenderer::ObjectData::operator=(ObjectData&& dat
 	return *this;
 }
 
-ModelRenderer::ObjectDataPtr::ObjectDataPtr() :
-		_data(nullptr) {}
-
 ModelRenderer::ObjectDataPtr::ObjectDataPtr(ObjectData *data) :
 		_data(data) {
 

@@ -33,7 +33,6 @@ class RE_API Engine {
 		// register maps
 		std::unordered_map<std::string, Blueprint> register_blueprints;
 		std::unordered_map<std::string, SceneDescription> register_scene_descriptions;
-		std::unordered_map<std::string, std::function<std::unique_ptr<Component>()>> register_components;
 		std::unordered_map<std::string, std::function<std::unique_ptr<Script>()>> register_scripts;
 
 		// render maps
@@ -133,29 +132,6 @@ public:
 	 * Returns the scene description with the given name.
 	 */
 	static const SceneDescription& GetSceneDescription(const std::string& name);
-
-	/**
-	 * Registers a component for future use.
-	 */
-	template<typename T>
-	static void RegisterComponent(const std::string& name) {
-		static_assert(std::is_base_of<Component, T>::value, "Registered component is not derived from Component");
-		static_assert(std::is_default_constructible<T>::value, "Components must be Default-Constructable");
-
-		_instance.register_components.insert({ name, []() {
-			return std::make_unique<T>();
-		} });
-	}
-
-	/**
-	 * Returns true only if a component with the given name has been registered.
-	 */
-	static bool HasComponent(const std::string& name);
-
-	/**
-	 * Creates a new component instance of the given name.
-	 */
-	static std::unique_ptr<Component> CreateComponent(const std::string& name);
 
 	/**
 	 * Registers a script for future use.

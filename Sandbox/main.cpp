@@ -7,13 +7,10 @@ static Blueprint createCubeBlueprint() {
 
 	std::shared_ptr<Model> model = std::make_shared<Model>("cube.dae", Model::FormatCollada);
 
-	blueprint.AddComponent(Component::NAME_RIGIDBODY, [](Component& c) {
-	});
+	blueprint.AddComponent<RigidbodyComponent>();
 
-	blueprint.AddComponent(Component::NAME_MODELRENDER, [model](Component& c) {
-		ModelRenderComponent& component = static_cast<ModelRenderComponent&>(c);
-		component.SetModel(model);
-	});
+	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
+	modelRenderComponent.SetModel(model);
 
 	return blueprint;
 }

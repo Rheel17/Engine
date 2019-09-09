@@ -12,11 +12,17 @@ namespace rheel {
  * built-in physics engine.
  */
 class RE_API RigidbodyComponent : public Component {
+	COMPONENT_INIT(RigidbodyComponent)
 
 private:
 	struct _DeleterBody { void operator()(void *ptr); };
 
+private:
+	RigidbodyComponent(const RigidbodyComponent& component);
+
 public:
+	RigidbodyComponent() = default;
+
 	void OnAdd() override;
 
 	void OnUpdate() override;

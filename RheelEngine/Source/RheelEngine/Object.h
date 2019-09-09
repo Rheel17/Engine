@@ -20,7 +20,7 @@ class RE_API Object {
 
 public:
 	enum EventType {
-		ON_ADD, ON_REMOVE, ON_UPDATE, ON_UPDATE_RENDERER, ON_RENDER
+		ON_ADD, ON_REMOVE, ON_UPDATE, ON_UPDATE_RENDERER
 	};
 
 	/**

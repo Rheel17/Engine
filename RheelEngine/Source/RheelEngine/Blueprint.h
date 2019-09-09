@@ -2,18 +2,14 @@
 #define BLUEPRINT_H_
 #include "_common.h"
 
-#include <string>
 #include <vector>
-#include <functional>
-#include <tuple>
 
 #include "Component.h"
 
 namespace rheel {
 
 class RE_API Blueprint {
-
-	using _ComponentLoader = std::function<void(Component&)>;
+	friend class Object;
 
 public:
 	/**
@@ -29,13 +25,23 @@ public:
 	/**
 	 * Adds a component to this blueprint.
 	 *
-	 * The first argument is the name of the component to add.
-	 * The second argument takes a functor with a ComponentPtr as parameter. Use
-	 * this function as a (default) initialization of the component when the
-	 * blueprint is instantiated. The second argument can be omitted for a no-op
-	 * initializer.
+	 * Call this method with the component as template argument like
+	 *
+	 * auto& component = blueprint.AddComponent<ComponentInstance>();
+	 *
+	 * The resulting reference can be used to set component parameters. This
+	 * reference will be copied into objects instantiated by this blueprint.
 	 */
-	void AddComponent(const std::string& componentName, _ComponentLoader onLoad = [](Component&){});
+	template<typename T>
+	T& AddComponent() {
+		static_assert(std::is_base_of<Component, T>::value, "Registered component is not derived from Component");
+		static_assert(std::is_default_constructible<T>::value, "Components must be Default-Constructable");
+
+		T* ptr = new T();
+		_components.emplace_back(std::unique_ptr<T>(ptr));
+
+		return *ptr;
+	}
 
 	/**
 	 * Adds a nested blueprint. When an instance of this blueprint is created,
@@ -43,22 +49,15 @@ public:
 	 */
 	void AddChild(const std::string& blueprintName);
 
-	/**
-	 * Returns a vector of all components in this blueprint.
-	 */
-	const std::vector<std::pair<std::string, _ComponentLoader>>& GetComponents() const;
-
-	/**
-	 * Returns a vector of all the nested blueprints in this blueprint.
-	 */
-	const std::vector<std::string>& GetChildren() const;
-
 private:
+	const std::vector<std::unique_ptr<Component>>& _Components() const;
+	const std::vector<std::string>& _Children() const;
+
 	bool _HasChild(const std::string& name) const;
 
 	std::string _name;
 
-	std::vector<std::pair<std::string, _ComponentLoader>> _components;
+	std::vector<std::unique_ptr<Component>> _components;
 	std::vector<std::string> _child_blueprints;
 
 };

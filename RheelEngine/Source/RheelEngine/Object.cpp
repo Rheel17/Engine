@@ -7,15 +7,14 @@
 namespace rheel {
 
 Object::Object(const Blueprint& blueprint) {
-	auto components = blueprint.GetComponents();
-	auto children = blueprint.GetChildren();
+	const auto& components = blueprint._Components();
+	const auto& children = blueprint._Children();
 
 	// add the components
-	for (const auto& componentEntry : components) {
-		auto component = Engine::CreateComponent(componentEntry.first);
-		componentEntry.second(*component);
-		component->_parent_object = this;
-		_components.push_back(std::move(component));
+	for (const auto& component : components) {
+		std::unique_ptr<Component> componentCopy(component->__CloneHeap());
+		componentCopy->_parent_object = this;
+		_components.push_back(std::move(componentCopy));
 	}
 
 	// add the children
@@ -147,7 +146,6 @@ void Object::FireEvent(EventType type, bool recursive) {
 			case ON_REMOVE:          component->OnRemove();          break;
 			case ON_UPDATE:          component->OnUpdate();          break;
 			case ON_UPDATE_RENDERER: component->OnUpdateRenderers(); break;
-			case ON_RENDER:          component->OnRender();          break;
 		}
 	}
 }

@@ -15,6 +15,8 @@ void RigidbodyComponent::_DeleterBody::operator()(void *ptr) {
 	delete static_cast<btRigidBody *>(ptr);
 }
 
+RigidbodyComponent::RigidbodyComponent(const RigidbodyComponent& component) {}
+
 void RigidbodyComponent::OnAdd() {
 	// TODO implement
 }

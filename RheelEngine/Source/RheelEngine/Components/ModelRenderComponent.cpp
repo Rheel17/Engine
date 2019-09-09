@@ -7,6 +7,9 @@
 
 namespace rheel {
 
+ModelRenderComponent::ModelRenderComponent(const ModelRenderComponent& component) :
+		_model(component._model), _material(component._material) {}
+
 void ModelRenderComponent::SetModel(std::shared_ptr<Model> model) {
 	if (_object_data) {
 		throw std::runtime_error("Model cannot be set after initialization");

@@ -8,7 +8,6 @@ namespace rheel {
 
 Engine::EngineInstance Engine::_instance;
 
-extern void registerComponents();
 extern void registerScripts();
 
 Engine::EngineInstance::~EngineInstance() {
@@ -23,7 +22,6 @@ void Engine::_Initialize() {
 	Window::InitializeDisplaySystems();
 	Font::Initialize();
 
-	registerComponents();
 	registerScripts();
 }
 
@@ -135,19 +133,6 @@ const SceneDescription& Engine::GetSceneDescription(const std::string& name) {
 	}
 
 	return iter->second;
-}
-
-bool Engine::HasComponent(const std::string& name) {
-	return _instance.register_components.find(name) != _instance.register_components.end();
-}
-
-std::unique_ptr<Component> Engine::CreateComponent(const std::string& name) {
-	auto iter = _instance.register_components.find(name);
-	if (iter == _instance.register_components.end()) {
-		throw std::runtime_error("Component \"" + name + "\" does not exist.");
-	}
-
-	return iter->second();
 }
 
 bool Engine::HasScript(const std::string& name) {
