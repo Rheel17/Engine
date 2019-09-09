@@ -2,15 +2,8 @@
 #define ENGINE_H_
 #include "_common.h"
 
-#include <functional>
-#include <unordered_map>
-
 #include "Game.h"
-#include "Blueprint.h"
-#include "Component.h"
 #include "Renderer/SceneRenderManager.h"
-#include "Script.h"
-#include "Scene.h"
 #include "Renderer/Window.h"
 #include "UI/UI.h"
 
@@ -33,7 +26,6 @@ class RE_API Engine {
 		// register maps
 		std::unordered_map<std::string, Blueprint> register_blueprints;
 		std::unordered_map<std::string, SceneDescription> register_scene_descriptions;
-		std::unordered_map<std::string, std::function<std::unique_ptr<Script>()>> register_scripts;
 
 		// render maps
 		std::unordered_map<Scene *, SceneRenderManager> render_map_scene;

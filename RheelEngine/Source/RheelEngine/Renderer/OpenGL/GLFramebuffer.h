@@ -2,9 +2,7 @@
 #define GLFRAMEBUFFER_H_
 #include "../../_common.h"
 
-#include <vector>
-#include <tuple>
-#include <set>
+#include <unordered_set>
 
 #include "GLTexture2D.h"
 #include "GLTexture2DMultisample.h"
@@ -132,8 +130,8 @@ private:
 
 	std::vector<GLTexture2D> _textures;
 	std::vector<GLRenderbuffer> _renderbuffers;
-	std::set<GLenum> _used_color_attachments;
-	std::set<GLenum> _used_other_attachments;
+	std::unordered_set<GLenum> _used_color_attachments;
+	std::unordered_set<GLenum> _used_other_attachments;
 
 	bool _is_multisampled;
 	std::vector<GLTexture2DMultisample> _multisample_textures;

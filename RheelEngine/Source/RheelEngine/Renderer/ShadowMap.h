@@ -2,15 +2,9 @@
 #define SHADOWMAP_H_
 #include "../_common.h"
 
-#include <vector>
-
-#include "OpenGL/GLFramebuffer.h"
-#include "../Light.h"
-#include "../Camera.h"
+#include "SceneRenderManager.h"
 
 namespace rheel {
-
-class SceneRenderManager;
 
 class RE_API ShadowMap {
 	friend class SceneRenderManager;

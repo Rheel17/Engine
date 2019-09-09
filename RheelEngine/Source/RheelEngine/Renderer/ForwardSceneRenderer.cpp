@@ -1,7 +1,6 @@
 #include "ForwardSceneRenderer.h"
 
 #include "ShadowMapDirectional.h"
-#include "SceneRenderManager.h"
 #include "../Engine.h"
 
 namespace rheel {

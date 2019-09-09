@@ -3,7 +3,6 @@
 #include "_common.h"
 
 #include <vector>
-#include <memory>
 
 #include "Color.h"
 

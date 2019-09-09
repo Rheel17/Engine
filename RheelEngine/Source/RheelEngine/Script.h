@@ -2,9 +2,6 @@
 #define SCRIPT_H_
 #include "_common.h"
 
-#include <memory>
-#include <string>
-
 #define SCRIPT_INIT(Class)						\
 protected:										\
 	Script *__CloneHeap() const override {		\

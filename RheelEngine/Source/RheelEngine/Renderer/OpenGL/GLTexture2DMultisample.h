@@ -2,7 +2,7 @@
 #define GLTEXTURE2DMULTISAMPLE_H_
 #include "../../_common.h"
 
-#include "GLTexture2D.h"
+#include "GL.h"
 
 namespace rheel {
 

@@ -6,8 +6,6 @@
 #include "ObjectPtr.h"
 #include "SceneDescription.h"
 
-#include <memory>
-
 namespace rheel {
 
 class Scene;

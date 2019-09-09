@@ -4,7 +4,7 @@
 
 #include <rapidxml_utils.hpp>
 
-#include <unordered_set>
+#include <memory>
 
 #include "Util/Hashes.h"
 #include "Model.h"

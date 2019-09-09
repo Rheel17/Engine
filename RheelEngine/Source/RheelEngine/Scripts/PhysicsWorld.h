@@ -2,6 +2,8 @@
 #define PHYSICSWORLD_H_
 #include "../_common.h"
 
+#include <memory>
+
 #include "../Script.h"
 
 namespace rheel {

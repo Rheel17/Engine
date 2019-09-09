@@ -1,7 +1,5 @@
 #include "EulerCameraController.h"
 
-#include <cmath>
-
 #include "../Scene.h"
 
 namespace rheel {

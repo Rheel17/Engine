@@ -3,7 +3,6 @@
 #include "../_common.h"
 
 #include "SceneRenderer.h"
-#include "OpenGL/GLFramebuffer.h"
 
 namespace rheel {
 

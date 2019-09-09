@@ -1,10 +1,6 @@
 #include "ModelRenderer.h"
 
-#include <algorithm>
-#include <tuple>
-
 #include "../Resources.h"
-#include "../Engine.h"
 
 namespace rheel {
 

@@ -4,10 +4,8 @@
 
 #include "GLShaderProgram.h"
 
-#include <exception>
 #include <iostream>
 #include <fstream>
-#include <streambuf>
 
 namespace rheel {
 

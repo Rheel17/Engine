@@ -1,12 +1,7 @@
 #include "DeferredSceneRenderer.h"
 
-#include <algorithm>
-#include <set>
-
 #include "ShadowMapDirectional.h"
-#include "SceneRenderManager.h"
 #include "../Engine.h"
-#include "../Resources.h"
 
 namespace rheel {
 

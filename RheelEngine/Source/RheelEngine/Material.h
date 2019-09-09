@@ -2,6 +2,8 @@
 #define MATERIAL_H_
 #include "_common.h"
 
+#include <memory>
+
 #include "Color.h"
 #include "Image.h"
 

@@ -2,14 +2,11 @@
 #define SCENEDESCRIPTION_H_
 #include "_common.h"
 
-#include <string>
-#include <vector>
-
 #include "Blueprint.h"
-#include "Script.h"
-#include "PointLight.h"
-#include "SpotLight.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
+#include "Script.h"
+#include "SpotLight.h"
 
 namespace rheel {
 

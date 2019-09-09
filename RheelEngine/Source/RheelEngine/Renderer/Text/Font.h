@@ -2,12 +2,6 @@
 #define FONT_H_
 #include "../../_common.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
-#include <string>
-#include <unordered_map>
-#include <memory>
 #include <list>
 
 #include "Character.h"
@@ -52,7 +46,7 @@ private:
 
 	FT_Face _face;
 	std::list<_CharacterCacheItem> _character_cache;
-	std::map<wchar_t, std::list<_CharacterCacheItem>::iterator> _character_cache_reference;
+	std::unordered_map<wchar_t, std::list<_CharacterCacheItem>::iterator> _character_cache_reference;
 
 public:
 	static constexpr auto DEFAULT_FONT = "__default_font__";

@@ -1,7 +1,6 @@
 #include "Image.h"
 
 #include <png.h>
-#include <string_format.h>
 
 #define FLOAT(x) ((x) / 255.0f)
 #define BYTE(x) ((png_byte) ((x) * 255))

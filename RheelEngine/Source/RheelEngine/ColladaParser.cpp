@@ -1,11 +1,5 @@
 #include "ColladaParser.h"
 
-#include <cstring>
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <map>
-
 namespace rheel {
 
 static void transformUp(vec3& vector, char up) {
@@ -44,7 +38,7 @@ ColladaParser::Geometry::Geometry(_XmlNode *geometry) {
 	}
 
 	// create a map from source ids to sources
-	std::map<std::string, _XmlNode *> sources;
+	std::unordered_map<std::string, _XmlNode *> sources;
 	for (_XmlNode *source = mesh->first_node("source"); source; source = source->next_sibling("source")) {
 		_XmlAttribute *id = source->first_attribute("id");
 		assert(id);
@@ -54,8 +48,8 @@ ColladaParser::Geometry::Geometry(_XmlNode *geometry) {
 	}
 
 	// read the inputs of the polylist, and store the sources in a map
-	std::map<std::string, std::string> inputs;
-	std::map<std::string, unsigned> offsets;
+	std::unordered_map<std::string, std::string> inputs;
+	std::unordered_map<std::string, unsigned> offsets;
 
 	for (_XmlNode *input = polylist->first_node("input"); input; input = input->next_sibling("input")) {
 		_XmlAttribute *semantic = input->first_attribute("semantic");
@@ -72,7 +66,7 @@ ColladaParser::Geometry::Geometry(_XmlNode *geometry) {
 	}
 
 	// read the vertices inputs
-	std::map<std::string, std::string> verticesInputs;
+	std::unordered_map<std::string, std::string> verticesInputs;
 
 	_XmlNode *vertices = mesh->first_node("vertices");
 	assert(vertices);

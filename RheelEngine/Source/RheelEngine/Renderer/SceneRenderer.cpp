@@ -1,8 +1,5 @@
 #include "SceneRenderer.h"
 
-#include "SceneRenderManager.h"
-#include "../Engine.h"
-
 namespace rheel {
 
 SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount, bool depthComponent) :
@@ -66,12 +63,12 @@ unsigned SceneRenderer::Height() const {
 	return _height;
 }
 
-const std::map<std::string, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
+const std::unordered_map<std::string, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
 	return _shadow_maps;
 }
 
 void SceneRenderer::_CorrectShadowMapList() {
-	std::set<std::string> lightNames;
+	std::unordered_set<std::string> lightNames;
 	for (const auto& pair : _shadow_maps) {
 		lightNames.insert(pair.first);
 	}

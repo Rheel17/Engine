@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 
 #include "../Engine.h"
-#include "../PerspectiveCamera.h"
 
 namespace rheel {
 

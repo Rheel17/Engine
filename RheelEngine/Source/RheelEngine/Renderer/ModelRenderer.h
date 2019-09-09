@@ -2,11 +2,13 @@
 #define MODELRENDERER_H_
 #include "../_common.h"
 
+#include <map>
+
 #include "../Material.h"
 #include "../Model.h"
 
-#include "OpenGL/GLVertexArray.h"
 #include "OpenGL/GLShaderProgram.h"
+#include "OpenGL/GLVertexArray.h"
 
 namespace rheel {
 

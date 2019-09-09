@@ -1,9 +1,5 @@
 #include "GLFramebuffer.h"
 
-#include <stdexcept>
-#include <exception>
-#include <iostream>
-
 namespace rheel {
 
 GLFramebuffer::GLFramebuffer(GLuint width, GLuint height, GLuint samples, bool forceMultisampled) :

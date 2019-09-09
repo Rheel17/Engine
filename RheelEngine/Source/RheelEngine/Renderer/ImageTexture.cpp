@@ -1,7 +1,5 @@
 #include "ImageTexture.h"
 
-#include <string_format.h>
-
 namespace rheel {
 
 std::unordered_map<Image *, ImageTexture> ImageTexture::_texture_map;

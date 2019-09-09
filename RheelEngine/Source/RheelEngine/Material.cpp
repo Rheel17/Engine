@@ -1,8 +1,5 @@
 #include "Material.h"
 
-#include <cmath>
-#include <tuple>
-
 #include "Resources.h"
 #include "Renderer/ImageTexture.h"
 

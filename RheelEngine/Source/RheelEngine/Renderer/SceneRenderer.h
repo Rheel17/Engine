@@ -7,8 +7,6 @@
 
 namespace rheel {
 
-class SceneRenderManager;
-
 class RE_API SceneRenderer {
 
 public:
@@ -33,7 +31,7 @@ protected:
 
 	unsigned Height() const;
 
-	const std::map<std::string, std::unique_ptr<ShadowMap>>& ShadowMaps() const;
+	const std::unordered_map<std::string, std::unique_ptr<ShadowMap>>& ShadowMaps() const;
 
 	virtual void Resize(unsigned width, unsigned height) = 0;
 
@@ -47,7 +45,7 @@ private:
 
 	GLFramebuffer _result_buffer;
 
-	std::map<std::string, std::unique_ptr<ShadowMap>> _shadow_maps;
+	std::unordered_map<std::string, std::unique_ptr<ShadowMap>> _shadow_maps;
 
 };
 

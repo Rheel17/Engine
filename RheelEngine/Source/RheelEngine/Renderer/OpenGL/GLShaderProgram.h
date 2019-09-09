@@ -2,10 +2,9 @@
 #define GLSHADERPROGRAM_H_
 #include "../../_common.h"
 
-#include <string>
-#include <vector>
-#include <unordered_map>
+#if RE_GL_DEBUG
 #include <iostream>
+#endif
 
 #include "GL.h"
 

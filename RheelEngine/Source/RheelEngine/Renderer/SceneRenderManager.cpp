@@ -3,14 +3,8 @@
 #include "DeferredSceneRenderer.h"
 #include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
-#include "../PointLight.h"
-#include "../SpotLight.h"
-#include "../DirectionalLight.h"
 #include "../Engine.h"
 #include "../Resources.h"
-
-#include <unordered_set>
-#include "ModelRenderer.h"
 
 namespace rheel {
 

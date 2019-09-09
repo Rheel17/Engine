@@ -2,13 +2,13 @@
 #define WINDOW_H_
 #include "../_common.h"
 
-#include <memory>
-
 #include "DisplayConfiguration.h"
 
 namespace rheel {
 
 class RE_API Window {
+	RE_NO_MOVE(Window);
+	RE_NO_COPY(Window);
 
 public:
 	/**

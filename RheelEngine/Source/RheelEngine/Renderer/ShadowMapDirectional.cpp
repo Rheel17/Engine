@@ -1,9 +1,6 @@
 #include "ShadowMapDirectional.h"
 
-#include "SceneRenderManager.h"
-#include "../DirectionalLight.h"
 #include "../Engine.h"
-#include "ModelRenderer.h"
 
 namespace rheel {
 

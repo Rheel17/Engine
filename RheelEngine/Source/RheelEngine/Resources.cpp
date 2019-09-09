@@ -1,6 +1,5 @@
 #include "Resources.h"
 
-#include <set>
 #include <sstream>
 
 namespace rheel {

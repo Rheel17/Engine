@@ -2,9 +2,7 @@
 #define MODEL_H_
 #include "_common.h"
 
-#include <memory>
 #include <vector>
-#include <functional>
 
 namespace rheel {
 

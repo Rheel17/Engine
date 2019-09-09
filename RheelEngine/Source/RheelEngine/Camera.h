@@ -2,7 +2,7 @@
 #define CAMERA_H_
 #include "_common.h"
 
-#include <memory>
+#include <array>
 
 namespace rheel {
 

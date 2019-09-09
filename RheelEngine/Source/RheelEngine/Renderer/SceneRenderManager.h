@@ -2,13 +2,14 @@
 #define SCENERENDERMANAGER_H_
 #include "../_common.h"
 
-#include "../Scene.h"
 #include "ModelRenderer.h"
-#include "SceneRenderer.h"
-#include "ShadowMap.h"
+#include "../Scene.h"
 #include "OpenGL/GLFramebuffer.h"
 
 namespace rheel {
+
+class SceneRenderer;
+class ShadowMap;
 
 class RE_API SceneRenderManager {
 

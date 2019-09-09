@@ -5,7 +5,7 @@
 #include "../Script.h"
 #include "../UI/Input.h"
 
-#include <set>
+#include <unordered_set>
 
 namespace rheel {
 
@@ -99,9 +99,9 @@ private:
 	vec2 _mouse_delta;
 	vec2 _scroll;
 
-	std::set<Input::MouseButton> _pressed_mouse_buttons;
-	std::set<Input::Key> _pressed_keys;
-	std::set<Input::Scancode> _pressed_scancodes;
+	std::unordered_set<Input::MouseButton> _pressed_mouse_buttons;
+	std::unordered_set<Input::Key> _pressed_keys;
+	std::unordered_set<Input::Scancode> _pressed_scancodes;
 
 };
 

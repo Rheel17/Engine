@@ -1,8 +1,5 @@
 #include "Model.h"
 
-#include <iostream>
-#include <fstream>
-
 #include "ColladaParser.h"
 
 namespace rheel {

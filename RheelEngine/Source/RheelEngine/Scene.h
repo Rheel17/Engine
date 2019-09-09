@@ -2,14 +2,11 @@
 #define SCENE_H_
 #include "_common.h"
 
-#include <map>
-#include <memory>
+#include <unordered_map>
 
 #include "Camera.h"
-#include "SceneDescription.h"
 #include "Object.h"
-#include "Light.h"
-#include "Script.h"
+#include "SceneDescription.h"
 
 namespace rheel {
 
@@ -134,8 +131,8 @@ private:
 	std::vector<Object> _objects;
 	std::vector<std::unique_ptr<Script>> _scripts;
 	std::vector<std::string> _light_names;
-	std::map<std::string, std::unique_ptr<Light>> _lights;
-	std::map<std::string, std::unique_ptr<Camera>> _cameras;
+	std::unordered_map<std::string, std::unique_ptr<Light>> _lights;
+	std::unordered_map<std::string, std::unique_ptr<Camera>> _cameras;
 
 	float _time = 0.0f;
 
