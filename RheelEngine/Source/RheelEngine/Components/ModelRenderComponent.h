@@ -1,7 +1,8 @@
 #ifndef MODELRENDERCOMPONENT_H_
 #define MODELRENDERCOMPONENT_H_
 #include "../_common.h"
-#include "../Components/RenderComponent.h"
+
+#include "../Component.h"
 #include "../Material.h"
 #include "../Model.h"
 #include "../Renderer/ModelRenderer.h"
@@ -11,7 +12,7 @@ namespace rheel {
 /**
  * A component that renders a Model
  */
-class RE_API ModelRenderComponent : public RenderComponent {
+class RE_API ModelRenderComponent : public Component {
 	COMPONENT_INIT(ModelRenderComponent)
 
 private:
