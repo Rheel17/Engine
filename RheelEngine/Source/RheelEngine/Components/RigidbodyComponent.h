@@ -2,8 +2,9 @@
 #define RIGIDBODYCOMPONENT_H_
 #include "../_common.h"
 
+#include <btBulletDynamicsCommon.h>
+
 #include "../Component.h"
-#include "../Physics/RigidShape.h"
 
 namespace rheel {
 
@@ -13,9 +14,6 @@ namespace rheel {
  */
 class RE_API RigidbodyComponent : public Component {
 	COMPONENT_INIT(RigidbodyComponent)
-
-private:
-	struct _DeleterBody { void operator()(void *ptr); };
 
 private:
 	RigidbodyComponent(const RigidbodyComponent& component);
@@ -28,9 +26,6 @@ public:
 	void OnUpdate() override;
 
 	void OnRemove() override;
-
-private:
-	std::unique_ptr<void, _DeleterBody> _body;
 
 };
 
