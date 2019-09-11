@@ -29,10 +29,6 @@ Image::Image(std::istream& input, ImageFormat format) {
 	_LoadFromStream(input, format);
 }
 
-Image::~Image() {
-	ImageTexture::_DestroyTexture(this);
-}
-
 unsigned Image::Width() const {
 	return _width;
 }

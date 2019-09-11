@@ -5,6 +5,7 @@
 // TODO: do this automatically?
 
 #include "RheelEngine/Engine.h"
+#include "RheelEngine/ResourceManager.h"
 
 #include "RheelEngine/Components/ModelRenderComponent.h"
 #include "RheelEngine/Components/RigidBodyComponent.h"

@@ -1,6 +1,8 @@
 #include "ModelRenderer.h"
 
-#include "../Resources.h"
+#include "../EngineResources.h"
+
+#include <array>
 
 namespace rheel {
 
@@ -68,8 +70,17 @@ ModelRenderer::ObjectDataPtr& ModelRenderer::ObjectDataPtr::operator=(ObjectData
 }
 
 bool ModelRenderer::_MaterialTextureCompare::operator()(const Material& mat1, const Material& mat2) const {
-	return std::tie(mat1.AmbientTexture(), mat1.DiffuseTexture(), mat1.SpecularTexture()) <
-			std::tie(mat2.AmbientTexture(), mat2.DiffuseTexture(), mat2.SpecularTexture());
+	std::array<std::uintptr_t, 3> mat1Addresses = {{
+			std::uintptr_t(mat1.AmbientTexture()),
+			std::uintptr_t(mat1.DiffuseTexture()),
+			std::uintptr_t(mat1.SpecularTexture()) }};
+	std::array<std::uintptr_t, 3> mat2Addresses = {{
+			std::uintptr_t(mat2.AmbientTexture()),
+			std::uintptr_t(mat2.DiffuseTexture()),
+			std::uintptr_t(mat2.SpecularTexture()) }};
+
+	return std::tie(mat1Addresses[0], mat1Addresses[1], mat1Addresses[2]) <
+			std::tie(mat2Addresses[0], mat2Addresses[1], mat2Addresses[2]);
 }
 
 ModelRenderer::ModelRenderer(const Model& model) :
@@ -155,8 +166,8 @@ void ModelRenderer::_InitializeShaders() {
 		return;
 	}
 
-	_forward_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_forward_modelshader_vert_glsl"));
-	_forward_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_forward_modelshader_frag_glsl"));
+	_forward_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_forward_modelshader_vert_glsl"));
+	_forward_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_forward_modelshader_frag_glsl"));
 	_forward_model_shader.Link();
 	_forward_model_shader["ambientTexture"] = 0;
 	_forward_model_shader["diffuseTexture"] = 1;
@@ -166,15 +177,15 @@ void ModelRenderer::_InitializeShaders() {
 	_forward_model_shader["shadowMap2"] = 5;
 	_forward_model_shader["shadowMap3"] = 6;
 
-	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_deferred_modelshader_vert_glsl"));
-	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_deferred_modelshader_frag_glsl"));
+	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_deferred_modelshader_vert_glsl"));
+	_deferred_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_deferred_modelshader_frag_glsl"));
 	_deferred_model_shader.Link();
 	_deferred_model_shader["ambientTexture"] = 0;
 	_deferred_model_shader["diffuseTexture"] = 1;
 	_deferred_model_shader["specularTexture"] = 2;
 
-	_opaque_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
-	_opaque_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
+	_opaque_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
+	_opaque_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
 	_opaque_shader.Link();
 
 	_are_shaders_initialized = true;

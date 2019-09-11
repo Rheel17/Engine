@@ -1,7 +1,7 @@
 #include "Element.h"
 
 #include "../Engine.h"
-#include "../Resources.h"
+#include "../EngineResources.h"
 
 namespace rheel {
 
@@ -169,8 +169,8 @@ void Element::_Initialize() {
 	}
 
 	_ui_shader = std::make_unique<GLShaderProgram>();
-	_ui_shader->AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_uishader_vert_glsl"));
-	_ui_shader->AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_uishader_frag_glsl"));
+	_ui_shader->AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
+	_ui_shader->AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_uishader_frag_glsl"));
 	_ui_shader->Link();
 
 	const DisplayConfiguration::Resolution& screenDimension = Engine::GetDisplayConfiguration().resolution;

@@ -3,6 +3,7 @@
 #include "../_common.h"
 
 #include "ModelRenderer.h"
+#include "../ModelResource.h"
 #include "../Scene.h"
 #include "OpenGL/GLFramebuffer.h"
 
@@ -31,7 +32,7 @@ public:
 	 * Returns a ModelRenderer instance to render the specified model. Multiple
 	 * calls with the same model will result in the same model renderer.
 	 */
-	ModelRenderer& GetModelRenderer(Model *model);
+	ModelRenderer& GetModelRenderer(ModelResource& model);
 
 	/**
 	 * Creates and returns a SceneRenderer managed by this manager.

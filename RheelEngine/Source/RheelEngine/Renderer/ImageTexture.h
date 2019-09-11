@@ -10,22 +10,14 @@
 namespace rheel {
 
 class RE_API ImageTexture {
-	friend class Image;
 
 public:
-	ImageTexture(Image *image);
+	ImageTexture(const Image& image);
+
 	void Bind(unsigned textureUnit) const;
 
 private:
 	GLTexture2D _texture;
-
-public:
-	static const ImageTexture& Get(Image *image);
-
-private:
-	static void _DestroyTexture(Image *image);
-
-	static std::unordered_map<Image *, ImageTexture> _texture_map;
 
 };
 

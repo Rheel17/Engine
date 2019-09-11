@@ -5,7 +5,7 @@ using namespace rheel;
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
-	std::shared_ptr<Model> model = std::make_shared<Model>("cube.dae", Model::FormatCollada);
+	ModelResource& model = ResourceManager::GetModel("cube.dae");
 
 	blueprint.AddComponent<RigidBodyComponent>();
 
@@ -60,6 +60,8 @@ class SandboxGame : public Game {
 		config.vsync = false;
 
 		Engine::SetDisplayConfiguration(std::move(config));
+
+		ResourceManager::SetResourcePath("Resources");
 	}
 
 	void Start() override {

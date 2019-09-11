@@ -1,7 +1,7 @@
 #include "TextRenderer.h"
 
 #include "../../Engine.h"
-#include "../../Resources.h"
+#include "../../EngineResources.h"
 
 #define STAGE_TRIANGLES		0
 #define STAGE_BEZIER		1
@@ -43,8 +43,8 @@ void TextRenderer::_Initialize() {
 		return;
 	}
 
-	_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_fontshader_frag_glsl"));
-	_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_fontshader_vert_glsl"));
+	_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
+	_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
 	_shader.Link();
 
 	_triangle_buffer = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);

@@ -4,7 +4,7 @@
 
 #include "../Component.h"
 #include "../Material.h"
-#include "../Model.h"
+#include "../ModelResource.h"
 #include "../Renderer/ModelRenderer.h"
 
 namespace rheel {
@@ -21,7 +21,7 @@ private:
 public:
 	ModelRenderComponent() = default;
 
-	void SetModel(std::shared_ptr<Model> model);
+	void SetModel(ModelResource& model);
 
 	void SetMaterial(Material material);
 
@@ -32,7 +32,7 @@ public:
 	void OnRemove() override;
 
 private:
-	std::shared_ptr<Model> _model;
+	ModelResource *_model = nullptr;
 	Material _material;
 	ModelRenderer::ObjectDataPtr _object_data;
 

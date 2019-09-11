@@ -4,7 +4,7 @@
 #include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
-#include "../Resources.h"
+#include "../EngineResources.h"
 
 namespace rheel {
 
@@ -60,11 +60,14 @@ void SceneRenderManager::Update() {
 	_shadow_level = _ShadowLevel();
 }
 
-ModelRenderer& SceneRenderManager::GetModelRenderer(Model *model) {
-	auto iter = _render_map.find(model);
+ModelRenderer& SceneRenderManager::GetModelRenderer(ModelResource& model) {
+	Model& modelRef = model.Get();
+	Model *modelPtr = &modelRef;
+
+	auto iter = _render_map.find(modelPtr);
 
 	if (iter == _render_map.end()) {
-		iter = _render_map.emplace(model, *model).first;
+		iter = _render_map.emplace(modelPtr, *modelPtr).first;
 	}
 
 	return iter->second;
@@ -143,8 +146,8 @@ void SceneRenderManager::_Initialize() {
 		return;
 	}
 
-	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::VERTEX, Resources::PreprocessShader("Shaders_deferred_lightingshader_vert_glsl"));
-	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, Resources::PreprocessShader("Shaders_deferred_lightingshader_frag_glsl"));
+	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_deferred_lightingshader_vert_glsl"));
+	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_deferred_lightingshader_frag_glsl"));
 	_deferred_lighting_shader.Link();
 	_deferred_lighting_shader["gBufferColor"] = 0;
 	_deferred_lighting_shader["gBufferPosition"] = 1;

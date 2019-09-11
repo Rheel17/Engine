@@ -42,8 +42,6 @@ public:
 	 */
 	Image(std::istream& input, ImageFormat format);
 
-	~Image();
-
 	unsigned Width() const;
 	unsigned Height() const;
 
