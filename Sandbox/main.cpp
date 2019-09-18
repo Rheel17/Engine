@@ -46,7 +46,23 @@ static Blueprint createBallBlueprint() {
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
 	rigidBodyComponent.SetShape(PhysicsShape::Sphere(1.5f));
-	rigidBodyComponent.SetMass(2500.0f);
+	rigidBodyComponent.SetMass(20000.0f);
+
+	return blueprint;
+}
+
+static Blueprint createRampBlueprint() {
+	Blueprint blueprint("ramp");
+
+	ModelResource& model = ResourceManager::GetModel("cube.dae");
+
+	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
+	modelRenderComponent.SetMaterial(Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.0f));
+	modelRenderComponent.SetScale({ 8.0f, 1.0f, 10.0f });
+	modelRenderComponent.SetModel(model);
+
+	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
+	rigidBodyComponent.SetShape(PhysicsShape::Box({ 8.0f, 1.0f, 10.0f }));
 
 	return blueprint;
 }
@@ -61,18 +77,18 @@ static SceneDescription createSceneDescription() {
 	eulerCameraController.SetCamera("main_camera");
 
 	for (int i = -2; i <= 2; i++) {
-		for (int j = -2; j <= 2; j++) {
-			for (int k = 0; k < 5; k++) {
-				description.AddObject("cube", { 2.1f * i, 2.1f * k, 2.1f * j });
-			}
+		for (int j = 0; j < 5; j++) {
+			description.AddObject("cube", { 2.1f * i, 2.1f * j, 2.1f * i });
 		}
 	}
 
 	description.AddObject("floor", { 0, -2, 0 });
 	description.AddObject("ball", { -20, 20, 0 });
+	description.AddObject("ramp", { -16, 5, 0 }, quat(vec3(0, 0, -0.6f)));
+	description.AddObject("ramp", { 16, 4, 0 }, quat(vec3(0, 0, 0.8f)));
 
 	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
-	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 2, 30 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 5, 20 });
 
 	return description;
 }
@@ -82,6 +98,7 @@ class SandboxGame : public Game {
 		Engine::RegisterBlueprint(createCubeBlueprint());
 		Engine::RegisterBlueprint(createFloorBlueprint());
 		Engine::RegisterBlueprint(createBallBlueprint());
+		Engine::RegisterBlueprint(createRampBlueprint());
 	};
 
 	void RegisterSceneDescriptions() override {
