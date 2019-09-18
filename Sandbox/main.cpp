@@ -41,10 +41,11 @@ static Blueprint createBallBlueprint() {
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetMaterial(Material({ 1.0f, 1.0f, 1.0f, 1.0f }, 0.7f, 0.0f));
+	modelRenderComponent.SetScale({ 1.5f, 1.5f, 1.5f });
 	modelRenderComponent.SetModel(model);
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
-	rigidBodyComponent.SetShape(PhysicsShape::Sphere(1.0f));
+	rigidBodyComponent.SetShape(PhysicsShape::Sphere(1.5f));
 	rigidBodyComponent.SetMass(2500.0f);
 
 	return blueprint;

@@ -47,7 +47,7 @@ ModelRenderer::ObjectDataPtr::ObjectDataPtr(ObjectData *data) :
 }
 
 void ModelRenderer::ObjectDataPtr::SetTransform(vec3 position, quat rotation, vec3 scale) {
-	_data->_model_matrix = glm::translate(glm::mat4_cast(rotation) * glm::scale(glm::identity<mat4>(), scale), position);
+	_data->_model_matrix = glm::translate(glm::identity<mat4>(), position) * glm::scale(glm::mat4_cast(rotation), scale);
 	_data->_normal_model_matrix = glm::transpose(glm::inverse(_data->_model_matrix));
 }
 
