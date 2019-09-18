@@ -17,6 +17,10 @@ PhysicsShape PhysicsShape::Box(const vec3& halfSize) {
 	return PhysicsShape(new btBoxShape({ halfSize.x, halfSize.y, halfSize.z }));
 }
 
+PhysicsShape PhysicsShape::Box(float halfX, float halfY, float halfZ) {
+	return PhysicsShape(new btBoxShape({ halfX, halfY, halfZ }));
+}
+
 PhysicsShape PhysicsShape::Sphere(float radius) {
 	return PhysicsShape(new btSphereShape(radius));
 }

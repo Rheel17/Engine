@@ -67,7 +67,7 @@ ModelRenderer& SceneRenderManager::GetModelRenderer(ModelResource& model) {
 	auto iter = _render_map.find(modelPtr);
 
 	if (iter == _render_map.end()) {
-		iter = _render_map.emplace(modelPtr, *modelPtr).first;
+		iter = _render_map.emplace(modelPtr, modelRef).first;
 	}
 
 	return iter->second;

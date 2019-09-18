@@ -23,6 +23,7 @@ private:
 
 public:
 	static PhysicsShape Box(const vec3& halfSize);
+	static PhysicsShape Box(float halfX, float halfY, float halfZ);
 	static PhysicsShape Sphere(float radius);
 
 };

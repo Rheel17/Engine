@@ -96,6 +96,8 @@ ModelRenderer::ModelRenderer(const Model& model) :
 	_vao.SetVertexAttributes<vec3, vec3, vec2>(_vertex_buffer_object);
 	_vao.SetVertexIndices(_element_array_buffer);
 	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ObjectData), true);
+
+	GL::ClearVertexArrayBinding();
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddObject() {
@@ -145,6 +147,8 @@ void ModelRenderer::RenderObjects() const {
 		_object_data_buffer.SetData(pair.second, GLBuffer::STREAM_DRAW);
 		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, pair.second.size());
 	}
+
+	GL::ClearVertexArrayBinding();
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::_Add(_ObjectDataVector& objects) {

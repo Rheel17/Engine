@@ -21,15 +21,15 @@ private:
 public:
 	ModelRenderComponent() = default;
 
+	/**
+	 * Sets the model to render.
+	 */
 	void SetModel(ModelResource& model);
 
+	/**
+	 * Sets the material to use when rendering.
+	 */
 	void SetMaterial(Material material);
-
-	void OnAdd() override;
-
-	void OnUpdateRenderers() override;
-
-	void OnRemove() override;
 
 	/**
 	 * Sets the scale of this model.
@@ -50,6 +50,10 @@ public:
 	 * Returns the scale of this model.
 	 */
 	const vec3& Scale() const;
+
+	void OnAdd() override;
+	void OnUpdateRenderers() override;
+	void OnRemove() override;
 
 private:
 	ModelResource *_model = nullptr;

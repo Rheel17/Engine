@@ -70,9 +70,7 @@ void ModelRenderComponent::SetScale(float x, float y, float z) {
 }
 
 void ModelRenderComponent::SetScale(float scale) {
-	_scale.x = scale;
-	_scale.y = scale;
-	_scale.z = scale;
+	SetScale(scale, scale, scale);
 }
 
 const vec3& ModelRenderComponent::Scale() const {
