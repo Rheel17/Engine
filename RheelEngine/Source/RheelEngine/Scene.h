@@ -63,7 +63,7 @@ public:
 	 * rotation can be specified, but if not, the default (origin, no rotation)
 	 * are used.
 	 */
-	void AddObject(const std::string& blueprint, const vec3& position = { 0, 0, 0 }, const quat& rotation = quat(1, 0, 0, 0), const vec3& scale = { 1, 1, 1 });
+	void AddObject(const std::string& blueprint, const vec3& position = { 0, 0, 0 }, const quat& rotation = quat(1, 0, 0, 0));
 
 	/**
 	 * Removes an object from this scene.

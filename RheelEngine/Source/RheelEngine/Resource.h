@@ -21,7 +21,7 @@ class RE_API Resource : public ResourceBase {
 public:
 	virtual ~Resource() = default;
 
-	const std::string& Name() {
+	const std::string& Name() const {
 		return _name;
 	}
 

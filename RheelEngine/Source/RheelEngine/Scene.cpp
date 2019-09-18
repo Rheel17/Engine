@@ -71,9 +71,9 @@ const std::vector<std::unique_ptr<Script>>& Scene::Scripts() const {
 	return _scripts;
 }
 
-void Scene::AddObject(const std::string& blueprintName, const vec3& position, const quat& rotation, const vec3& scale) {
+void Scene::AddObject(const std::string& blueprintName, const vec3& position, const quat& rotation) {
 	SceneDescription::_ObjectDescription object = SceneDescription::_ObjectDescription {
-			Engine::GetBlueprint(blueprintName), position, rotation, scale
+			Engine::GetBlueprint(blueprintName), position, rotation
 	};
 
 	_AddObject(object);
@@ -161,7 +161,6 @@ void Scene::_AddObject(const SceneDescription::_ObjectDescription& description) 
 
 	object.SetPosition(description.position);
 	object.SetRotation(description.rotation);
-	object.SetScale(description.scale);
 
 	object.FireEvent(Object::ON_ADD);
 }

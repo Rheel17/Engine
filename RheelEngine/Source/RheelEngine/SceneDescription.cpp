@@ -9,12 +9,12 @@ SceneDescription::_CameraDescription::_CameraDescription(std::string name, vec3 
 		position(std::move(position)), rotation(std::move(rotation)),
 		perspective_fov(fov), perspective_near(near), perspective_far(far) {}
 
-Blueprint& SceneDescription::AddObject(const std::string& blueprint, vec3 position, quat rotation, vec3 scale) {
+Blueprint& SceneDescription::AddObject(const std::string& blueprint, vec3 position, quat rotation) {
 	if (!Engine::HasBlueprint(blueprint)) {
 		throw std::runtime_error("Blueprint not registered: \"" + blueprint + "\"");
 	}
 
-	_ObjectDescription& description = _objects.emplace_back(_ObjectDescription { Engine::GetBlueprint(blueprint), std::move(position), std::move(rotation), std::move(scale) } );
+	_ObjectDescription& description = _objects.emplace_back(_ObjectDescription { Engine::GetBlueprint(blueprint), std::move(position), std::move(rotation) } );
 	return description.blueprint;
 }
 

@@ -37,4 +37,6 @@ using glm::mat4x2;
 using glm::mat4x3;
 using glm::quat;
 
+#include "Hashes.h"
+
 #endif

@@ -8,7 +8,7 @@
 namespace rheel {
 
 ModelRenderComponent::ModelRenderComponent(const ModelRenderComponent& component) :
-		_model(component._model), _material(component._material) {}
+		_model(component._model), _material(component._material), _scale(component._scale) {}
 
 void ModelRenderComponent::SetModel(ModelResource& model) {
 	if (_object_data) {
@@ -22,7 +22,6 @@ void ModelRenderComponent::SetMaterial(Material material) {
 	bool wasTextured = _material.Type() == Material::Textured;
 	bool isTextured = material.Type() == Material::Textured;
 
-	Material oldMaterial = _material;
 	_material = std::move(material);
 
 	if (_object_data) {
@@ -49,7 +48,7 @@ void ModelRenderComponent::OnAdd() {
 }
 
 void ModelRenderComponent::OnUpdateRenderers() {
-	_object_data.SetTransform(Parent()->Position(), Parent()->Rotation(), Parent()->Scale());
+	_object_data.SetTransform(Parent()->Position(), Parent()->Rotation(), _scale);
 }
 
 void ModelRenderComponent::OnRemove() {
@@ -58,6 +57,26 @@ void ModelRenderComponent::OnRemove() {
 	} else {
 		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).RemoveObject(std::move(_object_data));
 	}
+}
+
+void ModelRenderComponent::SetScale(const vec3& scale) {
+	SetScale(scale.x, scale.y, scale.z);
+}
+
+void ModelRenderComponent::SetScale(float x, float y, float z) {
+	_scale.x = x;
+	_scale.y = y;
+	_scale.z = z;
+}
+
+void ModelRenderComponent::SetScale(float scale) {
+	_scale.x = scale;
+	_scale.y = scale;
+	_scale.z = scale;
+}
+
+const vec3& ModelRenderComponent::Scale() const {
+	return _scale;
 }
 
 }

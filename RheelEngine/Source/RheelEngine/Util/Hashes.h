@@ -7,17 +7,17 @@
 namespace rheel {
 
 template<typename T>
-RE_API inline constexpr std::size_t hash_combine(const std::size_t& s, const T& t) {
+inline constexpr std::size_t hash_combine(const std::size_t& s, const T& t) {
 	return s ^ (std::hash<T>()(t) + 0x9e3779b9 + (s << 6) + (s >> 2));
 }
 
 template<typename T>
-RE_API inline constexpr std::size_t hash_all(const T& t) {
+inline constexpr std::size_t hash_all(const T& t) {
 	return hash_combine(17, t);
 }
 
 template<typename T, typename... Rest>
-RE_API inline constexpr std::size_t hash_all(const T& first, const Rest&... rest) {
+inline constexpr std::size_t hash_all(const T& first, const Rest&... rest) {
 	return hash_combine(hash_all(rest...), first);
 }
 

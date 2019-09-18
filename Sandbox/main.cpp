@@ -2,15 +2,15 @@
 
 using namespace rheel;
 
-static Blueprint createCubeBlueprint() {
-	Blueprint blueprint("cube");
+static Blueprint createObjectBlueprint() {
+	Blueprint blueprint("object");
 
 	ModelResource& model = ResourceManager::GetModel("cube.dae");
 
-	blueprint.AddComponent<RigidBodyComponent>();
-
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetModel(model);
+
+	blueprint.AddComponent<RigidBodyComponent>();
 
 	return blueprint;
 }
@@ -26,14 +26,19 @@ static SceneDescription createSceneDescription() {
 	for (int i = -2; i <= 2; i++) {
 		for (int j = -2; j <= 2; j++) {
 			for (int k = 0; k < 5; k++) {
-				auto& cube = description.AddObject("cube", { 4 * i, 4 * k, 4 * j });
-				cube.GetComponent<ModelRenderComponent>()->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.0f));
+				auto& obj = description.AddObject("object", { 4 * i, 4 * k, 4 * j });
+				obj.GetComponent<ModelRenderComponent>()->SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.0f));
+				obj.GetComponent<RigidBodyComponent>()->SetShape(PhysicsShape::Box({ 1.0f, 1.0f, 1.0f }));
+				obj.GetComponent<RigidBodyComponent>()->SetMass(100.0f);
 			}
 		}
 	}
 
-	auto& floor = description.AddObject("cube", { 0, -2, 0 }, quat(), { 20, 1, 20 });
+	auto& floor = description.AddObject("object", { 0, -2, 0 }, { 1, 0, 0, 0 });
 	floor.GetComponent<ModelRenderComponent>()->SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.0f));
+	floor.GetComponent<ModelRenderComponent>()->SetScale({ 20.0f, 1.0f, 20.0f });
+	floor.GetComponent<RigidBodyComponent>()->SetShape(PhysicsShape::Box({ 20.0f, 1.0f, 20.0f }));
+	floor.GetComponent<RigidBodyComponent>()->SetMass(0.0f);
 
 	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
 	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 2, 12 });
@@ -43,7 +48,7 @@ static SceneDescription createSceneDescription() {
 
 class SandboxGame : public Game {
 	void RegisterBlueprints() override {
-		Engine::RegisterBlueprint(createCubeBlueprint());
+		Engine::RegisterBlueprint(createObjectBlueprint());
 	};
 
 	void RegisterSceneDescriptions() override {
@@ -57,7 +62,7 @@ class SandboxGame : public Game {
 		config.render_mode = DisplayConfiguration::FORWARD;
 		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
-		config.vsync = false;
+		config.vsync = true;
 
 		Engine::SetDisplayConfiguration(std::move(config));
 

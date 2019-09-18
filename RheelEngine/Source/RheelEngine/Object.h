@@ -89,26 +89,6 @@ public:
 	const quat& Rotation() const;
 
 	/**
-	 * Sets the scale of this object.
-	 */
-	void SetScale(const vec3& scale);
-
-	/**
-	 * Sets the scale of this object.
-	 */
-	void SetScale(float x, float y, float z);
-
-	/**
-	 * Sets the scale of this object.
-	 */
-	void SetScale(float scale);
-
-	/**
-	 * Returns the scale of this object.
-	 */
-	const vec3& Scale() const;
-
-	/**
 	 * Fires an event of the given type to its components. A second parameter
 	 * can be set to false if this event should not be fired to children of this
 	 * object. By default, this will fire the same event in its children.
@@ -144,7 +124,6 @@ private:
 
 	vec3 _position = vec3(0, 0, 0);
 	quat _rotation = quat(1, 0, 0, 0);
-	vec3 _scale = vec3(1, 1, 1);
 
 	std::vector<std::unique_ptr<Component>> _components;
 	std::vector<Object> _children;

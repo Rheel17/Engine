@@ -28,7 +28,6 @@ Object::Object(Object&& object) noexcept :
 		_alive(object._alive),
 		_position(std::move(object._position)),
 		_rotation(std::move(object._rotation)),
-		_scale(std::move(object._scale)),
 		_components(std::move(object._components)),
 		_children(std::move(object._children)) {
 
@@ -50,7 +49,6 @@ Object& Object::operator=(Object&& object) {
 	_alive = std::move(object._alive);
 	_position = std::move(object._position);
 	_rotation = std::move(object._rotation);
-	_scale = std::move(object._scale);
 	_components = std::move(object._components);
 	_children = std::move(object._children);
 
@@ -109,26 +107,6 @@ void Object::Rotate(const quat& rotation) {
 
 const quat& Object::Rotation() const {
 	return _rotation;
-}
-
-void Object::SetScale(const vec3& scale) {
-	SetScale(scale.x, scale.y, scale.z);
-}
-
-void Object::SetScale(float x, float y, float z) {
-	_scale.x = x;
-	_scale.y = y;
-	_scale.z = z;
-}
-
-void Object::SetScale(float scale) {
-	_scale.x = scale;
-	_scale.y = scale;
-	_scale.z = scale;
-}
-
-const vec3& Object::Scale() const {
-	return _scale;
 }
 
 void Object::FireEvent(EventType type, bool recursive) {

@@ -3,7 +3,7 @@
 #include "../_common.h"
 
 #include "../Component.h"
-#include "../Physics/RigidBody.h"
+#include "../PhysicsShape.h"
 
 namespace rheel {
 
@@ -26,8 +26,16 @@ public:
 
 	void OnRemove() override;
 
+	void SetShape(PhysicsShape shape);
+
+	void SetMass(float mass);
+
 private:
-	std::unique_ptr<RigidBody> _body;
+	std::unique_ptr<btMotionState> _motion_state;
+	std::unique_ptr<btRigidBody> _body;
+
+	PhysicsShape _shape;
+	float _mass = 0.0f;
 
 };
 

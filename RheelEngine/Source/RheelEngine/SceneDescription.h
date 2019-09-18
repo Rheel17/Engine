@@ -18,7 +18,6 @@ private:
 		Blueprint blueprint;
 		vec3 position;
 		quat rotation;
-		vec3 scale;
 	};
 
 	struct _LightDescription {
@@ -93,7 +92,7 @@ public:
 	 * This methods returns a reference to the copied blueprint. This can be
 	 * used to access components and preset parameters.
 	 */
-	Blueprint& AddObject(const std::string& blueprint, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0), vec3 scale = { 1, 1, 1 });
+	Blueprint& AddObject(const std::string& blueprint, vec3 position = { 0, 0, 0 }, quat rotation = quat(1, 0, 0, 0));
 
 	/**
 	 * See: Scene::AddLight(...). When a scene is created from this description,

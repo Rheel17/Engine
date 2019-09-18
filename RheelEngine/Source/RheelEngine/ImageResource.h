@@ -15,15 +15,13 @@ class RE_API ImageResource : public Resource<Image> {
 	friend class ResourceManager;
 
 public:
-	~ImageResource();
-
 	const ImageTexture& GetImageTexture() const;
 
 private:
 	ImageResource(const std::string& path);
 	ImageResource(const std::string& path, Image *image);
 
-	mutable ImageTexture *_image_texture = nullptr;
+	mutable std::unique_ptr<ImageTexture> _image_texture = nullptr;
 
 };
 
