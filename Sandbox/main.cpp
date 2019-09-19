@@ -46,7 +46,7 @@ static Blueprint createBallBlueprint() {
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
 	rigidBodyComponent.SetShape(PhysicsShape::Sphere(1.5f));
-	rigidBodyComponent.SetMass(20000.0f);
+	rigidBodyComponent.SetMass(18000.0f);
 
 	return blueprint;
 }
