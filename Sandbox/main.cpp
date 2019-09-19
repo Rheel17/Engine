@@ -37,7 +37,7 @@ static Blueprint createFloorBlueprint() {
 static Blueprint createBallBlueprint() {
 	Blueprint blueprint("ball");
 
-	ModelResource& model = ResourceManager::GetModel("sphere.dae");
+	ModelResource& model = ResourceManager::GetModel("golf_ball.dae");
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetMaterial(Material({ 1.0f, 1.0f, 1.0f, 1.0f }, 0.7f, 0.0f));
