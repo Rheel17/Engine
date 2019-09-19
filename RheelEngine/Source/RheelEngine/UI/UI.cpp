@@ -29,13 +29,13 @@ void UI::RequestFocus(Element *element) {
 	ReleaseMouse();
 
 	if (_focus_element && _focus) {
-		_focus_element->OnFocusLost();
+		_focus_element->_OnFocusLost();
 	}
 
 	_focus_element = element;
 
 	if (_focus_element && _focus) {
-		_focus_element->OnFocusGained();
+		_focus_element->_OnFocusGained();
 	}
 }
 
@@ -62,13 +62,13 @@ void UI::OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, I
 	if (_focus_element) {
 		switch (action) {
 			case Input::Action::PRESS:
-				_focus_element->OnKeyPress(key, scancode, mods);
+				_focus_element->_OnKeyPress(key, scancode, mods);
 				break;
 			case Input::Action::REPEAT:
-				_focus_element->OnKeyRepeat(key, scancode, mods);
+				_focus_element->_OnKeyRepeat(key, scancode, mods);
 				break;
 			case Input::Action::RELEASE:
-				_focus_element->OnKeyRelease(key, scancode, mods);
+				_focus_element->_OnKeyRelease(key, scancode, mods);
 				break;
 		}
 	}
@@ -76,7 +76,7 @@ void UI::OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, I
 
 void UI::OnCharacter(wchar_t character) {
 	if (_focus_element) {
-		_focus_element->OnCharacterInput(character);
+		_focus_element->_OnCharacterInput(character);
 	}
 }
 
@@ -86,7 +86,7 @@ void UI::OnMouseMove(float x, float y) {
 
 	if (_mouse_down_count > 0) {
 		// a mouse button is down, so we drag
-		_mouseover_element->OnMouseDrag(_mouse_down_position, _mouse);
+		_mouseover_element->_OnMouseDrag(_mouse_down_position, _mouse);
 		return;
 	}
 
@@ -94,18 +94,18 @@ void UI::OnMouseMove(float x, float y) {
 
 	if (newMouseOverElement != _mouseover_element && !_mouse_grabbed) {
 		if (_mouseover_element) {
-			_mouseover_element->OnMouseExit(_mouse);
+			_mouseover_element->_OnMouseExit(_mouse);
 		}
 
 		_mouseover_element = newMouseOverElement;
 
 		if (_mouseover_element) {
-			_mouseover_element->OnMouseEnter(_mouse);
+			_mouseover_element->_OnMouseEnter(_mouse);
 		}
 	}
 
 	if (_mouseover_element) {
-		_mouseover_element->OnMouseMove(_mouse);
+		_mouseover_element->_OnMouseMove(_mouse);
 	}
 }
 
@@ -121,13 +121,13 @@ void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::M
 					RequestFocus(_mouseover_element);
 				}
 
-				_mouseover_element->OnMouseButtonPress(button, mods);
+				_mouseover_element->_OnMouseButtonPress(button, mods);
 				break;
 			case Input::Action::REPEAT:
 				break;
 			case Input::Action::RELEASE:
 				_mouse_down_count--;
-				_mouseover_element->OnMouseButtonRelease(button, mods);
+				_mouseover_element->_OnMouseButtonRelease(button, mods);
 				break;
 		}
 	}
@@ -135,9 +135,9 @@ void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::M
 
 void UI::OnScroll(float x, float y) {
 	if (_mouseover_element) {
-		_mouseover_element->OnMouseScroll({ x, y });
+		_mouseover_element->_OnMouseScroll({ x, y });
 	} else if (_focus_element) {
-		_focus_element->OnMouseScroll({ x, y });
+		_focus_element->_OnMouseScroll({ x, y });
 	}
 }
 
@@ -150,9 +150,9 @@ void UI::OnFocusChanged(bool focus) {
 
 	if (_focus_element) {
 		if (_focus) {
-			_focus_element->OnFocusGained();
+			_focus_element->_OnFocusGained();
 		} else {
-			_focus_element->OnFocusLost();
+			_focus_element->_OnFocusLost();
 		}
 	}
 }

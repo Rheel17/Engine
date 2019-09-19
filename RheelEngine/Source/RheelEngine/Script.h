@@ -2,6 +2,8 @@
 #define SCRIPT_H_
 #include "_common.h"
 
+#include "Scripts/ScriptInput.h"
+
 #define SCRIPT_INIT(Class)						\
 protected:										\
 	Script *__CloneHeap() const override {		\
@@ -13,7 +15,7 @@ namespace rheel {
 
 class Scene;
 
-class RE_API Script {
+class RE_API Script : public ScriptInput {
 	friend class Scene;
 
 public:

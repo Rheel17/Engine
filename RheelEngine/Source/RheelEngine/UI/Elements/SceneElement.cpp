@@ -1,8 +1,8 @@
 #include "SceneElement.h"
 
 #include "../../Engine.h"
-#include "../../Scripts/InputScript.h"
 #include "../../Renderer/ShadowMapDirectional.h"
+#include "../../Scripts/ScriptInput.h"
 
 namespace rheel {
 
@@ -50,9 +50,7 @@ void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::M
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
-			inputScript->_OnKeyPress(key, scancode, mods);
-		}
+		static_cast<ScriptInput *>(script.get())->_OnKeyPress(key, scancode, mods);
 	}
 }
 
@@ -62,9 +60,7 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
-			inputScript->_OnKeyRelease(key, scancode, mods);
-		}
+		static_cast<ScriptInput *>(script.get())->_OnKeyRelease(key, scancode, mods);
 	}
 }
 
@@ -74,9 +70,7 @@ void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifier
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
-			inputScript->_OnMouseButtonPress(button, mods);
-		}
+		static_cast<ScriptInput *>(script.get())->_OnMouseButtonPress(button, mods);
 	}
 }
 
@@ -86,9 +80,7 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
-			inputScript->_OnMouseButtonRelease(button, mods);
-		}
+		static_cast<ScriptInput *>(script.get())->_OnMouseButtonRelease(button, mods);
 	}
 }
 
@@ -98,9 +90,7 @@ void SceneElement::OnMouseMove(const vec2& position) {
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
-			inputScript->_OnMouseMove(position);
-		}
+		static_cast<ScriptInput *>(script.get())->_OnMouseMove(position);
 	}
 }
 
@@ -110,9 +100,7 @@ void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
-			inputScript->_OnMouseScroll(scrollComponents);
-		}
+		static_cast<ScriptInput *>(script.get())->_OnMouseScroll(scrollComponents);
 	}
 }
 

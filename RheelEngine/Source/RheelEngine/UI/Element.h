@@ -5,7 +5,7 @@
 #include <memory>
 #include <type_traits>
 
-#include "Input.h"
+#include "InputCallback.h"
 #include "../Color.h"
 #include "../Renderer/OpenGL/GLShaderProgram.h"
 #include "../Renderer/OpenGL/GLVertexArray.h"
@@ -16,7 +16,7 @@ namespace rheel {
 class UI;
 class Container;
 
-class RE_API Element {
+class RE_API Element : public InputCallback {
 	friend class UI;
 	friend class Container;
 
@@ -113,129 +113,22 @@ public:
 	Container *RootContainer();
 
 	/**
+	 * Adds an input callback. When an input event occurs, this callback object
+	 * will also receive the event. Events are received in the same order as
+	 * callbacks are added.
+	 */
+	void AddInputCallback(std::shared_ptr<InputCallback> callback);
+
+	/**
+	 * Removes an input callback. Removed input callbacks will no longer receive
+	 * input events.
+	 */
+	void RemoveInputCallback(std::shared_ptr<InputCallback> callback);
+
+	/**
 	 * Draws this UI element.
 	 */
 	virtual void Draw(float dt) const = 0;
-
-	/**
-	 * Called when this element has been resized.
-	 */
-	virtual void OnResize() {};
-
-	/**
-	 * Called when this element receives the focus in the UI.
-	 */
-	virtual void OnFocusGained() {};
-
-	/**
-	 * Called when the focus of this element is lost. This can happen because
-	 * another element receives focus, or the parent window itself looses focus.
-	 */
-	virtual void OnFocusLost() {};
-
-	/**
-	 * Called when a key on the keyboard is pressed down.
-	 *
-	 * Parameters
-	 * 	key: the code of the key
-	 * 	scancode: the location of the key on the keyboard
-	 * 	mods: any modifiers that were used
-	 */
-	virtual void OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {};
-
-	/**
-	 * Called when a key on the keyboard is kept pressed down long enough to
-	 * trigger a repeat.
-	 *
-	 * Parameters
-	 * 	key: the code of the key
-	 * 	scancode: the location of the key on the keyboard
-	 * 	mods: any modifiers that were used
-	 */
-	virtual void OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {};
-
-	/**
-	 * Called when a key on the keyboard is kept released.
-	 *
-	 * Parameters
-	 * 	key: the code of the key
-	 * 	scancode: the location of the key on the keyboard
-	 * 	mods: any modifiers that were used
-	 */
-	virtual void OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {};
-
-	/**
-	 * Called when a text character is inputed.
-	 *
-	 * Parameters
-	 * 	character: the unicode character that was inputed
-	 */
-	virtual void OnCharacterInput(wchar_t character) {};
-
-	/**
-	 * Called when a mouse button is pressed down.
-	 *
-	 * Parameters
-	 * 	button: the button that was pressed
-	 * 	mods: any modifiers that were used
-	 */
-	virtual void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {};
-
-	/**
-	 * Called when a mouse button is released.
-	 *
-	 * Parameters
-	 * 	button: the button that was pressed
-	 * 	mods: any modifiers that were used
-	 */
-	virtual void OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {};
-
-	/**
-	 * Called when the mouse enters the bounds of this component.
-	 *
-	 * x: the x-coordinate of the mouse position
-	 * y: the y-coordinate of the mouse position
-	 */
-	virtual void OnMouseEnter(const vec2& position) {}
-
-	/**
-	 * Called when the mouse exits the bounds of this component.
-	 *
-	 * x: the x-coordinate of the mouse position
-	 * y: the y-coordinate of the mouse position
-	 */
-	virtual void OnMouseExit(const vec2& position) {}
-
-	/**
-	 * Called when the mouse is moved without any buttons pressed.
-	 *
-	 * Parameters
-	 * 	x: the x-coordinate of the new mouse position
-	 * 	y: the y-coordinate of the new mouse position
-	 */
-	virtual void OnMouseMove(const vec2& position) {};
-
-	/**
-	 * Called when the mouse is moved with at least one button pressed.
-	 *
-	 * Parameters
-	 * 	xOrigin: the x-coordinate of the origin of the drag (where the mouse was
-	 * 		clicked)
-	 * 	yOrigin: the y-coordinate of the origin of the drag (where the mouse was
-	 * 		clicked)
-	 * 	x: the x-coordinate of the current mouse position
-	 * 	y: the y-coordinate of the current mouse position
-	 */
-	virtual void OnMouseDrag(const vec2& origin, const vec2& position) {};
-
-	/**
-	 * Called when the mouse is scrolled.
-	 *
-	 * Parameters
-	 * 	x: the x component of the scroll
-	 * 	y: the y component of the scroll
-	 */
-	virtual void OnMouseScroll(const vec2& scrollComponents) {};
 
 protected:
 	Element();
@@ -246,6 +139,21 @@ protected:
 	void _MoveSuperFields(Element&& element);
 
 private:
+	void _OnResize();
+	void _OnFocusGained();
+	void _OnFocusLost();
+	void _OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void _OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void _OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void _OnCharacterInput(wchar_t character);
+	void _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
+	void _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
+	void _OnMouseEnter(const vec2& position);
+	void _OnMouseExit(const vec2& position);
+	void _OnMouseMove(const vec2& position);
+	void _OnMouseDrag(const vec2& origin, const vec2& position);
+	void _OnMouseScroll(const vec2& scrollComponents);
+
 	Container *_parent_container;
 	Bounds _bounds;
 	bool _has_initialized_bounds = false;
@@ -254,6 +162,8 @@ private:
 	unsigned _default_height = 20;
 	bool _focusable = false;
 	bool _drag_enabled = false;
+
+	std::vector<std::shared_ptr<InputCallback>> _callback_list;
 
 protected:
 	/**

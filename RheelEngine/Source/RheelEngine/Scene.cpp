@@ -6,7 +6,6 @@
 #include "SpotLight.h"
 #include "DirectionalLight.h"
 #include "Renderer/SceneRenderManager.h"
-#include "Scripts/InputScript.h"
 
 namespace rheel {
 
@@ -149,9 +148,7 @@ void Scene::Update(float dt) {
 
 	// reset the input scripts
 	for (auto& script : _scripts) {
-		if (auto inputScript = dynamic_cast<InputScript *>(script.get())) {
-			inputScript->_ResetDeltas();
-		}
+		static_cast<ScriptInput *>(script.get())->_ResetDeltas();
 	}
 }
 

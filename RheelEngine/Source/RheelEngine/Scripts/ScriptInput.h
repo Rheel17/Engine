@@ -1,8 +1,7 @@
-#ifndef INPUTSCRIPT_H_
-#define INPUTSCRIPT_H_
+#ifndef SCRIPTINPUT_H_
+#define SCRIPTINPUT_H_
 #include "../_common.h"
 
-#include "../Script.h"
 #include "../UI/Input.h"
 
 #include <unordered_set>
@@ -12,14 +11,12 @@ namespace rheel {
 /**
  * A general base class for scripts that require mouse/keyboard input
  */
-class RE_API InputScript : public Script {
-	SCRIPT_INIT(InputScript)
-
-	friend class SceneElement;
+class RE_API ScriptInput {
 	friend class Scene;
+	friend class SceneElement;
 
 public:
-	virtual ~InputScript();
+	virtual ~ScriptInput();
 
 protected:
 	/**

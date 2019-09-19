@@ -3,6 +3,8 @@
 #include "../Engine.h"
 #include "../EngineResources.h"
 
+#include <algorithm>
+
 namespace rheel {
 
 #define MODE_COLORED    1
@@ -75,17 +77,16 @@ Element::Bounds& Element::GetBounds() {
 	return _bounds;
 }
 
-Container *Element::RootContainer() {
-	if (_parent_container) {
-		return _parent_container->RootContainer();
+void Element::InitializeBounds() {
+	if (!_has_initialized_bounds) {
+		_bounds.width = _default_width;
+		_bounds.height = _default_height;
+		_bounds.x = 0;
+		_bounds.y = 0;
+		_has_initialized_bounds = true;
 	}
-
-	if (Container *container = dynamic_cast<Container *>(this)) {
-		return container;
-	}
-
-	return nullptr;
 }
+
 
 const Container *Element::RootContainer() const {
 	if (_parent_container) {
@@ -99,15 +100,24 @@ const Container *Element::RootContainer() const {
 	return nullptr;
 }
 
-
-void Element::InitializeBounds() {
-	if (!_has_initialized_bounds) {
-		_bounds.width = _default_width;
-		_bounds.height = _default_height;
-		_bounds.x = 0;
-		_bounds.y = 0;
-		_has_initialized_bounds = true;
+Container *Element::RootContainer() {
+	if (_parent_container) {
+		return _parent_container->RootContainer();
 	}
+
+	if (Container *container = dynamic_cast<Container *>(this)) {
+		return container;
+	}
+
+	return nullptr;
+}
+
+void Element::AddInputCallback(std::shared_ptr<InputCallback> callback) {
+	_callback_list.push_back(std::move(callback));
+}
+
+void Element::RemoveInputCallback(std::shared_ptr<InputCallback> callback) {
+	_callback_list.erase(std::find(_callback_list.begin(), _callback_list.end(), callback));
 }
 
 void Element::_MoveSuperFields(Element&& element) {
@@ -116,6 +126,69 @@ void Element::_MoveSuperFields(Element&& element) {
 	_has_initialized_bounds = element._has_initialized_bounds;
 	_default_width = element._default_width;
 	_default_height = element._default_height;
+}
+
+#define CALLBACK_LIST(f, ...) \
+	f(__VA_ARGS__); 												\
+	std::for_each(													\
+		_callback_list.begin(), _callback_list.end(), 				\
+		[__VA_ARGS__](const auto& ptr) { ptr->f(__VA_ARGS__); }		\
+	)
+
+void Element::_OnResize() {
+	CALLBACK_LIST(OnResize);
+}
+
+void Element::_OnFocusGained() {
+	CALLBACK_LIST(OnFocusGained);
+}
+
+void Element::_OnFocusLost() {
+	CALLBACK_LIST(OnFocusLost);
+}
+
+void Element::_OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+	CALLBACK_LIST(OnKeyPress, key, scancode, mods);
+}
+
+void Element::_OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+	CALLBACK_LIST(OnKeyRepeat, key, scancode, mods);
+}
+
+void Element::_OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+	CALLBACK_LIST(OnKeyRelease, key, scancode, mods);
+}
+
+void Element::_OnCharacterInput(wchar_t character) {
+	CALLBACK_LIST(OnCharacterInput, character);
+}
+
+void Element::_OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
+	CALLBACK_LIST(OnMouseButtonPress, button, mods);
+}
+
+void Element::_OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
+	CALLBACK_LIST(OnMouseButtonRelease, button, mods);
+}
+
+void Element::_OnMouseEnter(const vec2& position) {
+	CALLBACK_LIST(OnMouseEnter, position);
+}
+
+void Element::_OnMouseExit(const vec2& position) {
+	CALLBACK_LIST(OnMouseExit, position);
+}
+
+void Element::_OnMouseMove(const vec2& position) {
+	CALLBACK_LIST(OnMouseMove, position);
+}
+
+void Element::_OnMouseDrag(const vec2& origin, const vec2& position) {
+	CALLBACK_LIST(OnMouseDrag, origin, position);
+}
+
+void Element::_OnMouseScroll(const vec2& scrollComponents) {
+	CALLBACK_LIST(OnMouseScroll, scrollComponents);
 }
 
 void Element::_DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3) {

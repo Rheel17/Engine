@@ -83,12 +83,11 @@ static SceneDescription createSceneDescription() {
 	}
 
 	description.AddObject("floor", { 0, -2, 0 });
-	description.AddObject("ball", { -20, 20, 0 });
 	description.AddObject("ramp", { -16, 5, 0 }, quat(vec3(0, 0, -0.6f)));
 	description.AddObject("ramp", { 16, 4, 0 }, quat(vec3(0, 0, 0.8f)));
 
 	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
-	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 5, 20 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { -25, 15, 0 }, { -0.5f, -M_PI / 2.0f, 0.0f });
 
 	return description;
 }
