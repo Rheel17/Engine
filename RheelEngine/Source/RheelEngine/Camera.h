@@ -29,6 +29,18 @@ public:
 	virtual std::array<vec3, 8> ViewspaceCorners(unsigned width, unsigned height, float near, float far) const = 0;
 
 	/**
+	 * Returns the direction of a ray starting at the camera origin and going
+	 * through the specified normalized device coordinates.
+	 */
+	virtual vec3 RayDirection(vec2 ndc) const = 0;
+
+	/**
+	 * Returns the direction of a ray starting at the camera origin and going
+	 * through the given pixel.
+	 */
+	vec3 RayDirection(unsigned width, unsigned height, vec2 pixel) const;
+
+	/**
 	 * Sets the position of this camera.
 	 */
 	void SetPosition(const vec3& position);

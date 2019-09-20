@@ -31,6 +31,32 @@ void PhysicsScene::SetGravity(vec3 gravity) {
 	}
 }
 
+RigidBodyComponent *PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT) {
+	// calculate the from and to positions
+	vec3 dir = glm::normalize(direction);
+
+	btVector3 from = {
+			origin.x + minT * dir.x,
+			origin.y + minT * dir.y,
+			origin.z + minT * dir.z
+	};
+
+	btVector3 to = {
+			origin.x + maxT * dir.x,
+			origin.y + maxT * dir.y,
+			origin.z + maxT * dir.z
+	};
+
+	btCollisionWorld::ClosestRayResultCallback callback(from, to);
+	_world->rayTest(from, to, callback);
+
+	if (!callback.hasHit()) {
+		return nullptr;
+	}
+
+	return static_cast<RigidBodyComponent *>(callback.m_collisionObject->getUserPointer());
+}
+
 void PhysicsScene::_AddBody(btRigidBody *body) {
 	_world->addRigidBody(body);
 }

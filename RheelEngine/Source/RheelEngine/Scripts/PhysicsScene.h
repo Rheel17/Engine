@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "../Script.h"
+#include "../Components/RigidBodyComponent.h"
 
 namespace rheel {
 
@@ -25,6 +26,15 @@ public:
 	void PostOnUpdate() override;
 
 	void SetGravity(vec3 gravity);
+
+	/**
+	 * Shoots a ray with a given origin and direction, and returns the closest
+	 * RigidBodyComponent that intersects with the ray. A minimum and maximum
+	 * distance need to be given. These values represent the search space.
+	 *
+	 * This function returns nullptr if there was no hit found.
+	 */
+	RigidBodyComponent *ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT);
 
 private:
 	void _AddBody(btRigidBody *body);

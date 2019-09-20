@@ -48,6 +48,7 @@ void RigidBodyComponent::OnAdd() {
 	transform.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
 
 	_body = std::make_unique<btRigidBody>(cinfo);
+	_body->setUserPointer(this);
 	_body->setWorldTransform(transform);
 	_body->setFriction(0.5f);
 
