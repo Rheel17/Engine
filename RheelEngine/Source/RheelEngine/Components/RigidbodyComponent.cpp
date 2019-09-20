@@ -8,7 +8,8 @@ namespace rheel {
 
 RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& component) :
 		_shape(component._shape),
-		_mass(component._mass) {}
+		_mass(component._mass),
+		_bounciness(component._bounciness) {}
 
 glm::quat bulletToGlm(const btQuaternion& q) {
 	return glm::quat(q.getW(), q.getX(), q.getY(), q.getZ());
@@ -40,6 +41,7 @@ void RigidBodyComponent::OnAdd() {
 	_motion_state = std::make_unique<btDefaultMotionState>();
 
 	btRigidBody::btRigidBodyConstructionInfo cinfo(_mass, _motion_state.get(), _shape._Pointer(), inertia);
+	cinfo.m_restitution = _bounciness;
 
 	btTransform transform = btTransform::getIdentity();
 	transform.setOrigin({ position.x, position.y, position.z });
@@ -78,6 +80,14 @@ void RigidBodyComponent::SetMass(float mass) {
 	}
 
 	_mass = mass;
+}
+
+void RigidBodyComponent::SetBounciness(float bounciness) {
+	if (_body) {
+		throw std::runtime_error("Cannot change bounciness while active");
+	}
+
+	_bounciness = bounciness;
 }
 
 void RigidBodyComponent::ApplyForce(const vec3& force) {

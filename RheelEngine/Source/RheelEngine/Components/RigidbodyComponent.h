@@ -30,6 +30,8 @@ public:
 
 	void SetMass(float mass);
 
+	void SetBounciness(float bounciness);
+
 	void ApplyForce(const vec3& force);
 
 	void ApplyImpulse(const vec3& impulse);
@@ -40,6 +42,7 @@ private:
 
 	PhysicsShape _shape;
 	float _mass = 0.0f;
+	float _bounciness = 0.5f;
 
 };
 

@@ -17,6 +17,22 @@ public:
 
 };
 
+class CrosshairElement : public Element {
+
+public:
+	void Draw(float dt) const override {
+		const Bounds& bounds = GetBounds();
+
+		_DrawColoredQuad(
+				Bounds { unsigned(bounds.x + bounds.width * 0.45f), bounds.y, unsigned(bounds.width * 0.1f), bounds.height },
+				{ 1.0f, 1.0f, 1.0f, 0.2f });
+		_DrawColoredQuad(
+				Bounds { bounds.x, unsigned(bounds.y + bounds.height * 0.45f), bounds.width, unsigned(bounds.height * 0.1f) },
+				{ 1.0f, 1.0f, 1.0f, 0.2f });
+	}
+
+};
+
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
@@ -28,7 +44,8 @@ static Blueprint createCubeBlueprint() {
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
 	rigidBodyComponent.SetShape(PhysicsShape::Box({ 1.0f, 1.0f, 1.0f }));
-	rigidBodyComponent.SetMass(1000.0f);
+	rigidBodyComponent.SetMass(10000.0f);
+	rigidBodyComponent.SetBounciness(0.05f);
 
 	return blueprint;
 }
@@ -62,6 +79,7 @@ static Blueprint createBallBlueprint() {
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
 	rigidBodyComponent.SetShape(PhysicsShape::Sphere(1.5f));
 	rigidBodyComponent.SetMass(18000.0f);
+	rigidBodyComponent.SetBounciness(0.3f);
 
 	return blueprint;
 }
@@ -143,6 +161,17 @@ class SandboxGame : public Game {
 		SceneElement *sceneElement = ui.InsertElement(SceneElement("main_camera"));
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+
+		const auto& resolution = Engine::GetDisplayConfiguration().resolution;
+		int size = std::max(resolution.width, resolution.height) / 80;
+		int horizontalMargin = (resolution.width - size) / 2;
+		int verticalMargin = (resolution.height - size) / 2;
+
+		CrosshairElement *crosshairElement = ui.InsertElement(CrosshairElement());
+		ui.AddConstraint(crosshairElement, Constraint::LEFT, nullptr, Constraint::LEFT, horizontalMargin);
+		ui.AddConstraint(crosshairElement, Constraint::RIGHT, nullptr, Constraint::RIGHT, horizontalMargin);
+		ui.AddConstraint(crosshairElement, Constraint::TOP, nullptr, Constraint::TOP, verticalMargin);
+		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM, verticalMargin);
 
 		Engine::GetUI().SetContainer(std::move(ui));
 		Engine::GetUI().RequestFocus(sceneElement);

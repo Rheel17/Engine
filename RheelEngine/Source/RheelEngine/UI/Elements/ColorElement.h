@@ -7,7 +7,6 @@
 namespace rheel {
 
 class RE_API ColorElement : public Element {
-	friend class UI;
 
 public:
 	/**

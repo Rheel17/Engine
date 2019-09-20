@@ -360,6 +360,7 @@ void Container::_LayoutNode(TempBoundsMap& boundsMap, const Constraint& constrai
 			opposite = &boundsMap[elem_m].left;
 			oppositeFixed = boundsMap[elem_m].fixed_left;
 			boundsMap[elem_m].fixed_right = true;
+			distance *= -1;
 			break;
 		case Constraint::WEST:
 			moving = &boundsMap[elem_m].left;
@@ -378,6 +379,7 @@ void Container::_LayoutNode(TempBoundsMap& boundsMap, const Constraint& constrai
 			opposite = &boundsMap[elem_m].top;
 			oppositeFixed = boundsMap[elem_m].fixed_top;
 			boundsMap[elem_m].fixed_bottom = true;
+			distance *= -1;
 			break;
 		default:
 			abort();
