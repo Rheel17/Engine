@@ -3,6 +3,7 @@
 #include "_common.h"
 
 #include <vector>
+#include <memory>
 
 #include "Component.h"
 

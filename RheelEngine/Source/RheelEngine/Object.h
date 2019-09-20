@@ -2,14 +2,11 @@
 #define OBJECT_H_
 #include "_common.h"
 
-#include "Blueprint.h"
-#include "ObjectPtr.h"
 #include "SceneDescription.h"
 
 namespace rheel {
 
 class Scene;
-class Object;
 
 class RE_API Object {
 	friend class Scene;
@@ -41,7 +38,7 @@ public:
 	 * Returns the parent object of this object, or nullptr if this object has
 	 * no parent object.
 	 */
-	ObjectPtr ParentObject();
+	Object& ParentObject();
 
 	/**
 	 * Returns the parent scene of this object.
@@ -118,7 +115,7 @@ private:
 	void _SetParentScene(Scene *scene);
 
 	Scene *_parent_scene = nullptr;
-	ObjectPtr _parent_object;
+	Object *_parent_object = nullptr;
 
 	bool _alive = true;
 
@@ -126,7 +123,7 @@ private:
 	quat _rotation = quat(1, 0, 0, 0);
 
 	std::vector<std::unique_ptr<Component>> _components;
-	std::vector<Object> _children;
+	std::vector<std::unique_ptr<Object>> _children;
 };
 
 }

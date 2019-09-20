@@ -1,8 +1,8 @@
 #include "RigidBodyComponent.h"
 
-#include "../Object.h"
 #include "../Scene.h"
 #include "../Scripts/PhysicsScene.h"
+#include "../Object.h"
 
 namespace rheel {
 
@@ -23,13 +23,13 @@ void RigidBodyComponent::OnAdd() {
 		throw std::runtime_error("no model set");
 	}
 
-	PhysicsScene *physicsScene = Parent()->ParentScene()->GetScript<PhysicsScene>();
+	PhysicsScene *physicsScene = Parent().ParentScene()->GetScript<PhysicsScene>();
 	if (!physicsScene) {
 		return;
 	}
 
-	const vec3& position = Parent()->Position();
-	const quat& rotation = Parent()->Rotation();
+	const vec3& position = Parent().Position();
+	const quat& rotation = Parent().Rotation();
 
 	btVector3 inertia(0, 0, 0);
 
@@ -56,8 +56,8 @@ void RigidBodyComponent::OnUpdate() {
 	btVector3 position = _body->getWorldTransform().getOrigin();
 	btQuaternion rotation = _body->getWorldTransform().getRotation();
 
-	Parent()->SetPosition(position.x(), position.y(), position.z());
-	Parent()->SetRotation(quat(rotation.getW(), rotation.getX(), rotation.getY(), rotation.getZ()));
+	Parent().SetPosition(position.x(), position.y(), position.z());
+	Parent().SetRotation(quat(rotation.getW(), rotation.getX(), rotation.getY(), rotation.getZ()));
 }
 
 void RigidBodyComponent::OnRemove() {
@@ -78,6 +78,14 @@ void RigidBodyComponent::SetMass(float mass) {
 	}
 
 	_mass = mass;
+}
+
+void RigidBodyComponent::ApplyForce(const vec3& force) {
+	_body->applyCentralForce({ force.x, force.y, force.z });
+}
+
+void RigidBodyComponent::ApplyImpulse(const vec3& impulse) {
+	_body->applyCentralImpulse({ impulse.x, impulse.y, impulse.z });
 }
 
 }

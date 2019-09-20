@@ -17,8 +17,8 @@ Object::Object(const Blueprint& blueprint) {
 
 	// add the children
 	for (const auto& childName : children) {
-		Object& child = _children.emplace_back(Engine::GetBlueprint(childName));
-		child._parent_object = this;
+		auto& child = _children.emplace_back(std::make_unique<Object>(Engine::GetBlueprint(childName)));
+		child->_parent_object = this;
 	}
 }
 
@@ -38,7 +38,7 @@ Object::Object(Object&& object) noexcept :
 
 	// re-initialize the children
 	for (auto& child : _children) {
-		child._parent_object = this;
+		child->_parent_object = this;
 	}
 }
 
@@ -59,14 +59,14 @@ Object& Object::operator=(Object&& object) {
 
 	// re-initialize the children
 	for (auto& child : _children) {
-		child._parent_object = this;
+		child->_parent_object = this;
 	}
 
 	return *this;
 }
 
-ObjectPtr Object::ParentObject() {
-	return _parent_object;
+Object& Object::ParentObject() {
+	return *_parent_object;
 }
 
 Scene *Object::ParentScene() {
@@ -112,7 +112,7 @@ const quat& Object::Rotation() const {
 void Object::FireEvent(EventType type, bool recursive) {
 	if (recursive) {
 		for (auto& child : _children) {
-			child.FireEvent(type, recursive);
+			child->FireEvent(type, recursive);
 		}
 	}
 
@@ -130,7 +130,7 @@ void Object::_SetParentScene(Scene *scene) {
 	_parent_scene = scene;
 
 	for (auto& child : _children) {
-		child._SetParentScene(scene);
+		child->_SetParentScene(scene);
 	}
 }
 

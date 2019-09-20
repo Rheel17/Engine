@@ -4,8 +4,6 @@
 
 #include <string>
 
-#include "ObjectPtr.h"
-
 #define COMPONENT_INIT(Class)						\
 protected:											\
 	Component *__CloneHeap() const override {		\
@@ -14,6 +12,8 @@ protected:											\
 private:
 
 namespace rheel {
+
+class Object;
 
 class RE_API Component {
 	friend class Blueprint;
@@ -49,10 +49,10 @@ protected:
 
 	virtual Component *__CloneHeap() const = 0;
 
-	ObjectPtr Parent() { return _parent_object; }
+	Object& Parent() { return *_parent_object; }
 
 private:
-	ObjectPtr _parent_object;
+	Object *_parent_object = nullptr;
 
 };
 

@@ -63,12 +63,12 @@ public:
 	 * rotation can be specified, but if not, the default (origin, no rotation)
 	 * are used.
 	 */
-	void AddObject(const std::string& blueprint, const vec3& position = { 0, 0, 0 }, const quat& rotation = quat(1, 0, 0, 0));
+	Object& AddObject(const std::string& blueprint, const vec3& position = { 0, 0, 0 }, const quat& rotation = quat(1, 0, 0, 0));
 
 	/**
 	 * Removes an object from this scene.
 	 */
-	void RemoveObject(ObjectPtr object);
+	void RemoveObject(Object& object);
 
 	/**
 	 * Adds a light to this scene.
@@ -122,13 +122,13 @@ public:
 	void Update(float dt);
 
 private:
-	void _AddObject(const SceneDescription::_ObjectDescription& description);
+	Object& _AddObject(const SceneDescription::_ObjectDescription& description);
 	void _AddLight(const std::string& name, Light *light);
 
 	Scene() = default;
 	Scene(const SceneDescription& description);
 
-	std::vector<Object> _objects;
+	std::vector<std::unique_ptr<Object>> _objects;
 	std::vector<std::unique_ptr<Script>> _scripts;
 	std::vector<std::string> _light_names;
 	std::unordered_map<std::string, std::unique_ptr<Light>> _lights;

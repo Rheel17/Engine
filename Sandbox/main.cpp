@@ -2,6 +2,21 @@
 
 using namespace rheel;
 
+class GameInputScript : public Script {
+	SCRIPT_INIT(GameInputScript);
+
+public:
+	void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) override {
+		if (button == Input::MouseButton::LEFT) {
+			auto camera = Parent().GetCamera("main_camera");
+			Object& object = Parent().AddObject("ball", camera->Position());
+			object.GetComponent<RigidBodyComponent>()->ApplyImpulse(
+					quat(camera->Rotation()) * vec4(0, 0, -1000000, 0));
+		}
+	}
+
+};
+
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
@@ -69,6 +84,8 @@ static Blueprint createRampBlueprint() {
 
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
+
+	description.AddScript<GameInputScript>();
 
 	auto& physicsScene = description.AddScript<PhysicsScene>();
 	physicsScene.SetGravity({ 0.0f, -9.81f, 0.0f });

@@ -70,16 +70,16 @@ const std::vector<std::unique_ptr<Script>>& Scene::Scripts() const {
 	return _scripts;
 }
 
-void Scene::AddObject(const std::string& blueprintName, const vec3& position, const quat& rotation) {
+Object& Scene::AddObject(const std::string& blueprintName, const vec3& position, const quat& rotation) {
 	SceneDescription::_ObjectDescription object = SceneDescription::_ObjectDescription {
 			Engine::GetBlueprint(blueprintName), position, rotation
 	};
 
-	_AddObject(object);
+	return _AddObject(object);
 }
 
-void Scene::RemoveObject(ObjectPtr ptr) {
-	Object *object = *ptr._ptr;
+void Scene::RemoveObject(Object& ptr) {
+	Object *object = &ptr;
 	object->FireEvent(Object::ON_REMOVE);
 
 	size_t index = (((size_t) object) - ((size_t) &_objects.front())) / sizeof(Object);
@@ -130,7 +130,7 @@ void Scene::Update(float dt) {
 
 	// update the objects
 	for (auto& object : _objects) {
-		object.FireEvent(Object::ON_UPDATE);
+		object->FireEvent(Object::ON_UPDATE);
 	}
 
 	// post-update the scripts
@@ -140,7 +140,7 @@ void Scene::Update(float dt) {
 
 	// update the object renderers
 	for (auto& object : _objects) {
-		object.FireEvent(Object::ON_UPDATE_RENDERER);
+		object->FireEvent(Object::ON_UPDATE_RENDERER);
 	}
 
 	SceneRenderManager& renderManager = Engine::GetSceneRenderManager(this);
@@ -152,14 +152,15 @@ void Scene::Update(float dt) {
 	}
 }
 
-void Scene::_AddObject(const SceneDescription::_ObjectDescription& description) {
-	Object& object = _objects.emplace_back(description.blueprint);
-	object._SetParentScene(this);
+Object& Scene::_AddObject(const SceneDescription::_ObjectDescription& description) {
+	const auto& objectPtr = _objects.emplace_back(std::make_unique<Object>(description.blueprint));
+	objectPtr->_SetParentScene(this);
 
-	object.SetPosition(description.position);
-	object.SetRotation(description.rotation);
+	objectPtr->SetPosition(description.position);
+	objectPtr->SetRotation(description.rotation);
 
-	object.FireEvent(Object::ON_ADD);
+	objectPtr->FireEvent(Object::ON_ADD);
+	return *objectPtr;
 }
 
 void Scene::_AddLight(const std::string& name, Light *light) {

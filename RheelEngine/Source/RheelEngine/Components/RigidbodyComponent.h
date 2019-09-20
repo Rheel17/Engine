@@ -30,6 +30,10 @@ public:
 
 	void SetMass(float mass);
 
+	void ApplyForce(const vec3& force);
+
+	void ApplyImpulse(const vec3& impulse);
+
 private:
 	std::unique_ptr<btMotionState> _motion_state;
 	std::unique_ptr<btRigidBody> _body;
