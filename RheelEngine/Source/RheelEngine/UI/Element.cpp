@@ -52,6 +52,19 @@ bool Element::HasFocus() const {
 	return RootContainer()->ParentUI()->FocusElement() == this;
 }
 
+bool Element::RequestFocus() {
+	return RootContainer()->ParentUI()->RequestFocus(this);
+}
+
+bool Element::LoseFocus() {
+	if (HasFocus()) {
+		RootContainer()->ParentUI()->RequestFocus(nullptr);
+		return true;
+	}
+
+	return false;
+}
+
 void Element::SetDragEnabled(bool drag) {
 	_drag_enabled = drag;
 }
@@ -181,6 +194,10 @@ void Element::_OnMouseExit(const vec2& position) {
 
 void Element::_OnMouseMove(const vec2& position) {
 	CALLBACK_LIST(OnMouseMove, position);
+}
+
+void Element::_OnMouseJump(const vec2& position) {
+	CALLBACK_LIST(OnMouseJump, position);
 }
 
 void Element::_OnMouseDrag(const vec2& origin, const vec2& position) {

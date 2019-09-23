@@ -87,16 +87,16 @@ public:
 	/**
 	 * Called when the mouse enters the bounds of this component.
 	 *
-	 * x: the x-coordinate of the mouse position
-	 * y: the y-coordinate of the mouse position
+	 * Parameters
+	 * 	position: coordinates of the mouse position
 	 */
 	virtual void OnMouseEnter(const vec2& position) {}
 
 	/**
 	 * Called when the mouse exits the bounds of this component.
 	 *
-	 * x: the x-coordinate of the mouse position
-	 * y: the y-coordinate of the mouse position
+	 * Parameters
+	 * 	position: coordinates of the mouse position
 	 */
 	virtual void OnMouseExit(const vec2& position) {}
 
@@ -104,10 +104,15 @@ public:
 	 * Called when the mouse is moved without any buttons pressed.
 	 *
 	 * Parameters
-	 * 	x: the x-coordinate of the new mouse position
-	 * 	y: the y-coordinate of the new mouse position
+	 * 	position: coordinates of the mouse position
 	 */
 	virtual void OnMouseMove(const vec2& position) {}
+
+	/**
+	 * Called when the mouse is jumped without the user specifically moving the
+	 * mouse itself, but i.e. through a spring-back by re-enabling the cursor.
+	 */
+	virtual void OnMouseJump(const vec2& position) {}
 
 	/**
 	 * Called when the mouse is moved with at least one button pressed.

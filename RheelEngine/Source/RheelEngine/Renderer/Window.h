@@ -22,6 +22,7 @@ public:
 	void Loop();
 
 	void SetInputMode(int mode, int value) const;
+	vec2 GetMousePosition() const;
 
 private:
 	DisplayConfiguration& _configuration;

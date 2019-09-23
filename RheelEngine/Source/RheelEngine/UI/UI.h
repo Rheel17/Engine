@@ -35,7 +35,7 @@ public:
 	/**
 	 * Requests that the given element be given focus in this UI.
 	 */
-	void RequestFocus(Element *element);
+	bool RequestFocus(Element *element);
 
 	/**
 	 * Returns the element which is in focus (can be nullptr).
@@ -87,6 +87,7 @@ private:
 
 	bool _focus = true;
 	bool _mouse_grabbed = false;
+	bool _mouse_jump = false;
 	vec2 _mouse;
 
 	unsigned _mouse_down_count = 0;

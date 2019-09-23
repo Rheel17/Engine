@@ -123,9 +123,11 @@ void Scene::Update(float dt) {
 
 	// pre-update the scripts
 	for (auto& script : _scripts) {
-		script->_dt = dt;
-		script->_time = _time;
-		script->PreOnUpdate();
+		if (script->IsActive()) {
+			script->_dt = dt;
+			script->_time = _time;
+			script->PreOnUpdate();
+		}
 	}
 
 	// update the objects
@@ -135,7 +137,9 @@ void Scene::Update(float dt) {
 
 	// post-update the scripts
 	for (auto& script : _scripts) {
-		script->PostOnUpdate();
+		if (script->IsActive()) {
+			script->PostOnUpdate();
+		}
 	}
 
 	// update the object renderers
@@ -148,7 +152,9 @@ void Scene::Update(float dt) {
 
 	// reset the input scripts
 	for (auto& script : _scripts) {
-		static_cast<ScriptInput *>(script.get())->_ResetDeltas();
+		if (script->IsActive()) {
+			script->_ResetDeltas();
+		}
 	}
 }
 

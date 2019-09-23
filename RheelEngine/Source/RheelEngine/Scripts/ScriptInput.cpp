@@ -4,6 +4,10 @@ namespace rheel {
 
 ScriptInput::~ScriptInput() {}
 
+SceneElement *ScriptInput::InputSource() const {
+	return _source_element;
+}
+
 const vec2& ScriptInput::InputMousePosition() const {
 	return _mouse;
 }
@@ -63,6 +67,11 @@ void ScriptInput::_OnMouseMove(const vec2& position) {
 	_got_mouse = true;
 
 	OnMouseMove(position);
+}
+
+void ScriptInput::_OnMouseJump(const vec2& position) {
+	_mouse = position;
+	_got_mouse = true;
 }
 
 void ScriptInput::_OnMouseScroll(const vec2& scrollComponents) {

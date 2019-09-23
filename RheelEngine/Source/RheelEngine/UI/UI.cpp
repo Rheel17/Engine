@@ -21,9 +21,13 @@ Element *UI::ElementAt(unsigned x, unsigned y) {
 	return _ui_container.ElementAt(x, y);
 }
 
-void UI::RequestFocus(Element *element) {
-	if (_focus_element == element || !element->IsFocusable()) {
-		return;
+bool UI::RequestFocus(Element *element) {
+	if (_focus_element == element) {
+		return true;
+	}
+
+	if (element && !element->IsFocusable()) {
+		return false;
 	}
 
 	ReleaseMouse();
@@ -37,6 +41,8 @@ void UI::RequestFocus(Element *element) {
 	if (_focus_element && _focus) {
 		_focus_element->_OnFocusGained();
 	}
+
+	return true;
 }
 
 Element *UI::FocusElement() const {
@@ -45,13 +51,17 @@ Element *UI::FocusElement() const {
 
 void UI::GrabMouse(Element *element) {
 	Engine::GetWindow().SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	_grabbed_element = element;
 	_mouseover_element = element;
 	_mouse_grabbed = true;
 }
 
 void UI::ReleaseMouse() {
 	Engine::GetWindow().SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	_mouse = Engine::GetWindow().GetMousePosition();
+	_grabbed_element = nullptr;
 	_mouse_grabbed = false;
+	_mouse_jump = true;
 }
 
 void UI::Draw(float dt) const {
@@ -105,7 +115,12 @@ void UI::OnMouseMove(float x, float y) {
 	}
 
 	if (_mouseover_element) {
-		_mouseover_element->_OnMouseMove(_mouse);
+		if (_mouse_jump) {
+			_mouseover_element->_OnMouseJump(_mouse);
+			_mouse_jump = false;
+		} else {
+			_mouseover_element->_OnMouseMove(_mouse);
+		}
 	}
 }
 

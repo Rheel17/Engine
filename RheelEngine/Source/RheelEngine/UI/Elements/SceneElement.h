@@ -3,13 +3,18 @@
 #include "../../_common.h"
 
 #include "../Element.h"
-#include "../../Renderer/SceneRenderer.h"
 
 namespace rheel {
 
+class SceneRenderer;
+class Scene;
+
 class RE_API SceneElement : public Element {
+	RE_NO_COPY(SceneElement);
 
 public:
+	SceneElement(SceneElement&&) = default;
+
 	/**
 	 * Creates a UI element that displays the camera output of the currently
 	 * active scene. When the currently active scene switches, the camera
@@ -25,11 +30,21 @@ public:
 	 */
 	SceneElement(Scene *scene, std::string cameraName);
 
+	/**
+	 * Sets whether this element should grab the mouse on focus. Its default
+	 * value is true.
+	 */
+	void SetGrabOnFocus(bool grabOnFocus);
+
+	/**
+	 * Returns whether this element should grab the mouse on focus.
+	 */
+	bool GetGrabOnFocus() const;
+
 	void Draw(float dt) const override;
 
-	void OnFocusGained() override;
-
 	// Override methods to pass input events to scripts
+	void OnFocusGained() override;
 	void OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) override;
 	void OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) override;
 	void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) override;
@@ -44,7 +59,9 @@ private:
 	mutable Scene *_scene;
 	std::string _camera_name;
 
-	mutable std::unique_ptr<SceneRenderer> _scene_renderer;
+	bool _grab_on_focus = true;
+
+	mutable std::shared_ptr<SceneRenderer> _scene_renderer;
 
 };
 

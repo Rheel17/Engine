@@ -2,7 +2,7 @@
 #define SCRIPTINPUT_H_
 #include "../_common.h"
 
-#include "../UI/Input.h"
+#include "../UI/Elements/SceneElement.h"
 
 #include <unordered_set>
 
@@ -12,6 +12,7 @@ namespace rheel {
  * A general base class for scripts that require mouse/keyboard input
  */
 class RE_API ScriptInput {
+	friend class Script;
 	friend class Scene;
 	friend class SceneElement;
 
@@ -19,6 +20,11 @@ public:
 	virtual ~ScriptInput();
 
 protected:
+	/**
+	 * Returns the source element of the input.
+	 */
+	SceneElement *InputSource() const;
+
 	/**
 	 * Returns the current mouse position
 	 */
@@ -88,6 +94,7 @@ private:
 	void _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
 	void _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
 	void _OnMouseMove(const vec2& position);
+	void _OnMouseJump(const vec2& position);
 	void _OnMouseScroll(const vec2& scrollComponents);
 	void _ResetDeltas();
 
@@ -99,6 +106,8 @@ private:
 	std::unordered_set<Input::MouseButton> _pressed_mouse_buttons;
 	std::unordered_set<Input::Key> _pressed_keys;
 	std::unordered_set<Input::Scancode> _pressed_scancodes;
+
+	SceneElement *_source_element;
 
 };
 

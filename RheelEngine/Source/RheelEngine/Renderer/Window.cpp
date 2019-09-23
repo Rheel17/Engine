@@ -159,6 +159,13 @@ void Window::SetInputMode(int mode, int value) const {
 	glfwSetInputMode(getWindow(_window_handle), mode, value);
 }
 
+vec2 Window::GetMousePosition() const {
+	double x, y;
+	glfwGetCursorPos(getWindow(_window_handle), &x, &y);
+
+	return vec2 { x, y };
+}
+
 void Window::InitializeDisplaySystems() {
 	// initialize GLFW
 	if (!_is_glfw_initialized) {

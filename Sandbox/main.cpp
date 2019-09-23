@@ -7,11 +7,23 @@ class GameInputScript : public Script {
 
 public:
 	void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) override {
-		if (button == Input::MouseButton::LEFT) {
-			auto camera = Parent().GetCamera("main_camera");
-			Object& object = Parent().AddObject("ball", camera->Position());
-			object.GetComponent<RigidBodyComponent>()->ApplyImpulse(
-					quat(camera->Rotation()) * vec4(0, 0, -1000000, 0));
+		if (button == Input::MouseButton::RIGHT) {
+			if (InputSource()->HasFocus()) {
+				InputSource()->LoseFocus();
+				Parent().GetScript<EulerCameraController>()->SetActive(false);
+			} else {
+				InputSource()->SetFocusable(true);
+				InputSource()->RequestFocus();
+				InputSource()->SetFocusable(false);
+				Parent().GetScript<EulerCameraController>()->SetActive(true);
+			}
+		} else if (button == Input::MouseButton::LEFT) {
+			if (InputSource()->HasFocus()) {
+				auto camera = Parent().GetCamera("main_camera");
+				Object& object = Parent().AddObject("ball", camera->Position());
+				object.GetComponent<RigidBodyComponent>()->ApplyImpulse(
+						quat(camera->Rotation()) * vec4(0, 0, -1000000, 0));
+			}
 		}
 	}
 
@@ -110,6 +122,7 @@ static SceneDescription createSceneDescription() {
 
 	auto& eulerCameraController = description.AddScript<EulerCameraController>();
 	eulerCameraController.SetCamera("main_camera");
+	eulerCameraController.SetActive(false);
 
 	for (int i = -2; i <= 2; i++) {
 		for (int j = 0; j < 5; j++) {
@@ -161,6 +174,7 @@ class SandboxGame : public Game {
 		SceneElement *sceneElement = ui.InsertElement(SceneElement("main_camera"));
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+		sceneElement->SetFocusable(false);
 
 		const auto& resolution = Engine::GetDisplayConfiguration().resolution;
 		int size = std::max(resolution.width, resolution.height) / 80;
@@ -174,7 +188,6 @@ class SandboxGame : public Game {
 		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM, verticalMargin);
 
 		Engine::GetUI().SetContainer(std::move(ui));
-		Engine::GetUI().RequestFocus(sceneElement);
 	}
 
 };

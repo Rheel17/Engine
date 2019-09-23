@@ -53,7 +53,8 @@ public:
 	void SetDefaultSize(unsigned width, unsigned height);
 
 	/**
-	 * Sets the focusable flag of this element.
+	 * Sets the focusable flag of this element. If this element is currently in
+	 * focus, calling this element does not make this element lose its focus.
 	 */
 	void SetFocusable(bool focusable);
 
@@ -66,6 +67,19 @@ public:
 	 * Returns whether this element has focus.
 	 */
 	bool HasFocus() const;
+
+	/**
+	 * Requests that this element get the focus from the UI. Returns true if the
+	 * request resulted in this element receiving the focus.
+	 */
+	bool RequestFocus();
+
+	/**
+	 * If this element is currently focused, calling this method will remove the
+	 * focus from this element. Returns true if the element was focused before
+	 * calling this focus.
+	 */
+	bool LoseFocus();
 
 	/**
 	 * Sets the drag-enabled flag for this element. If this is set to true, the
@@ -151,6 +165,7 @@ private:
 	void _OnMouseEnter(const vec2& position);
 	void _OnMouseExit(const vec2& position);
 	void _OnMouseMove(const vec2& position);
+	void _OnMouseJump(const vec2& position);
 	void _OnMouseDrag(const vec2& origin, const vec2& position);
 	void _OnMouseScroll(const vec2& scrollComponents);
 

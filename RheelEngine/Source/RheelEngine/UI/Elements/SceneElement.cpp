@@ -1,6 +1,7 @@
 #include "SceneElement.h"
 
 #include "../../Engine.h"
+#include "../../Renderer/SceneRenderer.h"
 #include "../../Renderer/ShadowMapDirectional.h"
 #include "../../Scripts/ScriptInput.h"
 
@@ -16,6 +17,14 @@ SceneElement::SceneElement(Scene *scene, std::string cameraName) :
 		_use_active_scene(false), _scene(scene), _camera_name(cameraName) {
 
 	SetFocusable(true);
+}
+
+void SceneElement::SetGrabOnFocus(bool grabOnFocus) {
+	_grab_on_focus = grabOnFocus;
+}
+
+bool SceneElement::GetGrabOnFocus() const {
+	return _grab_on_focus;
 }
 
 void SceneElement::Draw(float dt) const {
@@ -41,66 +50,86 @@ void SceneElement::Draw(float dt) const {
 }
 
 void SceneElement::OnFocusGained() {
-	RootContainer()->ParentUI()->GrabMouse(this);
+	if (_grab_on_focus) {
+		RootContainer()->ParentUI()->GrabMouse(this);
+	}
 }
 
 void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
-	if (!_scene || !HasFocus()) {
+	if (!_scene) {
 		return;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		static_cast<ScriptInput *>(script.get())->_OnKeyPress(key, scancode, mods);
+		if (script->IsActive()) {
+			script->_source_element = this;
+			script->_OnKeyPress(key, scancode, mods);
+		}
 	}
 }
 
 void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
-	if (!_scene || !HasFocus()) {
+	if (!_scene) {
 		return;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		static_cast<ScriptInput *>(script.get())->_OnKeyRelease(key, scancode, mods);
+		if (script->IsActive()) {
+			script->_source_element = this;
+			script->_OnKeyRelease(key, scancode, mods);
+		}
 	}
 }
 
 void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
-	if (!_scene || !HasFocus()) {
+	if (!_scene) {
 		return;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		static_cast<ScriptInput *>(script.get())->_OnMouseButtonPress(button, mods);
+		if (script->IsActive()) {
+			script->_source_element = this;
+			script->_OnMouseButtonPress(button, mods);
+		}
 	}
 }
 
 void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
-	if (!_scene || !HasFocus()) {
+	if (!_scene) {
 		return;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		static_cast<ScriptInput *>(script.get())->_OnMouseButtonRelease(button, mods);
+		if (script->IsActive()) {
+			script->_source_element = this;
+			script->_OnMouseButtonRelease(button, mods);
+		}
 	}
 }
 
 void SceneElement::OnMouseMove(const vec2& position) {
-	if (!_scene || !HasFocus()) {
+	if (!_scene) {
 		return;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		static_cast<ScriptInput *>(script.get())->_OnMouseMove(position);
+		if (script->IsActive()) {
+			script->_source_element = this;
+			script->_OnMouseMove(position);
+		}
 	}
 }
 
 void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
-	if (!_scene || !HasFocus()) {
+	if (!_scene) {
 		return;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
-		static_cast<ScriptInput *>(script.get())->_OnMouseScroll(scrollComponents);
+		if (script->IsActive()) {
+			script->_source_element = this;
+			script->_OnMouseScroll(scrollComponents);
+		}
 	}
 }
 
@@ -120,7 +149,9 @@ void SceneElement::_InitializeRenderer(const Bounds& bounds) const {
 		return;
 	}
 
-	_scene_renderer = Engine::GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_name, bounds.width, bounds.height);
+	auto renderer = Engine::GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_name, bounds.width, bounds.height);
+	SceneRenderer *ptr = renderer.release();
+	_scene_renderer = std::shared_ptr<SceneRenderer>(ptr);
 }
 
 }
