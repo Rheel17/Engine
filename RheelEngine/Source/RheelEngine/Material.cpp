@@ -47,8 +47,20 @@ vec4 Material::MaterialVector() const {
 	return { _ambient_factor, _diffuse_factor, _specular_factor, _specular_exponent };
 }
 
-const Color& Material::MaterialColor() const {
+const Color& Material::GetColor() const {
 	return _color;
+}
+
+float Material::AmbientFactor() const {
+	return _ambient_factor;
+}
+
+float Material::DiffuseFactor() const {
+	return _diffuse_factor;
+}
+
+float Material::SpecularFactor() const {
+	return _specular_factor;
 }
 
 void Material::BindTextures() const {

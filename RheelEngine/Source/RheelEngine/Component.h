@@ -22,6 +22,8 @@ class RE_API Component {
 public:
 	virtual ~Component() = default;
 
+	Object *Parent() const;
+
 	/**
 	 * Called when the object is added to a scene
 	 */
@@ -48,8 +50,6 @@ protected:
 	Component() = default;
 
 	virtual Component *__CloneHeap() const = 0;
-
-	Object& Parent() { return *_parent_object; }
 
 private:
 	Object *_parent_object = nullptr;

@@ -188,6 +188,9 @@ private:
 
 	Container(UI *ui);
 
+	std::vector<Element *> _AllElementsAt(unsigned x, unsigned y);
+	void _FillElementsAt(unsigned x, unsigned y, std::vector<Element *>& v);
+
 	void _CheckElement(Element *element, std::string sourceOrDestination) const;
 	void _DeleteConstraintTree(ConstraintTreeNode *node);
 

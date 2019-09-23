@@ -32,6 +32,11 @@ public:
 	void SetMaterial(Material material);
 
 	/**
+	 * Returns the material currently in use.
+	 */
+	const Material& GetMaterial() const;
+
+	/**
 	 * Sets the scale of this model.
 	 */
 	void SetScale(const vec3& scale);

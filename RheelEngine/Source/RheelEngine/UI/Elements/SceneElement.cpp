@@ -81,9 +81,9 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 	}
 }
 
-void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
+bool SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
 	if (!_scene) {
-		return;
+		return true;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
@@ -92,11 +92,13 @@ void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifier
 			script->_OnMouseButtonPress(button, mods);
 		}
 	}
+
+	return true;
 }
 
-void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
+bool SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
 	if (!_scene) {
-		return;
+		return true;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
@@ -105,11 +107,13 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 			script->_OnMouseButtonRelease(button, mods);
 		}
 	}
+
+	return true;
 }
 
-void SceneElement::OnMouseMove(const vec2& position) {
+bool SceneElement::OnMouseMove(const vec2& position) {
 	if (!_scene) {
-		return;
+		return true;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
@@ -118,11 +122,13 @@ void SceneElement::OnMouseMove(const vec2& position) {
 			script->_OnMouseMove(position);
 		}
 	}
+
+	return true;
 }
 
-void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
+bool SceneElement::OnMouseScroll(const vec2& scrollComponents) {
 	if (!_scene) {
-		return;
+		return true;
 	}
 
 	for (const auto& script : _scene->Scripts()) {
@@ -131,6 +137,8 @@ void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
 			script->_OnMouseScroll(scrollComponents);
 		}
 	}
+
+	return true;
 }
 
 void SceneElement::_InitializeRenderer(const Bounds& bounds) const {

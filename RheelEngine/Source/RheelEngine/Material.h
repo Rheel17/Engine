@@ -69,7 +69,22 @@ public:
 	 * Returns a const reference to the color of this material. If this is a
 	 * textured material, { 0, 0, 0, -1 } is returned.
 	 */
-	const Color& MaterialColor() const;
+	const Color& GetColor() const;
+
+	/**
+	 * Returns the ambient light factor
+	 */
+	float AmbientFactor() const;
+
+	/**
+	 * Returns the diffuse light factor
+	 */
+	float DiffuseFactor() const;
+
+	/**
+	 * Returns the specular light factor
+	 */
+	float SpecularFactor() const;
 
 	/**
 	 * Binds the texture images as OpenGL textures.

@@ -20,6 +20,9 @@ class RE_API Element : public InputCallback {
 	friend class UI;
 	friend class Container;
 
+private:
+	using _CBPtr = std::shared_ptr<InputCallback>;
+
 public:
 	struct Bounds {
 		unsigned x, y;
@@ -153,6 +156,9 @@ protected:
 	void _MoveSuperFields(Element&& element);
 
 private:
+	void _VoidCallback(std::function<void(const _CBPtr&)> callback);
+	bool _BoolCallback(std::function<bool(const _CBPtr&)> callback);
+
 	void _OnResize();
 	void _OnFocusGained();
 	void _OnFocusLost();
@@ -160,14 +166,14 @@ private:
 	void _OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
 	void _OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
 	void _OnCharacterInput(wchar_t character);
-	void _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
-	void _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
+	bool _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
+	bool _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
 	void _OnMouseEnter(const vec2& position);
 	void _OnMouseExit(const vec2& position);
-	void _OnMouseMove(const vec2& position);
-	void _OnMouseJump(const vec2& position);
-	void _OnMouseDrag(const vec2& origin, const vec2& position);
-	void _OnMouseScroll(const vec2& scrollComponents);
+	bool _OnMouseMove(const vec2& position);
+	bool _OnMouseJump(const vec2& position);
+	bool _OnMouseDrag(const vec2& origin, const vec2& position);
+	bool _OnMouseScroll(const vec2& scrollComponents);
 
 	Container *_parent_container;
 	Bounds _bounds;
@@ -178,7 +184,7 @@ private:
 	bool _focusable = false;
 	bool _drag_enabled = false;
 
-	std::vector<std::shared_ptr<InputCallback>> _callback_list;
+	std::vector<_CBPtr> _callback_list;
 
 protected:
 	/**

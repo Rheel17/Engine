@@ -114,14 +114,21 @@ void UI::OnMouseMove(float x, float y) {
 		}
 	}
 
-	if (_mouseover_element) {
+	std::vector<Element *> elementStack = _ui_container._AllElementsAt((unsigned) x, (unsigned) y);
+
+	for (Element *element : elementStack) {
 		if (_mouse_jump) {
-			_mouseover_element->_OnMouseJump(_mouse);
-			_mouse_jump = false;
+			if (element->_OnMouseJump(_mouse)) {
+				break;
+			}
 		} else {
-			_mouseover_element->_OnMouseMove(_mouse);
+			if (element->_OnMouseMove(_mouse)) {
+				break;
+			}
 		}
 	}
+
+	_mouse_jump = false;
 }
 
 void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::Modifiers mods) {

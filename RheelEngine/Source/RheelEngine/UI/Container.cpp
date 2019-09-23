@@ -275,6 +275,34 @@ void Container::OnResize() {
 	Layout();
 }
 
+std::vector<Element *> Container::_AllElementsAt(unsigned x, unsigned y) {
+	std::vector<Element *> v;
+	_FillElementsAt(x, y, v);
+	return v;
+}
+
+void Container::_FillElementsAt(unsigned x, unsigned y, std::vector<Element *>& v) {
+	for (auto iter = _elements.rbegin(); iter != _elements.rend(); iter++) {
+		Element *element = *iter;
+		const Element::Bounds& bounds = element->GetBounds();
+
+		// check if the coordinates are in the bounds of the element
+		if (bounds.x <= x && x < bounds.x + bounds.width &&
+				bounds.y <= y && y < bounds.y + bounds.height) {
+
+			// nested resolve
+			if (Container *container = dynamic_cast<Container *>(element)) {
+				container->_FillElementsAt(x, y, v);
+			} else {
+				// not a container: add the element
+				v.push_back(element);
+			}
+		}
+	}
+
+	v.push_back(this);
+}
+
 void Container::_CheckElement(Element *element, std::string sourceOrDestination) const {
 	if (element == nullptr) {
 		return;
