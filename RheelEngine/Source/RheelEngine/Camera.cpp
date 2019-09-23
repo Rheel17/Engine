@@ -12,7 +12,12 @@ Camera::Camera(std::string name, vec3 position, vec3 rotation) :
 }
 
 vec3 Camera::RayDirection(unsigned width, unsigned height, vec2 pixel) const {
-	return RayDirection(pixel / vec2(width, height));
+	vec2 ndc = pixel / vec2(width, height);
+	ndc *= 2;
+	ndc -= 1;
+	ndc.y *= -1;
+
+	return RayDirection(ndc);
 }
 
 void Camera::SetPosition(const vec3& position) {
