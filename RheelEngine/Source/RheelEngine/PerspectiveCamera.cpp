@@ -20,8 +20,15 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	near = std::max(near, _near);
 	far = std::min(far, _far);
 
-	const auto position = [forward, up, right, this](const vec2& ndc, float t) {
-		vec3 direction = glm::normalize(ndc.x * right + ndc.y * up + forward);
+	float tanfov = std::tan(_fov * 0.5f);
+	float aspectRatio = float(width) / float(height);
+
+	const auto position = [forward, up, right, tanfov, aspectRatio, this](const vec2& ndc, float t) {
+		vec3 direction = glm::normalize(
+				ndc.x * right * tanfov * aspectRatio +
+				ndc.y * up * tanfov +
+				forward);
+
 		return Position() + t * direction;
 	};
 
@@ -38,15 +45,17 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 }
 
 vec3 PerspectiveCamera::RayDirection(const vec2& ndc, float aspectRatio) const {
-	std::cout << ndc << std::endl;
-
 	quat rotation = quat(Rotation());
 
 	vec3 forward = rotation * vec4(0, 0, -1, 0);
 	vec3 up = rotation * vec4(0, 1, 0, 0);
 	vec3 right = glm::cross(forward, up);
+	float tanfov = std::tan(_fov * 0.5f);
 
-	return glm::normalize(ndc.x * right + ndc.y * up + forward);
+	return glm::normalize(
+			ndc.x * right * tanfov * aspectRatio +
+			ndc.y * up * tanfov +
+			forward);
 }
 
 }
