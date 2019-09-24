@@ -36,10 +36,7 @@ public:
 		auto camera = Parent().GetCamera("main_camera");
 		vec3 dir = camera->RayDirection(bounds.width, bounds.height, position);
 
-		std::cout << dir << std::endl;
-
 		auto rigidBody = Parent().GetScript<PhysicsScene>()->ShootRay(camera->Position(), dir, 0.01f, 100.0f);
-		std::cout << rigidBody << std::endl;
 
 		if (!rigidBody) {
 			if (_selected_object) {
@@ -57,7 +54,7 @@ public:
 				_selected_object = obj;
 				_original_material = _selected_object->GetComponent<ModelRenderComponent>()->GetMaterial();
 
-				Material m = Material(_original_material.GetColor(), 0.7f, 0.0f);
+				Material m = Material({ 0.8f, 0.1f, 0.1f, 1.0f }, 0.7f, 0.0f);
 				_selected_object->GetComponent<ModelRenderComponent>()->SetMaterial(m);
 			}
 		}
@@ -180,7 +177,7 @@ static SceneDescription createSceneDescription() {
 
 	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
 //	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { -25, 15, 0 }, { -0.5f, -M_PI / 2.0f, 0.0f });
-	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 0, 0 });
+	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { 0, 0, 10 });
 
 	return description;
 }

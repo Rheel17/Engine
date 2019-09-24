@@ -11,13 +11,13 @@ Camera::Camera(std::string name, vec3 position, vec3 rotation) :
 	_CalculateViewMatrix();
 }
 
-vec3 Camera::RayDirection(unsigned width, unsigned height, vec2 pixel) const {
+vec3 Camera::RayDirection(unsigned width, unsigned height, const vec2& pixel) const {
 	vec2 ndc = pixel / vec2(width, height);
 	ndc *= 2;
 	ndc -= 1;
 	ndc.y *= -1;
 
-	return RayDirection(ndc);
+	return RayDirection(ndc, float(width) / float(height));
 }
 
 void Camera::SetPosition(const vec3& position) {

@@ -37,7 +37,9 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	}};
 }
 
-vec3 PerspectiveCamera::RayDirection(vec2 ndc) const {
+vec3 PerspectiveCamera::RayDirection(const vec2& ndc, float aspectRatio) const {
+	std::cout << ndc << std::endl;
+
 	quat rotation = quat(Rotation());
 
 	vec3 forward = rotation * vec4(0, 0, -1, 0);

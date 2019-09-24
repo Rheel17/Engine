@@ -32,13 +32,13 @@ public:
 	 * Returns the direction of a ray starting at the camera origin and going
 	 * through the specified normalized device coordinates.
 	 */
-	virtual vec3 RayDirection(vec2 ndc) const = 0;
+	virtual vec3 RayDirection(const vec2& ndc, float apsectRatio) const = 0;
 
 	/**
 	 * Returns the direction of a ray starting at the camera origin and going
 	 * through the given pixel.
 	 */
-	vec3 RayDirection(unsigned width, unsigned height, vec2 pixel) const;
+	vec3 RayDirection(unsigned width, unsigned height, const vec2& pixel) const;
 
 	/**
 	 * Sets the position of this camera.
