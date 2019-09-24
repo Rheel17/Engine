@@ -100,7 +100,7 @@ void UI::OnMouseMove(float x, float y) {
 		return;
 	}
 
-	Element *newMouseOverElement = ElementAt((unsigned) x, (unsigned) y);
+	Element *newMouseOverElement = _ui_container.OpaqueElementAt((unsigned) x, (unsigned) y);
 
 	if (newMouseOverElement != _mouseover_element && !_mouse_grabbed) {
 		if (_mouseover_element) {
@@ -114,21 +114,14 @@ void UI::OnMouseMove(float x, float y) {
 		}
 	}
 
-	std::vector<Element *> elementStack = _ui_container._AllElementsAt((unsigned) x, (unsigned) y);
-
-	for (Element *element : elementStack) {
+	if (_mouseover_element) {
 		if (_mouse_jump) {
-			if (element->_OnMouseJump(_mouse)) {
-				break;
-			}
+			_mouseover_element->_OnMouseJump(_mouse);
+			_mouse_jump = false;
 		} else {
-			if (element->_OnMouseMove(_mouse)) {
-				break;
-			}
+			_mouseover_element->_OnMouseMove(_mouse);
 		}
 	}
-
-	_mouse_jump = false;
 }
 
 void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::Modifiers mods) {

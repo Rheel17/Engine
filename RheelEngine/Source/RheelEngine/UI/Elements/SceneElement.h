@@ -47,10 +47,10 @@ public:
 	void OnFocusGained() override;
 	void OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) override;
 	void OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) override;
-	bool OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) override;
-	bool OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) override;
-	bool OnMouseMove(const vec2& position) override;
-	bool OnMouseScroll(const vec2& scrollComponents) override;
+	void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) override;
+	void OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) override;
+	void OnMouseMove(const vec2& position) override;
+	void OnMouseScroll(const vec2& scrollComponents) override;
 
 private:
 	void _InitializeRenderer(const Bounds& bounds) const;

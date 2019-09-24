@@ -63,6 +63,10 @@ bool Element::LoseFocus() {
 	return false;
 }
 
+bool Element::IsOpaque() {
+	return true;
+}
+
 void Element::SetDragEnabled(bool drag) {
 	_drag_enabled = drag;
 }
@@ -139,101 +143,85 @@ void Element::_MoveSuperFields(Element&& element) {
 	_default_height = element._default_height;
 }
 
-void Element::_VoidCallback(std::function<void(const _CBPtr&)> callback) {
+void Element::_Callback(std::function<void(const _CBPtr&)> callback) {
 	for (const _CBPtr& ptr : _callback_list) {
 		callback(ptr);
 	}
 }
 
-bool Element::_BoolCallback(std::function<bool(const _CBPtr&)> callback) {
-	bool flag = false;
-
-	for (const _CBPtr& ptr : _callback_list) {
-		flag |= callback(ptr);
-	}
-
-	return flag;
-}
-
 void Element::_OnResize() {
 	OnResize();
-	_VoidCallback([](const _CBPtr& ptr) { ptr->OnResize(); });
+	_Callback([](const _CBPtr& ptr) { ptr->OnResize(); });
 }
 
 void Element::_OnFocusGained() {
 	OnFocusGained();
-	_VoidCallback([](const _CBPtr& ptr) { ptr->OnFocusGained(); });
+	_Callback([](const _CBPtr& ptr) { ptr->OnFocusGained(); });
 }
 
 void Element::_OnFocusLost() {
 	OnFocusLost();
-	_VoidCallback([](const _CBPtr& ptr) { ptr->OnFocusLost(); });
+	_Callback([](const _CBPtr& ptr) { ptr->OnFocusLost(); });
 }
 
 void Element::_OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
 	OnKeyPress(key, scancode, mods);
-	_VoidCallback([key, scancode, mods](const _CBPtr& ptr) { ptr->OnKeyPress(key, scancode, mods); });
+	_Callback([key, scancode, mods](const _CBPtr& ptr) { ptr->OnKeyPress(key, scancode, mods); });
 }
 
 void Element::_OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
 	OnKeyRepeat(key, scancode, mods);
-	_VoidCallback([key, scancode, mods](const _CBPtr& ptr) { ptr->OnKeyRepeat(key, scancode, mods); });
+	_Callback([key, scancode, mods](const _CBPtr& ptr) { ptr->OnKeyRepeat(key, scancode, mods); });
 }
 
 void Element::_OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
 	 OnKeyRelease(key, scancode, mods);
-	 _VoidCallback([key, scancode, mods](const _CBPtr& ptr) { ptr->OnKeyRelease(key, scancode, mods); });
+	 _Callback([key, scancode, mods](const _CBPtr& ptr) { ptr->OnKeyRelease(key, scancode, mods); });
 }
 
 void Element::_OnCharacterInput(wchar_t character) {
 	OnCharacterInput(character);
-	_VoidCallback([character](const _CBPtr& ptr) { ptr->OnCharacterInput(character); });
+	_Callback([character](const _CBPtr& ptr) { ptr->OnCharacterInput(character); });
 }
 
-bool Element::_OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
-	bool flag = OnMouseButtonPress(button, mods);
-	flag |= _BoolCallback([button, mods](const _CBPtr& ptr) { return ptr->OnMouseButtonPress(button, mods); });
-	return flag;
+void Element::_OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
+	OnMouseButtonPress(button, mods);
+	_Callback([button, mods](const _CBPtr& ptr) { ptr->OnMouseButtonPress(button, mods); });
 }
 
-bool Element::_OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
-	bool flag = OnMouseButtonRelease(button, mods);
-	flag |= _BoolCallback([button, mods](const _CBPtr& ptr) { return ptr->OnMouseButtonRelease(button, mods); });
-	return flag;
+void Element::_OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
+	OnMouseButtonRelease(button, mods);
+	_Callback([button, mods](const _CBPtr& ptr) { ptr->OnMouseButtonRelease(button, mods); });
 }
 
 void Element::_OnMouseEnter(const vec2& position) {
 	OnMouseEnter(position);
-	_VoidCallback([position](const _CBPtr& ptr) { ptr->OnMouseEnter(position); });
+	_Callback([position](const _CBPtr& ptr) { ptr->OnMouseEnter(position); });
 }
 
 void Element::_OnMouseExit(const vec2& position) {
 	OnMouseExit(position);
-	_VoidCallback([position](const _CBPtr& ptr) { ptr->OnMouseExit(position); });
+	_Callback([position](const _CBPtr& ptr) { ptr->OnMouseExit(position); });
 }
 
-bool Element::_OnMouseMove(const vec2& position) {
-	bool flag = OnMouseMove(position);
-	flag |= _BoolCallback([position](const _CBPtr& ptr) { return ptr->OnMouseMove(position); });
-	return flag;
+void Element::_OnMouseMove(const vec2& position) {
+	OnMouseMove(position);
+	_Callback([position](const _CBPtr& ptr) { ptr->OnMouseMove(position); });
 }
 
-bool Element::_OnMouseJump(const vec2& position) {
-	bool flag = OnMouseJump(position);
-	flag |= _BoolCallback([position](const _CBPtr& ptr) { return ptr->OnMouseJump(position); });
-	return flag;
+void Element::_OnMouseJump(const vec2& position) {
+	OnMouseJump(position);
+	_Callback([position](const _CBPtr& ptr) { ptr->OnMouseJump(position); });
 }
 
-bool Element::_OnMouseDrag(const vec2& origin, const vec2& position) {
-	bool flag = OnMouseDrag(origin, position);
-	flag |= _BoolCallback([origin, position](const _CBPtr& ptr) { return ptr->OnMouseDrag(origin, position); });
-	return flag;
+void Element::_OnMouseDrag(const vec2& origin, const vec2& position) {
+	OnMouseDrag(origin, position);
+	_Callback([origin, position](const _CBPtr& ptr) { ptr->OnMouseDrag(origin, position); });
 }
 
-bool Element::_OnMouseScroll(const vec2& scrollComponents) {
-	bool flag = OnMouseScroll(scrollComponents);
-	flag |= _BoolCallback([scrollComponents](const _CBPtr& ptr) { return ptr->OnMouseScroll(scrollComponents); });
-	return flag;
+void Element::_OnMouseScroll(const vec2& scrollComponents) {
+	OnMouseScroll(scrollComponents);
+	_Callback([scrollComponents](const _CBPtr& ptr) { ptr->OnMouseScroll(scrollComponents); });
 }
 
 void Element::_DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3) {

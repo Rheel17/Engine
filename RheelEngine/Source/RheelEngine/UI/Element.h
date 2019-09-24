@@ -85,6 +85,12 @@ public:
 	bool LoseFocus();
 
 	/**
+	 * Return true if this element should receive mouse events. If this method
+	 * returns false, the element is transparent to mouse events.
+	 */
+	virtual bool IsOpaque();
+
+	/**
 	 * Sets the drag-enabled flag for this element. If this is set to true, the
 	 * OnMouseDrag() method will be called when the mouse is moved while a
 	 * button is pressed.
@@ -156,8 +162,7 @@ protected:
 	void _MoveSuperFields(Element&& element);
 
 private:
-	void _VoidCallback(std::function<void(const _CBPtr&)> callback);
-	bool _BoolCallback(std::function<bool(const _CBPtr&)> callback);
+	void _Callback(std::function<void(const _CBPtr&)> callback);
 
 	void _OnResize();
 	void _OnFocusGained();
@@ -166,14 +171,14 @@ private:
 	void _OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
 	void _OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
 	void _OnCharacterInput(wchar_t character);
-	bool _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
-	bool _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
+	void _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
+	void _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
 	void _OnMouseEnter(const vec2& position);
 	void _OnMouseExit(const vec2& position);
-	bool _OnMouseMove(const vec2& position);
-	bool _OnMouseJump(const vec2& position);
-	bool _OnMouseDrag(const vec2& origin, const vec2& position);
-	bool _OnMouseScroll(const vec2& scrollComponents);
+	void _OnMouseMove(const vec2& position);
+	void _OnMouseJump(const vec2& position);
+	void _OnMouseDrag(const vec2& origin, const vec2& position);
+	void _OnMouseScroll(const vec2& scrollComponents);
 
 	Container *_parent_container;
 	Bounds _bounds;

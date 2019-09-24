@@ -114,6 +114,13 @@ public:
 	Element *ElementAt(unsigned x, unsigned y);
 
 	/**
+	 * Returns the element at the specified position. When no element has been
+	 * added at the given position, this container is returned. If multiple
+	 * elements share the position, the top opaque one (last added) is returned.
+	 */
+	Element *OpaqueElementAt(unsigned x, unsigned y);
+
+	/**
 	 * Adds a constraint between elements in this container. For more details
 	 * about constraints, look at the documentation of the Constraint class.
 	 *
@@ -187,9 +194,6 @@ private:
 	using TempBoundsMap = std::map<Element *, TemporaryBounds>;
 
 	Container(UI *ui);
-
-	std::vector<Element *> _AllElementsAt(unsigned x, unsigned y);
-	void _FillElementsAt(unsigned x, unsigned y, std::vector<Element *>& v);
 
 	void _CheckElement(Element *element, std::string sourceOrDestination) const;
 	void _DeleteConstraintTree(ConstraintTreeNode *node);

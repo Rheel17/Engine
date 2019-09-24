@@ -83,6 +83,10 @@ public:
 				{ 1.0f, 1.0f, 1.0f, 0.2f });
 	}
 
+	bool IsOpaque() override {
+		return false;
+	}
+
 };
 
 static Blueprint createCubeBlueprint() {

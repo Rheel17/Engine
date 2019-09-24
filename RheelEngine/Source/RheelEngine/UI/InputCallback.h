@@ -72,11 +72,8 @@ public:
 	 * Parameters
 	 * 	button: the button that was pressed
 	 * 	mods: any modifiers that were used
-	 * Return
-	 * 	True if this event should be consumed. False to pass to the underlying
-	 * 	element.
 	 */
-	virtual bool OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) { return false; }
+	virtual void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {}
 
 	/**
 	 * Called when a mouse button is released.
@@ -84,20 +81,14 @@ public:
 	 * Parameters
 	 * 	button: the button that was pressed
 	 * 	mods: any modifiers that were used
-	 * Return
-	 * 	True if this event should be consumed. False to pass to the underlying
-	 * 	element.
 	 */
-	virtual bool OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) { return false; }
+	virtual void OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {}
 
 	/**
 	 * Called when the mouse enters the bounds of this component.
 	 *
 	 * Parameters
 	 * 	position: coordinates of the mouse position
-	 * Return
-	 * 	True if this event should be consumed. False to pass to the underlying
-	 * 	element.
 	 */
 	virtual void OnMouseEnter(const vec2& position) {}
 
@@ -106,9 +97,6 @@ public:
 	 *
 	 * Parameters
 	 * 	position: coordinates of the mouse position
-	 * Return
-	 * 	True if this event should be consumed. False to pass to the underlying
-	 * 	element.
 	 */
 	virtual void OnMouseExit(const vec2& position) {}
 
@@ -117,11 +105,8 @@ public:
 	 *
 	 * Parameters
 	 * 	position: coordinates of the mouse position
-	 * Return
-	 * 	True if this event should be consumed. False to pass to the underlying
-	 * 	element.
 	 */
-	virtual bool OnMouseMove(const vec2& position) { return false; }
+	virtual void OnMouseMove(const vec2& position) {}
 
 	/**
 	 * Called when the mouse is jumped without the user specifically moving the
@@ -129,11 +114,8 @@ public:
 	 *
 	 * Parameters
 	 * 	position: coordinates of the mouse position
-	 * Return
-	 * 	True if this event should be consumed. False to pass to the underlying
-	 * 	element.
 	 */
-	virtual bool OnMouseJump(const vec2& position) { return false; }
+	virtual void OnMouseJump(const vec2& position) {}
 
 	/**
 	 * Called when the mouse is moved with at least one button pressed.
@@ -142,11 +124,8 @@ public:
 	 * 	origin: coordinates of the origin of the drag (where the mouse was
 	 * 		clicked)
 	 * 	position: coordinates of the mouse position
-	 * Return
-	 * 	True if this event should be consumed. False to pass to the underlying
-	 * 	element.
 	 */
-	virtual bool OnMouseDrag(const vec2& origin, const vec2& position) { return false; }
+	virtual void OnMouseDrag(const vec2& origin, const vec2& position) {}
 
 	/**
 	 * Called when the mouse is scrolled.
@@ -154,11 +133,8 @@ public:
 	 * Parameters
 	 * 	x: the x component of the scroll
 	 * 	y: the y component of the scroll
- 	 * Return
-	 * 	True if this event should be consumed. False to pass to the underlying
-	 * 	element.
 	 */
-	virtual bool OnMouseScroll(const vec2& scrollComponents) { return false; }
+	virtual void OnMouseScroll(const vec2& scrollComponents) {}
 
 };
 
