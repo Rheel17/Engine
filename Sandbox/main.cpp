@@ -2,6 +2,20 @@
 
 using namespace rheel;
 
+class ObjectPainterComponent : public CollisionComponent {
+	COMPONENT_INIT(ObjectPainterComponent);
+
+public:
+	void OnCollisionStart(CollisionComponent& other) override {
+		auto parent = other.Parent();
+		if (parent->BlueprintName() != "ball") {
+			other.Parent()->GetComponent<ModelRenderComponent>()
+					->SetMaterial({ Color { 1.0f, 0.0f, 0.0f, 1.0f }, 0.7f, 0.0f });
+		}
+	}
+
+};
+
 class GameInputScript : public Script {
 	SCRIPT_INIT(GameInputScript);
 
@@ -78,6 +92,8 @@ static Blueprint createCubeBlueprint() {
 	rigidBodyComponent.SetMass(10000.0f);
 	rigidBodyComponent.SetBounciness(0.05f);
 
+	blueprint.AddComponent<CollisionComponent>();
+
 	return blueprint;
 }
 
@@ -112,6 +128,8 @@ static Blueprint createBallBlueprint() {
 	rigidBodyComponent.SetMass(18000.0f);
 	rigidBodyComponent.SetBounciness(0.3f);
 
+	blueprint.AddComponent<ObjectPainterComponent>();
+
 	return blueprint;
 }
 
@@ -143,11 +161,11 @@ static SceneDescription createSceneDescription() {
 	auto& eulerCameraController = description.AddScript<EulerCameraController>();
 	eulerCameraController.SetCamera("main_camera");
 
-//	for (int i = -2; i <= 2; i++) {
-//		for (int j = 0; j < 5; j++) {
-//			description.AddObject("cube", { 2.1f * i, 2.1f * j, 2.1f * i });
-//		}
-//	}
+	for (int i = -2; i <= 2; i++) {
+		for (int j = 0; j < 5; j++) {
+			description.AddObject("cube", { 2.1f * i, 2.1f * j, 2.1f * i });
+		}
+	}
 
 	description.AddObject("floor", { 0, -2, 0 });
 	description.AddObject("ramp", { -16, 5, 0 }, quat(vec3(0, 0, -0.6f)));

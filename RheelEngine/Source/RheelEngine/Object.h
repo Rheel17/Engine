@@ -46,6 +46,11 @@ public:
 	Scene *ParentScene();
 
 	/**
+	 * Returns the name of the blueprint that constructed this object.
+	 */
+	const std::string& BlueprintName() const;
+
+	/**
 	 * Sets the position of this object.
 	 */
 	void SetPosition(const vec3& position);
@@ -113,6 +118,8 @@ public:
 
 private:
 	void _SetParentScene(Scene *scene);
+
+	std::string _blueprint_name;
 
 	Scene *_parent_scene = nullptr;
 	Object *_parent_object = nullptr;

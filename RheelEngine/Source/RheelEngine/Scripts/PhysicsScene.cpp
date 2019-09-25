@@ -1,6 +1,17 @@
 #include "PhysicsScene.h"
 
+#include "../Object.h"
+#include "../Components/CollisionComponent.h"
+
 namespace rheel {
+
+bool PhysicsScene::_CollisionData::operator==(const _CollisionData& other) const {
+	return other.cc0 == cc0 && other.cc1 == cc1;
+}
+
+constexpr std::size_t PhysicsScene::_CollisionDataHash::operator()(const _CollisionData& data) const {
+	return std::size_t(data.cc0) * std::size_t(data.cc1) * 0x4e911fa1;
+}
 
 PhysicsScene::PhysicsScene(const PhysicsScene& script) :
 		_gravity(script._gravity) {}
@@ -19,15 +30,7 @@ void PhysicsScene::Initialize() {
 
 void PhysicsScene::PreOnUpdate() {
 	_world->stepSimulation(TimeDelta());
-
-	std::cout << "[" << std::endl;
-
-	for (int i = 0; i < _world->getDispatcher()->getNumManifolds(); i++) {
-		auto manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);
-		std::cout << " " << manifold << std::endl;
-	}
-
-	std::cout << "]" << std::endl;
+	_HandleCollisions();
 }
 
 void PhysicsScene::SetGravity(vec3 gravity) {
@@ -66,6 +69,49 @@ RigidBodyComponent *PhysicsScene::ShootRay(const vec3& origin, const vec3& direc
 
 void PhysicsScene::_AddBody(btRigidBody *body) {
 	_world->addRigidBody(body);
+}
+
+void PhysicsScene::_HandleCollisions() {
+	for (int i = 0; i < _world->getDispatcher()->getNumManifolds(); i++) {
+		auto manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);
+
+		auto body0 = static_cast<RigidBodyComponent *>(manifold->getBody0()->getUserPointer());
+		auto body1 = static_cast<RigidBodyComponent *>(manifold->getBody1()->getUserPointer());
+
+		auto cc0 = body0->Parent()->GetComponent<CollisionComponent>();
+		if (!cc0) {
+			continue;
+		}
+
+		auto cc1 = body1->Parent()->GetComponent<CollisionComponent>();
+		if (!cc1) {
+			continue;
+		}
+
+		auto iter = _collisions.insert({ cc0, cc1, false });
+		iter.first->has_collision = true;
+
+		if (iter.second) {
+			cc0->OnCollisionStart(*cc1);
+			cc1->OnCollisionStart(*cc0);
+		}
+	}
+
+	std::vector<_CollisionData> toRemove;
+
+	for (const _CollisionData& data : _collisions) {
+		if (!data.has_collision) {
+			toRemove.push_back(data);
+			data.cc0->OnCollisionEnd(*data.cc1);
+			data.cc1->OnCollisionEnd(*data.cc0);
+		} else {
+			data.has_collision = false;
+		}
+	}
+
+	for (const _CollisionData& data : toRemove) {
+		_collisions.erase(data);
+	}
 }
 
 }

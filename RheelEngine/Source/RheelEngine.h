@@ -7,6 +7,7 @@
 #include "RheelEngine/Engine.h"
 #include "RheelEngine/ResourceManager.h"
 
+#include "RheelEngine/Components/CollisionComponent.h"
 #include "RheelEngine/Components/ModelRenderComponent.h"
 #include "RheelEngine/Components/RigidBodyComponent.h"
 

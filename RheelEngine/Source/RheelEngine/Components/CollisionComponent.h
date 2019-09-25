@@ -12,15 +12,16 @@ namespace rheel {
  * collisions with other objects having a CollisionComponent will be detected.
  */
 class RE_API CollisionComponent : public Component {
+	COMPONENT_INIT(CollisionComponent);
 
 public:
 	CollisionComponent();
 
 	~CollisionComponent() = default;
 
-	virtual void OnCollisionStart(const CollisionComponent& other) = 0;
+	virtual void OnCollisionStart(CollisionComponent& other) {}
 
-	virtual void OnCollisionEnd(const CollisionComponent& other) = 0;
+	virtual void OnCollisionEnd(CollisionComponent& other) {}
 
 };
 

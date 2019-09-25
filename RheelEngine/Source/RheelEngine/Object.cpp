@@ -4,7 +4,9 @@
 
 namespace rheel {
 
-Object::Object(const Blueprint& blueprint) {
+Object::Object(const Blueprint& blueprint) :
+		_blueprint_name(blueprint.Name()) {
+
 	const auto& components = blueprint._Components();
 	const auto& children = blueprint._Children();
 
@@ -23,6 +25,7 @@ Object::Object(const Blueprint& blueprint) {
 }
 
 Object::Object(Object&& object) noexcept :
+		_blueprint_name(std::move(object._blueprint_name)),
 		_parent_scene(object._parent_scene),
 		_parent_object(object._parent_object),
 		_alive(object._alive),
@@ -44,6 +47,7 @@ Object::Object(Object&& object) noexcept :
 
 Object& Object::operator=(Object&& object) {
 	// move fields
+	_blueprint_name = std::move(object._blueprint_name);
 	_parent_scene = std::move(object._parent_scene);
 	_parent_object = std::move(object._parent_object);
 	_alive = std::move(object._alive);
@@ -71,6 +75,10 @@ Object& Object::ParentObject() {
 
 Scene *Object::ParentScene() {
 	return _parent_scene;
+}
+
+const std::string& Object::BlueprintName() const {
+	return _blueprint_name;
 }
 
 void Object::SetPosition(const vec3& position) {

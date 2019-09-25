@@ -2,8 +2,6 @@
 
 namespace rheel {
 
-CollisionComponent::CollisionComponent()
-{
-}
+CollisionComponent::CollisionComponent() {}
 
 }
