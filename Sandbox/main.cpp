@@ -10,6 +10,14 @@ public:
 		auto parent = other.Parent();
 		if (parent->BlueprintName() != "ball") {
 			other.Parent()->GetComponent<ModelRenderComponent>()
+					->SetMaterial({ Color { 0.0f, 1.0f, 0.0f, 1.0f }, 0.7f, 0.0f });
+		}
+	}
+
+	void OnCollisionEnd(CollisionComponent& other) override {
+		auto parent = other.Parent();
+		if (parent->BlueprintName() != "ball") {
+			other.Parent()->GetComponent<ModelRenderComponent>()
 					->SetMaterial({ Color { 1.0f, 0.0f, 0.0f, 1.0f }, 0.7f, 0.0f });
 		}
 	}

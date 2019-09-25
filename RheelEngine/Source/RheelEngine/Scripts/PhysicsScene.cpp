@@ -75,6 +75,10 @@ void PhysicsScene::_HandleCollisions() {
 	for (int i = 0; i < _world->getDispatcher()->getNumManifolds(); i++) {
 		auto manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);
 
+		if (manifold->getNumContacts() == 0) {
+			continue;
+		}
+
 		auto body0 = static_cast<RigidBodyComponent *>(manifold->getBody0()->getUserPointer());
 		auto body1 = static_cast<RigidBodyComponent *>(manifold->getBody1()->getUserPointer());
 
