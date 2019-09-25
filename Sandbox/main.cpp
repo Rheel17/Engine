@@ -7,17 +7,7 @@ class GameInputScript : public Script {
 
 public:
 	void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) override {
-		if (button == Input::MouseButton::RIGHT) {
-			if (InputSource()->HasFocus()) {
-				InputSource()->LoseFocus();
-				Parent().GetScript<EulerCameraController>()->SetActive(false);
-			} else {
-				InputSource()->SetFocusable(true);
-				InputSource()->RequestFocus();
-				InputSource()->SetFocusable(false);
-				Parent().GetScript<EulerCameraController>()->SetActive(true);
-			}
-		} else if (button == Input::MouseButton::LEFT) {
+		if (button == Input::MouseButton::LEFT && InputSource()->HasFocus()) {
 			if (InputSource()->HasFocus()) {
 				auto camera = Parent().GetCamera("main_camera");
 				Object& object = Parent().AddObject("ball", camera->Position());
@@ -27,42 +17,30 @@ public:
 		}
 	}
 
-	void OnMouseMove(const vec2& position) override {
-		if (InputSource()->HasFocus()) {
-			return;
-		}
+};
 
-		auto bounds = InputSource()->GetBounds();
-		auto camera = Parent().GetCamera("main_camera");
-		vec3 dir = camera->RayDirection(bounds.width, bounds.height, position);
+class FpsUpdaterScript : public Script {
+	SCRIPT_INIT(FpsUpdaterScript);
 
-		auto rigidBody = Parent().GetScript<PhysicsScene>()->ShootRay(camera->Position(), dir, 0.01f, 100.0f);
+public:
+	void SetElement(TextElement *textElement) {
+		_element = textElement;
+	}
 
-		if (!rigidBody) {
-			if (_selected_object) {
-				_selected_object->GetComponent<ModelRenderComponent>()->SetMaterial(_original_material);
-				_selected_object = nullptr;
-			}
-		} else {
-			auto obj = rigidBody->Parent();
+	void PreOnUpdate() override {
+		if (_element) {
+			const int freq = 30;
 
-			if (_selected_object != obj) {
-				if (_selected_object) {
-					_selected_object->GetComponent<ModelRenderComponent>()->SetMaterial(_original_material);
-				}
-
-				_selected_object = obj;
-				_original_material = _selected_object->GetComponent<ModelRenderComponent>()->GetMaterial();
-
-				Material m = Material({ 0.8f, 0.1f, 0.1f, 1.0f }, 0.7f, 0.0f);
-				_selected_object->GetComponent<ModelRenderComponent>()->SetMaterial(m);
+			if (++_frame_counter == freq) {
+				_element->SetText(std::to_string(int(1.0f / TimeDelta())) + " FPS");
+				_frame_counter %= freq;
 			}
 		}
 	}
 
 private:
-	Object *_selected_object = nullptr;
-	Material _original_material;
+	TextElement *_element;
+	int _frame_counter;
 
 };
 
@@ -157,19 +135,19 @@ static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
 	description.AddScript<GameInputScript>();
+	description.AddScript<FpsUpdaterScript>();
 
 	auto& physicsScene = description.AddScript<PhysicsScene>();
 	physicsScene.SetGravity({ 0.0f, -9.81f, 0.0f });
 
 	auto& eulerCameraController = description.AddScript<EulerCameraController>();
 	eulerCameraController.SetCamera("main_camera");
-	eulerCameraController.SetActive(false);
 
-	for (int i = -2; i <= 2; i++) {
-		for (int j = 0; j < 5; j++) {
-			description.AddObject("cube", { 2.1f * i, 2.1f * j, 2.1f * i });
-		}
-	}
+//	for (int i = -2; i <= 2; i++) {
+//		for (int j = 0; j < 5; j++) {
+//			description.AddObject("cube", { 2.1f * i, 2.1f * j, 2.1f * i });
+//		}
+//	}
 
 	description.AddObject("floor", { 0, -2, 0 });
 	description.AddObject("ramp", { -16, 5, 0 }, quat(vec3(0, 0, -0.6f)));
@@ -215,7 +193,6 @@ class SandboxGame : public Game {
 		SceneElement *sceneElement = ui.InsertElement(SceneElement("main_camera"));
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
-		sceneElement->SetFocusable(false);
 
 		const auto& resolution = Engine::GetDisplayConfiguration().resolution;
 		int size = std::max(resolution.width, resolution.height) / 80;
@@ -228,7 +205,13 @@ class SandboxGame : public Game {
 		ui.AddConstraint(crosshairElement, Constraint::TOP, nullptr, Constraint::TOP, verticalMargin);
 		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM, verticalMargin);
 
+		TextElement *fpsElement = ui.InsertElement(TextElement("0 FPS", 16));
+		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
+
 		Engine::GetUI().SetContainer(std::move(ui));
+		sceneElement->RequestFocus();
+
+		Engine::GetActiveScene()->GetScript<FpsUpdaterScript>()->SetElement(fpsElement);
 	}
 
 };

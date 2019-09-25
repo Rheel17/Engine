@@ -23,8 +23,6 @@ public:
 
 	void PreOnUpdate() override;
 
-	void PostOnUpdate() override;
-
 	void SetGravity(vec3 gravity);
 
 	/**

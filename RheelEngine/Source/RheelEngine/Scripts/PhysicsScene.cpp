@@ -19,9 +19,16 @@ void PhysicsScene::Initialize() {
 
 void PhysicsScene::PreOnUpdate() {
 	_world->stepSimulation(TimeDelta());
-}
 
-void PhysicsScene::PostOnUpdate() {}
+	std::cout << "[" << std::endl;
+
+	for (int i = 0; i < _world->getDispatcher()->getNumManifolds(); i++) {
+		auto manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);
+		std::cout << " " << manifold << std::endl;
+	}
+
+	std::cout << "]" << std::endl;
+}
 
 void PhysicsScene::SetGravity(vec3 gravity) {
 	_gravity = std::move(gravity);
