@@ -1,7 +1,8 @@
 .metadata/
 **/.settings/
 **/*.o
-Build/*/libRheelEngine.dll
-Build/*/Sandbox.exe
 Build/Debug/
+Build/Libaries/
+Build/*/*.dll
+Build/*/Sandbox.exe
 **/_todo
