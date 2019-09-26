@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef IMAGERESOURCE_H_
 #define IMAGERESOURCE_H_
 #include "_common.h"

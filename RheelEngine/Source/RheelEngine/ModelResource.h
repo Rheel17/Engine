@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef MODELRESOURCE_H_
 #define MODELRESOURCE_H_
 #include "_common.h"

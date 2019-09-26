@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef SCRIPT_H_
 #define SCRIPT_H_
 #include "_common.h"

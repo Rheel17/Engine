@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef FORWARDSCENERENDERER_H_
 #define FORWARDSCENERENDERER_H_
 #include "../_common.h"

@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #include "TextElement.h"
 
 #include "../../Renderer/Text/TextRenderer.h"

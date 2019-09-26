@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef MODELRENDERER_H_
 #define MODELRENDERER_H_
 #include "../_common.h"

@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef FONT_H_
 #define FONT_H_
 #include "../../_common.h"

@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef DIRECTIONALLIGHT_H_
 #define DIRECTIONALLIGHT_H_
 #include "_common.h"

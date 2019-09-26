@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef PHYSICSSCENE_H_
 #define PHYSICSSCENE_H_
 #include "../_common.h"

@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef GAME_H_
 #define GAME_H_
 #include "_common.h"

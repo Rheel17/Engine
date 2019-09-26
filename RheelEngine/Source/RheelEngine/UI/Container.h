@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef CONTAINER_H_
 #define CONTAINER_H_
 #include "../_common.h"

@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef OBJECT_H_
 #define OBJECT_H_
 #include "_common.h"

@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 #include "_common.h"

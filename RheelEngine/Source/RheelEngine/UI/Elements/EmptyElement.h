@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef EMPTYELEMENT_H_
 #define EMPTYELEMENT_H_
 #include "../../_common.h"

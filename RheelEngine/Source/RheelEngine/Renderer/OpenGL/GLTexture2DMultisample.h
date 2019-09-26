@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef GLTEXTURE2DMULTISAMPLE_H_
 #define GLTEXTURE2DMULTISAMPLE_H_
 #include "../../_common.h"

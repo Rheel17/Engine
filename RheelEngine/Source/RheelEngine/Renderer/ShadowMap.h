@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef SHADOWMAP_H_
 #define SHADOWMAP_H_
 #include "../_common.h"

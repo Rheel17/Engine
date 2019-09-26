@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef POINTLIGHT_H_
 #define POINTLIGHT_H_
 #include "_common.h"

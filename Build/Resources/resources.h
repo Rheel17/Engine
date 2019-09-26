@@ -1,3 +1,7 @@
+/* 
+ * Copyright © 2019 Levi van Rheenen. All rights reserved. 
+ */ 
+
 // THIS IS A MACHINE GENERATED FILE. DO NOT EDIT! 
 #ifndef ___RE_RESOURCES_H 
 #define ___RE_RESOURCES_H 

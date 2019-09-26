@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #include "ModelResource.h"
 
 #include <VHACD.h>

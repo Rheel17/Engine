@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #version 330 core
 
 in vec3 vf_BarycentricCoordinates;

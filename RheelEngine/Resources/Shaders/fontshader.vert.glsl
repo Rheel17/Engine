@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #version 330 core
 
 layout (location = 0) in vec3 vert_Position;

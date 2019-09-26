@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef WINDOW_H_
 #define WINDOW_H_
 #include "../_common.h"

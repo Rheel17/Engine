@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef GLSHADERPROGRAM_H_
 #define GLSHADERPROGRAM_H_
 #include "../../_common.h"

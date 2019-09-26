@@ -1,7 +1,6 @@
-/**
- * Copyright (c) 2019 Levi van Rheenen - All rights reserved
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
  */
-
 #include "GLShaderProgram.h"
 
 #include <iostream>

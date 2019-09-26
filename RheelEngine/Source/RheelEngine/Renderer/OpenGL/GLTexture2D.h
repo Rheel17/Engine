@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef GLTEXTURE2D_H_
 #define GLTEXTURE2D_H_
 #include "../../_common.h"

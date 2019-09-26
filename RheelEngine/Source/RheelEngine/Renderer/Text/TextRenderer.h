@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef TEXTRENDERER_H_
 #define TEXTRENDERER_H_
 #include "../../_common.h"

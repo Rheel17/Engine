@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef PHYSICSSHAPE_H_
 #define PHYSICSSHAPE_H_
 #include "_common.h"

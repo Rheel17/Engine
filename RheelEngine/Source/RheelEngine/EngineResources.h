@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef ENGINERESOURCES_H_
 #define ENGINERESOURCES_H_
 #include "_common.h"

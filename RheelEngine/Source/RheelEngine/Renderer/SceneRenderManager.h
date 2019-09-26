@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef SCENERENDERMANAGER_H_
 #define SCENERENDERMANAGER_H_
 #include "../_common.h"

@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef GL_UTILS_H_
 #define GL_UTILS_H_
 #include "../../_common.h"

@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef HASHES_H_
 #define HASHES_H_
 #include "../_common.h"

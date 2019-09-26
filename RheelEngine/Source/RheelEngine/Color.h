@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ */
 #ifndef COLOR_H_
 #define COLOR_H_
 #include "_common.h"
