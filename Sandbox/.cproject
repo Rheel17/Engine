@@ -35,6 +35,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\freealut\include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.750886266" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1645656571" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=c++17" valueType="string"/>
@@ -104,6 +105,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\freealut\include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.62981634" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1541028533" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=c++17" valueType="string"/>
@@ -174,6 +176,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\freealut\include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.300474952" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1015438598" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=c++17" valueType="string"/>

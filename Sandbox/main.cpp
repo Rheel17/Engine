@@ -215,6 +215,8 @@ class SandboxGame : public Game {
 	}
 
 	void Start() override {
+		ResourceManager::GetSound("background.wav");
+
 		Engine::SetActiveScene("main");
 
 		Container ui;

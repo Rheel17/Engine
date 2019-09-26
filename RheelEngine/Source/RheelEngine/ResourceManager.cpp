@@ -28,4 +28,8 @@ ModelResource& ResourceManager::GetModel(const std::string& path) {
 	return _Get<ModelResource>(_resource_path + "/" + path);
 }
 
+SoundResource& ResourceManager::GetSound(const std::string& path) {
+	return _Get<SoundResource>(_resource_path + "/" + path);
+}
+
 }

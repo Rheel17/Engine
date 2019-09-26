@@ -10,6 +10,7 @@
 
 #include "ImageResource.h"
 #include "ModelResource.h"
+#include "SoundResource.h"
 
 namespace rheel {
 
@@ -50,6 +51,11 @@ public:
 	 * Loads a model from the file system.
 	 */
 	static ModelResource& GetModel(const std::string& path);
+
+	/**
+	 * Loads a sound from the file system.
+	 */
+	static SoundResource& GetSound(const std::string& path);
 
 private:
 	template<typename R, typename T>

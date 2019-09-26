@@ -12,6 +12,8 @@
 namespace rheel {
 
 class RE_API Image {
+	RE_NO_MOVE(Image);
+	RE_NO_COPY(Image);
 
 public:
 	enum ImageFormat {
