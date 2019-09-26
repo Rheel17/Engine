@@ -1,7 +1,3 @@
-REM /*
-REM  * Copyright © 2019 Levi van Rheenen. All rights reserved.
-REM  */
- 
 @echo off
 setlocal EnableDelayedExpansion
 
