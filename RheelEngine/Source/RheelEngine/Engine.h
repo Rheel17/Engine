@@ -6,6 +6,7 @@
 #include "_common.h"
 
 #include "Game.h"
+#include "Audio/AudioManager.h"
 #include "Renderer/SceneRenderManager.h"
 #include "Renderer/Window.h"
 #include "UI/UI.h"
@@ -22,6 +23,9 @@ class RE_API Engine {
 		DisplayConfiguration display_configuration;
 		Window *window = nullptr;
 		UI *ui = nullptr;
+
+		// audio
+		std::unique_ptr<AudioManager> audio_manager;
 
 		// game state
 		Scene *active_scene = nullptr;
@@ -59,6 +63,11 @@ public:
 	 * Gets the current UI
 	 */
 	static UI& GetUI();
+
+	/**
+	 * Returns the audio manager in use.
+	 */
+	static AudioManager& GetAudioManager();
 
 	/**
 	 * Creates a new empty scene.

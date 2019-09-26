@@ -5,6 +5,12 @@
 
 #include "Renderer/Text/Font.h"
 
+#include <cstring>
+
+#include <AL/alc.h>
+#include <AL/al.h>
+#include <AL/alext.h>
+
 namespace rheel {
 
 Engine::EngineInstance Engine::_instance;
@@ -20,6 +26,7 @@ Engine::EngineInstance::~EngineInstance() {
 void Engine::_Initialize() {
 	Window::InitializeDisplaySystems();
 	Font::Initialize();
+	_instance.audio_manager = std::make_unique<AudioManager>();
 }
 
 void Engine::_Run(Game *game) {
@@ -62,6 +69,10 @@ Window& Engine::GetWindow() {
 
 UI& Engine::GetUI() {
 	return *_instance.ui;
+}
+
+AudioManager& Engine::GetAudioManager() {
+	return *_instance.audio_manager;
 }
 
 Scene *Engine::CreateScene() {

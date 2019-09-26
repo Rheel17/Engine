@@ -41,6 +41,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\v-hacd\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Build/Resources}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1257020691" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
@@ -83,6 +84,7 @@
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1226383228" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" useByScannerDiscovery="false" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.userobjs.43350718" name="Other objects" superClass="gnu.cpp.link.option.userobjs" useByScannerDiscovery="false" valueType="userObjs">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Build/Resources/resources.o}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\lib\libOpenAL32.dll.a&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1826690568" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -149,6 +151,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\v-hacd\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Build/Resources}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1759327498" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
@@ -191,6 +194,7 @@
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.561436206" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" useByScannerDiscovery="false" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.userobjs.1501414571" name="Other objects" superClass="gnu.cpp.link.option.userobjs" useByScannerDiscovery="false" valueType="userObjs">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Build/Resources/resources.o}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\lib\libOpenAL32.dll.a&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.4591036" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -257,6 +261,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\rapidxml-1.13\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\FreeType\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Libraries\v-hacd\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Build/Resources}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1187908738" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
@@ -301,6 +306,7 @@
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1918112488" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" useByScannerDiscovery="false" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.userobjs.1867258449" name="Other objects" superClass="gnu.cpp.link.option.userobjs" useByScannerDiscovery="false" valueType="userObjs">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Build/Resources/resources.o}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Libraries\openal-soft-1.19.1\lib\libOpenAL32.dll.a&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1029894215" name="Linker flags" superClass="gnu.cpp.link.option.flags" useByScannerDiscovery="false" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1267319073" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">

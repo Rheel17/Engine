@@ -25,6 +25,8 @@
 // includes for entry point
 #include <type_traits>
 
+#include <AL/al.h>
+
 // entry point
 namespace rheel {
 
@@ -44,7 +46,7 @@ void __Entry__() {
 // macro for entry point
 #define RHEEL_ENGINE_ENTRY(GameClass)       \
 	int main(int argc, char* argv[]) {      \
-		__Entry__<GameClass>();				\
+		rheel::__Entry__<GameClass>();		\
 	}
 
 #endif
