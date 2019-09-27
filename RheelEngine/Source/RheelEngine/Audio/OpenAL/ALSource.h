@@ -5,7 +5,7 @@
 #define ALSOURCE_H_
 #include "../../_common.h"
 
-#include <AL/al.h>
+#include "ALBuffer.h"
 
 #include <memory>
 
@@ -15,6 +15,11 @@ class RE_API ALSource {
 
 public:
 	ALSource();
+
+	/**
+	 * Sets the sound buffer for this source.
+	 */
+	void SetBuffer(const ALBuffer& buffer);
 
 	/**
 	 * Sets the gain of the source. This gain can be in a range of 0 to 1, and

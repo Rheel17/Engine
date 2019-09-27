@@ -29,6 +29,10 @@ void Sound::_LoadWAVFile(const std::string& filename) {
 
 #pragma GCC diagnostic pop
 
+	_size = size;
+	_format = Sound::InternalFormat(format);
+	_frequency = frequency;
+
 }
 
 }

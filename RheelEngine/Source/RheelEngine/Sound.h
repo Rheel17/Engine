@@ -5,7 +5,7 @@
 #define SOUND_H_
 #include "_common.h"
 
-#include <string.h>
+#include <AL/al.h>
 
 #include <iostream>
 
@@ -20,11 +20,22 @@ public:
 		FormatWAV
 	};
 
+	enum class InternalFormat {
+		MONO8 = AL_FORMAT_MONO8, MONO16 = AL_FORMAT_MONO16,
+		STEREO8 = AL_FORMAT_STEREO8, STEREO16 = AL_FORMAT_STEREO16
+	};
+
 public:
 	Sound(const std::string& filename, SoundFormat format);
 	~Sound();
 
 	const char *Data() const;
+
+	unsigned Size() const;
+
+	InternalFormat Format() const;
+
+	int Frequency() const;
 
 private:
 	void _LoadWAVFile(const std::string& filename);
@@ -32,6 +43,10 @@ private:
 	void _LoadFromFile(const std::string& filename, SoundFormat format);
 
 	void *_data;
+	unsigned _size;
+
+	InternalFormat _format;
+	int _frequency;
 
 };
 

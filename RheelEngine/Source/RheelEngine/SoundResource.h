@@ -7,6 +7,7 @@
 
 #include "Sound.h"
 #include "Resource.h"
+#include "Audio/AudioClip.h"
 
 namespace rheel {
 
@@ -16,9 +17,13 @@ class RE_API SoundResource : public Resource<Sound> {
 
 	friend class ResourceManager;
 
+public:
+	const AudioClip& GetAudioClip() const;
+
 private:
 	SoundResource(const std::string& path);
 
+	mutable std::unique_ptr<AudioClip> _audio_clip = nullptr;
 };
 
 }

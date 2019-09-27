@@ -17,6 +17,18 @@ const char *Sound::Data() const {
 	return reinterpret_cast<const char *>(_data);
 }
 
+unsigned Sound::Size() const {
+	return _size;
+}
+
+Sound::InternalFormat Sound::Format() const {
+	return _format;
+}
+
+int Sound::Frequency() const {
+	return _frequency;
+}
+
 void Sound::_LoadFromFile(const std::string& filename, SoundFormat format) {
 	switch (format) {
 		case FormatWAV:

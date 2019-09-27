@@ -11,4 +11,12 @@ SoundResource::SoundResource(const std::string& path) :
 	// TODO: automatically find correct model format based on file extension
 }
 
+const AudioClip& SoundResource::GetAudioClip() const {
+	if (!_audio_clip) {
+		_audio_clip = std::make_unique<AudioClip>(Get());
+	}
+
+	return *_audio_clip;
+}
+
 }

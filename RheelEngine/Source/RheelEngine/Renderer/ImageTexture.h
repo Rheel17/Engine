@@ -5,8 +5,6 @@
 #define IMAGETEXTURE_H_
 #include "../_common.h"
 
-#include <unordered_map>
-
 #include "../Image.h"
 #include "OpenGL/GLTexture2D.h"
 
