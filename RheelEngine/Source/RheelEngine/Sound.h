@@ -27,12 +27,11 @@ public:
 	const char *Data() const;
 
 private:
-	void _LoadWAV(const char *input);
+	void _LoadWAVFile(const std::string& filename);
 
 	void _LoadFromFile(const std::string& filename, SoundFormat format);
-	void _LoadFromMemory(const char *input, SoundFormat format);
 
-	char *_data;
+	void *_data;
 
 };
 

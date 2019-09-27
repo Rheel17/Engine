@@ -7,7 +7,15 @@
 
 namespace rheel {
 
-void Sound::_LoadWAV(const char *input) {
+void Sound::_LoadWAVFile(const std::string& filename) {
+	// copy the file name into a non-const ALbyte array for alut to handle
+	std::size_t len = filename.length();
+	ALbyte file[len + 1];
+
+	for (std::size_t i = 0; i <= len; i++) {
+		file[i] = filename[i];
+	}
+
 	ALenum format;
 	ALsizei size;
 	ALsizei frequency;
@@ -17,9 +25,7 @@ void Sound::_LoadWAV(const char *input) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-	alutLoadWAVMemory(
-			reinterpret_cast<ALbyte *>(const_cast<char *>(input)),
-			&format, reinterpret_cast<ALvoid **>(&_data), &size, &frequency, &loop);
+	alutLoadWAVFile(file, &format, &_data, &size, &frequency, &loop);
 
 #pragma GCC diagnostic pop
 
