@@ -22,8 +22,7 @@ public:
 	void SetBuffer(const ALBuffer& buffer);
 
 	/**
-	 * Sets the gain of the source. This gain can be in a range of 0 to 1, and
-	 * values outside of this range will be clamped.
+	 * Sets the gain of the source.
 	 */
 	void SetGain(float gain);
 

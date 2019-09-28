@@ -17,8 +17,7 @@ class RE_API ALListener {
 
 public:
 	/**
-	 * Sets the gain of the OpenAL listener. This gain can be in a range of 0
-	 * to 1, and values outside of this range will be clamped.
+	 * Sets the gain of the OpenAL listener.
 	 */
 	void SetGain(float gain);
 

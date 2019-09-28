@@ -20,7 +20,7 @@ void ALSource::SetBuffer(const ALBuffer& buffer) {
 }
 
 void ALSource::SetGain(float gain) {
-	alSourcef(*_handle, AL_GAIN, std::clamp(gain, 0.0f, 1.0f));
+	alSourcef(*_handle, AL_GAIN, gain);
 }
 
 void ALSource::SetLooping(bool looping) {
