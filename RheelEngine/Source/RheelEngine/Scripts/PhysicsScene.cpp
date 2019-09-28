@@ -74,6 +74,32 @@ void PhysicsScene::_AddBody(btRigidBody *body) {
 	_world->addRigidBody(body);
 }
 
+void PhysicsScene::_RemoveBody(btRigidBody *body, CollisionComponent *cc) {
+	// handle current collisions
+	std::vector<_CollisionData> toRemove;
+
+	for (const auto& collision : _collisions) {
+		bool remove = true;
+
+		if (collision.cc0 == cc) {
+			collision.cc1->OnCollisionEnd(*cc);
+		} else if (collision.cc1 == cc) {
+			collision.cc0->OnCollisionEnd(*cc);
+		} else {
+			remove = false;
+		}
+
+		toRemove.push_back(collision);
+	}
+
+	for (const _CollisionData& data : toRemove) {
+		_collisions.erase(data);
+	}
+
+	// remove from the world
+	_world->removeRigidBody(body);
+}
+
 void PhysicsScene::_HandleCollisions() {
 	for (int i = 0; i < _world->getDispatcher()->getNumManifolds(); i++) {
 		auto manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);

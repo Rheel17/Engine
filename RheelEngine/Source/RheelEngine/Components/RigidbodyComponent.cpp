@@ -3,6 +3,7 @@
  */
 #include "RigidBodyComponent.h"
 
+#include "CollisionComponent.h"
 #include "../Scene.h"
 #include "../Scripts/PhysicsScene.h"
 #include "../Object.h"
@@ -67,7 +68,12 @@ void RigidBodyComponent::OnUpdate() {
 }
 
 void RigidBodyComponent::OnRemove() {
-	// TODO implement
+	PhysicsScene *physicsScene = Parent()->ParentScene()->GetScript<PhysicsScene>();
+	if (!physicsScene) {
+		return;
+	}
+
+	physicsScene->_RemoveBody(_body.get(), Parent()->GetComponent<CollisionComponent>());
 }
 
 void RigidBodyComponent::SetShape(PhysicsShape shape) {

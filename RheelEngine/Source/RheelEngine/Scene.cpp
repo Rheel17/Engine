@@ -85,13 +85,9 @@ void Scene::RemoveObject(Object& ptr) {
 	Object *object = &ptr;
 	object->FireEvent(Object::ON_REMOVE);
 
-	size_t index = (((size_t) object) - ((size_t) &_objects.front())) / sizeof(Object);
-
-	if (index >= _objects.size()) {
-		throw std::invalid_argument("index of object out of range");
-	}
-
-	_objects.erase(_objects.begin() + index);
+	auto iter = std::find_if(_objects.begin(), _objects.end(),
+			[object](const auto& ptr) { return ptr.get() == object; });
+	_objects.erase(iter);
 }
 
 Light *Scene::GetLight(const std::string& lightName) {

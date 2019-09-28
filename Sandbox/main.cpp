@@ -5,28 +5,6 @@
 
 using namespace rheel;
 
-class ObjectPainterComponent : public CollisionComponent {
-	COMPONENT_INIT(ObjectPainterComponent);
-
-public:
-	void OnCollisionStart(CollisionComponent& other) override {
-		auto parent = other.Parent();
-		if (parent->BlueprintName() != "ball") {
-			other.Parent()->GetComponent<ModelRenderComponent>()
-					->SetMaterial({ Color { 0.0f, 1.0f, 0.0f, 1.0f }, 0.7f, 0.0f });
-		}
-	}
-
-	void OnCollisionEnd(CollisionComponent& other) override {
-		auto parent = other.Parent();
-		if (parent->BlueprintName() != "ball") {
-			other.Parent()->GetComponent<ModelRenderComponent>()
-					->SetMaterial({ Color { 1.0f, 0.0f, 0.0f, 1.0f }, 0.7f, 0.0f });
-		}
-	}
-
-};
-
 class GameInputScript : public Script {
 	SCRIPT_INIT(GameInputScript);
 
@@ -41,31 +19,6 @@ public:
 			}
 		}
 	}
-
-};
-
-class FpsUpdaterScript : public Script {
-	SCRIPT_INIT(FpsUpdaterScript);
-
-public:
-	void SetElement(TextElement *textElement) {
-		_element = textElement;
-	}
-
-	void PreOnUpdate() override {
-		if (_element) {
-			const int freq = 30;
-
-			if (++_frame_counter == freq) {
-				_element->SetText(std::to_string(int(1.0f / TimeDelta())) + " FPS");
-				_frame_counter %= freq;
-			}
-		}
-	}
-
-private:
-	TextElement *_element;
-	int _frame_counter;
 
 };
 
@@ -139,8 +92,6 @@ static Blueprint createBallBlueprint() {
 	rigidBodyComponent.SetMass(18000.0f);
 	rigidBodyComponent.SetBounciness(0.3f);
 
-	blueprint.AddComponent<ObjectPainterComponent>();
-
 	return blueprint;
 }
 
@@ -164,7 +115,6 @@ static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
 	description.AddScript<GameInputScript>();
-	description.AddScript<FpsUpdaterScript>();
 
 	auto& physicsScene = description.AddScript<PhysicsScene>();
 	physicsScene.SetGravity({ 0.0f, -9.81f, 0.0f });
@@ -237,13 +187,8 @@ class SandboxGame : public Game {
 		ui.AddConstraint(crosshairElement, Constraint::TOP, nullptr, Constraint::TOP, verticalMargin);
 		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM, verticalMargin);
 
-		TextElement *fpsElement = ui.InsertElement(TextElement("0 FPS", 16));
-		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
-
 		Engine::GetUI().SetContainer(std::move(ui));
 		sceneElement->RequestFocus();
-
-		Engine::GetActiveScene()->GetScript<FpsUpdaterScript>()->SetElement(fpsElement);
 	}
 
 };

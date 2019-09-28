@@ -54,6 +54,7 @@ public:
 
 private:
 	void _AddBody(btRigidBody *body);
+	void _RemoveBody(btRigidBody *body, CollisionComponent *cc);
 	void _HandleCollisions();
 
 	PhysicsScene(const PhysicsScene& script);
