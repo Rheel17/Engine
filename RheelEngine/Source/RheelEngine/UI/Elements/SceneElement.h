@@ -4,6 +4,7 @@
 #ifndef SCENEELEMENT_H_
 #define SCENEELEMENT_H_
 #include "../../_common.h"
+#include "../../Renderer/PostProcessingStack.h"
 
 #include "../Element.h"
 
@@ -44,6 +45,12 @@ public:
 	 */
 	bool GetGrabOnFocus() const;
 
+	/**
+	 * Returns the post processing stack for this scene element. The reference
+	 * result can be changed to change the post processing stack.
+	 */
+	PostProcessingStack& GetPostProcessingStack();
+
 	void Draw(float dt) const override;
 
 	// Override methods to pass input events to scripts
@@ -64,6 +71,7 @@ private:
 
 	bool _grab_on_focus = true;
 
+	PostProcessingStack _post_processing_stack;
 	mutable std::shared_ptr<SceneRenderer> _scene_renderer;
 
 };

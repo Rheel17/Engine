@@ -89,7 +89,9 @@ void PhysicsScene::_RemoveBody(btRigidBody *body, CollisionComponent *cc) {
 			remove = false;
 		}
 
-		toRemove.push_back(collision);
+		if (remove) {
+			toRemove.push_back(collision);
+		}
 	}
 
 	for (const _CollisionData& data : toRemove) {

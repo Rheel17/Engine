@@ -30,6 +30,10 @@ bool SceneElement::GetGrabOnFocus() const {
 	return _grab_on_focus;
 }
 
+PostProcessingStack& SceneElement::GetPostProcessingStack() {
+	return _post_processing_stack;
+}
+
 void SceneElement::Draw(float dt) const {
 	const Bounds& bounds = GetBounds();
 	_InitializeRenderer(bounds);
