@@ -15,6 +15,7 @@
 #include "RheelEngine/Components/RigidBodyComponent.h"
 
 #include "RheelEngine/Scripts/EulerCameraController.h"
+#include "RheelEngine/Scripts/ListenerFollow.h"
 #include "RheelEngine/Scripts/PhysicsScene.h"
 
 #include "RheelEngine/UI/Elements/ColorElement.h"

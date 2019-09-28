@@ -13,6 +13,8 @@ class RE_API ALListener {
 	RE_NO_COPY(ALListener);
 	RE_NO_MOVE(ALListener);
 
+	friend class AudioManager;
+
 public:
 	/**
 	 * Sets the gain of the OpenAL listener. This gain can be in a range of 0
@@ -45,7 +47,7 @@ public:
 private:
 	ALListener() = default;
 
-public:
+private:
 	static ALListener INSTANCE;
 
 };

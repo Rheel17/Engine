@@ -5,6 +5,8 @@
 
 namespace rheel {
 
+ALListener ALListener::INSTANCE;
+
 void ALListener::SetGain(float gain) {
 	alListenerf(AL_GAIN, std::clamp(gain, 0.0f, 1.0f));
 }
