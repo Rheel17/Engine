@@ -42,6 +42,16 @@ public:
 	 */
 	void SetVelocity(const vec3& velocity);
 
+	/**
+	 * Plays the source
+	 */
+	void Play();
+
+	/**
+	 * Stops the source
+	 */
+	void Stop();
+
 private:
 	std::shared_ptr<ALuint> _handle;
 

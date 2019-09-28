@@ -15,6 +15,8 @@ class RE_API AudioClip {
 public:
 	AudioClip(const Sound& sound);
 
+	const ALBuffer& Buffer() const;
+
 private:
 	ALBuffer _buffer;
 

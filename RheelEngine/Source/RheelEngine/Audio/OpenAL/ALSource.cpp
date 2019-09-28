@@ -35,4 +35,12 @@ void ALSource::SetVelocity(const vec3& velocity) {
 	alSource3f(*_handle, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }
 
+void ALSource::Play() {
+	alSourcePlay(*_handle);
+}
+
+void ALSource::Stop() {
+	alSourceStop(*_handle);
+}
+
 }

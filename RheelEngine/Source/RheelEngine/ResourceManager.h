@@ -15,6 +15,7 @@
 namespace rheel {
 
 class RE_API ResourceManager {
+	friend class Engine;
 
 public:
 	struct ResourceContainer {
@@ -80,6 +81,10 @@ private:
 
 		_resource_map.insert({ path, ResourceContainer { std::move(resource) } });
 		return ref;
+	}
+
+	static void _ReleaseAll() {
+		_resource_map.clear();
 	}
 
 	static std::string _resource_path;

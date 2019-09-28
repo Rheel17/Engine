@@ -3,13 +3,10 @@
  */
 #include "Engine.h"
 
-#include "Renderer/Text/Font.h"
-
 #include <cstring>
 
-#include <AL/alc.h>
-#include <AL/al.h>
-#include <AL/alext.h>
+#include "ResourceManager.h"
+#include "Renderer/Text/Font.h"
 
 namespace rheel {
 
@@ -52,6 +49,8 @@ void Engine::_Run(Game *game) {
 }
 
 void Engine::_Terminate() {
+	_instance.audio_manager->_StopAll();
+	ResourceManager::_ReleaseAll();
 	Window::DestroyDisplaySystems();
 }
 
