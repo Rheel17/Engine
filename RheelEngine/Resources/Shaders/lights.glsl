@@ -107,7 +107,7 @@ vec3 abstractLight(Material material, vec3 P, vec3 N, vec3 L, vec4 color) {
 	vec3 Id = max(dot(N, L), 0.0) * material.diffuse;
 
 	// specular component
-	float s = max(0.0, dot(R, V));
+	float s = max(0.0, dot(R, -V));
     if (s > 0) {
         s = pow(s, material.specularExponent);
     }

@@ -48,7 +48,7 @@ static Blueprint createCubeBlueprint() {
 	ModelResource& model = ResourceManager::GetModel("cube.dae");
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
-	modelRenderComponent.SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.0f));
+	modelRenderComponent.SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.5f));
 	modelRenderComponent.SetModel(model);
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
@@ -67,7 +67,7 @@ static Blueprint createFloorBlueprint() {
 	ModelResource& model = ResourceManager::GetModel("cube.dae");
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
-	modelRenderComponent.SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.0f));
+	modelRenderComponent.SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f));
 	modelRenderComponent.SetScale({ 200.0f, 1.0f, 200.0f });
 	modelRenderComponent.SetModel(model);
 
@@ -83,7 +83,7 @@ static Blueprint createBallBlueprint() {
 	ModelResource& model = ResourceManager::GetModel("golf_ball.dae");
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
-	modelRenderComponent.SetMaterial(Material({ 1.0f, 1.0f, 1.0f, 1.0f }, 0.7f, 0.0f));
+	modelRenderComponent.SetMaterial(Material({ 1.0f, 1.0f, 1.0f, 1.0f }, 0.7f, 0.05f));
 	modelRenderComponent.SetScale({ 1.5f, 1.5f, 1.5f });
 	modelRenderComponent.SetModel(model);
 
@@ -101,7 +101,7 @@ static Blueprint createRampBlueprint() {
 	ModelResource& model = ResourceManager::GetModel("cube.dae");
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
-	modelRenderComponent.SetMaterial(Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.0f));
+	modelRenderComponent.SetMaterial(Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f));
 	modelRenderComponent.SetScale({ 8.0f, 1.0f, 10.0f });
 	modelRenderComponent.SetModel(model);
 
