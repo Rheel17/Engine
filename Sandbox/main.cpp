@@ -171,7 +171,6 @@ static SceneDescription createSceneDescription() {
 
 	auto& eulerCameraController = description.AddScript<EulerCameraController>();
 	eulerCameraController.SetCamera("main_camera");
-	eulerCameraController.SetVelocity(50.0f);
 
 	auto& listenerFollow = description.AddScript<ListenerFollow>();
 	listenerFollow.SetCamera("main_camera");
@@ -219,9 +218,6 @@ class SandboxGame : public Game {
 	}
 
 	void Start() override {
-		auto s = Engine::GetAudioManager().Play(ResourceManager::GetSound("background_mono.wav"));
-		s->SetGain(0.99f);
-
 		Engine::SetActiveScene("main");
 
 		Container ui;
