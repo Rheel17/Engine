@@ -220,6 +220,10 @@ unsigned GLFramebuffer::Height() const {
 	return _height;
 }
 
+bool GLFramebuffer::IsMultisampled() const {
+	return _is_multisampled;
+}
+
 const std::vector<GLTexture2DMultisample>& GLFramebuffer::MultisampleTextures() const {
 	return _multisample_textures;
 }

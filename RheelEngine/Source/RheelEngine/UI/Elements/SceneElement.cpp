@@ -43,17 +43,8 @@ void SceneElement::Draw(float dt) const {
 	}
 
 	_scene_renderer->Render(dt);
-	const auto& result = _scene_renderer->ResultBuffer();
-
-	GL::ClearFramebufferBinding(GL::FramebufferTarget::DRAW);
-	result.BindForReading();
-
-	glBlitFramebuffer(
-			0, 0, result.Width(), result.Height(),
-			bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height,
-			GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-	GL::ClearFramebufferBinding(GL::FramebufferTarget::READ);
+	_post_processing_stack.Render(_scene_renderer->ResultBuffer(),
+			{ bounds.x, bounds.y }, { bounds.width, bounds.height });
 }
 
 void SceneElement::OnFocusGained() {

@@ -71,7 +71,7 @@ private:
 
 	bool _grab_on_focus = true;
 
-	PostProcessingStack _post_processing_stack;
+	mutable PostProcessingStack _post_processing_stack;
 	mutable std::shared_ptr<SceneRenderer> _scene_renderer;
 
 };

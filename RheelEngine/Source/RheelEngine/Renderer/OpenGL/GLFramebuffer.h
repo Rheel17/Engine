@@ -107,6 +107,11 @@ public:
 	unsigned Height() const;
 
 	/**
+	 * Returns true if this framebuffer is multisampled
+	 */
+	bool IsMultisampled() const;
+
+	/**
 	 * Returns a vector of all the multisample textures attached to this
 	 * framebuffer. If the framebuffer is not multisampled, this always returns
 	 * and empty vector.
