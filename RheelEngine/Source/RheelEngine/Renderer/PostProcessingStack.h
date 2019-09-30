@@ -7,6 +7,7 @@
 
 #include "OpenGL/GLFramebuffer.h"
 #include "OpenGL/GLShaderProgram.h"
+#include "OpenGL/GLVertexArray.h"
 
 namespace rheel {
 
@@ -17,7 +18,7 @@ public:
 		float threshold_start;
 		float threshold_end;
 		float multiplier;
-		unsigned level;
+		std::vector<float> kernel;
 	};
 
 public:
@@ -25,26 +26,34 @@ public:
 
 	void Render(const GLFramebuffer& input, const ivec2& pos, const ivec2& size) const;
 
-	void SetBloom(float thresholdStart, float thresholdEnd, float multiplier, unsigned level);
+	void SetBloom(float thresholdStart, float thresholdEnd, float multiplier, float sigma, unsigned samples);
 	void SetBloomOff();
 	const Bloom& GetBloom() const;
 
 private:
 	void _EnsureTempBuffersSize(const ivec2& size, unsigned index) const;
+	GLFramebuffer& _GetFramebuffer(unsigned id) const;
+	unsigned _NextUnusedFramebufferIndex() const;
 
-	const GLFramebuffer& _RenderBloom(const GLFramebuffer& input) const;
+	const GLFramebuffer& _RenderBloom(const GLFramebuffer& input, unsigned& inputIndex) const;
 
 	bool _has_bloom = false;
 	Bloom _bloom;
 
 	mutable GLFramebuffer _temp_buffer_1;
 	mutable GLFramebuffer _temp_buffer_2;
-	mutable unsigned _temp_buffer_use = 0;
+	mutable GLFramebuffer _temp_buffer_3;
+	mutable bool _temp_buffer_use[3];
 
 private:
 	static GLShaderProgram& _BloomShader();
+	static GLShaderProgram& _CombineShader();
+	static void _DrawScreenQuad();
 
 	static std::unique_ptr<GLShaderProgram> _bloom_shader;
+	static std::unique_ptr<GLShaderProgram> _combine_shader;
+	static std::unique_ptr<GLBuffer> _screen_quad_buffer;
+	static std::unique_ptr<GLVertexArray> _screen_quad;
 
 };
 
