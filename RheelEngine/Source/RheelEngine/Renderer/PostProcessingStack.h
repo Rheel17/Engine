@@ -5,55 +5,52 @@
 #define POSTPROCESSINGSTACK_H_
 #include "../_common.h"
 
-#include "OpenGL/GLFramebuffer.h"
-#include "OpenGL/GLShaderProgram.h"
-#include "OpenGL/GLVertexArray.h"
+#include <array>
+
+#include "PostProcessing/Bloom.h"
 
 namespace rheel {
 
 class RE_API PostProcessingStack {
+	// TODO: make PostProcessingStack movable and copyable
+	RE_NO_MOVE(PostProcessingStack);
+	RE_NO_COPY(PostProcessingStack);
 
-public:
-	struct Bloom {
-		float threshold_start;
-		float threshold_end;
-		float multiplier;
-		std::vector<float> kernel;
-	};
+	friend class PostProcessingEffect;
 
 public:
 	PostProcessingStack();
 
+	/**
+	 * Renders all post-processing effects, with the input being a framebuffer
+	 * as outputted by a SceneRenderer. The final scene will be drawn to the
+	 * quad at pos with dimensions size.
+	 */
 	void Render(const GLFramebuffer& input, const ivec2& pos, const ivec2& size) const;
 
-	void SetBloom(float thresholdStart, float thresholdEnd, float multiplier, float sigma, unsigned samples);
-	void SetBloomOff();
-	const Bloom& GetBloom() const;
+	/**
+	 * Enables the bloom effect.
+	 */
+	void SetBloom(Bloom bloom);
+
+	/**
+	 * Disables the bloom effect.
+	 */
+	void ClearBloom();
 
 private:
-	void _EnsureTempBuffersSize(const ivec2& size, unsigned index) const;
-	GLFramebuffer& _GetFramebuffer(unsigned id) const;
-	unsigned _NextUnusedFramebufferIndex() const;
+	const GLFramebuffer& _ResolveInput(const GLFramebuffer& input) const;
 
-	const GLFramebuffer& _RenderBloom(const GLFramebuffer& input, unsigned& inputIndex) const;
+	unsigned _UnusedFramebufferIndex() const;
+	unsigned _GetFramebufferIndex(const GLFramebuffer& buffer) const;
+	GLFramebuffer& _Framebuffer(unsigned index) const;
+	void _MarkFramebufferUse(unsigned index, bool flag) const;
 
-	bool _has_bloom = false;
-	Bloom _bloom;
+	std::optional<Bloom> _bloom;
 
-	mutable GLFramebuffer _temp_buffer_1;
-	mutable GLFramebuffer _temp_buffer_2;
-	mutable GLFramebuffer _temp_buffer_3;
-	mutable bool _temp_buffer_use[3];
-
-private:
-	static GLShaderProgram& _BloomShader();
-	static GLShaderProgram& _CombineShader();
-	static void _DrawScreenQuad();
-
-	static std::unique_ptr<GLShaderProgram> _bloom_shader;
-	static std::unique_ptr<GLShaderProgram> _combine_shader;
-	static std::unique_ptr<GLBuffer> _screen_quad_buffer;
-	static std::unique_ptr<GLVertexArray> _screen_quad;
+	mutable unsigned _width = 0;
+	mutable unsigned _height = 0;
+	mutable std::array<std::pair<GLFramebuffer, bool>, 3> _temp_buffers;
 
 };
 

@@ -4,15 +4,16 @@
 #version 330 core
 
 in vec2 vf_Texture;
-
 out vec4 frag_Color;
 
 uniform sampler2D inputTexture;
+
 uniform float kernel[64];
 uniform int kernelSize;
-uniform int vertical;
 uniform float filterStart;
 uniform float filterEnd;
+
+uniform int vertical;
 
 vec3 filtered_lookup(vec2 uv) {
 	vec3 c = texture(inputTexture, uv).rgb;

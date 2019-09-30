@@ -11,13 +11,15 @@
 namespace rheel {
 
 SceneElement::SceneElement(std::string cameraName) :
-		_use_active_scene(true), _scene(nullptr), _camera_name(cameraName) {
+		_use_active_scene(true), _scene(nullptr), _camera_name(cameraName),
+		_post_processing_stack(std::make_shared<PostProcessingStack>()) {
 
 	SetFocusable(true);
 }
 
 SceneElement::SceneElement(Scene *scene, std::string cameraName) :
-		_use_active_scene(false), _scene(scene), _camera_name(cameraName) {
+		_use_active_scene(false), _scene(scene), _camera_name(cameraName),
+		_post_processing_stack(std::make_shared<PostProcessingStack>()) {
 
 	SetFocusable(true);
 }
@@ -31,7 +33,7 @@ bool SceneElement::GetGrabOnFocus() const {
 }
 
 PostProcessingStack& SceneElement::GetPostProcessingStack() {
-	return _post_processing_stack;
+	return *_post_processing_stack;
 }
 
 void SceneElement::Draw(float dt) const {
@@ -43,7 +45,7 @@ void SceneElement::Draw(float dt) const {
 	}
 
 	_scene_renderer->Render(dt);
-	_post_processing_stack.Render(_scene_renderer->ResultBuffer(),
+	_post_processing_stack->Render(_scene_renderer->ResultBuffer(),
 			{ bounds.x, bounds.y }, { bounds.width, bounds.height });
 }
 

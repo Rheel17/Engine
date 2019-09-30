@@ -176,7 +176,7 @@ class SandboxGame : public Game {
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
-		sceneElement->GetPostProcessingStack().SetBloom(0.6f, 0.65f, 1.0f, 2.0f, 5);
+		sceneElement->GetPostProcessingStack().SetBloom(Bloom(0.6f, 0.7f, 0.35f, 3.0f, 8));
 
 		const auto& resolution = Engine::GetDisplayConfiguration().resolution;
 		int size = std::max(resolution.width, resolution.height) / 80;

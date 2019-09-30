@@ -103,8 +103,9 @@
 						<entry excluding="OpenAL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Audio"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Audio/OpenAL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
-						<entry excluding="Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
+						<entry excluding="PostProcessing|Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/PostProcessing"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Scripts"/>
 						<entry excluding="Elements" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI"/>
@@ -217,8 +218,9 @@
 						<entry excluding="OpenAL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Audio"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Audio/OpenAL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
-						<entry excluding="Text|OpenGL|Text.old" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
+						<entry excluding="PostProcessing|Text|OpenGL|Text.old" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/PostProcessing"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Scripts"/>
 						<entry excluding="Elements" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI"/>
@@ -334,8 +336,9 @@
 						<entry excluding="OpenAL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Audio"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Audio/OpenAL"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Components"/>
-						<entry excluding="Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
+						<entry excluding="PostProcessing|Text|OpenGL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/OpenGL"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/PostProcessing"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Renderer/Text"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/Scripts"/>
 						<entry excluding="Elements" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Source/RheelEngine/UI"/>
