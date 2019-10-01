@@ -19,6 +19,7 @@
 #include "RheelEngine/Scripts/PhysicsScene.h"
 
 #include "RheelEngine/UI/Elements/ColorElement.h"
+#include "RheelEngine/UI/Elements/CrosshairElement.h"
 #include "RheelEngine/UI/Elements/EmptyElement.h"
 #include "RheelEngine/UI/Elements/SceneElement.h"
 #include "RheelEngine/UI/Elements/TextElement.h"
