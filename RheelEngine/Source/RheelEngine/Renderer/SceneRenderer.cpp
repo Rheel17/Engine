@@ -10,7 +10,9 @@ SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName
 		_width(width), _height(height),
 		_result_buffer(width, height, sampleCount) {
 
-	_result_buffer.AddTexture(GL_RGB8, GL_RGB);
+	_result_buffer.AddTexture(GL_RGB8, GL_RGB); // color
+	_result_buffer.AddTexture(GL_RGB8, GL_RGB); // position
+	_result_buffer.AddTexture(GL_RGB8, GL_RGB); // normal
 
 	if (depthComponent) {
 		_result_buffer.AddRenderbuffer(GL_DEPTH_COMPONENT32, GL_DEPTH_ATTACHMENT);

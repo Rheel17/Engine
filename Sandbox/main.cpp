@@ -169,6 +169,8 @@ class SandboxGame : public Game {
 		SceneElement *sceneElement = ui.InsertElement(SceneElement("main_camera"));
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+
+		sceneElement->GetPostProcessingStack().SetAmbientOcclusion(AmbientOcclusion());
 		sceneElement->GetPostProcessingStack().SetBloom(Bloom(0.5f, 0.7f, 0.35f, 3.0f, 8));
 
 		CrosshairElement *crosshairElement = ui.InsertElement(CrosshairElement(20));

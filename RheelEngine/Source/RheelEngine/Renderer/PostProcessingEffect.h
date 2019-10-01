@@ -44,6 +44,11 @@ protected:
 	 */
 	void _MarkFramebufferUse(unsigned index, bool flag) const;
 
+	/**
+	 * Returns the original input buffer
+	 */
+	const GLFramebuffer& _InputBuffer() const;
+
 private:
 	PostProcessingStack *_Stack() const;
 

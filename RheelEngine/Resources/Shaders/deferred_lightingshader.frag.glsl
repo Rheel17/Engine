@@ -3,7 +3,9 @@
  */
 #version 330 core
 
-out vec4 frag_Color;
+out layout(location = 0) vec4 frag_Color;
+out layout(location = 1) vec3 frag_Position;
+out layout(location = 2) vec3 frag_Normal;
 
 in vec2 vf_Texture;
 
@@ -38,6 +40,9 @@ vec3 calculateColor(int sample) {
 	vec3 specular = texelFetch(gBufferSpecular, textureLocation, sample).rgb;
 	vec4 materialParameters = texelFetch(gBufferMaterialParameters, textureLocation, sample);
 
+	frag_Position = position;
+	frag_Normal = normal;
+
 	// perform the calculation
 	return calculateLights(position, normal, ambient, diffuse, specular, materialParameters);
 }
@@ -57,6 +62,9 @@ vec4 _main(int sample) {
 
 void main(void) {
 	textureLocation = ivec2(vf_Texture.x * gBufferTextureSize.x, vf_Texture.y * gBufferTextureSize.y);
+
+	frag_Position = vec3(0.0);
+	frag_Normal = vec3(0.0);
 
 	for (int sample = 0; sample < sampleCount; sample++) {
 		frag_Color += _main(sample) / sampleCount;

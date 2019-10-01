@@ -20,7 +20,6 @@ void CrosshairElement::Draw(float dt) const {
 			unsigned(bounds.y + (bounds.height - _size) / 2.0f),
 			unsigned(_size / 10.0f), _size };
 
-
 	_DrawColoredQuad(horizontal, { 1.0f, 1.0f, 1.0f, 0.2f });
 	_DrawColoredQuad(vertical, { 1.0f, 1.0f, 1.0f, 0.2f });
 }

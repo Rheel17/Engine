@@ -14,6 +14,7 @@ extern char ___binary___Shaders_uishader_frag_glsl_start[] asm("_binary___Shader
 extern char ___binary___Shaders_deferred_lightingshader_vert_glsl_start[] asm("_binary___Shaders_deferred_lightingshader_vert_glsl_start"); 
 extern char ___binary___Shaders_fontshader_frag_glsl_start[] asm("_binary___Shaders_fontshader_frag_glsl_start"); 
 extern char ___binary___Shaders_deferred_modelshader_vert_glsl_start[] asm("_binary___Shaders_deferred_modelshader_vert_glsl_start"); 
+extern char ___binary___Shaders_postprocessing_ssao_frag_glsl_start[] asm("_binary___Shaders_postprocessing_ssao_frag_glsl_start"); 
 extern char ___binary___Shaders_uishader_vert_glsl_start[] asm("_binary___Shaders_uishader_vert_glsl_start"); 
 extern char ___binary___Shaders_deferred_lightingshader_frag_glsl_start[] asm("_binary___Shaders_deferred_lightingshader_frag_glsl_start"); 
 extern char ___binary___Shaders_postprocessing_bloom_frag_glsl_start[] asm("_binary___Shaders_postprocessing_bloom_frag_glsl_start"); 
@@ -27,6 +28,7 @@ extern char ___binary___Shaders_postprocessing_combine_frag_glsl_start[] asm("_b
 extern char ___binary___Shaders_forward_modelshader_vert_glsl_start[] asm("_binary___Shaders_forward_modelshader_vert_glsl_start"); 
 extern char ___binary___Shaders_postprocessing_vert_glsl_start[] asm("_binary___Shaders_postprocessing_vert_glsl_start"); 
 extern char ___binary___Shaders_deferred_modelshader_frag_glsl_start[] asm("_binary___Shaders_deferred_modelshader_frag_glsl_start"); 
+extern char ___binary___Shaders_postprocessing_ssao_frag_glsl_end[] asm("_binary___Shaders_postprocessing_ssao_frag_glsl_end"); 
 extern char ___binary___Shaders_uishader_vert_glsl_end[] asm("_binary___Shaders_uishader_vert_glsl_end"); 
 extern char ___binary___Shaders_fontshader_frag_glsl_end[] asm("_binary___Shaders_fontshader_frag_glsl_end"); 
 extern char ___binary___Shaders_forward_modelshader_vert_glsl_end[] asm("_binary___Shaders_forward_modelshader_vert_glsl_end"); 
@@ -53,6 +55,7 @@ struct ___res___ {
 		{ "___binary___Shaders_deferred_lightingshader_vert_glsl_start", ___binary___Shaders_deferred_lightingshader_vert_glsl_start }, 
 		{ "___binary___Shaders_fontshader_frag_glsl_start", ___binary___Shaders_fontshader_frag_glsl_start }, 
 		{ "___binary___Shaders_deferred_modelshader_vert_glsl_start", ___binary___Shaders_deferred_modelshader_vert_glsl_start }, 
+		{ "___binary___Shaders_postprocessing_ssao_frag_glsl_start", ___binary___Shaders_postprocessing_ssao_frag_glsl_start }, 
 		{ "___binary___Shaders_uishader_vert_glsl_start", ___binary___Shaders_uishader_vert_glsl_start }, 
 		{ "___binary___Shaders_deferred_lightingshader_frag_glsl_start", ___binary___Shaders_deferred_lightingshader_frag_glsl_start }, 
 		{ "___binary___Shaders_postprocessing_bloom_frag_glsl_start", ___binary___Shaders_postprocessing_bloom_frag_glsl_start }, 
@@ -66,6 +69,7 @@ struct ___res___ {
 		{ "___binary___Shaders_forward_modelshader_vert_glsl_start", ___binary___Shaders_forward_modelshader_vert_glsl_start }, 
 		{ "___binary___Shaders_postprocessing_vert_glsl_start", ___binary___Shaders_postprocessing_vert_glsl_start }, 
 		{ "___binary___Shaders_deferred_modelshader_frag_glsl_start", ___binary___Shaders_deferred_modelshader_frag_glsl_start }, 
+		{ "___binary___Shaders_postprocessing_ssao_frag_glsl_end", ___binary___Shaders_postprocessing_ssao_frag_glsl_end }, 
 		{ "___binary___Shaders_uishader_vert_glsl_end", ___binary___Shaders_uishader_vert_glsl_end }, 
 		{ "___binary___Shaders_fontshader_frag_glsl_end", ___binary___Shaders_fontshader_frag_glsl_end }, 
 		{ "___binary___Shaders_forward_modelshader_vert_glsl_end", ___binary___Shaders_forward_modelshader_vert_glsl_end }, 

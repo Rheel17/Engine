@@ -19,9 +19,10 @@ PostProcessingStack::PostProcessingStack() :
 }
 
 void PostProcessingStack::Render(const GLFramebuffer& input, const ivec2& pos, const ivec2& size) const {
-	// set size
+	// set size and input
 	_width = size.x;
 	_height = size.y;
+	_input_buffer = &input;
 
 	// reset temporary framebuffer usage
 	for (unsigned i = 0; i < _temp_buffers.size(); i++) {
@@ -45,6 +46,7 @@ void PostProcessingStack::Render(const GLFramebuffer& input, const ivec2& pos, c
 	};
 
 	// render the post-processing stack
+	pp(_ambient_occlusion);
 	pp(_bloom);
 
 	// resolve to the default frame buffer
@@ -55,6 +57,24 @@ void PostProcessingStack::Render(const GLFramebuffer& input, const ivec2& pos, c
 			0, 0, _width, _height,
 			pos.x, pos.y, pos.x + size.x, pos.y + size.y,
 			GL_COLOR_BUFFER_BIT, GL_NEAREST);
+}
+
+void PostProcessingStack::SetAmbientOcclusion(AmbientOcclusion ambientOcclusion) {
+	_ambient_occlusion = std::move(ambientOcclusion);
+	_ambient_occlusion->_stack = this;
+}
+
+void PostProcessingStack::ClearAmbientOcclusion() {
+	_ambient_occlusion.reset();
+}
+
+void PostProcessingStack::SetBloom(Bloom bloom) {
+	_bloom = std::move(bloom);
+	_bloom->_stack = this;
+}
+
+void PostProcessingStack::ClearBloom() {
+	_bloom.reset();
 }
 
 const GLFramebuffer& PostProcessingStack::_ResolveInput(const GLFramebuffer& input) const {
@@ -80,15 +100,6 @@ const GLFramebuffer& PostProcessingStack::_ResolveInput(const GLFramebuffer& inp
 	} else {
 		return input;
 	}
-}
-
-void PostProcessingStack::SetBloom(Bloom bloom) {
-	_bloom = std::move(bloom);
-	_bloom->_stack = this;
-}
-
-void PostProcessingStack::ClearBloom() {
-	_bloom.reset();
 }
 
 unsigned PostProcessingStack::_UnusedFramebufferIndex() const {

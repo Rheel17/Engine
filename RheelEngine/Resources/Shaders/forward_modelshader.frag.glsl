@@ -3,7 +3,9 @@
  */
 #version 330 core
 
-out vec4 frag_Color;
+out layout(location = 0) vec4 frag_Color;
+out layout(location = 1) vec3 frag_Position;
+out layout(location = 2) vec3 frag_Normal;
 
 // model inputs
 in vec3 vf_Position;
@@ -39,6 +41,9 @@ vec3 calculateColor() {
 	vec4 materialParameters = vec4(vf_Material.w, 0.0, 0.0, 0.0);
 	vec3 position = vf_Position;
 	vec3 normal = normalize(vf_Normal);
+
+	frag_Position = position;
+	frag_Normal = normal;
 
 	return calculateLights(position, normal, ambient, diffuse, specular, materialParameters);
 }

@@ -26,6 +26,10 @@ void PostProcessingEffect::_MarkFramebufferUse(unsigned index, bool flag) const 
 	_Stack()->_MarkFramebufferUse(index, flag);
 }
 
+const GLFramebuffer& PostProcessingEffect::_InputBuffer() const {
+	return *_Stack()->_input_buffer;
+}
+
 PostProcessingStack *PostProcessingEffect::_Stack() const {
 	if (!_stack) {
 		throw std::runtime_error("Effect not part of a stack");

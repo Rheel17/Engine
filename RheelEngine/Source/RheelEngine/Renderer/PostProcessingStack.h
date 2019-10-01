@@ -7,6 +7,7 @@
 
 #include <array>
 
+#include "PostProcessing/AmbientOcclusion.h"
 #include "PostProcessing/Bloom.h"
 
 namespace rheel {
@@ -29,6 +30,16 @@ public:
 	void Render(const GLFramebuffer& input, const ivec2& pos, const ivec2& size) const;
 
 	/**
+	 * Enables the ambient occlusion effect.
+	 */
+	void SetAmbientOcclusion(AmbientOcclusion ambientOcclusion);
+
+	/**
+	 * Disables the ambient occlusion effect.
+	 */
+	void ClearAmbientOcclusion();
+
+	/**
 	 * Enables the bloom effect.
 	 */
 	void SetBloom(Bloom bloom);
@@ -46,11 +57,13 @@ private:
 	GLFramebuffer& _Framebuffer(unsigned index) const;
 	void _MarkFramebufferUse(unsigned index, bool flag) const;
 
+	std::optional<AmbientOcclusion> _ambient_occlusion;
 	std::optional<Bloom> _bloom;
 
 	mutable unsigned _width = 0;
 	mutable unsigned _height = 0;
 	mutable std::array<std::pair<GLFramebuffer, bool>, 3> _temp_buffers;
+	mutable const GLFramebuffer *_input_buffer = nullptr;
 
 };
 
