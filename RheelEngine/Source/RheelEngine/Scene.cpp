@@ -82,6 +82,11 @@ Object& Scene::AddObject(const std::string& blueprintName, const vec3& position,
 }
 
 void Scene::RemoveObject(Object& ptr) {
+	if (_is_iterating_objects) {
+		_to_remove_objects.push_back(std::ref(ptr));
+		return;
+	}
+
 	Object *object = &ptr;
 	object->FireEvent(Object::ON_REMOVE);
 
@@ -130,9 +135,7 @@ void Scene::Update(float dt) {
 	}
 
 	// update the objects
-	for (auto& object : _objects) {
-		object->FireEvent(Object::ON_UPDATE);
-	}
+	_FireObjectsEvent(Object::ON_UPDATE);
 
 	// post-update the scripts
 	for (auto& script : _scripts) {
@@ -142,9 +145,7 @@ void Scene::Update(float dt) {
 	}
 
 	// update the object renderers
-	for (auto& object : _objects) {
-		object->FireEvent(Object::ON_UPDATE_RENDERER);
-	}
+	_FireObjectsEvent(Object::ON_UPDATE_RENDERER);
 
 	SceneRenderManager& renderManager = Engine::GetSceneRenderManager(this);
 	renderManager.Update();
@@ -175,6 +176,22 @@ void Scene::_AddLight(const std::string& name, Light *light) {
 
 	_lights[name] = std::unique_ptr<Light>(light);
 	_light_names.push_back(name);
+}
+
+void Scene::_FireObjectsEvent(Object::EventType event) {
+	_is_iterating_objects = true;
+
+	for (auto& object : _objects) {
+		object->FireEvent(event);
+	}
+
+	_is_iterating_objects = false;
+
+	for (const auto& objectReference : _to_remove_objects) {
+		RemoveObject(objectReference.get());
+	}
+
+	_to_remove_objects.clear();
 }
 
 }

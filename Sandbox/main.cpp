@@ -22,6 +22,18 @@ public:
 
 };
 
+class RemoveComponent : public Component {
+	COMPONENT_INIT(RemoveComponent);
+
+public:
+	void OnUpdate() override {
+		if (Parent()->Position().y < -3) {
+			Parent()->ParentScene()->RemoveObject(*Parent());
+		}
+	}
+
+};
+
 class CrosshairElement : public Element {
 
 public:
@@ -56,7 +68,7 @@ static Blueprint createCubeBlueprint() {
 	rigidBodyComponent.SetMass(10000.0f);
 	rigidBodyComponent.SetBounciness(0.05f);
 
-	blueprint.AddComponent<CollisionComponent>();
+	blueprint.AddComponent<RemoveComponent>();
 
 	return blueprint;
 }
@@ -68,11 +80,11 @@ static Blueprint createFloorBlueprint() {
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f));
-	modelRenderComponent.SetScale({ 200.0f, 1.0f, 200.0f });
+	modelRenderComponent.SetScale({ 30.0f, 1.0f, 30.0f });
 	modelRenderComponent.SetModel(model);
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
-	rigidBodyComponent.SetShape(PhysicsShape::Box({ 200.0f, 1.0f, 200.0f }));
+	rigidBodyComponent.SetShape(PhysicsShape::Box({ 30.0f, 1.0f, 30.0f }));
 
 	return blueprint;
 }
@@ -91,6 +103,8 @@ static Blueprint createBallBlueprint() {
 	rigidBodyComponent.SetShape(PhysicsShape::Sphere(1.5f));
 	rigidBodyComponent.SetMass(18000.0f);
 	rigidBodyComponent.SetBounciness(0.3f);
+
+	blueprint.AddComponent<RemoveComponent>();
 
 	return blueprint;
 }

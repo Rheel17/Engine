@@ -127,6 +127,7 @@ public:
 private:
 	Object& _AddObject(const SceneDescription::_ObjectDescription& description);
 	void _AddLight(const std::string& name, Light *light);
+	void _FireObjectsEvent(Object::EventType event);
 
 	Scene() = default;
 	Scene(const SceneDescription& description);
@@ -138,6 +139,8 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<Camera>> _cameras;
 
 	float _time = 0.0f;
+	bool _is_iterating_objects = false;
+	std::vector<std::reference_wrapper<Object>> _to_remove_objects;
 
 };
 
