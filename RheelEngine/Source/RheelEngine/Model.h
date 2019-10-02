@@ -25,6 +25,7 @@ public:
 
 public:
 	Model(const std::string& filename, ModelFormat format);
+	Model(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices);
 
 	const std::vector<Vertex>& Vertices() const;
 	const std::vector<unsigned>& Indices() const;

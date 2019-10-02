@@ -36,6 +36,23 @@ private:
 
 	mutable std::vector<ConvexHull> _convex_hulls;
 
+public:
+	/**
+	 * Returns a built-in box model with the dimensions given. The life-time of
+	 * this model will be the entire program duration.
+	 */
+	static ModelResource& Box(const vec3& halfDimensions);
+
+	/**
+	 * Returns a built-in sphere model with the radius given. The life-time of
+	 * this model will be the entire program duration.
+	 */
+	static ModelResource& Sphere(float radius);
+
+private:
+	static std::unordered_map<vec3, std::unique_ptr<ModelResource>> _boxes;
+	static std::unordered_map<float, std::unique_ptr<ModelResource>> _spheres;
+
 };
 
 }

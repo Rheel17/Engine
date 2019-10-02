@@ -37,7 +37,7 @@ public:
 static Blueprint createCubeBlueprint() {
 	Blueprint blueprint("cube");
 
-	ModelResource& model = ResourceManager::GetModel("cube.dae");
+	ModelResource& model = ModelResource::Box({ 1, 1, 1 });
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetMaterial(Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.5f));
@@ -56,11 +56,10 @@ static Blueprint createCubeBlueprint() {
 static Blueprint createFloorBlueprint() {
 	Blueprint blueprint("floor");
 
-	ModelResource& model = ResourceManager::GetModel("cube.dae");
+	ModelResource& model = ModelResource::Box({ 30.0f, 1.0f, 30.0f });
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetMaterial(Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f));
-	modelRenderComponent.SetScale({ 30.0f, 1.0f, 30.0f });
 	modelRenderComponent.SetModel(model);
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
@@ -92,11 +91,10 @@ static Blueprint createBallBlueprint() {
 static Blueprint createRampBlueprint() {
 	Blueprint blueprint("ramp");
 
-	ModelResource& model = ResourceManager::GetModel("cube.dae");
+	ModelResource& model = ModelResource::Box({ 8.0f, 1.0f, 10.0f });
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetMaterial(Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f));
-	modelRenderComponent.SetScale({ 8.0f, 1.0f, 10.0f });
 	modelRenderComponent.SetModel(model);
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();

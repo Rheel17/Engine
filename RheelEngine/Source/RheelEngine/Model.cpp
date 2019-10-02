@@ -15,6 +15,9 @@ Model::Model(const std::string& filename, ModelFormat format) {
 	}
 }
 
+Model::Model(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices) :
+		_vertices(vertices), _indices(indices) {}
+
 const std::vector<Model::Vertex>& Model::Vertices() const {
 	return _vertices;
 }
