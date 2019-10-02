@@ -52,7 +52,7 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 	// set the bias
 	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 	float cosAngle = max(dot(N, -L), 0.0);
-	float bias = (baseBias / biasFactor) * (3 - cosAngle);
+	float bias = (baseBias * biasFactor) * (1 - cosAngle);
 
 	// calculating the PCF parameters
 	float pcfLevel = 2.0 * shadowLevel - 1.0;
@@ -79,11 +79,11 @@ float getShadowFactor(vec3 P, vec3 N, vec3 L) {
 
 	float shadowFactor;
 	
-	shadowFactor = calculateShadowFactor(P, N, L, shadowMap0, lightspaceMatrix0, 8.0);
+	shadowFactor = calculateShadowFactor(P, N, L, shadowMap0, lightspaceMatrix0, 1.0);
 	if (shadowFactor <= 1.0) { return shadowFactor; }
 	if (shadowMapCount <= 1) { return 1.0; }
 
-	shadowFactor = calculateShadowFactor(P, N, L, shadowMap1, lightspaceMatrix1, 4.0);
+	shadowFactor = calculateShadowFactor(P, N, L, shadowMap1, lightspaceMatrix1, 1.5);
 	if (shadowFactor <= 1.0) { return shadowFactor; }
 	if (shadowMapCount <= 2) { return 1.0; }
 
@@ -91,7 +91,7 @@ float getShadowFactor(vec3 P, vec3 N, vec3 L) {
 	if (shadowFactor <= 1.0) { return shadowFactor; }
 	if (shadowMapCount <= 3) { return 1.0; }
 
-	shadowFactor = calculateShadowFactor(P, N, L, shadowMap3, lightspaceMatrix3, 1.0);
+	shadowFactor = calculateShadowFactor(P, N, L, shadowMap3, lightspaceMatrix3, 2.5);
 	if (shadowFactor <= 1.0) { return shadowFactor; }
 	if (shadowMapCount <= 4) { return 1.0; }
 

@@ -71,11 +71,11 @@ static Blueprint createFloorBlueprint() {
 static Blueprint createBallBlueprint() {
 	Blueprint blueprint("ball");
 
-	ModelResource& model = ResourceManager::GetModel("golf_ball.dae");
+//	ModelResource& model = ResourceManager::GetModel("golf_ball.dae");
+	ModelResource& model = ModelResource::Sphere(1.5f, 36);
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetMaterial(Material({ 1.0f, 1.0f, 1.0f, 1.0f }, 0.7f, 0.05f));
-	modelRenderComponent.SetScale({ 1.5f, 1.5f, 1.5f });
 	modelRenderComponent.SetModel(model);
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();

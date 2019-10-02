@@ -47,11 +47,11 @@ public:
 	 * Returns a built-in sphere model with the radius given. The life-time of
 	 * this model will be the entire program duration.
 	 */
-	static ModelResource& Sphere(float radius);
+	static ModelResource& Sphere(float radius, unsigned subdivisions = 10);
 
 private:
 	static std::unordered_map<vec3, std::unique_ptr<ModelResource>> _boxes;
-	static std::unordered_map<float, std::unique_ptr<ModelResource>> _spheres;
+	static std::unordered_map<vec2, std::unique_ptr<ModelResource>> _spheres;
 
 };
 
