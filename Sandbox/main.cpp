@@ -71,11 +71,11 @@ static Blueprint createFloorBlueprint() {
 static Blueprint createBallBlueprint() {
 	Blueprint blueprint("ball");
 
-//	ModelResource& model = ResourceManager::GetModel("golf_ball.dae");
-	ModelResource& model = ModelResource::Sphere(1.5f, 36);
+	ModelResource& model = ResourceManager::GetModel("golf_ball.dae");
 
 	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
 	modelRenderComponent.SetMaterial(Material({ 1.0f, 1.0f, 1.0f, 1.0f }, 0.7f, 0.05f));
+	modelRenderComponent.SetScale(1.5f);
 	modelRenderComponent.SetModel(model);
 
 	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
@@ -103,6 +103,23 @@ static Blueprint createRampBlueprint() {
 	return blueprint;
 }
 
+static Blueprint createPlayerBlueprint() {
+	Blueprint blueprint("player");
+
+	ModelResource& model = ModelResource::Capsule(0.7f, 0.4f);
+
+	auto& modelRenderComponent = blueprint.AddComponent<ModelRenderComponent>();
+	modelRenderComponent.SetMaterial(Material({ 1.0f, 0.9f, 0.8f, 1.0f }, 0.7f, 0.4f));
+	modelRenderComponent.SetModel(model);
+
+	auto& rigidBodyComponent = blueprint.AddComponent<RigidBodyComponent>();
+	rigidBodyComponent.SetShape(PhysicsShape::Capsule(0.7f, 0.4f));
+	rigidBodyComponent.SetMass(80.0f);
+	rigidBodyComponent.SetBounciness(0.0f);
+
+	return blueprint;
+}
+
 static SceneDescription createSceneDescription() {
 	SceneDescription description("main");
 
@@ -126,6 +143,7 @@ static SceneDescription createSceneDescription() {
 	description.AddObject("floor", { 0, -2, 0 });
 	description.AddObject("ramp", { -16, 5, 0 }, quat(vec3(0, 0, -0.6f)));
 	description.AddObject("ramp", { 16, 4, 0 }, quat(vec3(0, 0, 0.8f)));
+	description.AddObject("player", { 0, 4, 10 });
 
 	description.AddLight("main_light", DirectionalLight({ 1, 1, 1, 1 }, { 0.2f, -2.0f, -1.0f }), 100.0f);
 	description.AddCamera("main_camera", 75.0f, 0.01f, 100.0f, { -25, 15, 0 }, { -0.5f, -M_PI / 2.0f, 0.0f });
@@ -139,6 +157,7 @@ class SandboxGame : public Game {
 		Engine::RegisterBlueprint(createFloorBlueprint());
 		Engine::RegisterBlueprint(createBallBlueprint());
 		Engine::RegisterBlueprint(createRampBlueprint());
+		Engine::RegisterBlueprint(createPlayerBlueprint());
 	};
 
 	void RegisterSceneDescriptions() override {
@@ -167,7 +186,7 @@ class SandboxGame : public Game {
 		SceneElement *sceneElement = ui.InsertElement(SceneElement("main_camera"));
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
-		sceneElement->GetPostProcessingStack().SetBloom(Bloom(0.5f, 0.7f, 0.35f, 3.0f, 8));
+		sceneElement->GetPostProcessingStack().SetBloom(Bloom(0.5f, 0.7f, 0.15f, 3.0f, 8));
 
 		CrosshairElement *crosshairElement = ui.InsertElement(CrosshairElement(20));
 		ui.AddConstraint(crosshairElement, Constraint::LEFT, nullptr, Constraint::LEFT);

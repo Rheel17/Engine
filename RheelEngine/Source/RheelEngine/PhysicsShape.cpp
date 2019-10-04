@@ -28,4 +28,8 @@ PhysicsShape PhysicsShape::Sphere(float radius) {
 	return PhysicsShape(new btSphereShape(radius));
 }
 
+PhysicsShape PhysicsShape::Capsule(float radius, float straightHeight) {
+	return PhysicsShape(new btCapsuleShape(radius, straightHeight));
+}
+
 }
