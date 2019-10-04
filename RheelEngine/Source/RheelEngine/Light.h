@@ -7,8 +7,6 @@
 
 #include "Color.h"
 
-#include <memory>
-
 namespace rheel {
 
 class RE_API Light {

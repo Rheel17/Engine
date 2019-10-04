@@ -7,8 +7,6 @@
 
 #include <AL/al.h>
 
-#include <memory>
-
 namespace rheel {
 
 class RE_API ALBuffer {

@@ -8,7 +8,6 @@
 #include <GL/glew.h>
 
 #include <functional>
-#include <memory>
 #include <stack>
 
 #define RE_GL_DEBUG 0

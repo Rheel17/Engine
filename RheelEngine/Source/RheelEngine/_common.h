@@ -12,6 +12,11 @@
 
 #include "Util/Math.h"
 
+#include <memory>
+#include <string>
+#include <unordered_set>
+#include <vector>
+
 #define RE_NO_CONSTRUCT(X)				\
 	X() = delete;
 

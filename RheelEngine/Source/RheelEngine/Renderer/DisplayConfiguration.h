@@ -5,8 +5,6 @@
 #define DISPLAYCONFIGURATION_H_
 #include "../_common.h"
 
-#include <string>
-
 namespace rheel {
 
 /**

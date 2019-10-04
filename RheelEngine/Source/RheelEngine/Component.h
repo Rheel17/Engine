@@ -5,8 +5,6 @@
 #define COMPONENT_H_
 #include "_common.h"
 
-#include <string>
-
 #define COMPONENT_INIT(Class)						\
 protected:											\
 	Component *__CloneHeap() const override {		\

@@ -9,7 +9,6 @@
 #include FT_FREETYPE_H
 
 #include <array>
-#include <vector>
 
 namespace rheel {
 

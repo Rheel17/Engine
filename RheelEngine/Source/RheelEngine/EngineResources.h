@@ -7,8 +7,6 @@
 
 #include <resources.h>
 
-#include <unordered_set>
-
 namespace rheel {
 
 class RE_API EngineResources {

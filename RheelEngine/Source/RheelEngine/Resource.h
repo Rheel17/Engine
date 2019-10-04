@@ -5,8 +5,6 @@
 #define RESOURCE_H_
 #include "_common.h"
 
-#include <memory>
-
 namespace rheel {
 
 class RE_API ResourceBase {

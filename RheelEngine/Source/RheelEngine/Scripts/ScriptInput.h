@@ -7,8 +7,6 @@
 
 #include "../UI/Elements/SceneElement.h"
 
-#include <unordered_set>
-
 namespace rheel {
 
 /**

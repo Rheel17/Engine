@@ -5,8 +5,6 @@
 #define GLFRAMEBUFFER_H_
 #include "../../_common.h"
 
-#include <unordered_set>
-
 #include "GLTexture2D.h"
 #include "GLTexture2DMultisample.h"
 #include "GLRenderbuffer.h"

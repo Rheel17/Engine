@@ -7,8 +7,6 @@
 
 #include <btBulletDynamicsCommon.h>
 
-#include <memory>
-
 #include "../Script.h"
 #include "../Components/RigidBodyComponent.h"
 

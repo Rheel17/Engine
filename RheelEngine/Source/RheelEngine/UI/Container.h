@@ -5,7 +5,6 @@
 #define CONTAINER_H_
 #include "../_common.h"
 
-#include <vector>
 #include <map>
 #include <optional>
 

@@ -5,7 +5,6 @@
 #define ELEMENT_H_
 #include "../_common.h"
 
-#include <memory>
 #include <type_traits>
 
 #include "InputCallback.h"

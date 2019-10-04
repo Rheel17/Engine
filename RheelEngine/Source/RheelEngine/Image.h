@@ -5,8 +5,6 @@
 #define IMAGE_H_
 #include "_common.h"
 
-#include <vector>
-
 #include "Color.h"
 
 namespace rheel {

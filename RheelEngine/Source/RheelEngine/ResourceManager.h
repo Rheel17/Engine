@@ -5,9 +5,6 @@
 #define RESOURCEMANAGER_H_
 #include "_common.h"
 
-#include <unordered_map>
-#include <memory>
-
 #include "ImageResource.h"
 #include "ModelResource.h"
 #include "SoundResource.h"

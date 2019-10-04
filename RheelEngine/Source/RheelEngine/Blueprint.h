@@ -5,9 +5,6 @@
 #define BLUEPRINT_H_
 #include "_common.h"
 
-#include <vector>
-#include <memory>
-
 #include "Component.h"
 
 namespace rheel {

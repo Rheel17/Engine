@@ -7,8 +7,6 @@
 
 #include "GL.h"
 
-#include <vector>
-
 namespace rheel {
 
 class RE_API GLBuffer {

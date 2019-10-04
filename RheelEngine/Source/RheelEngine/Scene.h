@@ -5,8 +5,6 @@
 #define SCENE_H_
 #include "_common.h"
 
-#include <unordered_map>
-
 #include "Camera.h"
 #include "Object.h"
 #include "SceneDescription.h"

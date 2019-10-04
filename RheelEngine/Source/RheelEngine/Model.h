@@ -5,8 +5,6 @@
 #define MODEL_H_
 #include "_common.h"
 
-#include <vector>
-
 namespace rheel {
 
 class RE_API Model {

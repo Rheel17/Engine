@@ -7,8 +7,6 @@
 
 #include <btBulletDynamicsCommon.h>
 
-#include <memory>
-
 namespace rheel {
 
 class RE_API PhysicsShape {

@@ -7,8 +7,6 @@
 
 #include <rapidxml_utils.hpp>
 
-#include <memory>
-
 #include "Util/Hashes.h"
 #include "Model.h"
 
