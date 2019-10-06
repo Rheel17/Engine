@@ -127,14 +127,27 @@ void Object::FireEvent(EventType type, bool recursive) {
 		}
 	}
 
+	std::vector<Component *> components;
 	for (const auto& component : _components) {
+		components.push_back(component.get());
+	}
+
+	for (auto component : components) {
 		switch (type) {
 			case ON_ADD:             component->OnAdd();             break;
 			case ON_REMOVE:          component->OnRemove();          break;
-			case ON_UPDATE:          component->OnUpdate();          break;
+			case ON_UPDATE:          component->OnUpdate(_dt);       break;
 			case ON_UPDATE_RENDERER: component->OnUpdateRenderers(); break;
 		}
 	}
+}
+
+void Object::RemoveComponent(Component& component) {
+	Component *componentPtr = &component;
+
+	_components.erase(std::find_if(_components.begin(), _components.end(), [componentPtr](const auto& ptr) {
+		return ptr.get() == componentPtr;
+	}));
 }
 
 void Object::_SetParentScene(Scene *scene) {

@@ -103,8 +103,33 @@ public:
 	void FireEvent(EventType type, bool recursive = true);
 
 	/**
+	 * Adds a component to this object. A reference to the component is
+	 * returned. After the object is initialized, the "OnAdd" must be called
+	 * manually.
+	 */
+	template<typename T>
+	T& AddComponent() {
+		static_assert(std::is_base_of<Component, T>::value, "Class is not derived from Component");
+		static_assert(std::is_default_constructible<T>::value, "Components must be Default-Constructable");
+
+		std::unique_ptr<T> ptr = std::make_unique<T>();
+		T& ref = *ptr;
+
+		ptr->_parent_object = this;
+		_components.push_back(std::move(ptr));
+
+		return ref;
+	}
+
+	/**
+	 * Removes a component from this object.
+	 */
+	void RemoveComponent(Component& component);
+
+	/**
 	 * Returns a pointer to the component of the given type. A nullptr is
-	 * returned if no such component exists in this object.
+	 * returned if no such component exists in this object. If multiple
+	 * components of the same type exist, the first one added is returned.
 	 */
 	template<typename T>
 	T *GetComponent() {
@@ -119,6 +144,20 @@ public:
 		return nullptr;
 	}
 
+	template<typename T>
+	std::vector<T *> GetAllComponentsOfType() {
+		static_assert(std::is_base_of<Component, T>::value, "Type must be a component");
+		std::vector<T *> vec;
+
+		for (const auto& component : _components) {
+			if (auto ptr = dynamic_cast<T *>(component.get())) {
+				vec.push_back(ptr);
+			}
+		}
+
+		return vec;
+	}
+
 private:
 	void _SetParentScene(Scene *scene);
 
@@ -128,6 +167,8 @@ private:
 	Object *_parent_object = nullptr;
 
 	bool _alive = true;
+	float _time = 0.0f;
+	float _dt = 1.0f / 60.0f;
 
 	vec3 _position = vec3(0, 0, 0);
 	quat _rotation = quat(1, 0, 0, 0);

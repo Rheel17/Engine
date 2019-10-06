@@ -9,6 +9,7 @@
 
 #include "InputCallback.h"
 #include "../Color.h"
+#include "../ImageResource.h"
 #include "../Renderer/OpenGL/GLShaderProgram.h"
 #include "../Renderer/OpenGL/GLVertexArray.h"
 #include "../Renderer/OpenGL/GLTexture2D.h"
@@ -38,9 +39,14 @@ protected:
 	class Vertex {
 
 	public:
-		Vertex(vec2 position);
-		Vertex(vec2 position, vec4 color);
-		Vertex(vec2 position, vec2 texture);
+		Vertex(vec2 position) :
+				_position(std::move(position)), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(0.0f, 0.0f) {}
+
+		Vertex(vec2 position, vec4 color) :
+				_position(std::move(position)), _color(std::move(color)), _texture(0.0f, 0.0f) {}
+
+		Vertex(vec2 position, vec2 texture) :
+				_position(std::move(position)), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(std::move(texture)) {}
 
 	private:
 		vec2 _position;
@@ -229,8 +235,20 @@ protected:
 	 */
 	static void _DrawTexturedQuad(const Bounds& bounds, const GLTexture2D& texture);
 
+	/**
+	 * Draws a textured quad. Vertices are specified in pixel-space. Coutner-clockwise
+	 * ordering is required.
+	 */
+	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const ImageResource& image, float alpha = 1.0f);
+
+	/**
+	 * Draws the texture at the specified rectangle. The entire texture will be scaled to
+	 * fit the rectangle.
+	 */
+	static void _DrawTexturedQuad(const Bounds& bounds, const ImageResource& image, float alpha = 1.0f);
+
 private:
-	static void _Draw(const std::vector<Vertex>& vertices, int mode);
+	static void _Draw(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f);
 	static void _Initialize();
 
 	static std::unique_ptr<GLShaderProgram> _ui_shader;

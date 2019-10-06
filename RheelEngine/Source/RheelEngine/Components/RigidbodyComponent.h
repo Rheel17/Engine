@@ -25,7 +25,7 @@ public:
 
 	void OnAdd() override;
 
-	void OnUpdate() override;
+	void OnUpdate(float dt) override;
 
 	void OnRemove() override;
 

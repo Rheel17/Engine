@@ -40,6 +40,26 @@ public:
 	const Material& GetMaterial() const;
 
 	/**
+	 * Sets the position of the model renderer relative to its parent object
+	 */
+	void SetTranslation(const vec3& position);
+
+	/**
+	 * Returns the position of the model renderer relative to its parent object
+	 */
+	const vec3& Translation() const;
+
+	/**
+	 * Sets the rotation of the model renderer relative to its parent object
+	 */
+	void SetRotation(const quat& rotation);
+
+	/**
+	 * Returns the rotation of the model renderer relative to its parent object
+	 */
+	const quat& Rotation() const;
+
+	/**
 	 * Sets the scale of this model.
 	 */
 	void SetScale(const vec3& scale);
@@ -67,6 +87,8 @@ private:
 	ModelResource *_model = nullptr;
 	Material _material;
 	ModelRenderer::ObjectDataPtr _object_data;
+	vec3 _translation = vec3(0.0f, 0.0f, 0.0f);
+	quat _rotation = quat(1.0f, 0.0f, 0.0f, 0.0f);
 	vec3 _scale = vec3(1.0f, 1.0f, 1.0f);
 
 };

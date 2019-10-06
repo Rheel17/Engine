@@ -111,9 +111,6 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	glEnable(GL_STENCIL_TEST);
 
 	// for anti-aliasing, enable GL_BLEND
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
 	float subpixelWidth = 2.0f / (screen.width * 8);
 	float subpixelHeight = 2.0f / (screen.height * 8);
 
@@ -124,7 +121,6 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	_DrawTriangles(triangles, bezierCurves, { subpixelWidth * -3, subpixelHeight * -1 });
 	_DrawTriangles(triangles, bezierCurves, { subpixelWidth *  1, subpixelHeight * -3 });
 
-	glDisable(GL_BLEND);
 	glDisable(GL_STENCIL_TEST);
 	return x;
 }

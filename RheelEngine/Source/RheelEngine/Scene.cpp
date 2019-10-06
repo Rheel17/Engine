@@ -134,6 +134,12 @@ void Scene::Update(float dt) {
 		}
 	}
 
+	// pre-update the objects
+	for (const auto& obj : _objects) {
+		obj->_dt = dt;
+		obj->_time = _time;
+	}
+
 	// update the objects
 	_FireObjectsEvent(Object::ON_UPDATE);
 

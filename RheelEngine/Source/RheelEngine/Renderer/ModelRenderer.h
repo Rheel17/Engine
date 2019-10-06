@@ -47,7 +47,7 @@ public:
 		ObjectDataPtr() = default;
 		ObjectDataPtr(ObjectData *data);
 
-		void SetTransform(vec3 position, quat rotation, vec3 scale);
+		void SetTransform(mat4 matrix);
 		void SetMaterialVector(vec4 materialVector);
 		void SetMaterialColor(vec4 materialColor);
 

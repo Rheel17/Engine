@@ -42,28 +42,20 @@ const Material& ModelRenderComponent::GetMaterial() const {
 	return _material;
 }
 
-void ModelRenderComponent::OnAdd() {
-	if (_material.Type() == Material::Textured) {
-		_object_data = Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).AddTexturedObject(_material);
-		_object_data.SetMaterialVector(_material.MaterialVector());
-		_object_data.SetMaterialColor(_material.GetColor());
-	} else {
-		_object_data = Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).AddObject();
-		_object_data.SetMaterialVector(_material.MaterialVector());
-		_object_data.SetMaterialColor(_material.GetColor());
-	}
+void ModelRenderComponent::SetTranslation(const vec3& translation) {
+	_translation = translation;
 }
 
-void ModelRenderComponent::OnUpdateRenderers() {
-	_object_data.SetTransform(Parent()->Position(), Parent()->Rotation(), _scale);
+const vec3& ModelRenderComponent::Translation() const {
+	return _translation;
 }
 
-void ModelRenderComponent::OnRemove() {
-	if (_material.Type() == Material::Textured) {
-		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).RemoveTexturedObject(_material, std::move(_object_data));
-	} else {
-		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).RemoveObject(std::move(_object_data));
-	}
+void ModelRenderComponent::SetRotation(const quat& rotation) {
+	_rotation = rotation;
+}
+
+const quat& ModelRenderComponent::Rotation() const {
+	return _rotation;
 }
 
 void ModelRenderComponent::SetScale(const vec3& scale) {
@@ -82,6 +74,33 @@ void ModelRenderComponent::SetScale(float scale) {
 
 const vec3& ModelRenderComponent::Scale() const {
 	return _scale;
+}
+
+void ModelRenderComponent::OnAdd() {
+	if (_material.Type() == Material::Textured) {
+		_object_data = Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).AddTexturedObject(_material);
+		_object_data.SetMaterialVector(_material.MaterialVector());
+		_object_data.SetMaterialColor(_material.GetColor());
+	} else {
+		_object_data = Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).AddObject();
+		_object_data.SetMaterialVector(_material.MaterialVector());
+		_object_data.SetMaterialColor(_material.GetColor());
+	}
+}
+
+void ModelRenderComponent::OnUpdateRenderers() {
+	mat4 parentMatrix = glm::translate(glm::identity<mat4>(), Parent()->Position()) * glm::mat4_cast(Parent()->Rotation());
+	mat4 componentMatrix = glm::translate(glm::identity<mat4>(), _translation) * glm::scale(glm::mat4_cast(_rotation), _scale);
+
+	_object_data.SetTransform(parentMatrix * componentMatrix);
+}
+
+void ModelRenderComponent::OnRemove() {
+	if (_material.Type() == Material::Textured) {
+		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).RemoveTexturedObject(_material, std::move(_object_data));
+	} else {
+		Engine::GetSceneRenderManager(Parent()->ParentScene()).GetModelRenderer(*_model).RemoveObject(std::move(_object_data));
+	}
 }
 
 }

@@ -26,7 +26,7 @@ class RemoveComponent : public Component {
 	COMPONENT_INIT(RemoveComponent);
 
 public:
-	void OnUpdate() override {
+	void OnUpdate(float dt) override {
 		if (Parent()->Position().y < -3) {
 			Parent()->ParentScene()->RemoveObject(*Parent());
 		}

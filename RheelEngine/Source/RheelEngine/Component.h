@@ -35,7 +35,7 @@ public:
 	 * update its state and/or its object. Updates are received in the same
 	 * order as the components were added to the object or its blueprint.
 	 */
-	virtual void OnUpdate() {}
+	virtual void OnUpdate(float dt) {}
 
 	/**
 	 * Called at most once per frame to update renderers.

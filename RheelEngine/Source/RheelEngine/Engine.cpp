@@ -99,6 +99,24 @@ Scene *Engine::GetActiveScene() {
 	return _instance.active_scene;
 }
 
+void Engine::DeleteActiveScene() {
+	DeleteScene(_instance.active_scene);
+}
+
+void Engine::DeleteScene(Scene *scene) {
+	if (scene == nullptr) {
+		return;
+	}
+
+	_instance.scenes.erase(std::find(_instance.scenes.begin(), _instance.scenes.end(), scene));
+
+	if (_instance.active_scene == scene) {
+		_instance.active_scene = nullptr;
+	}
+
+	delete scene;
+}
+
 void Engine::UpdateScenes(float dt) {
 	for (auto scene : _instance.scenes) {
 		scene->Update(dt);

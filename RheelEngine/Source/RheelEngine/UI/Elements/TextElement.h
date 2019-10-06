@@ -7,6 +7,7 @@
 
 #include "../Element.h"
 #include "../../Renderer/Text/Font.h"
+#include "../../Renderer/Text/TextRenderer.h"
 
 namespace rheel {
 

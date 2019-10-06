@@ -102,6 +102,20 @@ public:
 	static Scene *GetActiveScene();
 
 	/**
+	 * Deletes the current active scene. A call to this should probably be
+	 * followed by a SetActiveScene() call. All references to the current active
+	 * scene will become invalid.
+	 */
+	static void DeleteActiveScene();
+
+	/**
+	 * Deletes a scene. If this scene is the current active scene, calling this
+	 * will also de-activate it. All references to the scene will become
+	 * invalid.
+	 */
+	static void DeleteScene(Scene *scene);
+
+	/**
 	 * Updates all the scenes.
 	 */
 	static void UpdateScenes(float dt);

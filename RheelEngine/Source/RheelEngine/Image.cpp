@@ -66,7 +66,7 @@ void Image::_LoadFromFile(const std::string& filename) {
 }
 
 void Image::_LoadFromFile(const std::string& filename, ImageFormat format) {
-	std::ifstream f(filename);
+	std::ifstream f(filename, std::ios::binary);
 
 	if (!f) {
 		throw std::runtime_error("Error while reading image file: " + filename);

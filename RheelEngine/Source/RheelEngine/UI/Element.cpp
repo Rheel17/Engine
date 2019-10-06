@@ -24,15 +24,6 @@ bool Element::Bounds::operator!=(const Bounds& bounds) const {
 	return !(*this == bounds);
 }
 
-Element::Vertex::Vertex(vec2 position) :
-		_position(std::move(position)), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(0.0f, 0.0f) {}
-
-Element::Vertex::Vertex(vec2 position, vec4 color) :
-		_position(std::move(position)), _color(std::move(color)), _texture(0.0f, 0.0f) {}
-
-Element::Vertex::Vertex(vec2 position, vec2 texture) :
-		_position(std::move(position)), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(std::move(texture)) {}
-
 Element::Element() :
 		_parent_container(nullptr) {}
 
@@ -262,10 +253,25 @@ void Element::_DrawTexturedQuad(const Bounds& bounds, const GLTexture2D& texture
 			texture);
 }
 
-void Element::_Draw(const std::vector<Vertex>& vertices, int mode) {
+void Element::_DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const ImageResource& image, float alpha) {
+	image.GetImageTexture().Bind(0);
+	_Draw({ v1, v2, v3, v3, v4, v1 }, MODE_TEXTURED, alpha);
+}
+
+void Element::_DrawTexturedQuad(const Bounds& bounds, const ImageResource& image, float alpha) {
+	_DrawTexturedQuad(
+			Vertex({ bounds.x, bounds.y }, { 0.0f, 1.0f }),
+			Vertex({ bounds.x, bounds.y + bounds.height }, { 0.0f, 0.0f }),
+			Vertex({ bounds.x + bounds.width, bounds.y + bounds.height }, { 1.0f, 0.0f }),
+			Vertex({ bounds.x + bounds.width, bounds.y }, { 1.0f, 1.0f }),
+			image, alpha);
+}
+
+void Element::_Draw(const std::vector<Vertex>& vertices, int mode, float alpha) {
 	_Initialize();
 
 	_ui_shader->GetUniform("uiMode") = mode;
+	_ui_shader->GetUniform("alpha") = alpha;
 	_ui_vertex_data->SetData(vertices, GLBuffer::STREAM_DRAW);
 	_ui_vao->Bind();
 

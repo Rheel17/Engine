@@ -59,7 +59,7 @@ void RigidBodyComponent::OnAdd() {
 	physicsScene->_AddBody(_body.get());
 }
 
-void RigidBodyComponent::OnUpdate() {
+void RigidBodyComponent::OnUpdate(float dt) {
 	btVector3 position = _body->getWorldTransform().getOrigin();
 	btQuaternion rotation = _body->getWorldTransform().getRotation();
 

@@ -13,6 +13,7 @@ out vec4 frag_Color;
 
 uniform sampler2D textureSampler;
 uniform int uiMode;
+uniform float alpha;
 
 void main(void) {
 	if (uiMode == MODE_COLORED) {
@@ -20,4 +21,6 @@ void main(void) {
 	} else if (uiMode == MODE_TEXTURED){
 		frag_Color = texture(textureSampler, vf_Texture);
 	}
+
+	frag_Color.a *= alpha;
 }
