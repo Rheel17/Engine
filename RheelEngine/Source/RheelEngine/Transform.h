@@ -10,9 +10,14 @@ namespace rheel {
 class RE_API Transform {
 
 public:
-	Transform();
-	~Transform();
+	Transform(
+			vec3 translation = { 0.0f, 0.0f, 0.0f },
+			quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f },
+			vec3 scale = { 1.0f, 1.0f, 1.0f });
 
+	vec3 translation;
+	quat rotation;
+	vec3 scale;
 };
 
 }

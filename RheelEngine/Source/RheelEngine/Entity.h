@@ -10,7 +10,6 @@ namespace rheel {
 class RE_API Entity {
 
 public:
-	virtual ~Entity();
 
 private:
 

@@ -5,12 +5,8 @@
 
 namespace rheel {
 
-Transform::Transform()
-{
-}
-
-Transform::~Transform()
-{
-}
+Transform::Transform(vec3 translation, quat rotation, vec3 scale) :
+		translation(translation), rotation(rotation), scale(scale) {}
 
 }
+

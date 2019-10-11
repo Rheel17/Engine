@@ -5,12 +5,4 @@
 
 namespace rheel {
 
-Entity::Entity()
-{
-}
-
-Entity::~Entity()
-{
-}
-
 }
