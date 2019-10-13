@@ -103,11 +103,6 @@ public:
 		MIDDLE = GLFW_MOUSE_BUTTON_MIDDLE
 	};
 
-	/**
-	 * Returns the scancode of a key in the current system.
-	 */
-	static Scancode GetScancode(Key key);
-
 };
 
 }
