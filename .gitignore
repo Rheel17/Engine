@@ -6,3 +6,5 @@ Build/Libaries/
 Build/*/*.dll
 Build/*/Sandbox.exe
 **/_todo
+**/.cproject
+**/.project
