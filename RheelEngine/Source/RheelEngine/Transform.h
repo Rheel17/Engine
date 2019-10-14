@@ -16,6 +16,11 @@ public:
 			vec3 scale = { 1.0f, 1.0f, 1.0f });
 
 	/**
+	 * Resets this transform to the identity transform.
+	 */
+	void SetIdentity();
+
+	/**
 	 * Returns the translation component of this transform.
 	 */
 	const vec3& GetTranslation() const;
@@ -32,7 +37,7 @@ public:
 	 * the rotation or scale into account. Calling this method is equivalent to
 	 * SetTranslation(GetTranslation() + vec).
 	 */
-	void Move(vec3 vec);
+	void Move(const vec3& vec);
 
 	/**
 	 * Returns the rotation component of this transform.
@@ -49,9 +54,9 @@ public:
 	 *
 	 * Note: this only updates the internal rotation. The rotation will not take
 	 * the translation or scale into account. Calling this method is equivalent
-	 * to SetRotation(). // TODO left or right multiplication?
+	 * to SetRotation(rotation * GetRotation()).
 	 */
-	void Rotate(quat rotation);
+	void Rotate(const quat& rotation);
 
 	/**
 	 * Returns the scale component of this transform.
@@ -59,17 +64,49 @@ public:
 	const vec3& GetScale() const;
 
 	/**
+	 * Sets the scale component of this transform to the new scale.
+	 */
+	void SetScale(vec3 scale);
+
+	/**
+	 * Scales the scale component of this transform with the given scale vector.
+	 *
+	 * Note: this only updates the internal scale. The scale will not take the
+	 * translation or rotation into account. Calling this method is equivalent
+	 * to SetScale(GetScale() * scale).
+	 */
+	void Scale(const vec3& scale);
+
+	/**
 	 * Returns the resulting matrix of this transform.
 	 */
-	const mat4& GetMatrix() const;
+	const mat4& AsMatrix() const;
+
+	/**
+	 * Returns the unit forward vector of this transform, i.e. the
+	 * vector (0, 0, -1) as rotated by this transform.
+	 */
+	vec3 ForwardVector() const;
+
+	/**
+	 * Returns the unit up vector of this transform, i.e. the vector (0, 1, 0)
+	 * as rotated by this transform
+	 */
+	vec3 UpVector() const;
+
+	/**
+	 * Returns the unit right vector of this transform, i.e. the
+	 * vector (1, 0, 0) as rotated by this transform.
+	 */
+	vec3 RightVector() const;
 
 private:
 	vec3 _translation;
 	quat _rotation;
 	vec3 _scale;
 
-	mat4 _matrix;
-	bool _matrix_dirty;
+	mutable mat4 _matrix;
+	mutable bool _matrix_dirty;
 
 };
 
