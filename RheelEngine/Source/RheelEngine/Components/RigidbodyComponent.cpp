@@ -1,12 +1,13 @@
 /*
  * Copyright © 2019 Levi van Rheenen. All rights reserved.
  */
-#include "RigidBodyComponent.h"
+#include "RigidbodyComponent.h"
 
 #include "CollisionComponent.h"
 #include "../Scene.h"
 #include "../Scripts/PhysicsScene.h"
 #include "../Object.h"
+#include "CollisionComponent.h"
 
 namespace rheel {
 

@@ -22,7 +22,7 @@ public:
 
 };
 
-class RemoveComponent : public Component {
+class RemoveComponent : public ComponentOld {
 	COMPONENT_INIT(RemoveComponent);
 
 public:

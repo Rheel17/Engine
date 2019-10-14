@@ -5,13 +5,17 @@
 #define ENTITY_H_
 #include "_common.h"
 
+#include "RigidTransform.h"
+
 namespace rheel {
 
 class RE_API Entity {
 
 public:
+	RigidTransform transform;
 
 private:
+
 
 };
 

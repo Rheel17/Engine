@@ -4,8 +4,8 @@
 #ifndef RIGIDBODYCOMPONENT_H_
 #define RIGIDBODYCOMPONENT_H_
 #include "../_common.h"
+#include "../ComponentOld.h"
 
-#include "../Component.h"
 #include "../PhysicsShape.h"
 
 namespace rheel {
@@ -14,7 +14,7 @@ namespace rheel {
  * A component for Rigid Bodies. This component is required for the
  * built-in physics engine.
  */
-class RE_API RigidBodyComponent : public Component {
+class RE_API RigidBodyComponent : public ComponentOld {
 	COMPONENT_INIT(RigidBodyComponent)
 
 private:

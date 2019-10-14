@@ -39,7 +39,7 @@ void Blueprint::AddChild(const std::string& blueprintName) {
 	_child_blueprints.push_back(blueprintName);
 }
 
-const std::vector<std::unique_ptr<Component>>& Blueprint::_Components() const {
+const std::vector<std::unique_ptr<ComponentOld>>& Blueprint::_Components() const {
 	return _components;
 }
 

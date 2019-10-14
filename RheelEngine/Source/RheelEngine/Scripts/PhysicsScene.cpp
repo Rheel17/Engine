@@ -3,8 +3,8 @@
  */
 #include "PhysicsScene.h"
 
-#include "../Object.h"
 #include "../Components/CollisionComponent.h"
+#include "../Object.h"
 
 namespace rheel {
 

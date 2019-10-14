@@ -1,7 +1,7 @@
 /*
  * Copyright © 2019 Levi van Rheenen. All rights reserved.
  */
-#include "../Components/ModelRenderComponent.h"
+#include "ModelRenderComponent.h"
 
 #include <iostream>
 

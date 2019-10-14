@@ -15,7 +15,7 @@ Object::Object(const Blueprint& blueprint) :
 
 	// add the components
 	for (const auto& component : components) {
-		std::unique_ptr<Component> componentCopy(component->__CloneHeap());
+		std::unique_ptr<ComponentOld> componentCopy(component->__CloneHeap());
 		componentCopy->_parent_object = this;
 		_components.push_back(std::move(componentCopy));
 	}
@@ -127,7 +127,7 @@ void Object::FireEvent(EventType type, bool recursive) {
 		}
 	}
 
-	std::vector<Component *> components;
+	std::vector<ComponentOld *> components;
 	for (const auto& component : _components) {
 		components.push_back(component.get());
 	}
@@ -142,8 +142,8 @@ void Object::FireEvent(EventType type, bool recursive) {
 	}
 }
 
-void Object::RemoveComponent(Component& component) {
-	Component *componentPtr = &component;
+void Object::RemoveComponent(ComponentOld& component) {
+	ComponentOld *componentPtr = &component;
 
 	_components.erase(std::find_if(_components.begin(), _components.end(), [componentPtr](const auto& ptr) {
 		return ptr.get() == componentPtr;

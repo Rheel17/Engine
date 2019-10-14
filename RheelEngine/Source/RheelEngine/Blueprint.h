@@ -5,7 +5,7 @@
 #define BLUEPRINT_H_
 #include "_common.h"
 
-#include "Component.h"
+#include "ComponentOld.h"
 
 namespace rheel {
 
@@ -40,7 +40,7 @@ public:
 	 */
 	template<typename T>
 	T& AddComponent() {
-		static_assert(std::is_base_of<Component, T>::value, "Class is not derived from Component");
+		static_assert(std::is_base_of<ComponentOld, T>::value, "Class is not derived from Component");
 		static_assert(std::is_default_constructible<T>::value, "Components must be Default-Constructable");
 
 		std::unique_ptr<T> ptr = std::make_unique<T>();
@@ -56,7 +56,7 @@ public:
 	 */
 	template<typename T>
 	T *GetComponent() {
-		static_assert(std::is_base_of<Component, T>::value, "Type must be a component");
+		static_assert(std::is_base_of<ComponentOld, T>::value, "Type must be a component");
 
 		for (const auto& component : _components) {
 			if (auto ptr = dynamic_cast<T *>(component.get())) {
@@ -74,14 +74,14 @@ public:
 	void AddChild(const std::string& blueprintName);
 
 private:
-	const std::vector<std::unique_ptr<Component>>& _Components() const;
+	const std::vector<std::unique_ptr<ComponentOld>>& _Components() const;
 	const std::vector<std::string>& _Children() const;
 
 	bool _HasChild(const std::string& name) const;
 
 	std::string _name;
 
-	std::vector<std::unique_ptr<Component>> _components;
+	std::vector<std::unique_ptr<ComponentOld>> _components;
 	std::vector<std::string> _child_blueprints;
 
 };

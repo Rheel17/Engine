@@ -3,10 +3,8 @@
  */
 #include "Component.h"
 
-namespace rheel {
+#include <type_traits>
 
-Object *Component::Parent() const {
-	return _parent_object;
-}
+namespace rheel {
 
 }

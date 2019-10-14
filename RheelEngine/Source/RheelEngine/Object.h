@@ -109,7 +109,7 @@ public:
 	 */
 	template<typename T>
 	T& AddComponent() {
-		static_assert(std::is_base_of<Component, T>::value, "Class is not derived from Component");
+		static_assert(std::is_base_of<ComponentOld, T>::value, "Class is not derived from Component");
 		static_assert(std::is_default_constructible<T>::value, "Components must be Default-Constructable");
 
 		std::unique_ptr<T> ptr = std::make_unique<T>();
@@ -124,7 +124,7 @@ public:
 	/**
 	 * Removes a component from this object.
 	 */
-	void RemoveComponent(Component& component);
+	void RemoveComponent(ComponentOld& component);
 
 	/**
 	 * Returns a pointer to the component of the given type. A nullptr is
@@ -133,7 +133,7 @@ public:
 	 */
 	template<typename T>
 	T *GetComponent() {
-		static_assert(std::is_base_of<Component, T>::value, "Type must be a component");
+		static_assert(std::is_base_of<ComponentOld, T>::value, "Type must be a component");
 
 		for (const auto& component : _components) {
 			if (auto ptr = dynamic_cast<T *>(component.get())) {
@@ -146,7 +146,7 @@ public:
 
 	template<typename T>
 	std::vector<T *> GetAllComponentsOfType() {
-		static_assert(std::is_base_of<Component, T>::value, "Type must be a component");
+		static_assert(std::is_base_of<ComponentOld, T>::value, "Type must be a component");
 		std::vector<T *> vec;
 
 		for (const auto& component : _components) {
@@ -173,7 +173,7 @@ private:
 	vec3 _position = vec3(0, 0, 0);
 	quat _rotation = quat(1, 0, 0, 0);
 
-	std::vector<std::unique_ptr<Component>> _components;
+	std::vector<std::unique_ptr<ComponentOld>> _components;
 	std::vector<std::unique_ptr<Object>> _children;
 };
 

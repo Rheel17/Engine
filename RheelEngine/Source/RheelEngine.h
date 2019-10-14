@@ -10,10 +10,6 @@
 #include "RheelEngine/Engine.h"
 #include "RheelEngine/ResourceManager.h"
 
-#include "RheelEngine/Components/CollisionComponent.h"
-#include "RheelEngine/Components/ModelRenderComponent.h"
-#include "RheelEngine/Components/RigidBodyComponent.h"
-
 #include "RheelEngine/Scripts/EulerCameraController.h"
 #include "RheelEngine/Scripts/ListenerFollow.h"
 #include "RheelEngine/Scripts/PhysicsScene.h"
@@ -28,6 +24,10 @@
 #include <type_traits>
 
 #include <AL/al.h>
+
+#include "RheelEngine/Components/CollisionComponent.h"
+#include "RheelEngine/Components/ModelRenderComponent.h"
+#include "RheelEngine/Components/RigidbodyComponent.h"
 
 // entry point
 namespace rheel {
