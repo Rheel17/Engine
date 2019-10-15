@@ -20,28 +20,70 @@ Entity::Entity(std::string name, Entity *parent, RigidTransform transform) :
 		scene(parent->scene), parent(parent) {}
 
 Entity *Entity::AddChild(std::string name, RigidTransform transform) {
-	auto entity = std::unique_ptr<Entity>(new Entity(std::move(name), this, transform));
-	Entity *e = entity.get();
+	if (auto [it, inserted] = _child_names.insert(name); !inserted) {
+		// TODO: LOG ERROR
+		return nullptr;
+	}
 
-	_children.push_back(std::move(entity));
-	return e;
+	Entity *entity = new Entity(std::move(name), this, transform);
+	auto ptr = std::unique_ptr<Entity>(entity);
+
+	_children.push_back(std::move(ptr));
+	return entity;
 }
 
 void Entity::RemoveChild(Entity *entity) {
+	if (entity == nullptr) {
+		// TODO: LOG WARNING
+		return;
+	}
+
+	if (!entity->IsDescendantOf(this)) {
+		// TODO LOG WARNING
+		return;
+	}
+
+	if (entity->parent != this) {
+		entity->parent->RemoveChild(entity);
+		return;
+	}
+
 	auto iter = std::find_if(_children.begin(), _children.end(),
 			[entity](const auto& ptr) { return ptr.get() == entity; });
 	_children.erase(iter);
 }
 
-Entity *Entity::GetChild(const std::string& name) {
+Entity *Entity::FindChild(const std::string& name, bool recursive) {
 	auto iter = std::find_if(_children.begin(), _children.end(),
-			[&name](const auto& ptr) { return ptr->name == name; });
+			[&name](const auto& ptr){ return ptr->name == name; });
 
-	if (iter == _children.end()) {
+	if (iter != _children.end()) {
+		return iter->get();
+	}
+
+	if (!recursive) {
 		return nullptr;
 	}
 
-	return iter->get();
+	for (const auto& ptr : _children) {
+		if (Entity *child = ptr->FindChild(name, true); child) {
+			return child;
+		}
+	}
+
+	return nullptr;
+}
+
+bool Entity::IsDescendantOf(Entity *base) {
+	if (parent == base) {
+		return true;
+	}
+
+	if (parent == nullptr) {
+		return false;
+	}
+
+	return parent->IsDescendantOf(base);
 }
 
 void Entity::RemoveComponent(ComponentBase *component) {
@@ -52,6 +94,10 @@ void Entity::RemoveComponent(ComponentBase *component) {
 		component->Deactivate();
 		_components.erase(iter);
 	}
+}
+
+void Entity::Update() {
+	// TODO: implement
 }
 
 }

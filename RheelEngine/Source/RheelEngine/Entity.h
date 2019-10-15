@@ -16,6 +16,8 @@ class RE_API Entity {
 	RE_NO_MOVE(Entity);
 	RE_NO_COPY(Entity);
 
+	friend class Scene;
+
 private:
 	struct _ComponentBaseDeleter {
 		void operator()(ComponentBase *ptr) const;
@@ -25,20 +27,33 @@ private:
 
 public:
 	/**
-	 * Adds an empty child entity.
+	 * Adds an empty child entity. If this entity already has a direct child
+	 * with the given name, nothing is done, and nullptr is returned.
 	 */
 	Entity *AddChild(std::string name, RigidTransform transform = RigidTransform());
 
 	/**
-	 * Removes a child from this entity.
+	 * Removes a child from this entity. If the entity is not a direct child of
+	 * this entity, but is a descendant, it is removed from its direct parent.
+	 * If the entity is not a descendant of this entity, nothing is done.
 	 */
 	void RemoveChild(Entity *entity);
 
 	/**
-	 * Returns the child entity with the name, if it exists. Returns nullptr
-	 * otherwise.
+	 * Finds and returns the first found child with the given name. The
+	 * 'recursive' parameter (default: true) can be specified to turn on or off
+	 * recursive search. With recursive search, the direct children are first
+	 * searched in order of their creation. If no entity of that name is found,
+	 * the children of the children are searched.
+	 *
+	 * If no entity with the name given can be found, nullptr is returned.
 	 */
-	Entity *GetChild(const std::string& name);
+	Entity *FindChild(const std::string& name, bool recursive = true);
+
+	/**
+	 * Returns true of the base entity is in the parent chain of this entity.
+	 */
+	bool IsDescendantOf(Entity *base);
 
 	/**
 	 * Adds a component to this entity. The entity will take ownership of the
@@ -106,6 +121,11 @@ public:
 		return vec;
 	}
 
+	/**
+	 * Updates this entity and all its children and components.
+	 */
+	void Update();
+
 	// the name of this entity
 	const std::string name;
 
@@ -126,6 +146,7 @@ private:
 	float _time = 0.0f;
 	float _dt = 0.0f;
 
+	std::unordered_set<std::string> _child_names;
 	std::vector<std::unique_ptr<Entity>> _children;
 	std::vector<_ComponentBasePtr> _components;
 
