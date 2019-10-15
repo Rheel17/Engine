@@ -4,9 +4,9 @@
 #include "RigidbodyComponent.h"
 
 #include "CollisionComponent.h"
-#include "../Scene.h"
 #include "../Scripts/PhysicsScene.h"
 #include "../Object.h"
+#include "../SceneOld.h"
 #include "CollisionComponent.h"
 
 namespace rheel {

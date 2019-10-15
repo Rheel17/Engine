@@ -1,13 +1,12 @@
 /*
  * Copyright © 2019 Levi van Rheenen. All rights reserved.
  */
-#include "SceneRenderManager.h"
-
 #include "DeferredSceneRenderer.h"
 #include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
 #include "../EngineResources.h"
+#include "SceneOldRenderManager.h"
 
 namespace rheel {
 
@@ -16,7 +15,7 @@ std::unique_ptr<GLVertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
 std::unique_ptr<GLBuffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
 bool SceneRenderManager::_lighting_quad_initialized = false;
 
-SceneRenderManager::SceneRenderManager(Scene *scene) :
+SceneRenderManager::SceneRenderManager(SceneOld *scene) :
 		_scene(scene) {
 
 	_Initialize();
@@ -105,7 +104,7 @@ std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(const std::string
 	return nullptr;
 }
 
-Scene *SceneRenderManager::GetScene() {
+SceneOld *SceneRenderManager::GetScene() {
 	return _scene;
 }
 

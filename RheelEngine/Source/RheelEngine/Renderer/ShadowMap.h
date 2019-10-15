@@ -5,7 +5,7 @@
 #define SHADOWMAP_H_
 #include "../_common.h"
 
-#include "SceneRenderManager.h"
+#include "SceneOldRenderManager.h"
 
 namespace rheel {
 

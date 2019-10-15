@@ -13,7 +13,7 @@ namespace rheel {
 Engine::EngineInstance Engine::_instance;
 
 Engine::EngineInstance::~EngineInstance() {
-	for (Scene *scene : scenes) {
+	for (SceneOld *scene : scenes) {
 		delete scene;
 	}
 
@@ -74,20 +74,20 @@ AudioManager& Engine::GetAudioManager() {
 	return *_instance.audio_manager;
 }
 
-Scene *Engine::CreateScene() {
-	Scene *scene = new Scene;
+SceneOld *Engine::CreateScene() {
+	SceneOld *scene = new SceneOld;
 	_instance.scenes.push_back(scene);
 	return scene;
 }
 
-Scene *Engine::CreateScene(const std::string& sceneDescription) {
+SceneOld *Engine::CreateScene(const std::string& sceneDescription) {
 	const SceneDescription& description = GetSceneDescription(sceneDescription);
-	Scene *scene = new Scene(description);
+	SceneOld *scene = new SceneOld(description);
 	_instance.scenes.push_back(scene);
 	return scene;
 }
 
-void Engine::SetActiveScene(Scene *scene) {
+void Engine::SetActiveScene(SceneOld *scene) {
 	_instance.active_scene = scene;
 }
 
@@ -95,7 +95,7 @@ void Engine::SetActiveScene(const std::string& sceneDescription) {
 	_instance.active_scene = CreateScene(sceneDescription);
 }
 
-Scene *Engine::GetActiveScene() {
+SceneOld *Engine::GetActiveScene() {
 	return _instance.active_scene;
 }
 
@@ -103,7 +103,7 @@ void Engine::DeleteActiveScene() {
 	DeleteScene(_instance.active_scene);
 }
 
-void Engine::DeleteScene(Scene *scene) {
+void Engine::DeleteScene(SceneOld *scene) {
 	if (scene == nullptr) {
 		return;
 	}
@@ -158,7 +158,7 @@ const SceneDescription& Engine::GetSceneDescription(const std::string& name) {
 	return iter->second;
 }
 
-SceneRenderManager& Engine::GetSceneRenderManager(Scene *scene) {
+SceneRenderManager& Engine::GetSceneRenderManager(SceneOld *scene) {
 	auto iter = _instance.render_map_scene.find(scene);
 
 	if (iter == _instance.render_map_scene.end()) {

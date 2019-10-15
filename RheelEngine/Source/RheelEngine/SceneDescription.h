@@ -14,7 +14,7 @@
 namespace rheel {
 
 class RE_API SceneDescription {
-	friend class Scene;
+	friend class SceneOld;
 
 private:
 	struct _ObjectDescription {

@@ -11,7 +11,7 @@
 namespace rheel {
 
 class SceneRenderer;
-class Scene;
+class SceneOld;
 
 class RE_API SceneElement : public Element {
 	RE_NO_COPY(SceneElement);
@@ -32,7 +32,7 @@ public:
 	 * This does not automatically switch when the current active scene
 	 * switches.
 	 */
-	SceneElement(Scene *scene, std::string cameraName);
+	SceneElement(SceneOld *scene, std::string cameraName);
 
 	/**
 	 * Sets whether this element should grab the mouse on focus. Its default
@@ -66,7 +66,7 @@ private:
 	void _InitializeRenderer(const Bounds& bounds) const;
 
 	bool _use_active_scene;
-	mutable Scene *_scene;
+	mutable SceneOld *_scene;
 	std::string _camera_name;
 
 	bool _grab_on_focus = true;

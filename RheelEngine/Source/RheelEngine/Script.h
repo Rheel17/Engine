@@ -16,10 +16,10 @@ private:
 
 namespace rheel {
 
-class Scene;
+class SceneOld;
 
 class RE_API Script : public ScriptInput {
-	friend class Scene;
+	friend class SceneOld;
 
 public:
 	virtual ~Script() = default;
@@ -55,12 +55,12 @@ protected:
 
 	virtual Script *__CloneHeap() const = 0;
 
-	Scene& Parent() { return *_parent_scene; }
+	SceneOld& Parent() { return *_parent_scene; }
 	float TimeDelta() { return _dt; }
 	float Time() { return _time; }
 
 private:
-	Scene *_parent_scene = nullptr;
+	SceneOld *_parent_scene = nullptr;
 	float _dt = 0.016f;
 	float _time = 0.0f;
 	bool _active = true;

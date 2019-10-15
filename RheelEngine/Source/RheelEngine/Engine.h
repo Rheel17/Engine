@@ -7,7 +7,7 @@
 
 #include "Game.h"
 #include "Audio/AudioManager.h"
-#include "Renderer/SceneRenderManager.h"
+#include "Renderer/SceneOldRenderManager.h"
 #include "Renderer/Window.h"
 #include "UI/UI.h"
 
@@ -28,17 +28,17 @@ class RE_API Engine {
 		std::unique_ptr<AudioManager> audio_manager;
 
 		// game state
-		Scene *active_scene = nullptr;
+		SceneOld *active_scene = nullptr;
 
 		// register maps
 		std::unordered_map<std::string, Blueprint> register_blueprints;
 		std::unordered_map<std::string, SceneDescription> register_scene_descriptions;
 
 		// render maps
-		std::unordered_map<Scene *, SceneRenderManager> render_map_scene;
+		std::unordered_map<SceneOld *, SceneRenderManager> render_map_scene;
 
 		// active state
-		std::vector<Scene *> scenes;
+		std::vector<SceneOld *> scenes;
 
 		~EngineInstance();
 	};
@@ -72,21 +72,21 @@ public:
 	/**
 	 * Creates a new empty scene.
 	 */
-	static Scene *CreateScene();
+	static SceneOld *CreateScene();
 
 	/**
 	 * Constructs a scene from the given scene description. The scene
 	 * description must have been previously registered using
 	 * RegisterSceneDescription(...).
 	 */
-	static Scene *CreateScene(const std::string& sceneDescription);
+	static SceneOld *CreateScene(const std::string& sceneDescription);
 
 	/**
 	 * Sets the current active scene from a pointer to a previously instantiated
 	 * scene. See also: SetActiveScene(const std::string&) to use a registered
 	 * scene description
 	 */
-	static void SetActiveScene(Scene *scene);
+	static void SetActiveScene(SceneOld *scene);
 
 	/**
 	 * Sets the current active scene from a scene description. The scene
@@ -99,7 +99,7 @@ public:
 	/**
 	 * Returns the current active scene.
 	 */
-	static Scene *GetActiveScene();
+	static SceneOld *GetActiveScene();
 
 	/**
 	 * Deletes the current active scene. A call to this should probably be
@@ -113,7 +113,7 @@ public:
 	 * will also de-activate it. All references to the scene will become
 	 * invalid.
 	 */
-	static void DeleteScene(Scene *scene);
+	static void DeleteScene(SceneOld *scene);
 
 	/**
 	 * Updates all the scenes.
@@ -156,7 +156,7 @@ public:
 	 * Multiple calls with the same scene will result in the same scene render
 	 * manager.
 	 */
-	static SceneRenderManager& GetSceneRenderManager(Scene *scene);
+	static SceneRenderManager& GetSceneRenderManager(SceneOld *scene);
 
 private:
 	// Engine and Game life-cycle functions

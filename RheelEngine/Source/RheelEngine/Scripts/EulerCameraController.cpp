@@ -3,7 +3,7 @@
  */
 #include "EulerCameraController.h"
 
-#include "../Scene.h"
+#include "../SceneOld.h"
 
 namespace rheel {
 

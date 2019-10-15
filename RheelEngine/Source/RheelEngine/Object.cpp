@@ -76,7 +76,7 @@ Object& Object::ParentObject() {
 	return *_parent_object;
 }
 
-Scene *Object::ParentScene() {
+SceneOld *Object::ParentScene() {
 	return _parent_scene;
 }
 
@@ -150,7 +150,7 @@ void Object::RemoveComponent(ComponentOld& component) {
 	}));
 }
 
-void Object::_SetParentScene(Scene *scene) {
+void Object::_SetParentScene(SceneOld *scene) {
 	_parent_scene = scene;
 
 	for (auto& child : _children) {

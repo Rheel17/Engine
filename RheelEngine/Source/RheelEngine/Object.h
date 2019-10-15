@@ -9,10 +9,10 @@
 
 namespace rheel {
 
-class Scene;
+class SceneOld;
 
 class RE_API Object {
-	friend class Scene;
+	friend class SceneOld;
 	friend class ObjectPtr;
 
 	RE_NO_COPY(Object);
@@ -46,7 +46,7 @@ public:
 	/**
 	 * Returns the parent scene of this object.
 	 */
-	Scene *ParentScene();
+	SceneOld *ParentScene();
 
 	/**
 	 * Returns the name of the blueprint that constructed this object.
@@ -159,11 +159,11 @@ public:
 	}
 
 private:
-	void _SetParentScene(Scene *scene);
+	void _SetParentScene(SceneOld *scene);
 
 	std::string _blueprint_name;
 
-	Scene *_parent_scene = nullptr;
+	SceneOld *_parent_scene = nullptr;
 	Object *_parent_object = nullptr;
 
 	bool _alive = true;

@@ -17,7 +17,7 @@ SceneElement::SceneElement(std::string cameraName) :
 	SetFocusable(true);
 }
 
-SceneElement::SceneElement(Scene *scene, std::string cameraName) :
+SceneElement::SceneElement(SceneOld *scene, std::string cameraName) :
 		_use_active_scene(false), _scene(scene), _camera_name(cameraName),
 		_post_processing_stack(std::make_shared<PostProcessingStack>()) {
 

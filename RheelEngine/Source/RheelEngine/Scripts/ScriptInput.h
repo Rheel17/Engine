@@ -14,7 +14,7 @@ namespace rheel {
  */
 class RE_API ScriptInput {
 	friend class Script;
-	friend class Scene;
+	friend class SceneOld;
 	friend class SceneElement;
 
 public:

@@ -1,13 +1,13 @@
 /*
  * Copyright © 2019 Levi van Rheenen. All rights reserved.
  */
-#ifndef SCENERENDERMANAGER_H_
-#define SCENERENDERMANAGER_H_
+#ifndef SCENEOLDRENDERMANAGER_H_
+#define SCENEOLDRENDERMANAGER_H_
 #include "../_common.h"
 
 #include "ModelRenderer.h"
 #include "../ModelResource.h"
-#include "../Scene.h"
+#include "../SceneOld.h"
 #include "OpenGL/GLFramebuffer.h"
 
 namespace rheel {
@@ -18,7 +18,7 @@ class ShadowMap;
 class RE_API SceneRenderManager {
 
 public:
-	SceneRenderManager(Scene *scene);
+	SceneRenderManager(SceneOld *scene);
 
 	/**
 	 * Returns true only if shadows are enabled and at least one light in the
@@ -50,7 +50,7 @@ public:
 	/**
 	 * Returns the scene of this render manager.
 	 */
-	Scene *GetScene();
+	SceneOld *GetScene();
 
 	/**
 	 * Returns the render map containing all models and their renderers in the
@@ -76,7 +76,7 @@ public:
 private:
 	int _ShadowLevel();
 
-	Scene *_scene;
+	SceneOld *_scene;
 	std::unordered_map<Model *, ModelRenderer> _render_map;
 
 	std::vector<int> _lights_type;
