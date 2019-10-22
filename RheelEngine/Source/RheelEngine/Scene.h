@@ -6,10 +6,15 @@
 #include "_common.h"
 
 #include "Entity.h"
+#include "Components/Camera.h"
+#include "Components/Light.h"
 
 namespace rheel {
 
 class RE_API Scene {
+	friend class Camera;
+	friend class Light;
+
 	RE_NO_MOVE(Scene);
 	RE_NO_COPY(Scene);
 
@@ -75,12 +80,34 @@ public:
 	}
 
 	/**
+	 * Returns the camera of the given name. If no camera exists with that name,
+	 * nullptr is returned.
+	 */
+	Camera *GetCamera(const std::string& name);
+
+	/**
+	 * Returns the light of the given name. If no light exists with that name,
+	 * nullptr is returned.
+	 */
+	Light *GetLight(const std::string& name);
+
+	/**
+	 * Returns a vector of all lights in the scene.
+	 */
+	const std::vector<Light *>& GetLights();
+
+	/**
 	 * Updates the scene and all its entities.
 	 */
 	void Update();
 
 private:
 	Entity *_root_entity;
+
+	std::unordered_map<std::string, Camera *> _cameras;
+
+	std::unordered_map<std::string, Light *> _lights_map;
+	std::vector<Light *> _lights_vector;
 
 };
 

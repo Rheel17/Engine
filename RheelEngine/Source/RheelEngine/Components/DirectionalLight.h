@@ -3,7 +3,7 @@
  */
 #ifndef DIRECTIONALLIGHT_H_
 #define DIRECTIONALLIGHT_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include "Light.h"
 

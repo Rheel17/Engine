@@ -5,16 +5,16 @@
 
 namespace rheel {
 
-PerspectiveCamera::PerspectiveCamera(std::string name, vec3 position, vec3 rotation, float fov, float near, float far) :
-		Camera(std::move(name), std::move(position), std::move(rotation)),
+PerspectiveCamera::PerspectiveCamera(std::string name, float fov, float near, float far) :
+		Camera(std::move(name)),
 		_fov(glm::radians(fov)), _near(near), _far(far) {}
 
 mat4 PerspectiveCamera::CreateMatrix(unsigned width, unsigned height) const {
-	return glm::perspective(_fov, float(width) / float(height), _near, _far) * ViewMatrix();
+	return glm::perspective(_fov, float(width) / float(height), _near, _far) * transform.AsMatrix();
 }
 
 std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned height, float near, float far) const {
-	quat rotation = quat(Rotation());
+	const quat& rotation = transform.GetRotation();
 
 	vec3 forward = rotation * vec4(0, 0, -1, 0);
 	vec3 up = rotation * vec4(0, 1, 0, 0);
@@ -32,7 +32,7 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 				ndc.y * up * tanfov +
 				forward);
 
-		return Position() + t * direction;
+		return transform.GetTranslation() + t * direction;
 	};
 
 	return std::array<vec3, 8> {{
@@ -48,7 +48,7 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 }
 
 vec3 PerspectiveCamera::RayDirection(const vec2& ndc, float aspectRatio) const {
-	quat rotation = quat(Rotation());
+	const quat& rotation = transform.GetRotation();
 
 	vec3 forward = rotation * vec4(0, 0, -1, 0);
 	vec3 up = rotation * vec4(0, 1, 0, 0);

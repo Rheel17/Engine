@@ -26,6 +26,20 @@ Entity *Scene::FindEntity(const std::string& name, bool recursive) {
 	return _root_entity->FindChild(name, recursive);
 }
 
+Camera *Scene::GetCamera(const std::string& name) {
+	auto iter = _cameras.find(name);
+
+	if (iter == _cameras.end()) {
+		return nullptr;
+	}
+
+	return iter->second;
+}
+
+const std::vector<Light *>& Scene::GetLights() {
+	return _lights_vector;
+}
+
 void Scene::Update() {
 	_root_entity->Update();
 }

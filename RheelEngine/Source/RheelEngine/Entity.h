@@ -88,7 +88,7 @@ public:
 	/**
 	 * Returns the component of the given type, if this entity has one attached.
 	 * If multiple components of the same type are present in this entity, the
-	 * first one added is returned. If no components can be found, nullptr is
+	 * first one added is returned. If no component can be found, nullptr is
 	 * returned.
 	 */
 	template<typename T>

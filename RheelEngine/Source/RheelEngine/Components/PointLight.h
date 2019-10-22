@@ -3,7 +3,7 @@
  */
 #ifndef POINTLIGHT_H_
 #define POINTLIGHT_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include "Light.h"
 

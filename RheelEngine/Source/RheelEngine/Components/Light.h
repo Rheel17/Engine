@@ -3,13 +3,14 @@
  */
 #ifndef LIGHT_H_
 #define LIGHT_H_
-#include "_common.h"
+#include "../_common.h"
 
-#include "Color.h"
+#include "../Color.h"
+#include "../Component.h"
 
 namespace rheel {
 
-class RE_API Light {
+class RE_API Light : public ComponentBase {
 
 public:
 	virtual ~Light();
