@@ -13,10 +13,7 @@ namespace rheel {
 Engine::EngineInstance Engine::_instance;
 
 Engine::EngineInstance::~EngineInstance() {
-	for (SceneOld *scene : scenes) {
-		delete scene;
-	}
-
+	delete active_scene;
 	delete ui;
 }
 
@@ -74,98 +71,13 @@ AudioManager& Engine::GetAudioManager() {
 	return *_instance.audio_manager;
 }
 
-SceneOld *Engine::CreateScene() {
-	SceneOld *scene = new SceneOld;
-	_instance.scenes.push_back(scene);
-	return scene;
-}
-
-SceneOld *Engine::CreateScene(const std::string& sceneDescription) {
-	const SceneDescription& description = GetSceneDescription(sceneDescription);
-	SceneOld *scene = new SceneOld(description);
-	_instance.scenes.push_back(scene);
-	return scene;
-}
-
-void Engine::SetActiveScene(SceneOld *scene) {
+void Engine::SetActiveScene(Scene *scene) {
+	delete _instance.active_scene;
 	_instance.active_scene = scene;
 }
 
-void Engine::SetActiveScene(const std::string& sceneDescription) {
-	_instance.active_scene = CreateScene(sceneDescription);
-}
-
-SceneOld *Engine::GetActiveScene() {
+Scene *Engine::GetActiveScene() {
 	return _instance.active_scene;
-}
-
-void Engine::DeleteActiveScene() {
-	DeleteScene(_instance.active_scene);
-}
-
-void Engine::DeleteScene(SceneOld *scene) {
-	if (scene == nullptr) {
-		return;
-	}
-
-	_instance.scenes.erase(std::find(_instance.scenes.begin(), _instance.scenes.end(), scene));
-
-	if (_instance.active_scene == scene) {
-		_instance.active_scene = nullptr;
-	}
-
-	delete scene;
-}
-
-void Engine::UpdateScenes(float dt) {
-	for (auto scene : _instance.scenes) {
-		scene->Update(dt);
-	}
-}
-
-void Engine::RegisterBlueprint(Blueprint blueprint) {
-	_instance.register_blueprints.insert({ blueprint.Name(), std::move(blueprint) });
-}
-
-bool Engine::HasBlueprint(const std::string& name) {
-	return _instance.register_blueprints.find(name) != _instance.register_blueprints.end();
-}
-
-const Blueprint& Engine::GetBlueprint(const std::string& name) {
-	auto iter = _instance.register_blueprints.find(name);
-	if (iter == _instance.register_blueprints.end()) {
-		throw std::runtime_error("Blueprint \"" + name + "\" does not exist.");
-	}
-
-	return iter->second;
-}
-
-
-void Engine::RegisterSceneDescription(SceneDescription sceneDescription) {
-	_instance.register_scene_descriptions.insert({ sceneDescription.Name(), std::move(sceneDescription) });
-}
-
-bool Engine::HasSceneDescription(const std::string& name) {
-	return _instance.register_scene_descriptions.find(name) != _instance.register_scene_descriptions.end();
-}
-
-const SceneDescription& Engine::GetSceneDescription(const std::string& name) {
-	auto iter = _instance.register_scene_descriptions.find(name);
-	if (iter == _instance.register_scene_descriptions.end()) {
-		throw std::runtime_error("Scene Description \"" + name + "\" does not exist.");
-	}
-
-	return iter->second;
-}
-
-SceneRenderManager& Engine::GetSceneRenderManager(SceneOld *scene) {
-	auto iter = _instance.render_map_scene.find(scene);
-
-	if (iter == _instance.render_map_scene.end()) {
-		iter = _instance.render_map_scene.emplace(scene, scene).first;
-	}
-
-	return iter->second;
 }
 
 }

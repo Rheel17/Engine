@@ -5,11 +5,9 @@
 #define SCENE_H_
 #include "_common.h"
 
-#include "RigidTransform.h"
+#include "Entity.h"
 
 namespace rheel {
-
-class Entity;
 
 class RE_API Scene {
 	RE_NO_MOVE(Scene);
@@ -42,6 +40,39 @@ public:
 	 * If no entity with the name given can be found, nullptr is returned.
 	 */
 	Entity *FindEntity(const std::string& name, bool recursive = true);
+
+	/**
+	 * Adds a component to the scene root, instead of a specific object in the
+	 * scene. Use this only for scene-wide components.
+	 */
+	template<typename T, typename... Args>
+	T *AddRootComponent(Args&&... args) {
+		_root_entity->AddComponent<T>(args...);
+	}
+
+	/**
+	 * Removes a component from the scene root.
+	 */
+	void RemoveRootComponent(ComponentBase *component);
+
+	/**
+	 * Returns the root component of the given type, if this scene has one
+	 * attached. If multiple components of the same type are present in the
+	 * scene, the first one added is returned. If no component is found, nullptr
+	 * is returned.
+	 */
+	template<typename T>
+	T *GetRootComponent() {
+		return _root_entity->GetComponent<T>();
+	}
+
+	/**
+	 * Returns all root components of the given type.
+	 */
+	template<typename T>
+	std::vector<T *> GetAllRootComponentsOfType() {
+		return _root_entity->GetAllComponentsOfType<T>();
+	}
 
 	/**
 	 * Updates the scene and all its entities.

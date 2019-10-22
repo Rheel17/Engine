@@ -5,7 +5,7 @@
 #define COLLISIONCOMPONENT_H_
 #include "../_common.h"
 
-#include "../ComponentOld.h"
+#include "../Component.h"
 
 namespace rheel {
 
@@ -14,8 +14,7 @@ namespace rheel {
  * work, a RigidBodyComponent must be added before this component. Only
  * collisions with other objects having a CollisionComponent will be detected.
  */
-class RE_API CollisionComponent : public ComponentOld {
-	COMPONENT_INIT(CollisionComponent);
+class RE_API CollisionComponent : public ComponentBase {
 
 public:
 	CollisionComponent();

@@ -11,8 +11,8 @@
 namespace rheel {
 
 /**
- * Base class of all components. Do not use this class as a direct base class;
- * use Component or RigidComponent instead.
+ * Base class of all components. If you want a custom component with a
+ * transform, use either Component or RigidComponent as a base class.
  */
 class RE_API ComponentBase {
 	RE_NO_MOVE(ComponentBase);
@@ -55,10 +55,11 @@ public:
 	 */
 	Entity *GetParent();
 
-private:
+protected:
 	ComponentBase() = default;
 
-	Entity _entity;
+private:
+	Entity *_entity = nullptr;
 
 };
 

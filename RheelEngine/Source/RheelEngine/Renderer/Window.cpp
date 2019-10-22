@@ -143,8 +143,10 @@ void Window::Loop() {
 
 		time = newTime;
 
-		// update the scenes
-		Engine::UpdateScenes(dt);
+		// update the scene
+		if (auto scene = Engine::GetActiveScene(); scene) {
+			scene->Update();
+		}
 
 		// initialize OpenGL state
 		GLShaderProgram::ClearUse();
