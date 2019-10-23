@@ -15,12 +15,15 @@ class RE_API Light : public ComponentBase {
 public:
 	virtual ~Light();
 
+	void Activate() override;
+
 	void SetColor(const Color& color);
 	const Color& GetColor() const;
 
 	void SetShadowDistance(float shadowDistance);
 	float ShadowDistance() const;
 	bool CastsShadows() const;
+
 
 protected:
 	Light(const Color& color);

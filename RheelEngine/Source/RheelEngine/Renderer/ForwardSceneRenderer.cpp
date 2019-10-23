@@ -5,6 +5,7 @@
 
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
+#include "../Scene.h"
 
 namespace rheel {
 

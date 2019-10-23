@@ -46,7 +46,7 @@ void SceneRenderer::_RenderShadowMaps() {
 	_CorrectShadowMapList();
 
 	for (auto& iter : _shadow_maps) {
-		iter.second->Update(*camera, _width, _height);
+		iter.second->Update(camera, _width, _height);
 	}
 }
 

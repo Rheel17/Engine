@@ -6,6 +6,7 @@
 #include "../_common.h"
 
 #include "SceneRenderManager.h"
+#include "../Components/Camera.h"
 #include "../Components/Light.h"
 
 namespace rheel {
@@ -16,7 +17,7 @@ class RE_API ShadowMap {
 public:
 	virtual ~ShadowMap() = default;
 
-	virtual void Update(const Camera& camera, unsigned width, unsigned height) = 0;
+	virtual void Update(Camera *camera, unsigned width, unsigned height) = 0;
 
 protected:
 	ShadowMap(SceneRenderManager *manager, Light *light);

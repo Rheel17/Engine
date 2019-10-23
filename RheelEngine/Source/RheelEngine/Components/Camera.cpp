@@ -8,6 +8,12 @@ namespace rheel {
 Camera::Camera(std::string name) :
 		_name(std::move(name)) {}
 
+void Camera::Activate() {
+	// TODO: log warning replace camera
+
+	GetParent()->scene->_cameras.insert({ _name, this });
+}
+
 vec3 Camera::RayDirection(unsigned width, unsigned height, const vec2& pixel) const {
 	vec2 ndc = pixel / vec2(width, height);
 	ndc *= 2;

@@ -8,6 +8,7 @@
 #include "SceneRenderManager.h"
 #include "ShadowMap.h"
 #include "OpenGL/GLFramebuffer.h"
+#include "../Components/Camera.h"
 
 namespace rheel {
 

@@ -129,6 +129,9 @@ void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triang
 		const std::vector<Character::Triangle>& bezierCurves,
 		vec2 multisampleOffset) {
 
+	// TODO: do the multisampling in the to-stencilbuffer fragment shader and
+	// returning somehow a 0-255 value of how much the pixel is in the char.
+
 	// only draw on the stencil buffer
 	GLboolean colorMask[4];
 	GLboolean depthMask;

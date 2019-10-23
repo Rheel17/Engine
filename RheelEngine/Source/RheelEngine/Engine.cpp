@@ -37,9 +37,6 @@ void Engine::_Run(Game *game) {
 			_instance.display_configuration.resolution.width,
 			_instance.display_configuration.resolution.height);
 
-	game->RegisterBlueprints();
-	game->RegisterSceneDescriptions();
-
 	game->Start();
 
 	_instance.window->Loop();

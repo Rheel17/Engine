@@ -19,6 +19,8 @@ public:
 	 */
 	Camera(std::string name);
 
+	void Activate() override;
+
 	virtual ~Camera() = default;
 
 	/**

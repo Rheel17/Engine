@@ -6,6 +6,7 @@
 #include "_common.h"
 
 #include "Entity.h"
+#include "Scene.h"
 #include "Transform.h"
 
 namespace rheel {

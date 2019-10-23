@@ -6,10 +6,11 @@
 #include "_common.h"
 
 #include "Entity.h"
-#include "Components/Camera.h"
-#include "Components/Light.h"
 
 namespace rheel {
+
+class Camera;
+class Light;
 
 class RE_API Scene {
 	friend class Camera;
@@ -105,9 +106,7 @@ private:
 	Entity *_root_entity;
 
 	std::unordered_map<std::string, Camera *> _cameras;
-
-	std::unordered_map<std::string, Light *> _lights_map;
-	std::vector<Light *> _lights_vector;
+	std::vector<Light *> _lights;
 
 };
 

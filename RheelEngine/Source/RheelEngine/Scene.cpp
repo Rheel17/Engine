@@ -37,7 +37,7 @@ Camera *Scene::GetCamera(const std::string& name) {
 }
 
 const std::vector<Light *>& Scene::GetLights() {
-	return _lights_vector;
+	return _lights;
 }
 
 void Scene::Update() {

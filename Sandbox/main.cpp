@@ -5,7 +5,7 @@
 
 using namespace rheel;
 
-class GameInputScript : public Script {
+class GameInputScript : public BaseComponent {
 	SCRIPT_INIT(GameInputScript);
 
 public:
@@ -120,10 +120,8 @@ static Blueprint createPlayerBlueprint() {
 	return blueprint;
 }
 
-static SceneDescription createSceneDescription() {
-	SceneDescription description("main");
-
-	description.AddScript<GameInputScript>();
+static Scene *createScene() {
+	Scene *scene = new Scene();
 
 	auto& physicsScene = description.AddScript<PhysicsScene>();
 	physicsScene.SetGravity({ 0.0f, -9.81f, 0.0f });
@@ -152,23 +150,10 @@ static SceneDescription createSceneDescription() {
 }
 
 class SandboxGame : public Game {
-	void RegisterBlueprints() override {
-		Engine::RegisterBlueprint(createCubeBlueprint());
-		Engine::RegisterBlueprint(createFloorBlueprint());
-		Engine::RegisterBlueprint(createBallBlueprint());
-		Engine::RegisterBlueprint(createRampBlueprint());
-		Engine::RegisterBlueprint(createPlayerBlueprint());
-	};
-
-	void RegisterSceneDescriptions() override {
-		Engine::RegisterSceneDescription(createSceneDescription());
-	}
-
 	void Initialize() override {
 		DisplayConfiguration config;
 		config.title = "Sandbox";
 		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
-		config.render_mode = DisplayConfiguration::FORWARD;
 		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
 		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
 		config.vsync = true;

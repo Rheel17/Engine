@@ -73,7 +73,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *l
 
 ShadowMapDirectional::~ShadowMapDirectional() {}
 
-void ShadowMapDirectional::Update(const Camera& camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::Update(Camera *camera, unsigned width, unsigned height) {
 	GL::PushState();
 
 	// set the lightspace matrices
@@ -115,7 +115,7 @@ float ShadowMapDirectional::Bias() const {
 	return _bias;
 }
 
-void ShadowMapDirectional::_CalculateViewProjectionMatrices(const Camera& camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::_CalculateViewProjectionMatrices(Camera *camera, unsigned width, unsigned height) {
 	// calculate the light coordinate system axis
 	vec3 zplus = -GetLight<DirectionalLight>()->Direction();
 	vec3 xplus;
@@ -133,7 +133,7 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(const Camera& camera
 
 	for (unsigned i = 0; i < _csm_count; i++) {
 		// calculate the AABB of the camera frustum in light space
-		auto corners = camera.ViewspaceCorners(
+		auto corners = camera->ViewspaceCorners(
 				width, height,
 				_csm_borders[i]     * GetLight()->ShadowDistance(),
 				_csm_borders[i + 1] * GetLight()->ShadowDistance());

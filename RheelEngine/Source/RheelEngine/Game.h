@@ -12,9 +12,6 @@ class RE_API Game {
 public:
 	virtual ~Game() = default;
 
-	virtual void RegisterBlueprints() {}
-	virtual void RegisterSceneDescriptions() {}
-
 	/**
 	 * Initializes the game. This is before a window with OpenGL context is
 	 * created. Any render initialization cannot be done in this method, use
