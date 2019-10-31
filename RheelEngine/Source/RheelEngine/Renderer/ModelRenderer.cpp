@@ -49,7 +49,7 @@ ModelRenderer::ObjectDataPtr::ObjectDataPtr(ObjectData *data) :
 	_data->_ptr = this;
 }
 
-void ModelRenderer::ObjectDataPtr::SetTransform(mat4 matrix) {
+void ModelRenderer::ObjectDataPtr::SetMatrix(mat4 matrix) {
 	_data->_model_matrix = matrix;
 	_data->_normal_model_matrix = glm::transpose(glm::inverse(mat3(_data->_model_matrix)));
 }

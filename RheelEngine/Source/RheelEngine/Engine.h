@@ -6,8 +6,8 @@
 #include "_common.h"
 
 #include "Game.h"
-#include "Scene.h"
 #include "Audio/AudioManager.h"
+#include "Renderer/SceneRenderManager.h"
 #include "Renderer/Window.h"
 #include "UI/UI.h"
 
@@ -23,6 +23,9 @@ class RE_API Engine {
 		DisplayConfiguration display_configuration;
 		Window *window = nullptr;
 		UI *ui = nullptr;
+
+		// renderer
+		std::unordered_map<Scene *, SceneRenderManager> render_map_scene;
 
 		// audio
 		std::unique_ptr<AudioManager> audio_manager;
@@ -71,6 +74,13 @@ public:
 	 * Returns the current active scene.
 	 */
 	static Scene *GetActiveScene();
+
+	/**
+	 * Returns a SceneRenderManager instance to render the specified scene.
+	 * Multiple calls with the same scene will result in the same render
+	 * manager.
+	 */
+	static SceneRenderManager& GetSceneRenderManager(Scene *scene);
 
 private:
 	// Engine and Game life-cycle functions

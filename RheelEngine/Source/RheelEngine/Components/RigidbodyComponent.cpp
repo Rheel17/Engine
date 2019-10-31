@@ -16,6 +16,9 @@ static inline btQuaternion glmToBullet(const glm::quat& q) {
 	return btQuaternion(q.x, q.y, q.z, q.w);
 }
 
+RigidBodyComponent::RigidBodyComponent(PhysicsShape shape, float mass, float bounciness) :
+		_shape(std::move(shape)), _mass(mass), _bounciness(bounciness) {}
+
 void RigidBodyComponent::Activate() {
 	if (!_shape) {
 		throw std::runtime_error("no model set");
@@ -68,30 +71,6 @@ void RigidBodyComponent::Deactivate() {
 //	}
 //
 //	physicsScene->_RemoveBody(_body.get(), Parent()->GetComponent<CollisionComponent>());
-}
-
-void RigidBodyComponent::SetShape(PhysicsShape shape) {
-	if (_body) {
-		throw std::runtime_error("Cannot change shape while active");
-	}
-
-	_shape = std::move(shape);
-}
-
-void RigidBodyComponent::SetMass(float mass) {
-	if (_body) {
-		throw std::runtime_error("Cannot change mass while active");
-	}
-
-	_mass = mass;
-}
-
-void RigidBodyComponent::SetBounciness(float bounciness) {
-	if (_body) {
-		throw std::runtime_error("Cannot change bounciness while active");
-	}
-
-	_bounciness = bounciness;
 }
 
 void RigidBodyComponent::ApplyForce(const vec3& force) {

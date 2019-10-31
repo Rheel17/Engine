@@ -18,19 +18,19 @@ class RE_API Entity {
 
 	friend class Scene;
 
-private:
-	struct _ComponentBaseDeleter {
-		void operator()(ComponentBase *ptr) const;
-	};
-
-	using _ComponentBasePtr = std::unique_ptr<ComponentBase, _ComponentBaseDeleter>;
-
 public:
+	~Entity();
+
 	/**
 	 * Adds an empty child entity. If this entity already has a direct child
 	 * with the given name, nothing is done, and nullptr is returned.
 	 */
 	Entity *AddChild(std::string name, RigidTransform transform = RigidTransform());
+
+	/**
+	 * Creates a unique child name starting with the given prefix.
+	 */
+	std::string UniqueChildName(const std::string& prefix);
 
 	/**
 	 * Removes a child from this entity. If the entity is not a direct child of
@@ -67,14 +67,13 @@ public:
 	T *AddComponent(Args&&... args) {
 		static_assert(std::is_base_of_v<ComponentBase, T>, "Type must extend ComponentBase");
 
-		auto component = std::make_unique<T>(std::forward<Args>(args)...);
-		T *c = component.get();
+		T *c = new T(std::forward<Args>(args)...);
 
-		_components.push_back(std::move(component));
+		_components.push_back(c);
 		c->_entity = this;
 		c->Activate();
 
-		return &c;
+		return c;
 	}
 
 	/**
@@ -95,8 +94,8 @@ public:
 	T *GetComponent() {
 		static_assert(std::is_base_of_v<ComponentBase, T>, "Type must be a component");
 
-		for (const auto& component : _components) {
-			if (auto ptr = dynamic_cast<T *>(component.get())) {
+		for (auto component : _components) {
+			if (auto ptr = dynamic_cast<T *>(component)) {
 				return ptr;
 			}
 		}
@@ -112,14 +111,20 @@ public:
 		static_assert(std::is_base_of_v<ComponentBase, T>, "Type must be a component");
 		std::vector<T *> vec;
 
-		for (const auto& component : _components) {
-			if (auto ptr = dynamic_cast<T *>(component.get())) {
+		for (auto component : _components) {
+			if (auto ptr = dynamic_cast<T *>(component)) {
 				vec.push_back(ptr);
 			}
 		}
 
 		return vec;
 	}
+
+	/**
+	 * Calculates the resulting transform after applying this Entity's parent's
+	 * transforms and applying its own transform.
+	 */
+	RigidTransform CalculateResultingTransform() const;
 
 	/**
 	 * Updates this entity and all its children and components.
@@ -148,7 +153,7 @@ private:
 
 	std::unordered_set<std::string> _child_names;
 	std::vector<std::unique_ptr<Entity>> _children;
-	std::vector<_ComponentBasePtr> _components;
+	std::vector<ComponentBase *> _components;
 
 };
 

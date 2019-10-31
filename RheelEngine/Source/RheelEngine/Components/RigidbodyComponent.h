@@ -17,6 +17,8 @@ namespace rheel {
 class RE_API RigidBodyComponent : public RigidComponent {
 
 public:
+	RigidBodyComponent(PhysicsShape shape, float mass, float bounciness);
+
 	void Activate() override;
 	void Update() override;
 	void Deactivate() override;

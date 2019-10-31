@@ -5,8 +5,8 @@
 #define COMPONENT_H_
 #include "_common.h"
 
-#include "Entity.h"
 #include "Scene.h"
+#include "Entity.h"
 #include "Transform.h"
 
 namespace rheel {

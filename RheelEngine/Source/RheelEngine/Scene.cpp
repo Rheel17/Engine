@@ -18,6 +18,10 @@ Entity *Scene::AddEntity(std::string name, RigidTransform transform) {
 	return _root_entity->AddChild(std::move(name), transform);
 }
 
+std::string Scene::UniqueEntityName(const std::string& prefix) {
+	return _root_entity->UniqueChildName(prefix);
+}
+
 void Scene::RemoveEntity(Entity *entity) {
 	_root_entity->RemoveChild(entity);
 }

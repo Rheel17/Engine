@@ -30,6 +30,11 @@ public:
 	Entity *AddEntity(std::string name, RigidTransform transform = RigidTransform());
 
 	/**
+	 * Creates a unique entity name with the given prefix
+	 */
+	std::string UniqueEntityName(const std::string& prefix);
+
+	/**
 	 * Removes an entity from the scene. If it is still active, it will be
 	 * killed first. If the entity is a child of another entity, the entity will
 	 * be removed from its parent.
@@ -53,7 +58,7 @@ public:
 	 */
 	template<typename T, typename... Args>
 	T *AddRootComponent(Args&&... args) {
-		_root_entity->AddComponent<T>(args...);
+		return _root_entity->AddComponent<T>(args...);
 	}
 
 	/**

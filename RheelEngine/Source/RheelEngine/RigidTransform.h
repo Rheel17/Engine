@@ -13,6 +13,7 @@ public:
 	RigidTransform(
 			vec3 translation = { 0.0f, 0.0f, 0.0f },
 			quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f });
+	RigidTransform(mat4 matrix);
 
 	virtual ~RigidTransform() = default;
 

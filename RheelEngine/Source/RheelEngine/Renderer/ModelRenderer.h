@@ -47,7 +47,7 @@ public:
 		ObjectDataPtr() = default;
 		ObjectDataPtr(ObjectData *data);
 
-		void SetTransform(mat4 matrix);
+		void SetMatrix(mat4 matrix);
 		void SetMaterialVector(vec4 materialVector);
 		void SetMaterialColor(vec4 materialColor);
 

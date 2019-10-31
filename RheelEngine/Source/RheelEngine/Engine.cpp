@@ -77,4 +77,14 @@ Scene *Engine::GetActiveScene() {
 	return _instance.active_scene;
 }
 
+SceneRenderManager& Engine::GetSceneRenderManager(Scene *scene) {
+	auto iter = _instance.render_map_scene.find(scene);
+
+	if (iter == _instance.render_map_scene.end()) {
+		iter = _instance.render_map_scene.emplace(scene, scene).first;
+	}
+
+	return iter->second;
+}
+
 }

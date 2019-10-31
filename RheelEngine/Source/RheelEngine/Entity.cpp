@@ -7,10 +7,6 @@
 
 namespace rheel {
 
-void Entity::_ComponentBaseDeleter::operator()(ComponentBase *ptr) const {
-	delete ptr;
-}
-
 Entity::Entity(std::string name, Scene *scene, RigidTransform transform) :
 		name(std::move(name)), transform(std::move(transform)),
 		scene(scene), parent(nullptr) {}
@@ -18,6 +14,12 @@ Entity::Entity(std::string name, Scene *scene, RigidTransform transform) :
 Entity::Entity(std::string name, Entity *parent, RigidTransform transform) :
 		name(std::move(name)), transform(std::move(transform)),
 		scene(parent->scene), parent(parent) {}
+
+Entity::~Entity() {
+	while (!_components.empty()) {
+		RemoveComponent(_components.front());
+	}
+}
 
 Entity *Entity::AddChild(std::string name, RigidTransform transform) {
 	if (auto [it, inserted] = _child_names.insert(name); !inserted) {
@@ -30,6 +32,33 @@ Entity *Entity::AddChild(std::string name, RigidTransform transform) {
 
 	_children.push_back(std::move(ptr));
 	return entity;
+}
+
+static inline void printChars(char *str, unsigned i) {
+	str[7] = '0' + (i % 10); i /= 10;
+	str[6] = '0' + (i % 10); i /= 10;
+	str[5] = '0' + (i % 10); i /= 10;
+	str[4] = '0' + (i % 10); i /= 10;
+	str[3] = '0' + (i % 10); i /= 10;
+	str[2] = '0' + (i % 10); i /= 10;
+	str[1] = '0' + (i % 10); i /= 10;
+	str[0] = '0' + (i % 10);
+}
+
+std::string Entity::UniqueChildName(const std::string& prefix) {
+	char numberString[9] = "-0000000";
+
+	for (unsigned i = 0; i < 10000000; i++) {
+		printChars(numberString + 1, i);
+		std::string tryName = prefix + numberString;
+
+		if (std::find(_child_names.begin(), _child_names.end(), tryName) == _child_names.end()) {
+			return tryName;
+		}
+	}
+
+	return prefix;
+	// TODO ERROR: unable to find a unique name with prefix x
 }
 
 void Entity::RemoveChild(Entity *entity) {
@@ -88,12 +117,19 @@ bool Entity::IsDescendantOf(Entity *base) {
 
 void Entity::RemoveComponent(ComponentBase *component) {
 	auto iter = std::find_if(_components.begin(), _components.end(),
-			[component](const auto& ptr) { return ptr.get() == component; });
+			[component](auto ptr) { return ptr == component; });
 
 	if (iter != _components.end()) {
 		component->Deactivate();
 		_components.erase(iter);
+		delete component;
 	}
+}
+
+RigidTransform Entity::CalculateResultingTransform() const {
+	mat4 matrix = glm::identity<mat4>();
+	// TODO: compose transform from parents.
+	// TODO: do the same for components
 }
 
 void Entity::Update() {
