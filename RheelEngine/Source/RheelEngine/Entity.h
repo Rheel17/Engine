@@ -121,10 +121,16 @@ public:
 	}
 
 	/**
+	 * Calculates the resulting transformation matrix after applying this
+	 * Entity's parent's transform and applying its own transform.
+	 */
+	mat4 CalculateAbsoluteTransformationMatrix() const;
+
+	/**
 	 * Calculates the resulting transform after applying this Entity's parent's
 	 * transforms and applying its own transform.
 	 */
-	RigidTransform CalculateResultingTransform() const;
+	RigidTransform CalculateAbsoluteTransform() const;
 
 	/**
 	 * Updates this entity and all its children and components.

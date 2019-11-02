@@ -126,10 +126,20 @@ void Entity::RemoveComponent(ComponentBase *component) {
 	}
 }
 
-RigidTransform Entity::CalculateResultingTransform() const {
+mat4 Entity::CalculateAbsoluteTransformationMatrix() const {
 	mat4 matrix = glm::identity<mat4>();
-	// TODO: compose transform from parents.
-	// TODO: do the same for components
+	const Entity *entity = this;
+
+	while (entity != nullptr) {
+		matrix = matrix * entity->transform.AsMatrix();
+		entity = entity->parent;
+	}
+
+	return matrix;
+}
+
+RigidTransform Entity::CalculateAbsoluteTransform() const {
+	return static_cast<RigidTransform>(Transform(CalculateAbsoluteTransformationMatrix()));
 }
 
 void Entity::Update() {

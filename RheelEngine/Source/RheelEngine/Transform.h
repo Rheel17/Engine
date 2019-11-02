@@ -17,6 +17,8 @@ public:
 			quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f },
 			vec3 scale = { 1.0f, 1.0f, 1.0f });
 
+	Transform(const mat4& matrix);
+
 	~Transform() = default;
 
 	/**

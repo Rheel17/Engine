@@ -9,10 +9,6 @@ RigidTransform::RigidTransform(vec3 translation, quat rotation) :
 		_translation(translation), _rotation(rotation),
 		_matrix_dirty(true) {}
 
-RigidTransform::RigidTransform(mat4 matrix) {
-	// TODO: transform from matrix
-}
-
 void RigidTransform::SetIdentity() {
 	_translation = vec3(0.0f, 0.0f, 0.0f);
 	_rotation = quat(1.0f, 0.0f, 0.0f, 0.0f);
