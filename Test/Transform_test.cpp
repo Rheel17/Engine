@@ -208,17 +208,39 @@ TEST(Transform, AsMatrix) {
 	EXPECT_NEAR( 0.5615536f, matrix[0][0], e);
 	EXPECT_NEAR(-1.0492762f, matrix[0][1], e);
 	EXPECT_NEAR( 0.9130591f, matrix[0][2], e);
-	EXPECT_EQ  ( 0.0f,        matrix[0][3]);
+	EXPECT_EQ  ( 0.0f,       matrix[0][3]);
 	EXPECT_NEAR( 0.7683589f, matrix[1][0], e);
-	EXPECT_NEAR( 2.1267323, matrix[1][1], e);
-	EXPECT_NEAR( 1.9714549, matrix[1][2], e);
-	EXPECT_EQ  ( 0.0f,        matrix[1][3]);
-	EXPECT_NEAR(-0.1782415, matrix[2][0], e);
-	EXPECT_NEAR(-0.0180231, matrix[2][1], e);
-	EXPECT_NEAR( 0.0889109, matrix[2][2], e);
-	EXPECT_EQ  ( 0.0f,        matrix[2][3]);
-	EXPECT_EQ  ( 2.0f,        matrix[3][0]);
-	EXPECT_EQ  (-5.0f,        matrix[3][1]);
-	EXPECT_EQ  ( 7.0f,        matrix[3][2]);
-	EXPECT_EQ  ( 1.0f,        matrix[3][3]);
+	EXPECT_NEAR( 2.1267323f, matrix[1][1], e);
+	EXPECT_NEAR( 1.9714549f, matrix[1][2], e);
+	EXPECT_EQ  ( 0.0f,       matrix[1][3]);
+	EXPECT_NEAR(-0.1782415f, matrix[2][0], e);
+	EXPECT_NEAR(-0.0180231f, matrix[2][1], e);
+	EXPECT_NEAR( 0.0889109f, matrix[2][2], e);
+	EXPECT_EQ  ( 0.0f,       matrix[2][3]);
+	EXPECT_EQ  ( 2.0f,       matrix[3][0]);
+	EXPECT_EQ  (-5.0f,       matrix[3][1]);
+	EXPECT_EQ  ( 7.0f,       matrix[3][2]);
+	EXPECT_EQ  ( 1.0f,       matrix[3][3]);
+}
+
+TEST(Transform, FromMatrix) {
+	Transform t;
+	t.SetTranslation(vec3(1.5f, 3.4f, -2.0f));
+	t.SetRotation(quat(0.7949582f, 0.2350021f, -0.4716957f, -0.3005306f));
+	t.SetScale(vec3(0.5f, 3.0f, 8.2f));
+
+	const mat4& matrix = t.AsMatrix();
+	Transform tprime(matrix);
+
+	EXPECT_NEAR(t.GetTranslation().x, tprime.GetTranslation().x, e);
+	EXPECT_NEAR(t.GetTranslation().y, tprime.GetTranslation().y, e);
+	EXPECT_NEAR(t.GetTranslation().y, tprime.GetTranslation().y, e);
+
+	EXPECT_NEAR(t.GetRotation().x, tprime.GetRotation().x, e);
+	EXPECT_NEAR(t.GetRotation().y, tprime.GetRotation().y, e);
+	EXPECT_NEAR(t.GetRotation().z, tprime.GetRotation().z, e);
+
+	EXPECT_NEAR(t.GetScale().x, tprime.GetScale().x, e);
+	EXPECT_NEAR(t.GetScale().y, tprime.GetScale().y, e);
+	EXPECT_NEAR(t.GetScale().z, tprime.GetScale().z, e);
 }

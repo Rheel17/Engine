@@ -16,9 +16,9 @@ Transform::Transform(const mat4& matrix) {
 	vec3 yScaleVector(matrix[1][0], matrix[1][1], matrix[1][2]);
 	vec3 zScaleVector(matrix[2][0], matrix[2][1], matrix[2][2]);
 
-	_scale.x = glm::dot(xScaleVector, xScaleVector);
-	_scale.y = glm::dot(yScaleVector, yScaleVector);
-	_scale.z = glm::dot(zScaleVector, zScaleVector);
+	_scale.x = sqrt(glm::dot(xScaleVector, xScaleVector));
+	_scale.y = sqrt(glm::dot(yScaleVector, yScaleVector));
+	_scale.z = sqrt(glm::dot(zScaleVector, zScaleVector));
 
 	mat3 rotationMatrix;
 	for (int i = 0; i < 3; i++) {
