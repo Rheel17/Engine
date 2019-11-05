@@ -15,7 +15,9 @@ Scene::~Scene() {
 }
 
 Entity *Scene::AddEntity(std::string name, RigidTransform transform) {
-	return _root_entity->AddChild(std::move(name), transform);
+	Entity *entity = _root_entity->AddChild(std::move(name), transform);
+	_entities.push_back(entity);
+	return entity;
 }
 
 std::string Scene::UniqueEntityName(const std::string& prefix) {
@@ -24,10 +26,15 @@ std::string Scene::UniqueEntityName(const std::string& prefix) {
 
 void Scene::RemoveEntity(Entity *entity) {
 	_root_entity->RemoveChild(entity);
+	_entities.erase(std::find(_entities.begin(), _entities.end(), entity));
 }
 
 Entity *Scene::FindEntity(const std::string& name, bool recursive) {
 	return _root_entity->FindChild(name, recursive);
+}
+
+const std::vector<Entity *>& Scene::GetEntities() const {
+	return _entities;
 }
 
 Camera *Scene::GetCamera(const std::string& name) {

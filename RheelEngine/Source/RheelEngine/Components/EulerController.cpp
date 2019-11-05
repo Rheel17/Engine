@@ -5,32 +5,32 @@
 
 namespace rheel {
 
-void EulerCameraController::SetAngularVelocity(float velocity) {
+void EulerController::SetAngularVelocity(float velocity) {
 	SetAngularVelocity(velocity, velocity);
 }
 
-void EulerCameraController::SetAngularVelocity(float yawVelocity, float pitchVelocity) {
+void EulerController::SetAngularVelocity(float yawVelocity, float pitchVelocity) {
 	_velocity_yaw = yawVelocity;
 	_velocity_pitch = pitchVelocity;
 }
 
-void EulerCameraController::SetVelocity(float velocity) {
+void EulerController::SetVelocity(float velocity) {
 	SetVelocity(velocity, velocity);
 }
 
-void EulerCameraController::SetVelocity(float forwardsBackwardsVelocity, float sideVelocity) {
+void EulerController::SetVelocity(float forwardsBackwardsVelocity, float sideVelocity) {
 	_velocity_z = forwardsBackwardsVelocity;
 	_velocity_x = sideVelocity;
 }
 
 
-void EulerCameraController::Update() {
+void EulerController::Update() {
 	// TODO: get dt
 	_Rotate(1.0 / 60.0);
 	_Move(1.0 / 60.0);
 }
 
-void EulerCameraController::_Rotate(float dt) {
+void EulerController::_Rotate(float dt) {
 	vec2 mouse = vec2(0, 0);
 	// TODO: get mouse
 	// vec2 mouse = InputMouseDelta();
@@ -57,7 +57,7 @@ void EulerCameraController::_Rotate(float dt) {
 	GetParent()->transform.SetRotation(angles);
 }
 
-void EulerCameraController::_Move(float dt) {
+void EulerController::_Move(float dt) {
 	// get the movement
 	vec4 movement = vec4();
 	bool hasMovement = false;

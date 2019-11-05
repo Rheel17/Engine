@@ -24,6 +24,11 @@ public:
 	virtual ~Camera() = default;
 
 	/**
+	 * Returns the view matrix of this camera.
+	 */
+	mat4 GetViewMatrix() const;
+
+	/**
 	 * Creates the matrix which transforms vertices from world space into view
 	 * space.
 	 */

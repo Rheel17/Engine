@@ -137,6 +137,12 @@ public:
 	 */
 	void Update();
 
+	/**
+	 * Calls the Render() method on all components and its children's
+	 * components.
+	 */
+	void Render();
+
 	// the name of this entity
 	const std::string name;
 

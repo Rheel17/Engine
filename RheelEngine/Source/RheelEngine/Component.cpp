@@ -9,6 +9,10 @@ Entity *ComponentBase::GetParent() {
 	return _entity;
 }
 
+const Entity *ComponentBase::GetParent() const {
+	return _entity;
+}
+
 }
 
 

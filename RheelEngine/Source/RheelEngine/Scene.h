@@ -53,6 +53,12 @@ public:
 	Entity *FindEntity(const std::string& name, bool recursive = true);
 
 	/**
+	 * Returns a vector of all root-level entities in the scene. No child
+	 * entities are returned.
+	 */
+	const std::vector<Entity *>& GetEntities() const;
+
+	/**
 	 * Adds a component to the scene root, instead of a specific object in the
 	 * scene. Use this only for scene-wide components.
 	 */
@@ -112,6 +118,7 @@ private:
 
 	std::unordered_map<std::string, Camera *> _cameras;
 	std::vector<Light *> _lights;
+	std::vector<Entity *> _entities;
 
 };
 

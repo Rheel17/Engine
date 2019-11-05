@@ -68,6 +68,11 @@ void ForwardSceneRenderer::Render(float dt) {
 		ShadowMapDirectional::EmptyShadowMap().Bind(textureUnit++);
 	}
 
+	// render all objects
+	for (const auto entity : GetManager()->GetScene()->GetEntities()) {
+		entity->Render();
+	}
+
 	// render all the models
 	for (const auto& pair : GetManager()->RenderMap()) {
 		pair.second.RenderObjects();

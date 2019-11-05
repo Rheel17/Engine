@@ -46,15 +46,7 @@ void ModelRenderComponent::Activate() {
 }
 
 void ModelRenderComponent::Render() {
-	// TODO: update transforms
-
-	// mat4 parentMatrix = GetParent()->ResultingTransform();
-	// _object_data.SetMatrix();
-
-//	mat4 parentMatrix = glm::translate(glm::identity<mat4>(), Parent()->Position()) * glm::mat4_cast(Parent()->Rotation());
-//	mat4 componentMatrix = glm::translate(glm::identity<mat4>(), _translation) * glm::scale(glm::mat4_cast(_rotation), _scale);
-//
-//	_object_data.SetTransform(parentMatrix * componentMatrix);
+	_object_data.SetMatrix(CalculateAbsoluteTransformationMatrix());
 }
 
 void ModelRenderComponent::Deactivate() {

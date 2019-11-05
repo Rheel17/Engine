@@ -8,10 +8,17 @@ namespace rheel {
 Camera::Camera(std::string name) :
 		_name(std::move(name)) {}
 
+
 void Camera::Activate() {
 	// TODO: log warning replace camera
 
 	GetParent()->scene->_cameras.insert({ _name, this });
+}
+
+mat4 Camera::GetViewMatrix() const {
+	// TODO: check that this is correct.
+	RigidTransform absolute = CalculateAbsoluteTransform();
+	return RigidTransform(-absolute.GetTranslation(), -absolute.GetRotation()).AsMatrix();
 }
 
 vec3 Camera::RayDirection(unsigned width, unsigned height, const vec2& pixel) const {

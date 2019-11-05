@@ -23,23 +23,28 @@ static void createCube(Entity *cube) {
 static Scene *createScene() {
 	Scene *scene = new Scene();
 
-	auto physicsScene = scene->AddRootComponent<PhysicsScene>();
-	physicsScene->SetGravity({ 0.0f, -9.81f, 0.0f });
+	scene->AddRootComponent<EulerController>();
 
-	for (int i = -2; i <= 2; i++) {
-		for (int j = 0; j < 5; j++) {
-			Entity *cube = scene->AddEntity(
-					scene->UniqueEntityName("cube"),
-					Transform({ 1.1f * i, 1.1f * j + 0.5f, 1.1f * i }));
-			createCube(cube);
-		}
-	}
+//	auto physicsScene = scene->AddRootComponent<PhysicsScene>();
+//	physicsScene->SetGravity({ 0.0f, -9.81f, 0.0f });
+//
+//	for (int i = -2; i <= 2; i++) {
+//		for (int j = 0; j < 5; j++) {
+//			Entity *cube = scene->AddEntity(
+//					scene->UniqueEntityName("cube"),
+//					Transform({ 1.1f * i, 1.1f * j + 0.5f, 1.1f * i }));
+//			createCube(cube);
+//		}
+//	}
+
+	Entity *cube = scene->AddEntity("cube", Transform(vec3{ 0, 0, -5 }));
+	createCube(cube);
 
 	Entity *light = scene->AddEntity("main_light");
 	auto lightComponent = light->AddComponent<DirectionalLight>(Color{ 1, 1, 1, 1 }, vec3{ 0.2f, -2.0f, -1.0f });
 	lightComponent->SetShadowDistance(100.0f);
 
-	Entity *camera = scene->AddEntity("main_camera", RigidTransform(vec3{ -12, 7.5f, 0 }, vec3{ -0.5f, -M_PI / 2.0f, 0.0f }));
+	Entity *camera = scene->AddEntity("main_camera", RigidTransform(vec3{ 0, 0, 0 })); // coordinates are reversed
 	camera->AddComponent<PerspectiveCamera>("main_camera", 75.0f, 0.01f, 100.0f);
 
 	return scene;

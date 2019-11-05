@@ -56,6 +56,11 @@ public:
 	 */
 	Entity *GetParent();
 
+	/**
+	 * Returns the parent entity of this component
+	 */
+	const Entity *GetParent() const;
+
 protected:
 	ComponentBase() = default;
 
@@ -75,14 +80,14 @@ class RE_API _Component : public ComponentBase {
 public:
 	virtual ~_Component() = default;
 
-	mat4 CalculateAbsoluteTransformationMatrix() {
+	mat4 CalculateAbsoluteTransformationMatrix() const {
 		mat4 parentTransform = GetParent()->CalculateAbsoluteTransform().AsMatrix();
 		mat4 thisTransform = transform.AsMatrix();
 		return thisTransform * parentTransform;
 	}
 
-	Transform CalculateAbsoluteTransform() {
-		return _Transform(CalculateAbsoluteTransformationMatrix());
+	_Transform CalculateAbsoluteTransform() const {
+		return Transform(CalculateAbsoluteTransformationMatrix());
 	}
 
 	_Transform transform;

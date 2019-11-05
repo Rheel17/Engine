@@ -15,6 +15,10 @@ GLShaderProgram ModelRenderer::_opaque_shader;
 bool ModelRenderer::_are_shaders_initialized = false;
 
 ModelRenderer::ObjectData::ObjectData() :
+		_model_matrix(glm::identity<mat4>()),
+		_normal_model_matrix(glm::identity<mat4>()),
+		_material_vector(0, 0, 0, 0),
+		_material_color(0, 0, 0, 0),
 		_ptr(nullptr) {}
 
 ModelRenderer::ObjectData::ObjectData(const ObjectData& data) :

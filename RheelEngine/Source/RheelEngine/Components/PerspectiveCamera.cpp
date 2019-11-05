@@ -10,7 +10,12 @@ PerspectiveCamera::PerspectiveCamera(std::string name, float fov, float near, fl
 		_fov(glm::radians(fov)), _near(near), _far(far) {}
 
 mat4 PerspectiveCamera::CreateMatrix(unsigned width, unsigned height) const {
-	return glm::perspective(_fov, float(width) / float(height), _near, _far) * transform.AsMatrix();
+	// TODO: cache perspective matrix. Width and Height don't usually change.
+	// TODO: notify components of transform change? This could optimize this
+	// code a lot. Maybe also give the source of the transform change. However,
+	// that would require the restructure of a lot of transform code.
+
+	return glm::perspective(_fov, float(width) / float(height), _near, _far) * GetViewMatrix();
 }
 
 std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned height, float near, float far) const {

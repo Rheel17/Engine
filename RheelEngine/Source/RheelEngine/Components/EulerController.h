@@ -9,7 +9,7 @@
 
 namespace rheel {
 
-class RE_API EulerCameraController : public ComponentBase {
+class RE_API EulerController : public ComponentBase {
 
 public:
 	void Update() override;

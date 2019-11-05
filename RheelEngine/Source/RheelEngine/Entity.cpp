@@ -142,8 +142,28 @@ RigidTransform Entity::CalculateAbsoluteTransform() const {
 	return static_cast<RigidTransform>(Transform(CalculateAbsoluteTransformationMatrix()));
 }
 
+// This function calls the given method on all components and children
+template<typename Method>
+static void callAll(
+		const std::vector<ComponentBase *>& components,
+		const std::vector<std::unique_ptr<Entity>>& children,
+		Method m) {
+
+	for (const auto& component : components) {
+		m(component);
+	}
+
+	for (const auto& child : children) {
+		m(child);
+	}
+}
+
 void Entity::Update() {
-	// TODO: implement
+	callAll(_components, _children, [](const auto& c) { c->Update(); });
+}
+
+void Entity::Render() {
+	callAll(_components, _children, [](const auto& c) { c->Render(); });
 }
 
 }
