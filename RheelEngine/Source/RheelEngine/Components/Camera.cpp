@@ -16,9 +16,8 @@ void Camera::Activate() {
 }
 
 mat4 Camera::GetViewMatrix() const {
-	// TODO: check that this is correct.
-	RigidTransform absolute = CalculateAbsoluteTransform();
-	return RigidTransform(-absolute.GetTranslation(), -absolute.GetRotation()).AsMatrix();
+	// TODO: optimize
+	return glm::inverse(CalculateAbsoluteTransformationMatrix());
 }
 
 vec3 Camera::RayDirection(unsigned width, unsigned height, const vec2& pixel) const {
