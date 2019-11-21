@@ -5,6 +5,20 @@
 
 namespace rheel {
 
+void EulerController::Activate() {
+	SetReceiveInput(true);
+}
+
+void EulerController::Deactivate() {
+	SetReceiveInput(false);
+}
+
+void EulerController::Update() {
+	// TODO: get dt
+	_Rotate(1.0 / 60.0);
+	_Move(1.0 / 60.0);
+}
+
 void EulerController::SetAngularVelocity(float velocity) {
 	SetAngularVelocity(velocity, velocity);
 }
@@ -21,13 +35,6 @@ void EulerController::SetVelocity(float velocity) {
 void EulerController::SetVelocity(float forwardsBackwardsVelocity, float sideVelocity) {
 	_velocity_z = forwardsBackwardsVelocity;
 	_velocity_x = sideVelocity;
-}
-
-
-void EulerController::Update() {
-	// TODO: get dt
-	_Rotate(1.0 / 60.0);
-	_Move(1.0 / 60.0);
 }
 
 void EulerController::_Rotate(float dt) {

@@ -11,10 +11,12 @@ namespace rheel {
 
 class Camera;
 class Light;
+class ComponentInputProxy;
 
 class RE_API Scene {
 	friend class Camera;
 	friend class Light;
+	friend class ComponentInputProxy;
 
 	RE_NO_MOVE(Scene);
 	RE_NO_COPY(Scene);
@@ -119,6 +121,7 @@ private:
 	std::unordered_map<std::string, Camera *> _cameras;
 	std::vector<Light *> _lights;
 	std::vector<Entity *> _entities;
+	std::vector<ComponentInputProxy *> _input_components;
 
 };
 

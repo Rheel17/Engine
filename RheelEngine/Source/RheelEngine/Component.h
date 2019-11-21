@@ -11,6 +11,24 @@
 
 namespace rheel {
 
+class ComponentBase;
+
+/**
+ * A proxy class to handle player input
+ */
+class RE_API ComponentInputProxy {
+	friend class ComponentBase;
+
+private:
+	ComponentInputProxy(ComponentBase *component);
+
+	void _Register();
+	void _Unregister();
+
+	ComponentBase *_component;
+
+};
+
 /**
  * Base class of all components. If you want a custom component with a
  * transform, use either Component or RigidComponent as a base class.
@@ -61,11 +79,24 @@ public:
 	 */
 	const Entity *GetParent() const;
 
+	/**
+	 * Sets the receive input flag for this component. When this flag is set to
+	 * true, the component will receive input events from the player.
+	 */
+	void SetReceiveInput(bool flag);
+
+	/**
+	 * Returns whether this component receives input from the player.
+	 */
+	bool ReceivesInput() const;
+
 protected:
 	ComponentBase() = default;
 
 private:
 	Entity *_entity = nullptr;
+	bool _receive_input = false;
+	std::unique_ptr<ComponentInputProxy> _input_proxy;
 
 };
 
