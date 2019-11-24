@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "Transform.h"
+#include "UI/Input.h"
 
 namespace rheel {
 
@@ -18,6 +19,22 @@ class ComponentBase;
  */
 class RE_API ComponentInputProxy {
 	friend class ComponentBase;
+
+public:
+	virtual ~ComponentInputProxy() = default;
+
+	void OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void OnCharacterInput(wchar_t character);
+	void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
+	void OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
+	void OnMouseEnter(const vec2& position);
+	void OnMouseExit(const vec2& position);
+	void OnMouseMove(const vec2& position);
+	void OnMouseJump(const vec2& position);
+	void OnMouseDrag(const vec2& origin, const vec2& position);
+	void OnMouseScroll(const vec2& scrollComponents);
 
 private:
 	ComponentInputProxy(ComponentBase *component);

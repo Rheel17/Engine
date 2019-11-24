@@ -8,6 +8,55 @@ namespace rheel {
 ComponentInputProxy::ComponentInputProxy(ComponentBase *component) :
 		_component(component) {}
 
+
+void ComponentInputProxy::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+
+}
+
+void ComponentInputProxy::OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+
+}
+
+void ComponentInputProxy::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+
+}
+
+void ComponentInputProxy::OnCharacterInput(wchar_t character) {
+
+}
+
+void ComponentInputProxy::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
+
+}
+
+void ComponentInputProxy::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
+
+}
+
+void ComponentInputProxy::OnMouseEnter(const vec2& position) {
+
+}
+
+void ComponentInputProxy::OnMouseExit(const vec2& position) {
+
+}
+
+void ComponentInputProxy::OnMouseMove(const vec2& position) {
+
+}
+
+void ComponentInputProxy::OnMouseJump(const vec2& position) {
+
+}
+
+void ComponentInputProxy::OnMouseDrag(const vec2& origin, const vec2& position) {
+
+}
+
+void ComponentInputProxy::OnMouseScroll(const vec2& scrollComponents) {
+
+}
+
 void ComponentInputProxy::_Register() {
 	_component->GetParent()->scene->_input_components.push_back(this);
 }
