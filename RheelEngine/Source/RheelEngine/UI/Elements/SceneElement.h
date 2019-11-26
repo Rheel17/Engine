@@ -58,9 +58,12 @@ public:
 	void OnFocusGained() override;
 	void OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) override;
 	void OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) override;
+	void OnCharacterInput(Input::Unicode character) override;
 	void OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) override;
 	void OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) override;
 	void OnMouseMove(const vec2& position) override;
+	void OnMouseJump(const vec2& position) override;
+	void OnMouseDrag(const vec2& origin, const vec2& position) override;
 	void OnMouseScroll(const vec2& scrollComponents) override;
 
 private:

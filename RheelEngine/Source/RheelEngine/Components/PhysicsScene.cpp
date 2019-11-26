@@ -31,8 +31,7 @@ void PhysicsScene::Activate() {
 }
 
 void PhysicsScene::Update() {
-	// TODO: use delta time
-	_world->stepSimulation(1.0f / 60.0);
+	_world->stepSimulation(GetTimeDelta());
 	_HandleCollisions();
 }
 

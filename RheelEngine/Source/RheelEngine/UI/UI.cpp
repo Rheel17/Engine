@@ -87,7 +87,7 @@ void UI::OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, I
 	}
 }
 
-void UI::OnCharacter(wchar_t character) {
+void UI::OnCharacter(Input::Unicode character) {
 	if (_focus_element) {
 		_focus_element->_OnCharacterInput(character);
 	}

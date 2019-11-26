@@ -159,6 +159,8 @@ private:
 	Entity(std::string name, Scene *scene, RigidTransform transform = RigidTransform());
 	Entity(std::string name, Entity *parent, RigidTransform transform = RigidTransform());
 
+	void _UpdateTime(float time, float dt);
+
 	bool _alive = true;
 	float _time = 0.0f;
 	float _dt = 0.0f;

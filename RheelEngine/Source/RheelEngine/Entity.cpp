@@ -149,7 +149,7 @@ static void callAll(
 		const std::vector<std::unique_ptr<Entity>>& children,
 		Method m) {
 
-	for (const auto& component : components) {
+	for (auto component : components) {
 		m(component);
 	}
 
@@ -164,6 +164,20 @@ void Entity::Update() {
 
 void Entity::Render() {
 	callAll(_components, _children, [](const auto& c) { c->Render(); });
+}
+
+void Entity::_UpdateTime(float time, float dt) {
+	_time = time;
+	_dt = dt;
+
+	for (auto component : _components) {
+		component->_time = _time;
+		component->_dt = _dt;
+	}
+
+	for (const auto& child : _children) {
+		child->_UpdateTime(_time, _dt);
+	}
 }
 
 }

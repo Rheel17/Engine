@@ -145,7 +145,7 @@ void Window::Loop() {
 
 		// update the scene
 		if (auto scene = Engine::GetActiveScene(); scene) {
-			scene->Update();
+			scene->Update(time, dt);
 		}
 
 		// initialize OpenGL state
@@ -193,7 +193,7 @@ static void glfw_KeyCallback(GLFWwindow *glfw_window, int key, int scancode, int
 	Engine::GetUI().OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
 }
 
-static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned int codepoint) {
+static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned codepoint) {
 	Engine::GetUI().OnCharacter(codepoint);
 }
 

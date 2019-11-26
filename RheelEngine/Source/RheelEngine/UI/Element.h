@@ -178,7 +178,7 @@ private:
 	void _OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
 	void _OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
 	void _OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void _OnCharacterInput(wchar_t character);
+	void _OnCharacterInput(Input::Unicode character);
 	void _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
 	void _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
 	void _OnMouseEnter(const vec2& position);

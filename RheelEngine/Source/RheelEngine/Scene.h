@@ -111,9 +111,14 @@ public:
 	const std::vector<Light *>& GetLights();
 
 	/**
+	 * Returns the components registered to receive input events
+	 */
+	const std::vector<ComponentInputProxy *>& GetInputComponents() const;
+
+	/**
 	 * Updates the scene and all its entities.
 	 */
-	void Update();
+	void Update(float time, float dt);
 
 private:
 	Entity *_root_entity;

@@ -173,7 +173,7 @@ void Element::_OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Mod
 	 _Callback([key, scancode, mods](const _CBPtr& ptr) { ptr->OnKeyRelease(key, scancode, mods); });
 }
 
-void Element::_OnCharacterInput(wchar_t character) {
+void Element::_OnCharacterInput(Input::Unicode character) {
 	OnCharacterInput(character);
 	_Callback([character](const _CBPtr& ptr) { ptr->OnCharacterInput(character); });
 }

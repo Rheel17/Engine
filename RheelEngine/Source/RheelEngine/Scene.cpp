@@ -4,6 +4,7 @@
 #include "Scene.h"
 
 #include "Entity.h"
+#include "Component.h"
 
 namespace rheel {
 
@@ -51,8 +52,17 @@ const std::vector<Light *>& Scene::GetLights() {
 	return _lights;
 }
 
-void Scene::Update() {
+const std::vector<ComponentInputProxy *>& Scene::GetInputComponents() const {
+	return _input_components;
+}
+
+void Scene::Update(float time, float dt) {
+	_root_entity->_UpdateTime(time, dt);
 	_root_entity->Update();
+
+	for (auto inputComponent : _input_components) {
+		inputComponent->ResetDeltas();
+	}
 }
 
 }

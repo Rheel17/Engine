@@ -92,6 +92,7 @@ public:
 	};
 
 	using Scancode = int;
+	using Unicode = unsigned;
 
 	enum class MouseButton {
 		BUTTON_1 = GLFW_MOUSE_BUTTON_1, BUTTON_2 = GLFW_MOUSE_BUTTON_2,
