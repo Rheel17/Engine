@@ -34,7 +34,7 @@ void ForwardSceneRenderer::Render(float dt) {
 	GLShaderProgram& modelShader = ModelRenderer::GetForwardModelShader();
 	GetManager()->InitializeShaderLights(modelShader);
 	modelShader["cameraMatrix"] = camera->CreateMatrix(Width(), Height());
-	modelShader["cameraPosition"] = camera->transform.GetTranslation();
+	modelShader["cameraPosition"] = camera->CalculateAbsoluteTransform().GetTranslation();
 
 	// bind the shadow objects
 	int shadowMapCount = 0;
