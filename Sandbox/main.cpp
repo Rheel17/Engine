@@ -20,6 +20,32 @@ static void createCube(Entity *cube) {
 	);
 }
 
+static void createRamp(Entity *ramp) {
+	ModelResource& model = ModelResource::Box({ 4.0f, 0.5f, 5.0f });
+
+	ramp->AddComponent<ModelRenderComponent>(
+			model,
+			Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f)
+	);
+
+	ramp->AddComponent<RigidBodyComponent>(
+			PhysicsShape::Box({ 4.0f, 0.5f, 5.0f })
+	);
+}
+
+static void createFloor(Entity *ramp) {
+	ModelResource& model = ModelResource::Box({ 20.0f, 0.5f, 20.0f });
+
+	ramp->AddComponent<ModelRenderComponent>(
+			model,
+			Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f)
+	);
+
+	ramp->AddComponent<RigidBodyComponent>(
+			PhysicsShape::Box({ 20.0f, 0.5f, 20.0f })
+	);
+}
+
 static Scene *createScene() {
 	Scene *scene = new Scene();
 
@@ -34,6 +60,15 @@ static Scene *createScene() {
 			createCube(cube);
 		}
 	}
+
+	Entity *ramp1 = scene->AddEntity("ramp1", Transform({ -8, 3, 0 }, quat(vec3{ 0, 0, -0.6f })));
+	createRamp(ramp1);
+
+	Entity *ramp2 = scene->AddEntity("ramp2", Transform({ 8, 2, 0 }, quat(vec3{ 0, 0, 0.8f })));
+	createRamp(ramp2);
+
+	Entity *floor = scene->AddEntity("floor", Transform({ 0, -0.5f, 0 }));
+	createFloor(floor);
 
 	Entity *light = scene->AddEntity("main_light");
 	auto lightComponent = light->AddComponent<DirectionalLight>(Color{ 1, 1, 1, 1 }, vec3{ 0.2f, -2.0f, -1.0f });
