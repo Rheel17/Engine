@@ -146,6 +146,7 @@ void Window::Loop() {
 		// update the scene
 		if (auto scene = Engine::GetActiveScene(); scene) {
 			scene->Update(time, dt);
+			Engine::GetSceneRenderManager(scene).Update();
 		}
 
 		// initialize OpenGL state
