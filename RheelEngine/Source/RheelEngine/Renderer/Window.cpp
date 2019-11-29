@@ -225,41 +225,41 @@ static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity
 		return;
 	}
 
-	std::cout << "[Debug][OpenGL] " << id << ": ";
+	auto& info = Log::Info() << "[OpenGL] " << id << ": ";
 
 	switch (source) {
-		case GL_DEBUG_SOURCE_API:			  std::cout << "source=API"; 			 break;
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "source=WINDOW_SYSTEM";   break;
-		case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "source=SHADER_COMPILER"; break;
-		case GL_DEBUG_SOURCE_THIRD_PARTY:	  std::cout << "source=THIRD_PARTY";	 break;
-		case GL_DEBUG_SOURCE_APPLICATION:	  std::cout << "source=APPLICATION";	 break;
-		case GL_DEBUG_SOURCE_OTHER:			  std::cout << "source=OTHER";			 break;
+		case GL_DEBUG_SOURCE_API:			  info << "source=API"; 			break;
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   info << "source=WINDOW_SYSTEM";   break;
+		case GL_DEBUG_SOURCE_SHADER_COMPILER: info << "source=SHADER_COMPILER"; break;
+		case GL_DEBUG_SOURCE_THIRD_PARTY:	  info << "source=THIRD_PARTY";	 	break;
+		case GL_DEBUG_SOURCE_APPLICATION:	  info << "source=APPLICATION";		break;
+		case GL_DEBUG_SOURCE_OTHER:			  info << "source=OTHER";			break;
 	}
 
-	std::cout << ", ";
+	info << ", ";
 
 	switch (type) {
-		case GL_DEBUG_TYPE_ERROR: 				std::cout << "type=ERROR"; 				 break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "type=DEPRECATED_BEHAVIOR"; break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: 	std::cout << "type=UNDEFINED_BEHAVIOR";  break;
-		case GL_DEBUG_TYPE_PORTABILITY: 		std::cout << "type=PORTABILITY";		 break;
-		case GL_DEBUG_TYPE_PERFORMANCE:		 	std::cout << "type=PERFORMANCE";		 break;
-		case GL_DEBUG_TYPE_MARKER: 				std::cout << "type=MARKER";				 break;
-		case GL_DEBUG_TYPE_PUSH_GROUP: 			std::cout << "type=PUSH_GROUP";			 break;
-		case GL_DEBUG_TYPE_POP_GROUP: 			std::cout << "type=POP_GROUP";			 break;
-		case GL_DEBUG_TYPE_OTHER: 				std::cout << "type=OTHER";				 break;
+		case GL_DEBUG_TYPE_ERROR: 				info << "type=ERROR"; 				break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: info << "type=DEPRECATED_BEHAVIOR";	break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: 	info << "type=UNDEFINED_BEHAVIOR";	break;
+		case GL_DEBUG_TYPE_PORTABILITY: 		info << "type=PORTABILITY";			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:		 	info << "type=PERFORMANCE";			break;
+		case GL_DEBUG_TYPE_MARKER: 				info << "type=MARKER";				break;
+		case GL_DEBUG_TYPE_PUSH_GROUP: 			info << "type=PUSH_GROUP";			break;
+		case GL_DEBUG_TYPE_POP_GROUP: 			info << "type=POP_GROUP";			break;
+		case GL_DEBUG_TYPE_OTHER: 				info << "type=OTHER";				break;
 	}
 
-	std::cout << ", ";
+	info << ", ";
 
 	switch (severity) {
-		case GL_DEBUG_SEVERITY_HIGH:         std::cout << "severity=HIGH";         break;
-		case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "severity=MEDIUM";       break;
-		case GL_DEBUG_SEVERITY_LOW:          std::cout << "severity=LOW";          break;
-		case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "severity=NOTIFICATION"; break;
+		case GL_DEBUG_SEVERITY_HIGH:         info << "severity=HIGH";         break;
+		case GL_DEBUG_SEVERITY_MEDIUM:       info << "severity=MEDIUM";       break;
+		case GL_DEBUG_SEVERITY_LOW:          info << "severity=LOW";          break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION: info << "severity=NOTIFICATION"; break;
 	}
 
-	std::cout << ", " << std::string(message, length) << std::endl;
+	info << ", " << std::string(message, length) << std::endl;
 }
 
 }

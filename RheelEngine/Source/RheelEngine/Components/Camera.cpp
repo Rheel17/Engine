@@ -10,9 +10,10 @@ Camera::Camera(std::string name) :
 
 
 void Camera::Activate() {
-	// TODO: log warning replace camera
-
-	GetParent()->scene->_cameras.insert({ _name, this });
+	const auto& [iter, insert] = GetParent()->scene->_cameras.insert({ _name, this });
+	if (!insert) {
+		Log::Error() << "Camera with name already exists: " << _name << std::endl;
+	}
 }
 
 mat4 Camera::GetViewMatrix() const {

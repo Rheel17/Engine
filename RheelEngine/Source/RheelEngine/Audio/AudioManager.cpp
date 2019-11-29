@@ -11,20 +11,25 @@ namespace rheel {
 
 AudioManager::AudioManager() {
 	const ALCchar *defaultDevice = alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER);
-	std::cout << "Audio device: " << defaultDevice << std::endl;
+	Log::Info() << "Audio device: " << defaultDevice << std::endl;
+
+	// TODO: handle errors
 
 	_device = alcOpenDevice(defaultDevice);
 	if (!_device) {
-		throw std::runtime_error("Could not create audio device");
+		Log::Error() << "Could not create audio device" << std::endl;
+		return;
 	}
 
 	_context = alcCreateContext(_device, nullptr);
 	if (!_context) {
-		throw std::runtime_error("Could not create audio context");
+		Log::Error() << "Could not create audio context" << std::endl;
+		return;
 	}
 
 	if (!alcMakeContextCurrent(_context)) {
-		throw std::runtime_error("Could not make audio context current");
+		Log::Error() << "Could not make audio context current" << std::endl;
+		return;
 	}
 }
 

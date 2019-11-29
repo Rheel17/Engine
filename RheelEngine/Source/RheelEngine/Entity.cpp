@@ -23,7 +23,7 @@ Entity::~Entity() {
 
 Entity *Entity::AddChild(std::string name, RigidTransform transform) {
 	if (auto [it, inserted] = _child_names.insert(name); !inserted) {
-		// TODO: LOG ERROR
+		Log::Error() << "A child with name already exists: " << name << std::endl;
 		return nullptr;
 	}
 
@@ -57,18 +57,18 @@ std::string Entity::UniqueChildName(const std::string& prefix) {
 		}
 	}
 
+	Log::Error() << "Unable to find a unique name with prefix " << prefix << std::endl;
 	return prefix;
-	// TODO ERROR: unable to find a unique name with prefix x
 }
 
 void Entity::RemoveChild(Entity *entity) {
 	if (entity == nullptr) {
-		// TODO: LOG WARNING
+		Log::Warning() << "Cannot remove nullptr entity" << std::endl;
 		return;
 	}
 
 	if (!entity->IsDescendantOf(this)) {
-		// TODO LOG WARNING
+		Log::Warning() << "Entity to remove is not a descendant of this" << std::endl;
 		return;
 	}
 

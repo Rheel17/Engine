@@ -126,7 +126,7 @@ bool ComponentBase::IsKeyPressed(Input::Key key) const {
 		return _input_proxy->_pressed_keys.find(key) != _input_proxy->_pressed_keys.end();
 	}
 
-	// TODO: LOG ERROR Component not registered to receive input events
+	Log::Error() << "Component not registered to receive input events" << std::endl;
 	return false;
 }
 
@@ -135,7 +135,7 @@ bool ComponentBase::IsKeyPressed(Input::Scancode scancode) const {
 		return _input_proxy->_pressed_scancodes.find(scancode) != _input_proxy->_pressed_scancodes.end();
 	}
 
-	// TODO: LOG ERROR Component not registered to receive input events
+	Log::Error() << "Component not registered to receive input events" << std::endl;
 	return false;
 }
 
@@ -144,7 +144,7 @@ const vec2& ComponentBase::GetMousePosition() const {
 		return _input_proxy->_mouse_position;
 	}
 
-	// TODO: LOG ERROR Component not registered to receive input events
+	Log::Error() << "Component not registered to receive input events" << std::endl;
 	return ZERO_VEC2;
 }
 
@@ -153,7 +153,7 @@ const vec2& ComponentBase::GetMouseDelta() const {
 		return _input_proxy->_mouse_delta;
 	}
 
-	// TODO: LOG ERROR Component not registered to receive input events
+	Log::Error() << "Component not registered to receive input events" << std::endl;
 	return ZERO_VEC2;
 }
 
@@ -162,7 +162,7 @@ const vec2& ComponentBase::GetMouseScroll() const {
 		return _input_proxy->_mouse_scroll;
 	}
 
-	// TODO: LOG ERROR Component not registered to receive input events
+	Log::Error() << "Component not registered to receive input events" << std::endl;
 	return ZERO_VEC2;
 }
 

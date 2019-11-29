@@ -8,7 +8,7 @@ using namespace rheel;
 static void createCube(Entity *cube) {
 	ModelResource& model = ModelResource::Box({ 0.5f, 0.5f, 0.5f });
 
-	cube->AddComponent<ModelRenderComponent>(
+	auto comp = cube->AddComponent<ModelRenderComponent>(
 			model,												// model
 			Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.5f)	// material
 	);

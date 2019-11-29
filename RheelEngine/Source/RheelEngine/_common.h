@@ -11,6 +11,7 @@
 #endif
 
 #include "Util/Math.h"
+#include "Util/Log.h"
 
 #include <memory>
 #include <string>
