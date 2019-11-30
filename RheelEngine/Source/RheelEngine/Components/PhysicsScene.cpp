@@ -43,7 +43,7 @@ void PhysicsScene::SetGravity(vec3 gravity) {
 	}
 }
 
-RigidBodyComponent *PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT) {
+RigidBody *PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT) {
 	// calculate the from and to positions
 	vec3 dir = glm::normalize(direction);
 
@@ -66,7 +66,7 @@ RigidBodyComponent *PhysicsScene::ShootRay(const vec3& origin, const vec3& direc
 		return nullptr;
 	}
 
-	return static_cast<RigidBodyComponent *>(callback.m_collisionObject->getUserPointer());
+	return static_cast<RigidBody *>(callback.m_collisionObject->getUserPointer());
 }
 
 void PhysicsScene::_AddBody(btRigidBody *body) {
@@ -109,8 +109,8 @@ void PhysicsScene::_HandleCollisions() {
 			continue;
 		}
 
-		auto body0 = static_cast<RigidBodyComponent *>(manifold->getBody0()->getUserPointer());
-		auto body1 = static_cast<RigidBodyComponent *>(manifold->getBody1()->getUserPointer());
+		auto body0 = static_cast<RigidBody *>(manifold->getBody0()->getUserPointer());
+		auto body1 = static_cast<RigidBody *>(manifold->getBody1()->getUserPointer());
 
 		// TODO: notify all CollisionComponents?
 		auto cc0 = body0->GetParent()->GetComponent<CollisionComponent>();

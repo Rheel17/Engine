@@ -10,7 +10,7 @@
 namespace rheel {
 
 class RE_API PhysicsShape {
-	friend class RigidBodyComponent;
+	friend class RigidBody;
 
 public:
 	operator bool() const;

@@ -7,14 +7,14 @@
 
 #include <btBulletDynamicsCommon.h>
 
-#include "../Components/RigidBodyComponent.h"
+#include "Rigidbody.h"
 
 namespace rheel {
 
 class CollisionComponent;
 
 class RE_API PhysicsScene : public ComponentBase {
-	friend class RigidBodyComponent;
+	friend class RigidBody;
 
 private:
 	struct _CollisionData {
@@ -45,7 +45,7 @@ public:
 	 *
 	 * This function returns nullptr if there was no hit found.
 	 */
-	RigidBodyComponent *ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT);
+	RigidBody *ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT);
 
 private:
 	void _AddBody(btRigidBody *body);

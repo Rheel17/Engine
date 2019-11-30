@@ -8,12 +8,12 @@ using namespace rheel;
 static void createCube(Entity *cube) {
 	ModelResource& model = ModelResource::Box({ 0.5f, 0.5f, 0.5f });
 
-	auto comp = cube->AddComponent<ModelRenderComponent>(
+	cube->AddComponent<ModelRenderComponent>(
 			model,												// model
 			Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.5f)	// material
 	);
 
-	cube->AddComponent<RigidBodyComponent>(
+	cube->AddComponent<RigidBody>(
 			PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }),	// shape
 			5.0f,										// mass
 			0.05f										// bounciness
@@ -28,7 +28,7 @@ static void createRamp(Entity *ramp) {
 			Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f)
 	);
 
-	ramp->AddComponent<RigidBodyComponent>(
+	ramp->AddComponent<RigidBody>(
 			PhysicsShape::Box({ 4.0f, 0.5f, 5.0f })
 	);
 }
@@ -41,7 +41,7 @@ static void createFloor(Entity *ramp) {
 			Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f)
 	);
 
-	ramp->AddComponent<RigidBodyComponent>(
+	ramp->AddComponent<RigidBody>(
 			PhysicsShape::Box({ 20.0f, 0.5f, 20.0f })
 	);
 }
@@ -49,8 +49,8 @@ static void createFloor(Entity *ramp) {
 static Scene *createScene() {
 	Scene *scene = new Scene();
 
-//	auto physicsScene = scene->AddRootComponent<PhysicsScene>();
-//	physicsScene->SetGravity({ 0.0f, -9.81f, 0.0f });
+	auto physicsScene = scene->AddRootComponent<PhysicsScene>();
+	physicsScene->SetGravity({ 0.0f, -9.81f, 0.0f });
 
 	for (int i = -2; i <= 2; i++) {
 		for (int j = 0; j < 5; j++) {

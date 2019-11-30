@@ -18,7 +18,7 @@
 #include "RheelEngine/Components/PerspectiveCamera.h"
 #include "RheelEngine/Components/PhysicsScene.h"
 #include "RheelEngine/Components/PointLight.h"
-#include "RheelEngine/Components/RigidbodyComponent.h"
+#include "RheelEngine/Components/Rigidbody.h"
 #include "RheelEngine/Components/SpotLight.h"
 
 #include "RheelEngine/UI/Elements/ColorElement.h"
