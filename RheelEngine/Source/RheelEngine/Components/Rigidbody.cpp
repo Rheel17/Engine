@@ -57,20 +57,28 @@ void RigidBody::Activate() {
 }
 
 void RigidBody::Update() {
-//	btVector3 position = _body->getWorldTransform().getOrigin();
-//	btQuaternion rotation = _body->getWorldTransform().getRotation();
-//
-//	Parent()->SetPosition(position.x(), position.y(), position.z());
-//	Parent()->SetRotation(quat(rotation.getW(), rotation.getX(), rotation.getY(), rotation.getZ()));
+	mat4 mPrime, pInv, cInv;
+	_body->getWorldTransform().getOpenGLMatrix(&mPrime[0][0]);
+
+	if (GetParent()->parent == nullptr) {
+		pInv = glm::identity<mat4>();
+	} else {
+		pInv = glm::inverse(GetParent()->parent->CalculateAbsoluteTransformationMatrix());
+	}
+
+	cInv = glm::inverse(transform.AsMatrix());
+
+	mat4 oPrime = cInv * mPrime * pInv;
+	GetParent()->transform = Transform(oPrime);
 }
 
 void RigidBody::Deactivate() {
-//	PhysicsScene *physicsScene = Parent()->ParentScene()->GetScript<PhysicsScene>();
-//	if (!physicsScene) {
-//		return;
-//	}
-//
-//	physicsScene->_RemoveBody(_body.get(), Parent()->GetComponent<CollisionComponent>());
+	PhysicsScene *physicsScene = GetParent()->scene->GetRootComponent<PhysicsScene>();
+	if (!physicsScene) {
+		return;
+	}
+
+	physicsScene->_RemoveBody(_body.get(), GetParent()->GetComponent<CollisionComponent>());
 }
 
 void RigidBody::ApplyForce(const vec3& force) {
