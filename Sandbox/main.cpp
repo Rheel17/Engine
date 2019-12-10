@@ -5,6 +5,22 @@
 
 using namespace rheel;
 
+class FpsUpdater : public ComponentBase {
+
+public:
+	void SetElement(TextElement *element) {
+		_element = element;
+	}
+
+	void Update() override {
+		_element->SetText(std::to_string(int(std::round(1.0 / GetTimeDelta()))) + " FPS");
+	}
+
+private:
+	TextElement *_element = nullptr;
+
+};
+
 static void createCube(Entity *cube) {
 	ModelResource& model = ModelResource::Box({ 0.5f, 0.5f, 0.5f });
 
@@ -48,6 +64,8 @@ static void createFloor(Entity *ramp) {
 
 static Scene *createScene() {
 	Scene *scene = new Scene();
+
+	scene->AddRootComponent<FpsUpdater>();
 
 	auto physicsScene = scene->AddRootComponent<PhysicsScene>();
 	physicsScene->SetGravity({ 0.0f, -9.81f, 0.0f });
@@ -110,8 +128,13 @@ class SandboxGame : public Game {
 		ui.AddConstraint(crosshairElement, Constraint::TOP, nullptr, Constraint::TOP);
 		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM);
 
+		TextElement *fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
+		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
+
 		Engine::GetUI().SetContainer(std::move(ui));
 		sceneElement->RequestFocus();
+
+		Engine::GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
 	}
 
 };
