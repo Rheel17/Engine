@@ -33,8 +33,8 @@ private:
 
 	static std::unique_ptr<GLBuffer> _triangle_buffer;
 	static std::unique_ptr<GLVertexArray> _vao;
-	static std::unique_ptr<GLBuffer> _screenquad_vbo;
-	static std::unique_ptr<GLVertexArray> _screenquad_vao;
+	static std::unique_ptr<GLBuffer> _resolve_vbo;
+	static std::unique_ptr<GLVertexArray> _resolve_vao;
 	static GLShaderProgram _shader;
 	static bool _initialized;
 

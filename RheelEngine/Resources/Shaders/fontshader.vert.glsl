@@ -9,6 +9,7 @@ out vec3 vf_BarycentricCoordinates;
 
 uniform int stage;
 uniform vec2 multisampleOffset;
+uniform vec4 bounds;
 
 #define STAGE_TRIANGLES		0
 #define STAGE_BEZIER		1
@@ -17,8 +18,11 @@ uniform vec2 multisampleOffset;
 void main(void) {
 	gl_Position = vec4(vert_Position.xy, 0.0, 1.0);
 
-	if (stage != STAGE_RESOLVE) {
-		gl_Position.xy +=  + multisampleOffset;
+	if (stage == STAGE_RESOLVE) {
+		gl_Position.xy *= bounds.zw - bounds.xy;
+		gl_Position.xy += bounds.xy;
+	} else {
+		gl_Position.xy += multisampleOffset;
 	}
 
 	if (vert_Position.z == 0.0) {
