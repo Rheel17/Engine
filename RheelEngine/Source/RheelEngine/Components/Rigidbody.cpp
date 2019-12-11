@@ -23,10 +23,10 @@ RigidBody::RigidBody(PhysicsShape shape, float mass, float bounciness) :
 void RigidBody::TransformChanged() {
 	if (!_transform_event_from_update) {
 		auto matrix = CalculateAbsoluteTransformationMatrix();
-		btTransform transform = btTransform::getIdentity();
-		transform.setFromOpenGLMatrix(&matrix[0][0]);
+		_last_transform_update = btTransform::getIdentity();
+		_last_transform_update.setFromOpenGLMatrix(&matrix[0][0]);
 
-		_body->setWorldTransform(transform);
+		_body->setWorldTransform(_last_transform_update);
 	}
 }
 
@@ -52,20 +52,25 @@ void RigidBody::Activate() {
 	cinfo.m_restitution = _bounciness;
 
 	auto matrix = CalculateAbsoluteTransformationMatrix();
-	btTransform transform = btTransform::getIdentity();
-	transform.setFromOpenGLMatrix(&matrix[0][0]);
+	_last_transform_update = btTransform::getIdentity();
+	_last_transform_update.setFromOpenGLMatrix(&matrix[0][0]);
 
 	_body = std::make_unique<btRigidBody>(cinfo);
 	_body->setUserPointer(this);
-	_body->setWorldTransform(transform);
+	_body->setWorldTransform(_last_transform_update);
 	_body->setFriction(0.5f);
 
 	physicsScene->_AddBody(_body.get());
 }
 
 void RigidBody::Update() {
+	if (_body->getWorldTransform() == _last_transform_update) {
+		return;
+	}
+
 	mat4 mPrime, pInv, cInv;
-	_body->getWorldTransform().getOpenGLMatrix(&mPrime[0][0]);
+	_last_transform_update = _body->getWorldTransform();
+	_last_transform_update.getOpenGLMatrix(&mPrime[0][0]);
 
 	if (GetParent()->parent == nullptr) {
 		pInv = glm::identity<mat4>();

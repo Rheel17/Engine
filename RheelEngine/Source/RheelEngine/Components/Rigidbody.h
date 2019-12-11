@@ -38,6 +38,8 @@ private:
 	std::unique_ptr<btMotionState> _motion_state;
 	std::unique_ptr<btRigidBody> _body;
 
+	btTransform _last_transform_update;
+
 	PhysicsShape _shape;
 	float _mass = 0.0f;
 	float _bounciness = 0.5f;

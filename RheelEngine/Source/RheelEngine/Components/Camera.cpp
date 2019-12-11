@@ -8,6 +8,9 @@ namespace rheel {
 Camera::Camera(std::string name) :
 		_name(std::move(name)) {}
 
+void Camera::TransformChanged() {
+	_has_view_matrix = false;
+}
 
 void Camera::Activate() {
 	const auto& [iter, insert] = GetParent()->scene->_cameras.insert({ _name, this });
@@ -17,8 +20,12 @@ void Camera::Activate() {
 }
 
 mat4 Camera::GetViewMatrix() const {
-	// TODO: optimize
-	return glm::inverse(CalculateAbsoluteTransformationMatrix());
+	if (!_has_view_matrix) {
+		_view_matrix = glm::inverse(CalculateAbsoluteTransformationMatrix());
+		_has_view_matrix = true;
+	}
+
+	return _view_matrix;
 }
 
 vec3 Camera::RayDirection(unsigned width, unsigned height, const vec2& pixel) const {

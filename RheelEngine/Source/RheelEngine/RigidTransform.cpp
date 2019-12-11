@@ -47,13 +47,14 @@ const vec3& RigidTransform::GetTranslation() const {
 }
 
 void RigidTransform::SetTranslation(vec3 translation) {
-	_translation = std::move(translation);
-	SetChanged();
+	if (_translation != translation) {
+		_translation = std::move(translation);
+		SetChanged();
+	}
 }
 
 void RigidTransform::Move(const vec3& vec) {
-	_translation += vec;
-	SetChanged();
+	SetTranslation(_translation + vec);
 }
 
 const quat& RigidTransform::GetRotation() const {
@@ -61,13 +62,14 @@ const quat& RigidTransform::GetRotation() const {
 }
 
 void RigidTransform::SetRotation(quat rotation) {
-	_rotation = rotation;
-	SetChanged();
+	if (_rotation != rotation) {
+		_rotation = rotation;
+		SetChanged();
+	}
 }
 
 void RigidTransform::Rotate(const quat& rotation) {
-	_rotation = rotation * _rotation;
-	SetChanged();
+	SetRotation(rotation * _rotation);
 }
 
 const mat4& RigidTransform::AsMatrix() const {

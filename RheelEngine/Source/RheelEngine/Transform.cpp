@@ -76,13 +76,14 @@ const vec3& Transform::GetScale() const {
 }
 
 void Transform::SetScale(vec3 scale) {
-	_scale = scale;
-	SetChanged();
+	if (_scale != scale) {
+		_scale = scale;
+		SetChanged();
+	}
 }
 
 void Transform::Scale(const vec3& scale) {
-	_scale *= scale;
-	SetChanged();
+	SetScale(_scale * scale);
 }
 
 mat4 Transform::CalculateMatrix() const {

@@ -8,12 +8,18 @@
 namespace rheel {
 
 Entity::Entity(std::string name, Scene *scene, RigidTransform transform) :
-		name(std::move(name)), transform(std::move(transform)),
-		scene(scene), parent(nullptr) {}
+		name(std::move(name)),
+		scene(scene), parent(nullptr) {
+
+	this->transform = std::move(transform);
+}
 
 Entity::Entity(std::string name, Entity *parent, RigidTransform transform) :
-		name(std::move(name)), transform(std::move(transform)),
-		scene(parent->scene), parent(parent) {}
+		name(std::move(name)),
+		scene(parent->scene), parent(parent) {
+
+	this->transform = std::move(transform);
+}
 
 Entity::~Entity() {
 	while (!_components.empty()) {

@@ -19,6 +19,8 @@ public:
 	 */
 	Camera(std::string name);
 
+	void TransformChanged() override;
+
 	void Activate() override;
 
 	virtual ~Camera() = default;
@@ -54,6 +56,9 @@ public:
 
 private:
 	std::string _name;
+
+	mutable mat4 _view_matrix;
+	mutable bool _has_view_matrix = false;
 
 };
 

@@ -77,6 +77,10 @@ void EulerController::_Rotate(float dt) {
 	float yaw = glm::radians(mouse.x * _velocity_yaw / 100.0f);
 	float pitch = glm::radians(mouse.y * _velocity_pitch / 100.0f);
 
+	if (yaw == 0 && pitch == 0) {
+		return;
+	}
+
 	vec3 angles = euler(GetParent()->transform.GetRotation());
 
 	angles.x -= pitch;
