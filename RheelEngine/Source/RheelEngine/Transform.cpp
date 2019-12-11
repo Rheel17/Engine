@@ -30,6 +30,42 @@ Transform::Transform(const mat4& matrix) {
 	SetRotation(rotationMatrix);
 }
 
+Transform::Transform(TransformOwner *owner) :
+		RigidTransform(owner), _scale(1.0f) {}
+
+Transform::Transform(const Transform& t) :
+		RigidTransform(t), _scale(t._scale) {}
+
+Transform::Transform(const RigidTransform& t) :
+		RigidTransform(t), _scale(1.0f, 1.0f, 1.0f) {}
+
+Transform::Transform(RigidTransform&& t) :
+		RigidTransform(std::forward<RigidTransform>(t)), _scale(1.0f, 1.0f, 1.0f) {}
+
+Transform& Transform::operator=(const Transform& t) {
+	_scale = t._scale;
+	RigidTransform::operator=(t);
+	return *this;
+}
+
+Transform& Transform::operator=(Transform&& t) {
+	_scale = std::move(t._scale);
+	RigidTransform::operator=(std::forward<Transform>(t));
+	return *this;
+}
+
+Transform& Transform::operator=(const RigidTransform& t) {
+	_scale = vec3(1.0f, 1.0f, 1.0f);
+	RigidTransform::operator=(t);
+	return *this;
+}
+
+Transform& Transform::operator=(RigidTransform&& t) {
+	_scale = vec3(1.0f, 1.0f, 1.0f);
+	RigidTransform::operator=(std::forward<RigidTransform>(t));
+	return *this;
+}
+
 void Transform::SetIdentity() {
 	_scale = vec3(1.0f, 1.0f, 1.0f);
 	RigidTransform::SetIdentity();
@@ -41,12 +77,12 @@ const vec3& Transform::GetScale() const {
 
 void Transform::SetScale(vec3 scale) {
 	_scale = scale;
-	MarkDirty();
+	SetChanged();
 }
 
 void Transform::Scale(const vec3& scale) {
 	_scale *= scale;
-	MarkDirty();
+	SetChanged();
 }
 
 mat4 Transform::CalculateMatrix() const {

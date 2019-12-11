@@ -59,7 +59,7 @@ private:
  * Base class of all components. If you want a custom component with a
  * transform, use either Component or RigidComponent as a base class.
  */
-class RE_API ComponentBase {
+class RE_API ComponentBase : public TransformOwner {
 	RE_NO_MOVE(ComponentBase);
 	RE_NO_COPY(ComponentBase);
 
@@ -69,6 +69,12 @@ class RE_API ComponentBase {
 
 public:
 	virtual ~ComponentBase() = default;
+
+	/**
+	 * Called when the transform of this component or any of the entity
+	 * ancestors has changed.
+	 */
+	virtual void TransformChanged() {}
 
 	/**
 	 * Called when the component is activated; either when the component is
@@ -234,16 +240,16 @@ public:
 	virtual ~_Component() = default;
 
 	mat4 CalculateAbsoluteTransformationMatrix() const {
-		mat4 parentTransform = GetParent()->CalculateAbsoluteTransform().AsMatrix();
+		mat4 parentTransform = GetParent()->CalculateAbsoluteTransformationMatrix();
 		mat4 thisTransform = transform.AsMatrix();
-		return thisTransform * parentTransform;
+		return parentTransform * thisTransform;
 	}
 
-	_Transform CalculateAbsoluteTransform() const {
+	Transform CalculateAbsoluteTransform() const {
 		return Transform(CalculateAbsoluteTransformationMatrix());
 	}
 
-	_Transform transform;
+	_Transform transform = _Transform(this);
 
 };
 

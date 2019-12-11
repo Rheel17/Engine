@@ -19,6 +19,7 @@ class RE_API RigidBody : public RigidComponent {
 public:
 	RigidBody(PhysicsShape shape, float mass = 0.0f, float bounciness = 0.5f);
 
+	void TransformChanged() override;
 	void Activate() override;
 	void Update() override;
 	void Deactivate() override;
@@ -40,6 +41,8 @@ private:
 	PhysicsShape _shape;
 	float _mass = 0.0f;
 	float _bounciness = 0.5f;
+
+	bool _transform_event_from_update = false;
 
 };
 

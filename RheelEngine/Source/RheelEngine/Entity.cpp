@@ -131,7 +131,7 @@ mat4 Entity::CalculateAbsoluteTransformationMatrix() const {
 	const Entity *entity = this;
 
 	while (entity != nullptr) {
-		matrix = matrix * entity->transform.AsMatrix();
+		matrix = entity->transform.AsMatrix() * matrix;
 		entity = entity->parent;
 	}
 
@@ -164,6 +164,10 @@ void Entity::Update() {
 
 void Entity::Render() {
 	callAll(_components, _children, [](const auto& c) { c->Render(); });
+}
+
+void Entity::TransformChanged() {
+	callAll(_components, _children, [](const auto& c) { c->TransformChanged(); });
 }
 
 void Entity::_UpdateTime(float time, float dt) {

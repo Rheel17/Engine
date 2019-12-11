@@ -8,16 +8,27 @@
 
 namespace rheel {
 
-static inline glm::quat bulletToGlm(const btQuaternion& q) {
-	return glm::quat(q.getW(), q.getX(), q.getY(), q.getZ());
-}
-
-static inline btQuaternion glmToBullet(const glm::quat& q) {
-	return btQuaternion(q.x, q.y, q.z, q.w);
-}
+//static inline glm::quat bulletToGlm(const btQuaternion& q) {
+//	return glm::quat(q.getW(), q.getX(), q.getY(), q.getZ());
+//}
+//
+//static inline btQuaternion glmToBullet(const glm::quat& q) {
+//	return btQuaternion(q.x, q.y, q.z, q.w);
+//}
 
 RigidBody::RigidBody(PhysicsShape shape, float mass, float bounciness) :
 		_shape(std::move(shape)), _mass(mass), _bounciness(bounciness) {}
+
+
+void RigidBody::TransformChanged() {
+	if (!_transform_event_from_update) {
+		auto matrix = CalculateAbsoluteTransformationMatrix();
+		btTransform transform = btTransform::getIdentity();
+		transform.setFromOpenGLMatrix(&matrix[0][0]);
+
+		_body->setWorldTransform(transform);
+	}
+}
 
 void RigidBody::Activate() {
 	if (!_shape) {
@@ -28,10 +39,6 @@ void RigidBody::Activate() {
 	if (!physicsScene) {
 		return;
 	}
-
-	auto matrix = CalculateAbsoluteTransform();
-	const vec3& position = matrix.GetTranslation();
-	const quat& rotation = matrix.GetRotation();
 
 	btVector3 inertia(0, 0, 0);
 
@@ -44,9 +51,9 @@ void RigidBody::Activate() {
 	btRigidBody::btRigidBodyConstructionInfo cinfo(_mass, _motion_state.get(), _shape._Pointer(), inertia);
 	cinfo.m_restitution = _bounciness;
 
+	auto matrix = CalculateAbsoluteTransformationMatrix();
 	btTransform transform = btTransform::getIdentity();
-	transform.setOrigin({ position.x, position.y, position.z });
-	transform.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
+	transform.setFromOpenGLMatrix(&matrix[0][0]);
 
 	_body = std::make_unique<btRigidBody>(cinfo);
 	_body->setUserPointer(this);
@@ -68,8 +75,11 @@ void RigidBody::Update() {
 
 	cInv = glm::inverse(transform.AsMatrix());
 
-	mat4 oPrime = cInv * mPrime * pInv;
+	mat4 oPrime = pInv * mPrime * cInv;
+
+	_transform_event_from_update = true;
 	GetParent()->transform = Transform(oPrime);
+	_transform_event_from_update = false;
 }
 
 void RigidBody::Deactivate() {

@@ -7,6 +7,13 @@
 
 namespace rheel {
 
+struct RE_API TransformOwner {
+
+	virtual ~TransformOwner() = default;
+	virtual void TransformChanged() {}
+
+};
+
 class RE_API RigidTransform {
 
 public:
@@ -14,7 +21,15 @@ public:
 			vec3 translation = { 0.0f, 0.0f, 0.0f },
 			quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f });
 
+	RigidTransform(TransformOwner *owner);
+
 	virtual ~RigidTransform() = default;
+
+	RigidTransform(const RigidTransform& t);
+	RigidTransform(RigidTransform&& t);
+
+	RigidTransform& operator=(const RigidTransform& t);
+	RigidTransform& operator=(RigidTransform&& t);
 
 	/**
 	 * Resets this transform to the identity transform.
@@ -83,7 +98,7 @@ public:
 	vec3 RightVector() const;
 
 protected:
-	void MarkDirty();
+	void SetChanged();
 
 	virtual mat4 CalculateMatrix() const;
 
@@ -93,6 +108,8 @@ private:
 
 	mutable mat4 _matrix;
 	mutable bool _matrix_dirty;
+
+	TransformOwner *_owner = nullptr;
 
 };
 

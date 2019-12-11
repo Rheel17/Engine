@@ -19,6 +19,19 @@ public:
 
 	Transform(const mat4& matrix);
 
+	Transform(TransformOwner *owner);
+
+	Transform(const Transform& t);
+
+	Transform(const RigidTransform& t);
+	Transform(RigidTransform&& t);
+
+	Transform& operator=(const Transform& t);
+	Transform& operator=(Transform&& t);
+
+	Transform& operator=(const RigidTransform& t);
+	Transform& operator=(RigidTransform&& t);
+
 	~Transform() = default;
 
 	/**

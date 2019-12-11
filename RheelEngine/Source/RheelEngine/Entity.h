@@ -12,7 +12,7 @@ namespace rheel {
 class ComponentBase;
 class Scene;
 
-class RE_API Entity {
+class RE_API Entity : public TransformOwner {
 	RE_NO_MOVE(Entity);
 	RE_NO_COPY(Entity);
 
@@ -143,11 +143,17 @@ public:
 	 */
 	void Render();
 
+	/**
+	 * Called by the transform when it changes. The event will be passed to all
+	 * its children and components.
+	 */
+	void TransformChanged() override;
+
 	// the name of this entity
 	const std::string name;
 
 	// The root transform of this entity.
-	RigidTransform transform;
+	RigidTransform transform = RigidTransform(this);
 
 	// The parent scene of this entity.
 	Scene * const scene;

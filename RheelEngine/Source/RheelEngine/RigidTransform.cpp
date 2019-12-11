@@ -9,12 +9,37 @@ RigidTransform::RigidTransform(vec3 translation, quat rotation) :
 		_translation(translation), _rotation(rotation),
 		_matrix_dirty(true) {}
 
+RigidTransform::RigidTransform(TransformOwner *owner) :
+		_translation(0.0f, 0.0f, 0.0f), _rotation(1.0f, 0.0f, 0.0f, 0.0f),
+		_matrix_dirty(true), _owner(owner) {}
+
+RigidTransform::RigidTransform(const RigidTransform& t) :
+		_translation(t._translation), _rotation(t._rotation),
+		_matrix_dirty(true) {}
+
+RigidTransform::RigidTransform(RigidTransform&& t) :
+		_translation(std::move(t._translation)),
+		_rotation(std::move(t._rotation)),
+		_matrix_dirty(true) {}
+
+RigidTransform& RigidTransform::operator=(const RigidTransform& t) {
+	_translation = t._translation;
+	_rotation = t._rotation;
+	SetChanged();
+	return *this;
+}
+
+RigidTransform& RigidTransform::operator=(RigidTransform&& t) {
+	_translation = std::move(t._translation);
+	_rotation = std::move(t._rotation);
+	SetChanged();
+	return *this;
+}
+
 void RigidTransform::SetIdentity() {
 	_translation = vec3(0.0f, 0.0f, 0.0f);
 	_rotation = quat(1.0f, 0.0f, 0.0f, 0.0f);
-
-	_matrix = glm::identity<mat4>();
-	_matrix_dirty = false;
+	SetChanged();
 }
 
 const vec3& RigidTransform::GetTranslation() const {
@@ -23,12 +48,12 @@ const vec3& RigidTransform::GetTranslation() const {
 
 void RigidTransform::SetTranslation(vec3 translation) {
 	_translation = std::move(translation);
-	_matrix_dirty = true;
+	SetChanged();
 }
 
 void RigidTransform::Move(const vec3& vec) {
 	_translation += vec;
-	_matrix_dirty = true;
+	SetChanged();
 }
 
 const quat& RigidTransform::GetRotation() const {
@@ -37,12 +62,12 @@ const quat& RigidTransform::GetRotation() const {
 
 void RigidTransform::SetRotation(quat rotation) {
 	_rotation = rotation;
-	_matrix_dirty = true;
+	SetChanged();
 }
 
 void RigidTransform::Rotate(const quat& rotation) {
 	_rotation = rotation * _rotation;
-	_matrix_dirty = true;
+	SetChanged();
 }
 
 const mat4& RigidTransform::AsMatrix() const {
@@ -66,8 +91,12 @@ vec3 RigidTransform::RightVector() const {
 	return _rotation * vec3(1, 0, 0);
 }
 
-void RigidTransform::MarkDirty() {
+void RigidTransform::SetChanged() {
 	_matrix_dirty = true;
+
+	if (_owner) {
+		_owner->TransformChanged();
+	}
 }
 
 mat4 RigidTransform::CalculateMatrix() const {
