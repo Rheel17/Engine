@@ -22,44 +22,30 @@ private:
 };
 
 static void createCube(Entity *cube) {
-	ModelResource& model = ModelResource::Box({ 0.5f, 0.5f, 0.5f });
-
 	cube->AddComponent<ModelRenderComponent>(
-			model,												// model
-			Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.5f)	// material
-	);
+			ModelResource::Box({ 0.5f, 0.5f, 0.5f }),
+			Material(ResourceManager::GetImage("uv_grid.png"), 0.7f, 0.5f));
 
 	cube->AddComponent<RigidBody>(
-			PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }),	// shape
-			5.0f,										// mass
-			0.05f										// bounciness
-	);
+			PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }), 5.0f, 0.05f);
 }
 
 static void createRamp(Entity *ramp) {
-	ModelResource& model = ModelResource::Box({ 4.0f, 0.5f, 5.0f });
-
 	ramp->AddComponent<ModelRenderComponent>(
-			model,
-			Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f)
-	);
+			ModelResource::Box({ 4.0f, 0.5f, 5.0f }),
+			Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f));
 
 	ramp->AddComponent<RigidBody>(
-			PhysicsShape::Box({ 4.0f, 0.5f, 5.0f })
-	);
+			PhysicsShape::Box({ 4.0f, 0.5f, 5.0f }));
 }
 
 static void createFloor(Entity *ramp) {
-	ModelResource& model = ModelResource::Box({ 20.0f, 0.5f, 20.0f });
-
 	ramp->AddComponent<ModelRenderComponent>(
-			model,
-			Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f)
-	);
+			ModelResource::Box({ 20.0f, 0.5f, 20.0f }),
+			Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f));
 
 	ramp->AddComponent<RigidBody>(
-			PhysicsShape::Box({ 20.0f, 0.5f, 20.0f })
-	);
+			PhysicsShape::Box({ 20.0f, 0.5f, 20.0f }));
 }
 
 static Scene *createScene() {

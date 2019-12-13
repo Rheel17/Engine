@@ -148,11 +148,11 @@ void ModelRenderer::RenderObjects() const {
 	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
 
-	for (auto pair : _textured_objects) {
-		pair.first.BindTextures();
+	for (const auto& [material, objects] : _textured_objects) {
+		material.BindTextures();
 
-		_object_data_buffer.SetData(pair.second, GLBuffer::STREAM_DRAW);
-		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, pair.second.size());
+		_object_data_buffer.SetData(objects, GLBuffer::STREAM_DRAW);
+		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, objects.size());
 	}
 
 	GL::ClearVertexArrayBinding();
