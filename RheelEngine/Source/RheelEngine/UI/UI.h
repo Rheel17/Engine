@@ -68,7 +68,7 @@ public:
 
 	void OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, Input::Modifiers mods);
 
-	void OnCharacter(wchar_t character);
+	void OnCharacter(Input::Unicode character);
 
 	void OnMouseMove(float x, float y);
 

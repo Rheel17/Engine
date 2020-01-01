@@ -15,6 +15,10 @@ GLShaderProgram ModelRenderer::_opaque_shader;
 bool ModelRenderer::_are_shaders_initialized = false;
 
 ModelRenderer::ObjectData::ObjectData() :
+		_model_matrix(glm::identity<mat4>()),
+		_normal_model_matrix(glm::identity<mat4>()),
+		_material_vector(0, 0, 0, 0),
+		_material_color(0, 0, 0, 0),
 		_ptr(nullptr) {}
 
 ModelRenderer::ObjectData::ObjectData(const ObjectData& data) :
@@ -49,7 +53,7 @@ ModelRenderer::ObjectDataPtr::ObjectDataPtr(ObjectData *data) :
 	_data->_ptr = this;
 }
 
-void ModelRenderer::ObjectDataPtr::SetTransform(mat4 matrix) {
+void ModelRenderer::ObjectDataPtr::SetMatrix(mat4 matrix) {
 	_data->_model_matrix = matrix;
 	_data->_normal_model_matrix = glm::transpose(glm::inverse(mat3(_data->_model_matrix)));
 }
@@ -144,11 +148,11 @@ void ModelRenderer::RenderObjects() const {
 	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
 
-	for (auto pair : _textured_objects) {
-		pair.first.BindTextures();
+	for (const auto& [material, objects] : _textured_objects) {
+		material.BindTextures();
 
-		_object_data_buffer.SetData(pair.second, GLBuffer::STREAM_DRAW);
-		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, pair.second.size());
+		_object_data_buffer.SetData(objects, GLBuffer::STREAM_DRAW);
+		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, objects.size());
 	}
 
 	GL::ClearVertexArrayBinding();

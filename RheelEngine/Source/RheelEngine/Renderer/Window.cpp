@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <sstream>
+
 #include "../Engine.h"
 
 namespace rheel {
@@ -143,8 +145,11 @@ void Window::Loop() {
 
 		time = newTime;
 
-		// update the scenes
-		Engine::UpdateScenes(dt);
+		// update the scene
+		if (auto scene = Engine::GetActiveScene(); scene) {
+			scene->Update(time, dt);
+			Engine::GetSceneRenderManager(scene).Update();
+		}
 
 		// initialize OpenGL state
 		GLShaderProgram::ClearUse();
@@ -191,7 +196,7 @@ static void glfw_KeyCallback(GLFWwindow *glfw_window, int key, int scancode, int
 	Engine::GetUI().OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
 }
 
-static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned int codepoint) {
+static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned codepoint) {
 	Engine::GetUI().OnCharacter(codepoint);
 }
 
@@ -222,41 +227,49 @@ static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity
 		return;
 	}
 
-	std::cout << "[Debug][OpenGL] " << id << ": ";
+	std::stringstream ss;
+	ss << "OpenGL " << id << ": ";
 
 	switch (source) {
-		case GL_DEBUG_SOURCE_API:			  std::cout << "source=API"; 			 break;
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "source=WINDOW_SYSTEM";   break;
-		case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "source=SHADER_COMPILER"; break;
-		case GL_DEBUG_SOURCE_THIRD_PARTY:	  std::cout << "source=THIRD_PARTY";	 break;
-		case GL_DEBUG_SOURCE_APPLICATION:	  std::cout << "source=APPLICATION";	 break;
-		case GL_DEBUG_SOURCE_OTHER:			  std::cout << "source=OTHER";			 break;
+		case GL_DEBUG_SOURCE_API:			  ss << "source=API";				break;
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   ss << "source=WINDOW_SYSTEM";		break;
+		case GL_DEBUG_SOURCE_SHADER_COMPILER: ss << "source=SHADER_COMPILER";	break;
+		case GL_DEBUG_SOURCE_THIRD_PARTY:	  ss << "source=THIRD_PARTY";	 	break;
+		case GL_DEBUG_SOURCE_APPLICATION:	  ss << "source=APPLICATION";		break;
+		case GL_DEBUG_SOURCE_OTHER:			  ss << "source=OTHER";				break;
 	}
 
-	std::cout << ", ";
+	ss << ", ";
 
 	switch (type) {
-		case GL_DEBUG_TYPE_ERROR: 				std::cout << "type=ERROR"; 				 break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "type=DEPRECATED_BEHAVIOR"; break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: 	std::cout << "type=UNDEFINED_BEHAVIOR";  break;
-		case GL_DEBUG_TYPE_PORTABILITY: 		std::cout << "type=PORTABILITY";		 break;
-		case GL_DEBUG_TYPE_PERFORMANCE:		 	std::cout << "type=PERFORMANCE";		 break;
-		case GL_DEBUG_TYPE_MARKER: 				std::cout << "type=MARKER";				 break;
-		case GL_DEBUG_TYPE_PUSH_GROUP: 			std::cout << "type=PUSH_GROUP";			 break;
-		case GL_DEBUG_TYPE_POP_GROUP: 			std::cout << "type=POP_GROUP";			 break;
-		case GL_DEBUG_TYPE_OTHER: 				std::cout << "type=OTHER";				 break;
+		case GL_DEBUG_TYPE_ERROR: 				ss << "type=ERROR"; 				break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ss << "type=DEPRECATED_BEHAVIOR";	break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: 	ss << "type=UNDEFINED_BEHAVIOR";	break;
+		case GL_DEBUG_TYPE_PORTABILITY: 		ss << "type=PORTABILITY";			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:		 	ss << "type=PERFORMANCE";			break;
+		case GL_DEBUG_TYPE_MARKER: 				ss << "type=MARKER";				break;
+		case GL_DEBUG_TYPE_PUSH_GROUP: 			ss << "type=PUSH_GROUP";			break;
+		case GL_DEBUG_TYPE_POP_GROUP: 			ss << "type=POP_GROUP";				break;
+		case GL_DEBUG_TYPE_OTHER: 				ss << "type=OTHER";					break;
 	}
 
-	std::cout << ", ";
+	ss << ", ";
 
 	switch (severity) {
-		case GL_DEBUG_SEVERITY_HIGH:         std::cout << "severity=HIGH";         break;
-		case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "severity=MEDIUM";       break;
-		case GL_DEBUG_SEVERITY_LOW:          std::cout << "severity=LOW";          break;
-		case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "severity=NOTIFICATION"; break;
+		case GL_DEBUG_SEVERITY_HIGH:         ss << "severity=HIGH";         break;
+		case GL_DEBUG_SEVERITY_MEDIUM:       ss << "severity=MEDIUM";       break;
+		case GL_DEBUG_SEVERITY_LOW:          ss << "severity=LOW";          break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION: ss << "severity=NOTIFICATION"; break;
 	}
 
-	std::cout << ", " << std::string(message, length) << std::endl;
+	ss << ", " << std::string(message, length);
+
+	switch (severity) {
+		case GL_DEBUG_SEVERITY_HIGH:         Log::Error() 	<< ss.str() << std::endl; break;
+		case GL_DEBUG_SEVERITY_MEDIUM:       Log::Warning() << ss.str() << std::endl; break;
+		case GL_DEBUG_SEVERITY_LOW:          Log::Info() 	<< ss.str() << std::endl; break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION: Log::Info() 	<< ss.str() << std::endl; break;
+	}
 }
 
 }

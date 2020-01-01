@@ -15,7 +15,6 @@ struct RE_API DisplayConfiguration {
 
 public:
 	enum WindowMode { FULLSCREEN, WINDOWED_UNRESIZABLE };
-	enum RenderMode { FORWARD, DEFERRED };
 	enum AntiAliasing { AA_OFF, MSAA_4, MSAA_8, MSAA_16 };
 	enum ShadowQuality { SHADOW_OFF, SHADOW_LOW, SHADOW_MEDIUM, SHADOW_HIGH };
 
@@ -28,7 +27,6 @@ public:
 	unsigned SampleCount() const;
 
 	WindowMode window_mode = FULLSCREEN;
-	RenderMode render_mode = FORWARD;
 	Resolution resolution = RESOLUTION_NATIVE;
 	std::string title = "Rheel Game Engine";
 	bool vsync = true;

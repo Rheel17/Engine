@@ -14,8 +14,7 @@ namespace rheel {
  * work, a RigidBodyComponent must be added before this component. Only
  * collisions with other objects having a CollisionComponent will be detected.
  */
-class RE_API CollisionComponent : public Component {
-	COMPONENT_INIT(CollisionComponent);
+class RE_API CollisionComponent : public ComponentBase {
 
 public:
 	CollisionComponent();

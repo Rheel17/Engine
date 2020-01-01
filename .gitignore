@@ -5,4 +5,7 @@ Build/Debug/
 Build/Libaries/
 Build/*/*.dll
 Build/*/Sandbox.exe
+Build/*/Test.exe
 **/_todo
+**/.cproject
+**/.project

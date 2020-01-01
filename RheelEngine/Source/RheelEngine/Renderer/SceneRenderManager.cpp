@@ -3,11 +3,13 @@
  */
 #include "SceneRenderManager.h"
 
-#include "DeferredSceneRenderer.h"
 #include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
 #include "../EngineResources.h"
+#include "../Components/DirectionalLight.h"
+#include "../Components/PointLight.h"
+#include "../Components/SpotLight.h"
 
 namespace rheel {
 
@@ -34,9 +36,7 @@ void SceneRenderManager::Update() {
 	_lights_attenuation.clear();
 	_lights_spot_attenuation.clear();
 
-	for (const std::string& lightName : _scene->Lights()) {
-		Light *light = _scene->GetLight(lightName);
-
+	for (Light *light : _scene->GetLights()) {
 		_lights_color.push_back(light->GetColor());
 
 		if (auto pointLight = dynamic_cast<PointLight *>(light)) {
@@ -77,29 +77,16 @@ ModelRenderer& SceneRenderManager::GetModelRenderer(ModelResource& model) {
 }
 
 std::unique_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height) {
-	SceneRenderer *renderer;
-
-	switch (Engine::GetDisplayConfiguration().render_mode) {
-		case DisplayConfiguration::FORWARD:
-			renderer = new ForwardSceneRenderer(this, std::move(cameraName), width, height);
-			break;
-		case DisplayConfiguration::DEFERRED:
-			renderer = new DeferredSceneRenderer(this, std::move(cameraName), width, height);
-			break;
-	}
-
-	return std::unique_ptr<SceneRenderer>(renderer);
+	return std::unique_ptr<ForwardSceneRenderer>(new ForwardSceneRenderer(this, std::move(cameraName), width, height));
 }
 
-std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(const std::string& lightName) {
-	Light *light = _scene->GetLight(lightName);
-
+std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(Light *light) {
 	if (dynamic_cast<PointLight *>(light)) {
 
 	} else if (dynamic_cast<SpotLight *>(light)) {
 
 	} else if (dynamic_cast<DirectionalLight *>(light)) {
-		return std::unique_ptr<ShadowMapDirectional>(new ShadowMapDirectional(this, *light));
+		return std::unique_ptr<ShadowMapDirectional>(new ShadowMapDirectional(this, light));
 	}
 
 	return nullptr;
@@ -135,8 +122,8 @@ void SceneRenderManager::DrawDeferredLightingQuad() const {
 }
 
 int SceneRenderManager::_ShadowLevel() {
-	for (const std::string& light : _scene->Lights()) {
-		if (_scene->GetLight(light)->CastsShadows()) {
+	for (Light *light : _scene->GetLights()) {
+		if (light->CastsShadows()) {
 			return Engine::GetDisplayConfiguration().shadow_quality;
 		}
 	}

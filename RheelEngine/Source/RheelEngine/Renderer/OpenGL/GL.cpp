@@ -22,7 +22,7 @@ bool GL::_BindBuffer(GLuint handle, BufferTarget target) {
 	}
 
 #if RE_GL_DEBUG
-	std::cout << "glBindBuffer(" << int(target) << ", " << handle << ")" << std::endl;
+	Log::Info() << "glBindBuffer(" << int(target) << ", " << handle << ")" << std::endl;
 #endif
 
 	glBindBuffer(Target(target), handle);
@@ -37,7 +37,7 @@ bool GL::_BindFramebuffer(GLuint handle, GLuint width, GLuint height, Framebuffe
 	}
 
 #if RE_GL_DEBUG
-	std::cout << "glBindFramebuffer(" << int(target) << ", " << handle << ")" << std::endl;
+	Log::Info() << "glBindFramebuffer(" << int(target) << ", " << handle << ")" << std::endl;
 #endif
 
 	glBindFramebuffer(Target(target), handle);
@@ -46,7 +46,7 @@ bool GL::_BindFramebuffer(GLuint handle, GLuint width, GLuint height, Framebuffe
 	if (target == FramebufferTarget::DRAW) {
 
 #if RE_GL_DEBUG
-	std::cout << "glViewport(0, 0, " << width << ", " << height << ")" << std::endl;
+	Log::Info() << "glViewport(0, 0, " << width << ", " << height << ")" << std::endl;
 #endif
 
 		glViewport(0, 0, width, height);
@@ -66,7 +66,7 @@ bool GL::_BindRenderbuffer(GLuint handle) {
 	}
 
 #if RE_GL_DEBUG
-	std::cout << "glBindRenderbuffer(" << GL_RENDERBUFFER << ", " << handle << ")" << std::endl;
+	Log::Info() << "glBindRenderbuffer(" << GL_RENDERBUFFER << ", " << handle << ")" << std::endl;
 #endif
 
 	glBindRenderbuffer(GL_RENDERBUFFER, handle);
@@ -78,7 +78,7 @@ bool GL::_BindRenderbuffer(GLuint handle) {
 bool GL::_BindTexture(GLuint handle, TextureTarget target, GLuint textureUnit) {
 
 #if RE_GL_DEBUG
-	std::cout << "glActiveTexture(GL_TEXTURE0 + " << textureUnit << ")" << std::endl;
+	Log::Info() << "glActiveTexture(GL_TEXTURE0 + " << textureUnit << ")" << std::endl;
 #endif
 
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
@@ -88,7 +88,7 @@ bool GL::_BindTexture(GLuint handle, TextureTarget target, GLuint textureUnit) {
 	}
 
 #if RE_GL_DEBUG
-	std::cout << "glBindTexture(" << int(target) << ", " << handle << ")" << std::endl;
+	Log::Info() << "glBindTexture(" << int(target) << ", " << handle << ")" << std::endl;
 #endif
 
 	glBindTexture(Target(target), handle);
@@ -103,7 +103,7 @@ bool GL::_BindVertexArray(GLuint handle) {
 	}
 
 #if RE_GL_DEBUG
-	std::cout << "glBindVertexArray(" << handle << ")" << std::endl;
+	Log::Info() << "glBindVertexArray(" << handle << ")" << std::endl;
 #endif
 
 	glBindVertexArray(handle);

@@ -4,12 +4,13 @@
 #include "ShadowMapDirectional.h"
 
 #include "../Engine.h"
+#include "../Components/DirectionalLight.h"
 
 namespace rheel {
 
 std::unique_ptr<GLTexture2D> ShadowMapDirectional::_empty_shadow_map;
 
-ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light& light) :
+ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *light) :
 		ShadowMap(manager, light) {
 
 	unsigned textureSize;
@@ -72,7 +73,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light& l
 
 ShadowMapDirectional::~ShadowMapDirectional() {}
 
-void ShadowMapDirectional::Update(const Camera& camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::Update(Camera *camera, unsigned width, unsigned height) {
 	GL::PushState();
 
 	// set the lightspace matrices
@@ -87,7 +88,7 @@ void ShadowMapDirectional::Update(const Camera& camera, unsigned width, unsigned
 		_shadow_buffers[i].Bind();
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		for (const auto& pair : Manager()->RenderMap()) {
+		for (const auto& pair : GetManager()->RenderMap()) {
 			pair.second.RenderObjects();
 		}
 	}
@@ -114,9 +115,9 @@ float ShadowMapDirectional::Bias() const {
 	return _bias;
 }
 
-void ShadowMapDirectional::_CalculateViewProjectionMatrices(const Camera& camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::_CalculateViewProjectionMatrices(Camera *camera, unsigned width, unsigned height) {
 	// calculate the light coordinate system axis
-	vec3 zplus = -GetLight<DirectionalLight>().Direction();
+	vec3 zplus = -GetLight<DirectionalLight>()->Direction();
 	vec3 xplus;
 
 	if (zplus.x == 0 && zplus.z == 0) {
@@ -132,10 +133,10 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(const Camera& camera
 
 	for (unsigned i = 0; i < _csm_count; i++) {
 		// calculate the AABB of the camera frustum in light space
-		auto corners = camera.ViewspaceCorners(
+		auto corners = camera->ViewspaceCorners(
 				width, height,
-				_csm_borders[i]     * GetLight().ShadowDistance(),
-				_csm_borders[i + 1] * GetLight().ShadowDistance());
+				_csm_borders[i]     * GetLight()->ShadowDistance(),
+				_csm_borders[i + 1] * GetLight()->ShadowDistance());
 
 		float min = std::numeric_limits<float>::lowest();
 		float max = std::numeric_limits<float>::max();

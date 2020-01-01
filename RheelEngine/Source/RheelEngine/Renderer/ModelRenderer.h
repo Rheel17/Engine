@@ -29,12 +29,14 @@ public:
 		ObjectData(const ObjectData& data);
 		ObjectData& operator=(ObjectData&& data);
 
+	private:
 		mat4 _model_matrix;
 		mat4 _normal_model_matrix;
 		vec4 _material_vector;
 		vec4 _material_color;
 
 		ObjectDataPtr *_ptr;
+
 	};
 
 	class ObjectDataPtr {
@@ -47,7 +49,7 @@ public:
 		ObjectDataPtr() = default;
 		ObjectDataPtr(ObjectData *data);
 
-		void SetTransform(mat4 matrix);
+		void SetMatrix(mat4 matrix);
 		void SetMaterialVector(vec4 materialVector);
 		void SetMaterialColor(vec4 materialColor);
 

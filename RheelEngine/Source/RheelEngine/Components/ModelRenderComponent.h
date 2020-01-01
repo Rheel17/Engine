@@ -16,18 +16,9 @@ namespace rheel {
  * A component that renders a Model
  */
 class RE_API ModelRenderComponent : public Component {
-	COMPONENT_INIT(ModelRenderComponent)
-
-private:
-	ModelRenderComponent(const ModelRenderComponent& modelRenderComponent);
 
 public:
-	ModelRenderComponent() = default;
-
-	/**
-	 * Sets the model to render.
-	 */
-	void SetModel(ModelResource& model);
+	ModelRenderComponent(ModelResource& model, Material material);
 
 	/**
 	 * Sets the material to use when rendering.
@@ -39,57 +30,14 @@ public:
 	 */
 	const Material& GetMaterial() const;
 
-	/**
-	 * Sets the position of the model renderer relative to its parent object
-	 */
-	void SetTranslation(const vec3& position);
-
-	/**
-	 * Returns the position of the model renderer relative to its parent object
-	 */
-	const vec3& Translation() const;
-
-	/**
-	 * Sets the rotation of the model renderer relative to its parent object
-	 */
-	void SetRotation(const quat& rotation);
-
-	/**
-	 * Returns the rotation of the model renderer relative to its parent object
-	 */
-	const quat& Rotation() const;
-
-	/**
-	 * Sets the scale of this model.
-	 */
-	void SetScale(const vec3& scale);
-
-	/**
-	 * Sets the scale of this model.
-	 */
-	void SetScale(float x, float y, float z);
-
-	/**
-	 * Sets the scale of this model.
-	 */
-	void SetScale(float scale);
-
-	/**
-	 * Returns the scale of this model.
-	 */
-	const vec3& Scale() const;
-
-	void OnAdd() override;
-	void OnUpdateRenderers() override;
-	void OnRemove() override;
+	void Activate() override;
+	void Render() override;
+	void Deactivate() override;
 
 private:
-	ModelResource *_model = nullptr;
+	ModelResource& _model;
 	Material _material;
 	ModelRenderer::ObjectDataPtr _object_data;
-	vec3 _translation = vec3(0.0f, 0.0f, 0.0f);
-	quat _rotation = quat(1.0f, 0.0f, 0.0f, 0.0f);
-	vec3 _scale = vec3(1.0f, 1.0f, 1.0f);
 
 };
 

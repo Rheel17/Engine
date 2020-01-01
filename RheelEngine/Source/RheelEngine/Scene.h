@@ -5,140 +5,128 @@
 #define SCENE_H_
 #include "_common.h"
 
-#include "Camera.h"
-#include "Object.h"
-#include "SceneDescription.h"
+#include "Entity.h"
 
 namespace rheel {
 
-class RE_API Scene {
-	friend class Engine;
+class Camera;
+class Light;
+class ComponentInputProxy;
 
-	RE_NO_COPY(Scene);
+class RE_API Scene {
+	friend class Camera;
+	friend class Light;
+	friend class ComponentInputProxy;
+
 	RE_NO_MOVE(Scene);
+	RE_NO_COPY(Scene);
 
 public:
+	Scene();
+	~Scene();
+
 	/**
-	 * Adds a script to the scene. The script will go into effect immediately. A
-	 * reference to the script is returned.
+	 * Adds an empty entity to the scene. This function returns a pointer to the
+	 * created entity.
 	 */
-	template<typename T>
-	T& AddScript() {
-		static_assert(std::is_base_of<Script, T>::value, "Class is not derived from Script");
-		static_assert(std::is_default_constructible<T>::value, "Scripts must be Default-Constructable");
+	Entity *AddEntity(std::string name, RigidTransform transform = RigidTransform());
 
-		std::unique_ptr<T> ptr = std::make_unique<T>();
-		T& ref = *ptr;
+	/**
+	 * Creates a unique entity name with the given prefix
+	 */
+	std::string UniqueEntityName(const std::string& prefix);
 
-		_scripts.push_back(std::move(ptr));
-		ref._parent_scene = this;
-		ref.Initialize();
+	/**
+	 * Removes an entity from the scene. If it is still active, it will be
+	 * killed first. If the entity is a child of another entity, the entity will
+	 * be removed from its parent.
+	 */
+	void RemoveEntity(Entity *entity);
 
-		return ref;
+	/**
+	 * Finds and returns the first found entity with the given name. The
+	 * 'recursive' parameter (default: true) can be specified to turn on or off
+	 * recursive search. With recursive search, the root entities are first
+	 * searched in order of their creation. If no entity of that name is found,
+	 * the children of the entities are searched.
+	 *
+	 * If no entity with the name given can be found, nullptr is returned.
+	 */
+	Entity *FindEntity(const std::string& name, bool recursive = true);
+
+	/**
+	 * Returns a vector of all root-level entities in the scene. No child
+	 * entities are returned.
+	 */
+	const std::vector<Entity *>& GetEntities() const;
+
+	/**
+	 * Adds a component to the scene root, instead of a specific object in the
+	 * scene. Use this only for scene-wide components.
+	 */
+	template<typename T, typename... Args>
+	T *AddRootComponent(Args&&... args) {
+		return _root_entity->AddComponent<T>(args...);
 	}
 
 	/**
-	 * Returns a pointer to the script of the given type. A nullptr is returned
-	 * if no such script exists in this object.
+	 * Removes a component from the scene root.
+	 */
+	void RemoveRootComponent(ComponentBase *component);
+
+	/**
+	 * Returns the root component of the given type, if this scene has one
+	 * attached. If multiple components of the same type are present in the
+	 * scene, the first one added is returned. If no component is found, nullptr
+	 * is returned.
 	 */
 	template<typename T>
-	T *GetScript() {
-		static_assert(std::is_base_of<Script, T>::value, "Type must be a script");
-
-		for (const auto& script : _scripts) {
-			if (auto ptr = dynamic_cast<T *>(script.get())) {
-				return ptr;
-			}
-		}
-
-		return nullptr;
+	T *GetRootComponent() {
+		return _root_entity->GetComponent<T>();
 	}
 
 	/**
-	 * Returns all the scripts currently in this scene
-	 */
-	const std::vector<std::unique_ptr<Script>>& Scripts() const;
-
-	/**
-	 * Adds an object to the scene with the given blueprint. A position and
-	 * rotation can be specified, but if not, the default (origin, no rotation)
-	 * are used.
-	 */
-	Object& AddObject(const std::string& blueprint, const vec3& position = { 0, 0, 0 }, const quat& rotation = quat(1, 0, 0, 0));
-
-	/**
-	 * Removes an object from this scene.
-	 */
-	void RemoveObject(Object& object);
-
-	/**
-	 * Adds a light to this scene.
+	 * Returns all root components of the given type.
 	 */
 	template<typename T>
-	void AddLight(const std::string& name, const T& light) {
-		static_assert(std::is_base_of<Light, T>::value, "Type must be a light");
-		_AddLight(name, new T(light));
+	std::vector<T *> GetAllRootComponentsOfType() {
+		return _root_entity->GetAllComponentsOfType<T>();
 	}
 
 	/**
-	 * Adds a light to this scene. A shadow distance parameter can be specified
-	 * with this overload of the method. If the light already had a shadow
-	 * distance set, this function will overwrite it.
+	 * Returns the camera of the given name. If no camera exists with that name,
+	 * nullptr is returned.
 	 */
-	template<typename T>
-	void AddLight(const std::string& name, const T& light, float shadowDistance) {
-		static_assert(std::is_base_of<Light, T>::value, "Type must be a light");
-
-		T *lightPtr = new T(light);
-		lightPtr->SetShadowDistance(shadowDistance);
-
-		_AddLight(name, lightPtr);
-	}
+	Camera *GetCamera(const std::string& name);
 
 	/**
-	 * Returns a pointer to the light in this scene with the given name, or
-	 * nullptr when a light with the given name does not exist in this scene.
+	 * Returns the light of the given name. If no light exists with that name,
+	 * nullptr is returned.
 	 */
-	Light *GetLight(const std::string& lightName);
+	Light *GetLight(const std::string& name);
 
 	/**
 	 * Returns a vector of all lights in the scene.
 	 */
-	const std::vector<std::string>& Lights() const;
+	const std::vector<Light *>& GetLights();
 
 	/**
-	 * Adds a camera to the scene with the given camera parameters
+	 * Returns the components registered to receive input events
 	 */
-	void AddCamera(float fov, float near, float far, std::string name, vec3 position = { 0, 0, 0 }, vec3 rotation = { 0, 0, 0 });
+	const std::vector<ComponentInputProxy *>& GetInputComponents() const;
 
 	/**
-	 * Returns the camera in this scene with the given name, or nullptr when a
-	 * camera with the given name does not exist in this scene.
+	 * Updates the scene and all its entities.
 	 */
-	Camera *GetCamera(const std::string& cameraName);
-
-	/**
-	 * Updates the scene and all the objects in the scene.
-	 */
-	void Update(float dt);
+	void Update(float time, float dt);
 
 private:
-	Object& _AddObject(const SceneDescription::_ObjectDescription& description);
-	void _AddLight(const std::string& name, Light *light);
-	void _FireObjectsEvent(Object::EventType event);
+	Entity *_root_entity;
 
-	Scene() = default;
-	Scene(const SceneDescription& description);
-
-	std::vector<std::unique_ptr<Object>> _objects;
-	std::vector<std::unique_ptr<Script>> _scripts;
-	std::vector<std::string> _light_names;
-	std::unordered_map<std::string, std::unique_ptr<Light>> _lights;
-	std::unordered_map<std::string, std::unique_ptr<Camera>> _cameras;
-
-	float _time = 0.0f;
-	bool _is_iterating_objects = false;
-	std::vector<std::reference_wrapper<Object>> _to_remove_objects;
+	std::unordered_map<std::string, Camera *> _cameras;
+	std::vector<Light *> _lights;
+	std::vector<Entity *> _entities;
+	std::vector<ComponentInputProxy *> _input_components;
 
 };
 

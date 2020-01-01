@@ -1,8 +1,9 @@
 /*
  * Copyright © 2019 Levi van Rheenen. All rights reserved.
  */
-#ifndef SCENERENDERMANAGER_H_
-#define SCENERENDERMANAGER_H_
+
+#ifndef SCENEOLDRENDERMANAGER_H_
+#define SCENEOLDRENDERMANAGER_H_
 #include "../_common.h"
 
 #include "ModelRenderer.h"
@@ -45,7 +46,7 @@ public:
 	/**
 	 * Creates and returns a shadow map for the given light.
 	 */
-	std::unique_ptr<ShadowMap> CreateShadowMap(const std::string& lightName);
+	std::unique_ptr<ShadowMap> CreateShadowMap(Light *light);
 
 	/**
 	 * Returns the scene of this render manager.

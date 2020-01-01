@@ -6,7 +6,7 @@
 #include "../../Engine.h"
 #include "../../Renderer/SceneRenderer.h"
 #include "../../Renderer/ShadowMapDirectional.h"
-#include "../../Scripts/ScriptInput.h"
+#include "../../Component.h"
 
 namespace rheel {
 
@@ -60,11 +60,9 @@ void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::M
 		return;
 	}
 
-	for (const auto& script : _scene->Scripts()) {
-		if (script->IsActive()) {
-			script->_source_element = this;
-			script->_OnKeyPress(key, scancode, mods);
-		}
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnKeyPress(key, scancode, mods);
 	}
 }
 
@@ -73,24 +71,32 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 		return;
 	}
 
-	for (const auto& script : _scene->Scripts()) {
-		if (script->IsActive()) {
-			script->_source_element = this;
-			script->_OnKeyRelease(key, scancode, mods);
-		}
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnKeyRelease(key, scancode, mods);
 	}
 }
+
+void SceneElement::OnCharacterInput(Input::Unicode character) {
+	if (!_scene) {
+		return;
+	}
+
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnCharacterInput(character);
+	}
+}
+
 
 void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
 	if (!_scene) {
 		return;
 	}
 
-	for (const auto& script : _scene->Scripts()) {
-		if (script->IsActive()) {
-			script->_source_element = this;
-			script->_OnMouseButtonPress(button, mods);
-		}
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnMouseButtonPress(button, mods);
 	}
 }
 
@@ -99,11 +105,9 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 		return;
 	}
 
-	for (const auto& script : _scene->Scripts()) {
-		if (script->IsActive()) {
-			script->_source_element = this;
-			script->_OnMouseButtonRelease(button, mods);
-		}
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnMouseButtonRelease(button, mods);
 	}
 }
 
@@ -112,11 +116,31 @@ void SceneElement::OnMouseMove(const vec2& position) {
 		return;
 	}
 
-	for (const auto& script : _scene->Scripts()) {
-		if (script->IsActive()) {
-			script->_source_element = this;
-			script->_OnMouseMove(position);
-		}
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnMouseMove(position);
+	}
+}
+
+void SceneElement::OnMouseJump(const vec2& position) {
+	if (!_scene) {
+		return;
+	}
+
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnMouseJump(position);
+	}
+}
+
+void SceneElement::OnMouseDrag(const vec2& origin, const vec2& position) {
+	if (!_scene) {
+		return;
+	}
+
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnMouseDrag(origin, position);
 	}
 }
 
@@ -125,11 +149,9 @@ void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
 		return;
 	}
 
-	for (const auto& script : _scene->Scripts()) {
-		if (script->IsActive()) {
-			script->_source_element = this;
-			script->_OnMouseScroll(scrollComponents);
-		}
+	for (auto inputComponent : _scene->GetInputComponents()) {
+		inputComponent->_source = this;
+		inputComponent->_OnMouseScroll(scrollComponents);
 	}
 }
 

@@ -82,7 +82,7 @@ void GLShaderProgram::Link() {
 		glGetProgramInfoLog(_id, logSize, &logSize, log);
 
 		// throw with compile errors
-		std::cerr << "Failed to link shader program:\n" + std::string(log) << std::endl;
+		Log::Error() << "Failed to link shader program:\n" + std::string(log) << std::endl;
 		throw std::runtime_error("Failed to link shader program:\n" + std::string(log));
 	}
 
@@ -122,7 +122,7 @@ GLuint GLShaderProgram::_AddShaderFromSource(GLuint type, std::string source) {
 		glGetShaderInfoLog(shader, logSize, &logSize, log);
 
 		// throw with compile errors
-		std::cerr << "Failed to compile shader:\n" << std::string(log) << std::endl;
+		Log::Error() << "Failed to compile shader:\n" << std::string(log) << std::endl;
 		throw std::runtime_error("Failed to compile shader:\n" + std::string(log));
 	}
 
@@ -153,7 +153,7 @@ GLint GLShaderProgram::_GetUniformLocation(const std::string& name) const {
 	GLint location = glGetUniformLocation(_id, name.c_str());
 
 	if (location < 0) {
-		std::cerr << "shader doesn't have uniform " << name << std::endl;
+		Log::Warning() << "shader doesn't have uniform " << name << std::endl;
 	}
 
 	return location;

@@ -92,6 +92,7 @@ public:
 	};
 
 	using Scancode = int;
+	using Unicode = unsigned;
 
 	enum class MouseButton {
 		BUTTON_1 = GLFW_MOUSE_BUTTON_1, BUTTON_2 = GLFW_MOUSE_BUTTON_2,
@@ -102,11 +103,6 @@ public:
 		LEFT = GLFW_MOUSE_BUTTON_LEFT, RIGHT = GLFW_MOUSE_BUTTON_RIGHT,
 		MIDDLE = GLFW_MOUSE_BUTTON_MIDDLE
 	};
-
-	/**
-	 * Returns the scancode of a key in the current system.
-	 */
-	static Scancode GetScancode(Key key);
 
 };
 

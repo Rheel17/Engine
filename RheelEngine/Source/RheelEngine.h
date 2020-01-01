@@ -11,12 +11,15 @@
 #include "RheelEngine/ResourceManager.h"
 
 #include "RheelEngine/Components/CollisionComponent.h"
+#include "RheelEngine/Components/DirectionalLight.h"
+#include "RheelEngine/Components/EulerController.h"
+#include "RheelEngine/Components/ListenerFollow.h"
 #include "RheelEngine/Components/ModelRenderComponent.h"
-#include "RheelEngine/Components/RigidBodyComponent.h"
-
-#include "RheelEngine/Scripts/EulerCameraController.h"
-#include "RheelEngine/Scripts/ListenerFollow.h"
-#include "RheelEngine/Scripts/PhysicsScene.h"
+#include "RheelEngine/Components/PerspectiveCamera.h"
+#include "RheelEngine/Components/PhysicsScene.h"
+#include "RheelEngine/Components/PointLight.h"
+#include "RheelEngine/Components/Rigidbody.h"
+#include "RheelEngine/Components/SpotLight.h"
 
 #include "RheelEngine/UI/Elements/ColorElement.h"
 #include "RheelEngine/UI/Elements/CrosshairElement.h"

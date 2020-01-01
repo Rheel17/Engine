@@ -67,7 +67,7 @@ public:
 	 * Parameters
 	 * 	character: the unicode character that was inputed
 	 */
-	virtual void OnCharacterInput(wchar_t character) {}
+	virtual void OnCharacterInput(Input::Unicode character) {}
 
 	/**
 	 * Called when a mouse button is pressed down.

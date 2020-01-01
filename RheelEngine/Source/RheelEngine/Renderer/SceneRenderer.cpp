@@ -46,11 +46,11 @@ void SceneRenderer::_RenderShadowMaps() {
 	_CorrectShadowMapList();
 
 	for (auto& iter : _shadow_maps) {
-		iter.second->Update(*camera, _width, _height);
+		iter.second->Update(camera, _width, _height);
 	}
 }
 
-SceneRenderManager *SceneRenderer::Manager() const {
+SceneRenderManager *SceneRenderer::GetManager() const {
 	return _manager;
 }
 
@@ -66,32 +66,30 @@ unsigned SceneRenderer::Height() const {
 	return _height;
 }
 
-const std::unordered_map<std::string, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
+const std::unordered_map<Light *, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
 	return _shadow_maps;
 }
 
 void SceneRenderer::_CorrectShadowMapList() {
-	std::unordered_set<std::string> lightNames;
+	std::unordered_set<Light *> lights;
 	for (const auto& pair : _shadow_maps) {
-		lightNames.insert(pair.first);
+		lights.insert(pair.first);
 	}
 
-	for (const std::string& lightName : _manager->GetScene()->Lights()) {
-		Light& light = *(_manager->GetScene()->GetLight(lightName));
-
-		if (!light.CastsShadows()) {
+	for (Light* light : _manager->GetScene()->GetLights()) {
+		if (!light->CastsShadows()) {
 			continue;
 		}
 
-		lightNames.erase(lightName);
+		lights.erase(light);
 
-		if (_shadow_maps.find(lightName) == _shadow_maps.end()) {
-			_shadow_maps.insert({ lightName, _manager->CreateShadowMap(lightName) });
+		if (_shadow_maps.find(light) == _shadow_maps.end()) {
+			_shadow_maps.insert({ light, _manager->CreateShadowMap(light) });
 		}
 	}
 
-	for (const std::string& lightName : lightNames) {
-		_shadow_maps.erase(lightName);
+	for (Light *light : lights) {
+		_shadow_maps.erase(light);
 	}
 }
 

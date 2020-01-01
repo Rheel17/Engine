@@ -5,6 +5,7 @@
 
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
+#include "../Scene.h"
 
 namespace rheel {
 
@@ -31,15 +32,15 @@ void ForwardSceneRenderer::Render(float dt) {
 
 	// initialize the model shader
 	GLShaderProgram& modelShader = ModelRenderer::GetForwardModelShader();
-	Manager()->InitializeShaderLights(modelShader);
+	GetManager()->InitializeShaderLights(modelShader);
 	modelShader["cameraMatrix"] = camera->CreateMatrix(Width(), Height());
-	modelShader["cameraPosition"] = camera->Position();
+	modelShader["cameraPosition"] = camera->CalculateAbsoluteTransform().GetTranslation();
 
 	// bind the shadow objects
 	int shadowMapCount = 0;
 	int textureUnit = 3;
 
-	if (Manager()->ShouldDrawShadows()) {
+	if (GetManager()->ShouldDrawShadows()) {
 		const auto& shadowMaps = ShadowMaps();
 
 		auto iter = std::find_if(shadowMaps.begin(), shadowMaps.end(), [](const auto& entry) {
@@ -67,8 +68,13 @@ void ForwardSceneRenderer::Render(float dt) {
 		ShadowMapDirectional::EmptyShadowMap().Bind(textureUnit++);
 	}
 
+	// render all objects
+	for (const auto entity : GetManager()->GetScene()->GetEntities()) {
+		entity->Render();
+	}
+
 	// render all the models
-	for (const auto& pair : Manager()->RenderMap()) {
+	for (const auto& pair : GetManager()->RenderMap()) {
 		pair.second.RenderObjects();
 	}
 
