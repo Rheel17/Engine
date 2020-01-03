@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ * Copyright (c) Levi van Rheenen. All rights reserved.
  */
 #ifndef SPOTLIGHT_H_
 #define SPOTLIGHT_H_

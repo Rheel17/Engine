@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Levi van Rheenen. All rights reserved.
+ * Copyright (c) Levi van Rheenen. All rights reserved.
  */
 #ifndef CAMERA_H_
 #define CAMERA_H_

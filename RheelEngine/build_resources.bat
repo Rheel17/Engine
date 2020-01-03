@@ -18,7 +18,7 @@ REM create resources.h file
 
 cd ..\..\Build\Resources
 echo /* > resources.h
-echo  * Copyright © 2019 Levi van Rheenen. All rights reserved. >> resources.h
+echo  * Copyright (c) Levi van Rheenen. All rights reserved. >> resources.h
 echo  */ >> resources.h
 echo:>> resources.h
 echo // THIS IS A MACHINE GENERATED FILE. DO NOT EDIT^^! >> resources.h
