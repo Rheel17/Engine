@@ -6,6 +6,7 @@
 #include "_common.h"
 
 #include "ImageResource.h"
+#include "Image3DResource.h"
 #include "ModelResource.h"
 #include "SoundResource.h"
 
@@ -44,6 +45,11 @@ public:
 	 * Loads an image from the file system.
 	 */
 	static ImageResource& GetImage(const std::string& path);
+
+	/**
+	 * Loads a 3d image from the file system.
+	 */
+	static Image3DResource& GetImage3D(const std::string& path);
 
 	/**
 	 * Loads a model from the file system.

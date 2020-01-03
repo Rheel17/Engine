@@ -19,6 +19,4 @@ const ImageTexture& ImageResource::GetImageTexture() const {
 	return *_image_texture;
 }
 
-
-
 }

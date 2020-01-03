@@ -24,6 +24,10 @@ ImageResource& ResourceManager::GetImage(const std::string& path) {
 	return _Get<ImageResource>(_resource_path + "/" + path);
 }
 
+Image3DResource& ResourceManager::GetImage3D(const std::string& path) {
+	return _Get<Image3DResource>(_resource_path + "/" + path);
+}
+
 ModelResource& ResourceManager::GetModel(const std::string& path) {
 	return _Get<ModelResource>(_resource_path + "/" + path);
 }

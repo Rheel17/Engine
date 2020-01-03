@@ -102,6 +102,8 @@ class SandboxGame : public Game {
 	void Start() override {
 		Engine::SetActiveScene(createScene());
 
+		ResourceManager::GetImage3D("monu10.vox");
+
 		Container ui;
 
 		SceneElement *sceneElement = ui.InsertElement(SceneElement("main_camera"));
