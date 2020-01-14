@@ -34,6 +34,7 @@ private:
 	Image3D() = default;
 
 	void _LoadVOX(std::istream& input);
+	void _Finish(const std::array<std::vector<ivec3>, 256>& voxels, const std::array<Color, 256>& palette);
 
 	void _LoadFromFile(const std::string& filename);
 	void _LoadFromStream(std::istream& input);
