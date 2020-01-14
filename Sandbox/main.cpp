@@ -1,6 +1,3 @@
-/*
- * Copyright (c) Levi van Rheenen. All rights reserved.
- */
 #include <RheelEngine.h>
 
 using namespace rheel;
@@ -49,7 +46,7 @@ static void createFloor(Entity *ramp) {
 }
 
 static Scene *createScene() {
-	Scene *scene = new Scene();
+	auto *scene = new Scene();
 
 	scene->AddRootComponent<FpsUpdater>();
 
@@ -60,25 +57,25 @@ static Scene *createScene() {
 		for (int j = 0; j < 5; j++) {
 			Entity *cube = scene->AddEntity(
 					scene->UniqueEntityName("cube"),
-					Transform({ 1.1f * i, 1.1f * j + 0.5f, 1.1f * i }));
+					RigidTransform({ 1.1f * i, 1.1f * j + 0.5f, 1.1f * i }));
 			createCube(cube);
 		}
 	}
 
-	Entity *ramp1 = scene->AddEntity("ramp1", Transform({ -8, 3, 0 }, quat(vec3{ 0, 0, -0.6f })));
+	auto *ramp1 = scene->AddEntity("ramp1", RigidTransform({ -8, 3, 0 }, quat(vec3{ 0, 0, -0.6f })));
 	createRamp(ramp1);
 
-	Entity *ramp2 = scene->AddEntity("ramp2", Transform({ 8, 2, 0 }, quat(vec3{ 0, 0, 0.8f })));
+	auto *ramp2 = scene->AddEntity("ramp2", RigidTransform({ 8, 2, 0 }, quat(vec3{ 0, 0, 0.8f })));
 	createRamp(ramp2);
 
-	Entity *floor = scene->AddEntity("floor", Transform({ 0, -0.5f, 0 }));
+	auto *floor = scene->AddEntity("floor", RigidTransform({ 0, -0.5f, 0 }));
 	createFloor(floor);
 
-	Entity *light = scene->AddEntity("main_light");
+	auto *light = scene->AddEntity("main_light");
 	auto lightComponent = light->AddComponent<DirectionalLight>(Color{ 1, 1, 1, 1 }, vec3{ 0.2f, -2.0f, -1.0f });
 	lightComponent->SetShadowDistance(100.0f);
 
-	Entity *camera = scene->AddEntity("main_camera", RigidTransform(vec3{ -12.0f, 7.5f, 0.0f }, vec3{ 0.0f, -M_PI / 2.0f, 0.0f }));
+	auto *camera = scene->AddEntity("main_camera", RigidTransform(vec3{ -12.0f, 7.5f, 0.0f }, vec3{ 0.0f, -M_PI / 2.0f, 0.0f }));
 	camera->AddComponent<PerspectiveCamera>("main_camera", 75.0f, 0.01f, 100.0f);
 	camera->AddComponent<EulerController>();
 
