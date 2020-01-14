@@ -1,11 +1,3 @@
-.metadata/
-**/.settings/
-**/*.o
-Build/Debug/
-Build/Libaries/
-Build/*/*.dll
-Build/*/Sandbox.exe
-Build/*/Test.exe
-**/_todo
-**/.cproject
-**/.project
+/.idea/
+/cmake-build-debug/
+pre_cmake.py
