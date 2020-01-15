@@ -22,11 +22,11 @@ public:
 	/**
 	 * Creates the 3d image based on a voxel file in the file system.
 	 */
-	Image3D(const std::string& filename);
+	explicit Image3D(const std::string& filename);
 
-	unsigned Width() const;
-	unsigned Height() const;
-	unsigned Depth() const;
+	unsigned GetWidth() const;
+	unsigned GetHeight() const;
+	unsigned GetDepth() const;
 
 	const Color& At(unsigned x, unsigned y, unsigned z) const;
 
@@ -34,7 +34,6 @@ private:
 	Image3D() = default;
 
 	void _LoadVOX(std::istream& input);
-	void _Finish(const std::array<std::vector<ivec3>, 256>& voxels, const std::array<Color, 256>& palette);
 
 	void _LoadFromFile(const std::string& filename);
 	void _LoadFromStream(std::istream& input);

@@ -5,194 +5,218 @@
 
 namespace rheel {
 
-static constexpr std::array<Color, 256> default_palette = { {
-		{ 0.0f, 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, 0.8f, 1.0f, 1.0f }, { 1.0f, 0.6f, 1.0f, 1.0f },
-		{ 1.0f, 0.4f, 1.0f, 1.0f }, { 1.0f, 0.2f, 1.0f, 1.0f }, { 1.0f, 0.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 0.8f, 1.0f },
-		{ 1.0f, 0.8f, 0.8f, 1.0f }, { 1.0f, 0.6f, 0.8f, 1.0f }, { 1.0f, 0.4f, 0.8f, 1.0f }, { 1.0f, 0.2f, 0.8f, 1.0f },
-		{ 1.0f, 0.0f, 0.8f, 1.0f }, { 1.0f, 1.0f, 0.6f, 1.0f }, { 1.0f, 0.8f, 0.6f, 1.0f }, { 1.0f, 0.6f, 0.6f, 1.0f },
-		{ 1.0f, 0.4f, 0.6f, 1.0f }, { 1.0f, 0.2f, 0.6f, 1.0f }, { 1.0f, 0.0f, 0.6f, 1.0f }, { 1.0f, 1.0f, 0.4f, 1.0f },
-		{ 1.0f, 0.8f, 0.4f, 1.0f }, { 1.0f, 0.6f, 0.4f, 1.0f }, { 1.0f, 0.4f, 0.4f, 1.0f }, { 1.0f, 0.2f, 0.4f, 1.0f },
-		{ 1.0f, 0.0f, 0.4f, 1.0f }, { 1.0f, 1.0f, 0.2f, 1.0f }, { 1.0f, 0.8f, 0.2f, 1.0f }, { 1.0f, 0.6f, 0.2f, 1.0f },
-		{ 1.0f, 0.4f, 0.2f, 1.0f }, { 1.0f, 0.2f, 0.2f, 1.0f }, { 1.0f, 0.0f, 0.2f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f },
-		{ 1.0f, 0.8f, 0.0f, 1.0f }, { 1.0f, 0.6f, 0.0f, 1.0f }, { 1.0f, 0.4f, 0.0f, 1.0f }, { 1.0f, 0.2f, 0.0f, 1.0f },
-		{ 1.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 0.8f }, { 1.0f, 0.8f, 1.0f, 0.8f }, { 1.0f, 0.6f, 1.0f, 0.8f },
-		{ 1.0f, 0.4f, 1.0f, 0.8f }, { 1.0f, 0.2f, 1.0f, 0.8f }, { 1.0f, 0.0f, 1.0f, 0.8f }, { 1.0f, 1.0f, 0.8f, 0.8f },
-		{ 1.0f, 0.8f, 0.8f, 0.8f }, { 1.0f, 0.6f, 0.8f, 0.8f }, { 1.0f, 0.4f, 0.8f, 0.8f }, { 1.0f, 0.2f, 0.8f, 0.8f },
-		{ 1.0f, 0.0f, 0.8f, 0.8f }, { 1.0f, 1.0f, 0.6f, 0.8f }, { 1.0f, 0.8f, 0.6f, 0.8f }, { 1.0f, 0.6f, 0.6f, 0.8f },
-		{ 1.0f, 0.4f, 0.6f, 0.8f }, { 1.0f, 0.2f, 0.6f, 0.8f }, { 1.0f, 0.0f, 0.6f, 0.8f }, { 1.0f, 1.0f, 0.4f, 0.8f },
-		{ 1.0f, 0.8f, 0.4f, 0.8f }, { 1.0f, 0.6f, 0.4f, 0.8f }, { 1.0f, 0.4f, 0.4f, 0.8f }, { 1.0f, 0.2f, 0.4f, 0.8f },
-		{ 1.0f, 0.0f, 0.4f, 0.8f }, { 1.0f, 1.0f, 0.2f, 0.8f }, { 1.0f, 0.8f, 0.2f, 0.8f }, { 1.0f, 0.6f, 0.2f, 0.8f },
-		{ 1.0f, 0.4f, 0.2f, 0.8f }, { 1.0f, 0.2f, 0.2f, 0.8f }, { 1.0f, 0.0f, 0.2f, 0.8f }, { 1.0f, 1.0f, 0.0f, 0.8f },
-		{ 1.0f, 0.8f, 0.0f, 0.8f }, { 1.0f, 0.6f, 0.0f, 0.8f }, { 1.0f, 0.4f, 0.0f, 0.8f }, { 1.0f, 0.2f, 0.0f, 0.8f },
-		{ 1.0f, 0.0f, 0.0f, 0.8f }, { 1.0f, 1.0f, 1.0f, 0.6f }, { 1.0f, 0.8f, 1.0f, 0.6f }, { 1.0f, 0.6f, 1.0f, 0.6f },
-		{ 1.0f, 0.4f, 1.0f, 0.6f }, { 1.0f, 0.2f, 1.0f, 0.6f }, { 1.0f, 0.0f, 1.0f, 0.6f }, { 1.0f, 1.0f, 0.8f, 0.6f },
-		{ 1.0f, 0.8f, 0.8f, 0.6f }, { 1.0f, 0.6f, 0.8f, 0.6f }, { 1.0f, 0.4f, 0.8f, 0.6f }, { 1.0f, 0.2f, 0.8f, 0.6f },
-		{ 1.0f, 0.0f, 0.8f, 0.6f }, { 1.0f, 1.0f, 0.6f, 0.6f }, { 1.0f, 0.8f, 0.6f, 0.6f }, { 1.0f, 0.6f, 0.6f, 0.6f },
-		{ 1.0f, 0.4f, 0.6f, 0.6f }, { 1.0f, 0.2f, 0.6f, 0.6f }, { 1.0f, 0.0f, 0.6f, 0.6f }, { 1.0f, 1.0f, 0.4f, 0.6f },
-		{ 1.0f, 0.8f, 0.4f, 0.6f }, { 1.0f, 0.6f, 0.4f, 0.6f }, { 1.0f, 0.4f, 0.4f, 0.6f }, { 1.0f, 0.2f, 0.4f, 0.6f },
-		{ 1.0f, 0.0f, 0.4f, 0.6f }, { 1.0f, 1.0f, 0.2f, 0.6f }, { 1.0f, 0.8f, 0.2f, 0.6f }, { 1.0f, 0.6f, 0.2f, 0.6f },
-		{ 1.0f, 0.4f, 0.2f, 0.6f }, { 1.0f, 0.2f, 0.2f, 0.6f }, { 1.0f, 0.0f, 0.2f, 0.6f }, { 1.0f, 1.0f, 0.0f, 0.6f },
-		{ 1.0f, 0.8f, 0.0f, 0.6f }, { 1.0f, 0.6f, 0.0f, 0.6f }, { 1.0f, 0.4f, 0.0f, 0.6f }, { 1.0f, 0.2f, 0.0f, 0.6f },
-		{ 1.0f, 0.0f, 0.0f, 0.6f }, { 1.0f, 1.0f, 1.0f, 0.4f }, { 1.0f, 0.8f, 1.0f, 0.4f }, { 1.0f, 0.6f, 1.0f, 0.4f },
-		{ 1.0f, 0.4f, 1.0f, 0.4f }, { 1.0f, 0.2f, 1.0f, 0.4f }, { 1.0f, 0.0f, 1.0f, 0.4f }, { 1.0f, 1.0f, 0.8f, 0.4f },
-		{ 1.0f, 0.8f, 0.8f, 0.4f }, { 1.0f, 0.6f, 0.8f, 0.4f }, { 1.0f, 0.4f, 0.8f, 0.4f }, { 1.0f, 0.2f, 0.8f, 0.4f },
-		{ 1.0f, 0.0f, 0.8f, 0.4f }, { 1.0f, 1.0f, 0.6f, 0.4f }, { 1.0f, 0.8f, 0.6f, 0.4f }, { 1.0f, 0.6f, 0.6f, 0.4f },
-		{ 1.0f, 0.4f, 0.6f, 0.4f }, { 1.0f, 0.2f, 0.6f, 0.4f }, { 1.0f, 0.0f, 0.6f, 0.4f }, { 1.0f, 1.0f, 0.4f, 0.4f },
-		{ 1.0f, 0.8f, 0.4f, 0.4f }, { 1.0f, 0.6f, 0.4f, 0.4f }, { 1.0f, 0.4f, 0.4f, 0.4f }, { 1.0f, 0.2f, 0.4f, 0.4f },
-		{ 1.0f, 0.0f, 0.4f, 0.4f }, { 1.0f, 1.0f, 0.2f, 0.4f }, { 1.0f, 0.8f, 0.2f, 0.4f }, { 1.0f, 0.6f, 0.2f, 0.4f },
-		{ 1.0f, 0.4f, 0.2f, 0.4f }, { 1.0f, 0.2f, 0.2f, 0.4f }, { 1.0f, 0.0f, 0.2f, 0.4f }, { 1.0f, 1.0f, 0.0f, 0.4f },
-		{ 1.0f, 0.8f, 0.0f, 0.4f }, { 1.0f, 0.6f, 0.0f, 0.4f }, { 1.0f, 0.4f, 0.0f, 0.4f }, { 1.0f, 0.2f, 0.0f, 0.4f },
-		{ 1.0f, 0.0f, 0.0f, 0.4f }, { 1.0f, 1.0f, 1.0f, 0.2f }, { 1.0f, 0.8f, 1.0f, 0.2f }, { 1.0f, 0.6f, 1.0f, 0.2f },
-		{ 1.0f, 0.4f, 1.0f, 0.2f }, { 1.0f, 0.2f, 1.0f, 0.2f }, { 1.0f, 0.0f, 1.0f, 0.2f }, { 1.0f, 1.0f, 0.8f, 0.2f },
-		{ 1.0f, 0.8f, 0.8f, 0.2f }, { 1.0f, 0.6f, 0.8f, 0.2f }, { 1.0f, 0.4f, 0.8f, 0.2f }, { 1.0f, 0.2f, 0.8f, 0.2f },
-		{ 1.0f, 0.0f, 0.8f, 0.2f }, { 1.0f, 1.0f, 0.6f, 0.2f }, { 1.0f, 0.8f, 0.6f, 0.2f }, { 1.0f, 0.6f, 0.6f, 0.2f },
-		{ 1.0f, 0.4f, 0.6f, 0.2f }, { 1.0f, 0.2f, 0.6f, 0.2f }, { 1.0f, 0.0f, 0.6f, 0.2f }, { 1.0f, 1.0f, 0.4f, 0.2f },
-		{ 1.0f, 0.8f, 0.4f, 0.2f }, { 1.0f, 0.6f, 0.4f, 0.2f }, { 1.0f, 0.4f, 0.4f, 0.2f }, { 1.0f, 0.2f, 0.4f, 0.2f },
-		{ 1.0f, 0.0f, 0.4f, 0.2f }, { 1.0f, 1.0f, 0.2f, 0.2f }, { 1.0f, 0.8f, 0.2f, 0.2f }, { 1.0f, 0.6f, 0.2f, 0.2f },
-		{ 1.0f, 0.4f, 0.2f, 0.2f }, { 1.0f, 0.2f, 0.2f, 0.2f }, { 1.0f, 0.0f, 0.2f, 0.2f }, { 1.0f, 1.0f, 0.0f, 0.2f },
-		{ 1.0f, 0.8f, 0.0f, 0.2f }, { 1.0f, 0.6f, 0.0f, 0.2f }, { 1.0f, 0.4f, 0.0f, 0.2f }, { 1.0f, 0.2f, 0.0f, 0.2f },
-		{ 1.0f, 0.0f, 0.0f, 0.2f }, { 1.0f, 1.0f, 1.0f, 0.0f }, { 1.0f, 0.8f, 1.0f, 0.0f }, { 1.0f, 0.6f, 1.0f, 0.0f },
-		{ 1.0f, 0.4f, 1.0f, 0.0f }, { 1.0f, 0.2f, 1.0f, 0.0f }, { 1.0f, 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.8f, 0.0f },
-		{ 1.0f, 0.8f, 0.8f, 0.0f }, { 1.0f, 0.6f, 0.8f, 0.0f }, { 1.0f, 0.4f, 0.8f, 0.0f }, { 1.0f, 0.2f, 0.8f, 0.0f },
-		{ 1.0f, 0.0f, 0.8f, 0.0f }, { 1.0f, 1.0f, 0.6f, 0.0f }, { 1.0f, 0.8f, 0.6f, 0.0f }, { 1.0f, 0.6f, 0.6f, 0.0f },
-		{ 1.0f, 0.4f, 0.6f, 0.0f }, { 1.0f, 0.2f, 0.6f, 0.0f }, { 1.0f, 0.0f, 0.6f, 0.0f }, { 1.0f, 1.0f, 0.4f, 0.0f },
-		{ 1.0f, 0.8f, 0.4f, 0.0f }, { 1.0f, 0.6f, 0.4f, 0.0f }, { 1.0f, 0.4f, 0.4f, 0.0f }, { 1.0f, 0.2f, 0.4f, 0.0f },
-		{ 1.0f, 0.0f, 0.4f, 0.0f }, { 1.0f, 1.0f, 0.2f, 0.0f }, { 1.0f, 0.8f, 0.2f, 0.0f }, { 1.0f, 0.6f, 0.2f, 0.0f },
-		{ 1.0f, 0.4f, 0.2f, 0.0f }, { 1.0f, 0.2f, 0.2f, 0.0f }, { 1.0f, 0.0f, 0.2f, 0.0f }, { 1.0f, 1.0f, 0.0f, 0.0f },
-		{ 1.0f, 0.8f, 0.0f, 0.0f }, { 1.0f, 0.6f, 0.0f, 0.0f }, { 1.0f, 0.4f, 0.0f, 0.0f }, { 1.0f, 0.2f, 0.0f, 0.0f },
-		{ 1.0f, 0.0f, 0.0f, 0.933333f }, { 1.0f, 0.0f, 0.0f, 0.866667f }, { 1.0f, 0.0f, 0.0f, 0.733333f },
-		{ 1.0f, 0.0f, 0.0f, 0.666667f }, { 1.0f, 0.0f, 0.0f, 0.533333f }, { 1.0f, 0.0f, 0.0f, 0.466667f },
-		{ 1.0f, 0.0f, 0.0f, 0.333333f }, { 1.0f, 0.0f, 0.0f, 0.266667f }, { 1.0f, 0.0f, 0.0f, 0.133333f },
-		{ 1.0f, 0.0f, 0.0f, 0.0666667f }, { 1.0f, 0.0f, 0.933333f, 0.0f }, { 1.0f, 0.0f, 0.866667f, 0.0f },
-		{ 1.0f, 0.0f, 0.733333f, 0.0f }, { 1.0f, 0.0f, 0.666667f, 0.0f }, { 1.0f, 0.0f, 0.533333f, 0.0f },
-		{ 1.0f, 0.0f, 0.466667f, 0.0f }, { 1.0f, 0.0f, 0.333333f, 0.0f }, { 1.0f, 0.0f, 0.266667f, 0.0f },
-		{ 1.0f, 0.0f, 0.133333f, 0.0f }, { 1.0f, 0.0f, 0.0666667f, 0.0f }, { 1.0f, 0.933333f, 0.0f, 0.0f },
-		{ 1.0f, 0.866667f, 0.0f, 0.0f }, { 1.0f, 0.733333f, 0.0f, 0.0f }, { 1.0f, 0.666667f, 0.0f, 0.0f },
-		{ 1.0f, 0.533333f, 0.0f, 0.0f }, { 1.0f, 0.466667f, 0.0f, 0.0f }, { 1.0f, 0.333333f, 0.0f, 0.0f },
-		{ 1.0f, 0.266667f, 0.0f, 0.0f }, { 1.0f, 0.133333f, 0.0f, 0.0f }, { 1.0f, 0.0666667f, 0.0f, 0.0f },
-		{ 1.0f, 0.933333f, 0.933333f, 0.933333f }, { 1.0f, 0.866667f, 0.866667f, 0.866667f },
-		{ 1.0f, 0.733333f, 0.733333f, 0.733333f }, { 1.0f, 0.666667f, 0.666667f, 0.666667f },
-		{ 1.0f, 0.533333f, 0.533333f, 0.533333f }, { 1.0f, 0.466667f, 0.466667f, 0.466667f },
-		{ 1.0f, 0.333333f, 0.333333f, 0.333333f }, { 1.0f, 0.266667f, 0.266667f, 0.266667f },
-		{ 1.0f, 0.133333f, 0.133333f, 0.133333f }, { 1.0f, 0.0666667f, 0.0666667f, 0.0666667f }
-} };
+///////////////////////////////
+// STREAM WRAPPER FOR VECTOR //
+///////////////////////////////
 
-static bool validateVOX(std::istream& input) {
-	// read the signature
-	unsigned char header[8];
-	input.read((char *) header, 8);
+template<typename CharT, typename TraitsT = std::char_traits<CharT> >
+class VectorStream : public std::basic_streambuf<CharT, TraitsT> {
 
-	// check if reading went well
-	if (!input.good()) {
-		std::cerr << "!input.good()" << std::endl;
-		return false;
+public:
+	explicit VectorStream(std::vector<std::istream::char_type>& vec) {
+		this->setg(vec.data(), vec.data(), vec.data() + vec.size());
 	}
 
-	// compare the header
-	return header[0] == 'V' && header[1] == 'O' && header[2] == 'X' && header[3] == ' ' &&
-			header[4] == 0x96 && header[5] == 0x00 && header[6] == 0x00 && header[7] == 0x00;
+};
+
+//////////////////////////
+// GENERAL RIFF PARSING //
+//////////////////////////
+
+using uint = uint32_t;
+
+/*
+ * Read the next count bytes into data. If an error occurred, or the stream reached
+ * end of file before the bytes could be completely read, an error will be shown and
+ * the program will abort.
+ */
+static void checkRead(std::istream& input, char *data, size_t count) {
+	input.read(data, count);
+
+	if (!input.good() || input.gcount() != count) {
+		Log::Error() << "Failed reading .vox file: an error occurred while trying to read " << count << " bytes" << std::endl;
+		abort();
+	}
 }
 
-static std::pair<unsigned, unsigned> readChunkHeader(std::istream& input, char *outChunk) {
-	// read the chunk id
-	input.read(outChunk, 4);
+/*
+ * Read a little-endian unsigned integer.
+ */
+static uint readInt(std::istream& input) {
+	char bytes[4];
+	checkRead(input, bytes, 4);
 
-	// read the sizes
-	unsigned sizes[2];
-	input.read((char *) sizes, 8);
+	auto *ubytes = reinterpret_cast<uint8_t *>(bytes);
+	uint part0 = uint(ubytes[0]);
+	uint part1 = uint(ubytes[1]) << 8;
+	uint part2 = uint(ubytes[2]) << 16;
+	uint part3 = uint(ubytes[3]) << 24;
 
-	return std::make_pair(sizes[0], sizes[1]);
+	return part0 | part1 | part2 | part3;
 }
 
-static bool assertChunkName(char *chunk, const char *check, bool force) {
-	bool correct = strcmp(chunk, check) == 0;
+class RIFF {
 
-	if (correct) {
-		return true;
+public:
+	using Byte = char;
+
+	class Chunk {
+		friend class RIFF;
+
+	public:
+		/*
+		 * Read an arbitrary chunk
+		 */
+		explicit Chunk(std::istream& input) {
+			// read the chunk header
+			checkRead(input, _chunk_id, 4);
+			_bytes_chunk = readInt(input);
+			_bytes_children = readInt(input);
+
+			// read chunk data
+			_data.resize(_bytes_chunk);
+			checkRead(input, _data.data(), _bytes_chunk);
+
+			// read children
+			int64_t childBytesLeft = _bytes_children;
+
+			while (childBytesLeft > 0) {
+				auto& child = _children.emplace_back(input);
+				childBytesLeft -= child._bytes_chunk + child._bytes_children + 12;
+			}
+		}
+
+		std::string GetID() const {
+			return std::string(_chunk_id, 4);
+		}
+
+		VectorStream<Byte> GetDataStream() const {
+			return VectorStream<Byte>(_data);
+		}
+
+		const std::vector<Chunk> & GetChildren() const {
+			return _children;
+		}
+
+	private:
+		Chunk() = default;
+
+		char _chunk_id[4]{};
+		uint _bytes_chunk = 0;
+		uint _bytes_children = 0;
+
+		mutable std::vector<Byte> _data{};
+		std::vector<Chunk> _children{};
+
+	};
+
+public:
+	/*
+	 * Read a RIFF file.
+	 */
+	explicit RIFF(std::istream& input) {
+		checkRead(input, _id, 4);
+		_version = readInt(input);
+		_root = Chunk(input);
 	}
 
-	if (force) {
-		throw std::runtime_error("An error occurred while reading VOX file: Expected chunk '" +
-				std::string(check, 4) + "', got '" + std::string(chunk, 4) + "'");
+	std::string GetID() const {
+		return std::string(_id, 4);
 	}
 
-	return false;
-}
+	uint GetVersion() const {
+		return _version;
+	}
+
+	const Chunk& GetRoot() const {
+		return _root;
+	}
+
+private:
+	char _id[4]{};
+	uint _version;
+	Chunk _root;
+
+};
+
+/////////////////////////
+// ACTUAL .VOX READING //
+/////////////////////////
 
 void Image3D::_LoadVOX(std::istream& input) {
-	if (!validateVOX(input)) {
-		throw std::runtime_error("An error occurred while reading VOX file: VOX header not valid.");
+	// read the riff-formated file.
+	RIFF riff(input);
+
+	// check the file header
+	if (riff.GetID() != "VOX " || riff.GetVersion() != 150) {
+		Log::Error() << "Failed reading .vox file: file header invalid." << std::endl;
+		abort();
 	}
 
-	// static storage for chunk names
-	char chunk[5] = { 0 };
-
-	// read the main chunk
-	readChunkHeader(input, chunk);
-	assertChunkName(chunk, "MAIN", true);
-
-	unsigned numModels = 1;
-
-	// read the first chunk
-	unsigned firstSize, firstChildren;
-
-	const auto& [firstSize0, firstChildren0] = readChunkHeader(input, chunk);
-	firstSize = firstSize0;
-	firstChildren = firstChildren0;
-
-	if (strcmp(chunk, "PACK") == 0) {
-		// read the PACK chunk
-		input.read((char *) &numModels, 4);
-
-		// re-read the first chunk
-		const auto& [firstSize1, firstChildren1] = readChunkHeader(input, chunk);
-		firstSize = firstSize1;
-		firstChildren = firstChildren1;
+	const auto& main = riff.GetRoot();
+	if (main.GetID() != "MAIN") {
+		Log::Error() << "Failed reading .vox file: invalid chunk." << std::endl;
+		abort();
 	}
 
-	if (numModels != 1) {
-		throw std::runtime_error("VOX files with multiple models unsupported.");
+	if (main.GetChildren().empty()) {
+		Log::Error() << "Failed reading .vox file: empty main child list." << std::endl;
+		abort();
 	}
 
-	// check that we have got a 'size' chunk
-	assertChunkName(chunk, "SIZE", true);
+	// currently we only accept a single model.
+	// TODO: add support for multiple models
+	if (main.GetChildren()[0].GetID() == "PACK") {
+		Log::Error() << "Failed reading .vox file: multiple models via 'PACK' unsupported." << std::endl;
+		abort();
+	}
 
-	// read the sizes
-	unsigned sizes[3];
-	input.read((char *) sizes, 12);
+	// read the model. Note that XYZ in the engine is XZY in the .vox format.
+	const auto& size = main.GetChildren()[0];
+	auto sizeStreamProxy = size.GetDataStream();
+	std::istream sizeStream(&sizeStreamProxy);
 
-	_width = sizes[0];
-	_height = sizes[1];
-	_depth = sizes[2];
-	_voxels.resize(sizes[0] * sizes[1] * sizes[2]);
+	_width = readInt(sizeStream);
+	_depth = readInt(sizeStream);
+	_height = readInt(sizeStream);
+	_voxels.resize(_width * _height * _depth);
 
-	// read the voxels
-	readChunkHeader(input, chunk);
-	assertChunkName(chunk, "XYZI", true);
+	const auto& xyzi = main.GetChildren()[1];
+	auto xyziStreamProxy = xyzi.GetDataStream();
+	std::istream xyziStream(&xyziStreamProxy);
 
+	uint voxelCount = readInt(xyziStream);
 	std::array<std::vector<ivec3>, 256> voxels;
-
-	int numVoxels;
-	input.read((char *) &numVoxels, 4);
-
 	char data[4];
 
-	for (int i = 0; i < numVoxels; i++) {
-		input.read(data, 4);
-		voxels[data[3]].emplace_back(data[0], data[1], data[2]);
+	for (uint i = 0; i < voxelCount; i++) {
+		checkRead(xyziStream, data, 4);
+		voxels[data[3]].emplace_back(data[0], data[2], data[1]);
 	}
 
-	std::array<Color, 256> palette = default_palette;
+	// read the rest: ignore the materials for now, search for the palette.
+	// TODO: handle materials?
+	std::array<Color, 256> palette{{}};
+	palette[0] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-	if (input.eof()) {
-		_Finish(voxels, palette);
+	for (size_t i = 2; i < main.GetChildren().size(); i++) {
+		const auto& rgba = main.GetChildren()[i];
+		if (rgba.GetID() != "RGBA") {
+			continue;
+		}
+
+		auto rgbaStreamProxy = rgba.GetDataStream();
+		std::istream rgbaStream(&rgbaStreamProxy);
+
+		for (int idx = 1; idx < 256; idx++) {
+			checkRead(rgbaStream, data, 4);
+			palette[idx] = { data[0] / 255.0f, data[1] / 255.0f, data[2] / 255.0f, data[3] / 255.0f };
+		}
+
+		break;
 	}
 
-	throw std::runtime_error("");
-
-}
-
-void Image3D::_Finish(const std::array<std::vector<ivec3>, 256>& voxels, const std::array<Color, 256>& palette) {
+	// push the voxels to the internal vector
 	for (int i = 0; i < 256; i++) {
 		Color c = palette[i];
 		const std::vector<ivec3>& locations = voxels[i];
