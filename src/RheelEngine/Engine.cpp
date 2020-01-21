@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-#include "ResourceManager.h"
+#include "Resources/ResourceManager.h"
 #include "Renderer/Text/Font.h"
 
 namespace rheel {

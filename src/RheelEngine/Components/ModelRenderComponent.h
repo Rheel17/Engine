@@ -7,7 +7,7 @@
 
 #include "../Component.h"
 #include "../Material.h"
-#include "../ModelResource.h"
+#include "../Resources/ModelResource.h"
 #include "../Renderer/ModelRenderer.h"
 
 namespace rheel {

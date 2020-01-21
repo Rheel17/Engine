@@ -5,7 +5,7 @@
 #define AUDIOCLIP_H_
 #include "../_common.h"
 
-#include "../Sound.h"
+#include "../Resources/Sound.h"
 #include "OpenAL/ALBuffer.h"
 
 namespace rheel {

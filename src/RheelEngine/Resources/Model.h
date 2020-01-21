@@ -3,7 +3,7 @@
  */
 #ifndef MODEL_H_
 #define MODEL_H_
-#include "_common.h"
+#include "../_common.h"
 
 namespace rheel {
 

@@ -3,11 +3,11 @@
  */
 #ifndef COLLADAPARSER_H_
 #define COLLADAPARSER_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include <rapidxml_utils.hpp>
 
-#include "Util/Hashes.h"
+#include "../Util/Hashes.h"
 #include "Model.h"
 
 namespace rheel {

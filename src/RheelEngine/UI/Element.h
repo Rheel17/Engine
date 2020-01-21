@@ -9,7 +9,7 @@
 
 #include "InputCallback.h"
 #include "../Color.h"
-#include "../ImageResource.h"
+#include "../Resources/ImageResource.h"
 #include "../Renderer/OpenGL/GLShaderProgram.h"
 #include "../Renderer/OpenGL/GLVertexArray.h"
 #include "../Renderer/OpenGL/GLTexture2D.h"

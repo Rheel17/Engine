@@ -3,7 +3,7 @@
  */
 #ifndef RESOURCE_H_
 #define RESOURCE_H_
-#include "_common.h"
+#include "../_common.h"
 
 namespace rheel {
 
@@ -20,7 +20,7 @@ class RE_API Resource : public ResourceBase {
 	RE_NO_MOVE(Resource);
 
 public:
-	virtual ~Resource() = default;
+	~Resource() override = default;
 
 	const std::string& Name() const {
 		return _name;
@@ -36,7 +36,7 @@ public:
 
 protected:
 	Resource(std::string name, T *value) :
-		_name(std::move(name)), _value(std::move(value)) {}
+			_name(std::move(name)), _value(std::move(value)) {}
 
 private:
 	std::string _name;

@@ -3,7 +3,7 @@
  */
 #ifndef MODELRESOURCE_H_
 #define MODELRESOURCE_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include <btBulletDynamicsCommon.h>
 

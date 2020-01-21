@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "Renderer/ImageTexture.h"
+#include "../Renderer/ImageTexture.h"
 
 namespace rheel {
 

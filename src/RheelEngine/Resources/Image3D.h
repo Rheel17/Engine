@@ -3,9 +3,9 @@
  */
 #ifndef IMAGE3D_H_
 #define IMAGE3D_H_
-#include "_common.h"
+#include "../_common.h"
 
-#include "Color.h"
+#include "../Color.h"
 
 namespace rheel {
 

@@ -8,7 +8,7 @@
 #include <map>
 
 #include "../Material.h"
-#include "../Model.h"
+#include "../Resources/Model.h"
 
 #include "OpenGL/GLShaderProgram.h"
 #include "OpenGL/GLVertexArray.h"

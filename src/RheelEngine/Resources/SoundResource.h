@@ -3,11 +3,11 @@
  */
 #ifndef SOUNDRESOURCE_H_
 #define SOUNDRESOURCE_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include "Sound.h"
 #include "Resource.h"
-#include "Audio/AudioClip.h"
+#include "../Audio/AudioClip.h"
 
 namespace rheel {
 

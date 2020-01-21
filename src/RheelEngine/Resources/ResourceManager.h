@@ -3,7 +3,7 @@
  */
 #ifndef RESOURCEMANAGER_H_
 #define RESOURCEMANAGER_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include "ImageResource.h"
 #include "Image3DResource.h"

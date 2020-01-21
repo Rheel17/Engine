@@ -6,7 +6,7 @@
 #include "_common.h"
 
 #include "Color.h"
-#include "ImageResource.h"
+#include "Resources/ImageResource.h"
 
 namespace rheel {
 

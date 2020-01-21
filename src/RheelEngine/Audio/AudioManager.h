@@ -8,7 +8,7 @@
 #include <AL/alc.h>
 
 #include "AudioSource.h"
-#include "../SoundResource.h"
+#include "../Resources/SoundResource.h"
 #include "OpenAL/ALListener.h"
 
 namespace rheel {

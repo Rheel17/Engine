@@ -3,7 +3,7 @@
  */
 #ifndef IMAGE3DRESOURCE_H_
 #define IMAGE3DRESOURCE_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include "Resource.h"
 #include "Image3D.h"

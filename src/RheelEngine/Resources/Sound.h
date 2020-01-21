@@ -3,7 +3,7 @@
  */
 #ifndef SOUND_H_
 #define SOUND_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include <AL/al.h>
 

@@ -7,7 +7,7 @@
 #include "../_common.h"
 
 #include "ModelRenderer.h"
-#include "../ModelResource.h"
+#include "../Resources/ModelResource.h"
 #include "../Scene.h"
 #include "OpenGL/GLFramebuffer.h"
 

@@ -3,11 +3,11 @@
  */
 #ifndef IMAGERESOURCE_H_
 #define IMAGERESOURCE_H_
-#include "_common.h"
+#include "../_common.h"
 
 #include "Image.h"
 #include "Resource.h"
-#include "Renderer/ImageTexture.h"
+#include "../Renderer/ImageTexture.h"
 
 namespace rheel {
 

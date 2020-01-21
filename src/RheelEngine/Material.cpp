@@ -4,7 +4,7 @@
 #include "Material.h"
 
 #include "EngineResources.h"
-#include "ResourceManager.h"
+#include "Resources/ResourceManager.h"
 #include "Renderer/ImageTexture.h"
 
 namespace rheel {

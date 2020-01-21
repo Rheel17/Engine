@@ -5,7 +5,7 @@
 #define IMAGETEXTURE_H_
 #include "../_common.h"
 
-#include "../Image.h"
+#include "../Resources/Image.h"
 #include "OpenGL/GLTexture2D.h"
 
 namespace rheel {
