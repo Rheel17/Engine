@@ -70,7 +70,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *l
 	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 0);
 }
 
-ShadowMapDirectional::~ShadowMapDirectional() {}
+ShadowMapDirectional::~ShadowMapDirectional() = default;
 
 void ShadowMapDirectional::Update(Camera *camera, unsigned width, unsigned height) {
 	GL::PushState();

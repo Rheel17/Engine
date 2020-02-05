@@ -6,7 +6,7 @@
 namespace rheel {
 
 Transform::Transform(vec3 translation, quat rotation, vec3 scale) :
-		RigidTransform(std::move(translation), std::move(rotation)),
+		RigidTransform(translation, rotation),
 		_scale(scale) {}
 
 Transform::Transform(const mat4& matrix) {
@@ -33,36 +33,15 @@ Transform::Transform(const mat4& matrix) {
 Transform::Transform(TransformOwner *owner) :
 		RigidTransform(owner), _scale(1.0f) {}
 
-Transform::Transform(const Transform& t) :
-		RigidTransform(t), _scale(t._scale) {}
-
 Transform::Transform(const RigidTransform& t) :
 		RigidTransform(t), _scale(1.0f, 1.0f, 1.0f) {}
 
 Transform::Transform(RigidTransform&& t) :
-		RigidTransform(std::forward<RigidTransform>(t)), _scale(1.0f, 1.0f, 1.0f) {}
+		RigidTransform(std::forward<RigidTransform>(t)) {}
 
-Transform& Transform::operator=(const Transform& t) {
+Transform& Transform::operator=(Transform&& t) noexcept {
 	_scale = t._scale;
-	RigidTransform::operator=(t);
-	return *this;
-}
-
-Transform& Transform::operator=(Transform&& t) {
-	_scale = std::move(t._scale);
 	RigidTransform::operator=(std::forward<Transform>(t));
-	return *this;
-}
-
-Transform& Transform::operator=(const RigidTransform& t) {
-	_scale = vec3(1.0f, 1.0f, 1.0f);
-	RigidTransform::operator=(t);
-	return *this;
-}
-
-Transform& Transform::operator=(RigidTransform&& t) {
-	_scale = vec3(1.0f, 1.0f, 1.0f);
-	RigidTransform::operator=(std::forward<RigidTransform>(t));
 	return *this;
 }
 

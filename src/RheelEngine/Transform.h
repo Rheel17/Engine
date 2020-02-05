@@ -21,16 +21,13 @@ public:
 
 	explicit Transform(TransformOwner *owner);
 
-	Transform(const Transform& t);
+	Transform(const Transform& t) = default;
 
 	explicit Transform(const RigidTransform& t);
 	explicit Transform(RigidTransform&& t);
 
-	Transform& operator=(const Transform& t);
-	Transform& operator=(Transform&& t);
-
-	Transform& operator=(const RigidTransform& t) override;
-	Transform& operator=(RigidTransform&& t) override;
+	Transform& operator=(const Transform& t) = default;
+	Transform& operator=(Transform&& t) noexcept;
 
 	~Transform() override = default;
 
@@ -62,7 +59,7 @@ protected:
 	mat4 CalculateMatrix() const override;
 
 private:
-	vec3 _scale;
+	vec3 _scale{ 1.0f, 1.0f, 1.0f };
 
 };
 

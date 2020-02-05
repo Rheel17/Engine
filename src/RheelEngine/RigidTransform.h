@@ -17,20 +17,20 @@ struct RE_API TransformOwner {
 class RE_API RigidTransform {
 
 public:
-	RigidTransform(
+	explicit RigidTransform(
 			vec3 translation = { 0.0f, 0.0f, 0.0f },
 			quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f });
 
-	RigidTransform(TransformOwner *owner);
+	explicit RigidTransform(TransformOwner *owner);
 
 	virtual ~RigidTransform() = default;
 
 	RigidTransform(const RigidTransform& t);
-	RigidTransform(RigidTransform&& t);
+	RigidTransform(RigidTransform&& t) noexcept;
 
-	virtual RigidTransform& operator=(const RigidTransform& t);
+	RigidTransform& operator=(const RigidTransform& t);
 
-	virtual RigidTransform& operator=(RigidTransform&& t);
+	RigidTransform& operator=(RigidTransform&& t) noexcept;
 
 	/**
 	 * Resets this transform to the identity transform.
@@ -107,7 +107,7 @@ private:
 	vec3 _translation;
 	quat _rotation;
 
-	mutable mat4 _matrix;
+	mutable mat4 _matrix{};
 	mutable bool _matrix_dirty;
 
 	TransformOwner *_owner = nullptr;

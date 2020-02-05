@@ -18,7 +18,8 @@ mat4 PerspectiveCamera::CreateMatrix(unsigned width, unsigned height) const {
 }
 
 std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned height, float near, float far) const {
-	const quat& rotation = transform.GetRotation();
+	Transform absoluteTransform = CalculateAbsoluteTransform();
+	const quat& rotation = absoluteTransform.GetRotation();
 
 	vec3 forward = rotation * vec4(0, 0, -1, 0);
 	vec3 up = rotation * vec4(0, 1, 0, 0);
@@ -30,13 +31,13 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	float tanfov = std::tan(_fov * 0.5f);
 	float aspectRatio = float(width) / float(height);
 
-	const auto position = [forward, up, right, tanfov, aspectRatio, this](const vec2& ndc, float t) {
+	const auto position = [absoluteTransform, forward, up, right, tanfov, aspectRatio](const vec2& ndc, float t) {
 		vec3 direction = glm::normalize(
 				ndc.x * right * tanfov * aspectRatio +
 				ndc.y * up * tanfov +
 				forward);
 
-		return transform.GetTranslation() + t * direction;
+		return absoluteTransform.GetTranslation() + t * direction;
 	};
 
 	return std::array<vec3, 8> {{

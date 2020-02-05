@@ -17,21 +17,29 @@ RigidTransform::RigidTransform(const RigidTransform& t) :
 		_translation(t._translation), _rotation(t._rotation),
 		_matrix_dirty(true) {}
 
-RigidTransform::RigidTransform(RigidTransform&& t) :
-		_translation(std::move(t._translation)),
-		_rotation(std::move(t._rotation)),
+RigidTransform::RigidTransform(RigidTransform&& t) noexcept :
+		_translation(t._translation),
+		_rotation(t._rotation),
 		_matrix_dirty(true) {}
 
 RigidTransform& RigidTransform::operator=(const RigidTransform& t) {
+	if (&t == this) {
+		return *this;
+	}
+
 	_translation = t._translation;
 	_rotation = t._rotation;
 	SetChanged();
 	return *this;
 }
 
-RigidTransform& RigidTransform::operator=(RigidTransform&& t) {
-	_translation = std::move(t._translation);
-	_rotation = std::move(t._rotation);
+RigidTransform& RigidTransform::operator=(RigidTransform&& t) noexcept {
+	if (&t == this) {
+		return *this;
+	}
+
+	_translation = t._translation;
+	_rotation = t._rotation;
 	SetChanged();
 	return *this;
 }
@@ -48,7 +56,7 @@ const vec3& RigidTransform::GetTranslation() const {
 
 void RigidTransform::SetTranslation(vec3 translation) {
 	if (_translation != translation) {
-		_translation = std::move(translation);
+		_translation = translation;
 		SetChanged();
 	}
 }

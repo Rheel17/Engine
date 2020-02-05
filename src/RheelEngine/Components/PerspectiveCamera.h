@@ -18,7 +18,7 @@ public:
 
 	std::array<vec3, 8> ViewspaceCorners(unsigned width, unsigned height, float near, float far) const override;
 
-	vec3 RayDirection(const vec2& ndc, float aspectRatio) const;
+	vec3 RayDirection(const vec2& ndc, float aspectRatio) const override;
 
 private:
 	float _fov;
