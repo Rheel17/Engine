@@ -242,13 +242,13 @@ protected:
 	 * Draws a textured quad. Vertices are specified in pixel-space. Coutner-clockwise
 	 * ordering is required.
 	 */
-	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, Image image, float alpha = 1.0f);
+	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const Image& image, float alpha = 1.0f);
 
 	/**
 	 * Draws the texture at the specified rectangle. The entire texture will be scaled to
 	 * fit the rectangle.
 	 */
-	static void _DrawTexturedQuad(const Bounds& bounds, Image image, float alpha = 1.0f);
+	static void _DrawTexturedQuad(const Bounds& bounds, const Image& image, float alpha = 1.0f);
 
 private:
 	static void _Draw(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f);

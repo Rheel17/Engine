@@ -16,15 +16,15 @@ public:
 	void Bind(unsigned textureUnit) const;
 
 private:
-	explicit ImageTexture(Image image);
+	explicit ImageTexture(const Image& image);
 
 	GLTexture2D _texture;
 
 public:
-	static ImageTexture& GetFor(Image image);
+	static const ImageTexture& Get(const Image& image);
 
 private:
-	static std::unordered_map<Image, ImageTexture> _texture_cache;
+	static std::unordered_map<std::uintptr_t, ImageTexture> _texture_cache;
 
 };
 

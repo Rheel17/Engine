@@ -17,7 +17,7 @@ public:
 		auto iter = _cache.find(path);
 
 		if (iter == _cache.end()) {
-			_cache.emplace(path, _DoLoad(path));
+			iter = _cache.emplace(path, _DoLoad(path)).first;
 		}
 
 		return iter->second;

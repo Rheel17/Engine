@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "EngineResources.h"
+#include "Renderer/ImageTexture.h"
 
 namespace rheel {
 
@@ -65,13 +66,9 @@ float Material::SpecularFactor() const {
 }
 
 void Material::BindTextures() const {
-	/*
-	_ambient_texture->GetImageTexture().Bind(0);
-	_diffuse_texture->GetImageTexture().Bind(1);
-	_specular_texture->GetImageTexture().Bind(2);
-	*/
-
-	// TODO: bind textures
+	ImageTexture::Get(_ambient_texture).Bind(0);
+	ImageTexture::Get(_diffuse_texture).Bind(1);
+	ImageTexture::Get(_specular_texture).Bind(2);
 }
 
 Image Material::GetAmbientTexture() const {

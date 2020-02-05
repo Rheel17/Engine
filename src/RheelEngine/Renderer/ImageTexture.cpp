@@ -5,11 +5,13 @@
 
 namespace rheel {
 
+std::unordered_map<std::uintptr_t, ImageTexture> ImageTexture::_texture_cache;
+
 void ImageTexture::Bind(unsigned textureUnit) const {
 	_texture.Bind(textureUnit);
 }
 
-ImageTexture::ImageTexture(Image image)
+ImageTexture::ImageTexture(const Image& image)
 		: _texture(image.GetWidth(), image.GetHeight(), GL_RGBA) {
 
 	_texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
@@ -29,6 +31,16 @@ ImageTexture::ImageTexture(Image image)
 	_texture.SetData(GL_RGBA, GL_FLOAT, glData);
 
 	delete[] glData;
+}
+
+const ImageTexture& ImageTexture::Get(const Image& image) {
+	auto iter = _texture_cache.find(image.GetAddress());
+
+	if (iter == _texture_cache.end()) {
+		iter = _texture_cache.emplace(image.GetAddress(), ImageTexture(image)).first;
+	}
+
+	return iter->second;
 }
 
 }

@@ -36,30 +36,6 @@ public:
 		return std::uintptr_t(_data.get());
 	}
 
-	/*
-	 * The equality operator uses raw addresses to check for equality. This means that
-	 * two assets that are semantically the same (have the same data) might not
-	 * return true for this function.
-	 *
-	 * To check for null assets, use this IsNull() or RequireNonNull() functions.
-	 */
-	template<typename T2>
-	bool operator==(const Asset& rhs) const {
-		return GetAddress() == rhs.GetAddress();
-	}
-
-	/*
-	 * The equality operator uses raw addresses to check for equality. This means that
-	 * two assets that are semantically the same (have the same data) might not
-	 * return true for this function.
-	 *
-	 * To check for null assets, use this IsNull() or RequireNonNull() functions.
-	 */
-	template<typename T2>
-	bool operator!=(const Asset<T2>& rhs) const {
-		return !(rhs == *this);
-	}
-
 protected:
 	Asset() : _data(std::make_shared<T>()) {}
 
