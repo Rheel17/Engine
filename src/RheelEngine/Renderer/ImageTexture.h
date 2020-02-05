@@ -5,7 +5,7 @@
 #define IMAGETEXTURE_H_
 #include "../_common.h"
 
-#include "../Resources/Image.h"
+#include "../Assets/Image.h"
 #include "OpenGL/GLTexture2D.h"
 
 namespace rheel {
@@ -13,12 +13,18 @@ namespace rheel {
 class RE_API ImageTexture {
 
 public:
-	ImageTexture(const Image& image);
-
 	void Bind(unsigned textureUnit) const;
 
 private:
+	explicit ImageTexture(Image image);
+
 	GLTexture2D _texture;
+
+public:
+	static ImageTexture& GetFor(Image image);
+
+private:
+	static std::unordered_map<Image, ImageTexture> _texture_cache;
 
 };
 

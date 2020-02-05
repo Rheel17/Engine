@@ -8,7 +8,7 @@
 #include <map>
 
 #include "../Material.h"
-#include "../Resources/Model.h"
+#include "../Assets/Model.h"
 
 #include "OpenGL/GLShaderProgram.h"
 #include "OpenGL/GLVertexArray.h"
@@ -27,7 +27,7 @@ public:
 	public:
 		ObjectData();
 		ObjectData(const ObjectData& data);
-		ObjectData& operator=(ObjectData&& data);
+		ObjectData& operator=(ObjectData&& data) noexcept;
 
 	private:
 		mat4 _model_matrix;
@@ -47,14 +47,14 @@ public:
 
 	public:
 		ObjectDataPtr() = default;
-		ObjectDataPtr(ObjectData *data);
+		explicit ObjectDataPtr(ObjectData *data);
 
 		void SetMatrix(mat4 matrix);
 		void SetMaterialVector(vec4 materialVector);
 		void SetMaterialColor(vec4 materialColor);
 
-		operator bool() const;
-		ObjectDataPtr& operator=(ObjectDataPtr&& ptr);
+		explicit operator bool() const;
+		ObjectDataPtr& operator=(ObjectDataPtr&& ptr) noexcept;
 
 	private:
 		ObjectData *_data = nullptr;
@@ -69,7 +69,7 @@ private:
 	};
 
 public:
-	ModelRenderer(const Model& model);
+	explicit ModelRenderer(const Model& model);
 
 	ObjectDataPtr AddObject();
 	ObjectDataPtr AddTexturedObject(const Material& material);
@@ -80,8 +80,8 @@ public:
 	void RenderObjects() const;
 
 private:
-	ObjectDataPtr _Add(_ObjectDataVector& objects);
-	void _Remove(_ObjectDataVector& objects, ObjectDataPtr&& data);
+	static ObjectDataPtr _Add(_ObjectDataVector& objects);
+	static void _Remove(_ObjectDataVector& objects, ObjectDataPtr&& data);
 
 	GLVertexArray _vao;
 	GLBuffer _vertex_buffer_object;

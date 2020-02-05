@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#include "ColladaParser.h"
+#include "ColladaLoader.h"
 
 namespace rheel {
 
@@ -19,10 +19,12 @@ static void transformUp(vec3& vector, char up) {
 			vector.y = original.z;
 			vector.z = -original.y;
 			break;
+		default:
+			abort();
 	}
 }
 
-ColladaParser::Geometry::Geometry(_XmlNode *geometry) {
+ColladaLoader::Geometry::Geometry(_XmlNode *geometry) {
 	_XmlNode *mesh = geometry->first_node("mesh");
 	assert(mesh);
 
@@ -120,7 +122,7 @@ ColladaParser::Geometry::Geometry(_XmlNode *geometry) {
 		vec3 normal   = vNormals  [p_list[i + normalOffset  ]];
 		vec2 texcoord = vTexcoords[p_list[i + texcoordOffset]];
 
-		Model::Vertex vertex { position, normal, texcoord };
+		ModelVertex vertex { position, normal, texcoord };
 
 		auto iter = _vertex_indices.find(vertex);
 		unsigned index;
@@ -137,7 +139,7 @@ ColladaParser::Geometry::Geometry(_XmlNode *geometry) {
 	}
 }
 
-std::vector<float> ColladaParser::Geometry::_ReadSource(_XmlNode *source) {
+std::vector<float> ColladaLoader::Geometry::_ReadSource(_XmlNode *source) {
 	_XmlNode *float_array = source->first_node("float_array");
 	assert(float_array);
 
@@ -147,16 +149,7 @@ std::vector<float> ColladaParser::Geometry::_ReadSource(_XmlNode *source) {
 	return _CreateVectorFloat(float_array, strtoul(count->value(), nullptr, 10));
 }
 
-ColladaParser::ColladaParser(const std::string& filename) {
-	// create the document
-	_xml_file = std::make_unique<_XmlFile>(filename.c_str());
-	_xml_document = std::make_unique<_XmlDocument>();
-	_xml_document->parse<0>(_xml_file->data());
-
-	ParseCOLLADA();
-}
-
-void ColladaParser::ParseCOLLADA() {
+void ColladaLoader::ParseCOLLADA() {
 	// get the up vector
 	_XmlNode *root = _xml_document->first_node();
 	assert(root);
@@ -185,14 +178,14 @@ void ColladaParser::ParseCOLLADA() {
 	}
 }
 
-void ColladaParser::ParseGeometry(_XmlNode *geometry) {
+void ColladaLoader::ParseGeometry(_XmlNode *geometry) {
 	_XmlAttribute *id = geometry->first_attribute("id");
 	assert(id);
 
 	_geometries.insert({ "#" + std::string(id->value()), Geometry(geometry) });
 }
 
-void ColladaParser::ParseScene(_XmlNode *scene) {
+void ColladaLoader::ParseScene(_XmlNode *scene) {
 	for (_XmlNode *node = scene->first_node("node"); node; node = node->next_sibling("node")) {
 		mat4 transform = glm::identity<mat4>();
 
@@ -215,12 +208,12 @@ void ColladaParser::ParseScene(_XmlNode *scene) {
 	}
 }
 
-void ColladaParser::AddGeometry(const Geometry& geometry, const mat4& transform) {
+void ColladaLoader::AddGeometry(const Geometry& geometry, const mat4& transform) {
 	unsigned indexOffset = _vertices.size();
 
-	for (const Model::Vertex& vertex : geometry._vertices) {
+	for (const ModelVertex& vertex : geometry._vertices) {
 		vec4 transformedPosition = transform * vec4(vertex.position, 1.0f);
-		Model::Vertex transformed = { transformedPosition, vertex.normal, vertex.texture };
+		ModelVertex transformed = { transformedPosition, vertex.normal, vertex.texture };
 
 		transformUp(transformed.position, _up);
 		transformUp(transformed.normal, _up);
@@ -233,14 +226,25 @@ void ColladaParser::AddGeometry(const Geometry& geometry, const mat4& transform)
 	}
 }
 
-void ColladaParser::ParseCollada(Model& model, const std::string& filename) {
-	ColladaParser parser(filename);
+Model ColladaLoader::_DoLoad(const std::string& path) {
+	_xml_file = std::make_unique<_XmlFile>(path.c_str());
+	_xml_document = std::make_unique<_XmlDocument>();
+	_xml_document->parse<0>(_xml_file->data());
 
-	model._vertices = std::move(parser._vertices);
-	model._indices = std::move(parser._indices);
+	ParseCOLLADA();
+	Model model(std::move(_vertices), std::move(_indices));
+
+	_xml_file.reset();
+	_xml_document.reset();
+
+	_geometries = {};
+	_vertices = {};
+	_indices = {};
+
+	return model;
 }
 
-std::vector<unsigned> ColladaParser::_CreateVectorUnsigned(_XmlNode *node, int size) {
+std::vector<unsigned> ColladaLoader::_CreateVectorUnsigned(_XmlNode *node, int size) {
 	// create the vector
 	std::vector<unsigned> vec;
 
@@ -266,7 +270,7 @@ std::vector<unsigned> ColladaParser::_CreateVectorUnsigned(_XmlNode *node, int s
 	return vec;
 }
 
-std::vector<float> ColladaParser::_CreateVectorFloat(_XmlNode *node, int size) {
+std::vector<float> ColladaLoader::_CreateVectorFloat(_XmlNode *node, int size) {
 	// create the vector
 	std::vector<float> vec;
 
@@ -292,7 +296,7 @@ std::vector<float> ColladaParser::_CreateVectorFloat(_XmlNode *node, int size) {
 	return vec;
 }
 
-mat4 ColladaParser::_CreateMatrix(_XmlNode *node) {
+mat4 ColladaLoader::_CreateMatrix(_XmlNode *node) {
 	std::vector<float> floats = _CreateVectorFloat(node, 16);
 
 	return mat4(

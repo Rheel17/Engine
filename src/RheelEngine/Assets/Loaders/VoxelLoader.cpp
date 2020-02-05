@@ -1,7 +1,9 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#include "Image3D.h"
+#include "VoxelLoader.h"
+
+#include <fstream>
 
 namespace rheel {
 
@@ -143,7 +145,17 @@ private:
 // ACTUAL .VOX READING //
 /////////////////////////
 
-void Image3D::_LoadVOX(std::istream& input) {
+VoxelImage VoxelLoader::_DoLoad(const std::string& path) {
+	std::ifstream f(path, std::ios::binary);
+
+	if (!f) {
+		throw std::runtime_error("Error while reading image file: " + path);
+	}
+
+	return _LoadVOX(f);
+}
+
+VoxelImage VoxelLoader::_LoadVOX(std::istream& input) {
 	// read the riff-formated file.
 	RIFF riff(input);
 
@@ -176,22 +188,24 @@ void Image3D::_LoadVOX(std::istream& input) {
 	auto sizeStreamProxy = size.GetDataStream();
 	std::istream sizeStream(&sizeStreamProxy);
 
-	_width = readInt(sizeStream);
-	_depth = readInt(sizeStream);
-	_height = readInt(sizeStream);
-	_voxels.resize(_width * _height * _depth);
+	unsigned width = readInt(sizeStream);
+	unsigned depth = readInt(sizeStream);
+	unsigned height = readInt(sizeStream);
+
+	std::vector<Color> voxels;
+	voxels.resize(width * height * depth);
 
 	const auto& xyzi = main.GetChildren()[1];
 	auto xyziStreamProxy = xyzi.GetDataStream();
 	std::istream xyziStream(&xyziStreamProxy);
 
 	uint voxelCount = readInt(xyziStream);
-	std::array<std::vector<ivec3>, 256> voxels;
+	std::array<std::vector<ivec3>, 256> rawVoxels;
 	char data[4];
 
 	for (uint i = 0; i < voxelCount; i++) {
 		checkRead(xyziStream, data, 4);
-		voxels[data[3]].emplace_back(data[0], data[2], data[1]);
+		rawVoxels[data[3]].emplace_back(data[0], data[2], data[1]);
 	}
 
 	// read the rest: ignore the materials for now, search for the palette.
@@ -219,12 +233,14 @@ void Image3D::_LoadVOX(std::istream& input) {
 	// push the voxels to the internal vector
 	for (int i = 0; i < 256; i++) {
 		Color c = palette[i];
-		const std::vector<ivec3>& locations = voxels[i];
+		const std::vector<ivec3>& locations = rawVoxels[i];
 
 		for (ivec3 v : locations) {
-			_voxels[v.x + v.y * _width + v.z * _width * _height] = c;
+			voxels[v.x + v.y * width + v.z * width * height] = c;
 		}
 	}
+
+	return VoxelImage(width, height, depth, std::move(voxels));
 }
 
 }

@@ -3,9 +3,6 @@
  */
 #include "Engine.h"
 
-#include <cstring>
-
-#include "Resources/ResourceManager.h"
 #include "Renderer/Text/Font.h"
 
 namespace rheel {
@@ -44,7 +41,6 @@ void Engine::_Run(Game *game) {
 
 void Engine::_Terminate() {
 	_instance.audio_manager->_StopAll();
-	ResourceManager::_ReleaseAll();
 	Window::DestroyDisplaySystems();
 }
 
@@ -62,6 +58,10 @@ Window& Engine::GetWindow() {
 
 UI& Engine::GetUI() {
 	return *_instance.ui;
+}
+
+AssetLoader& Engine::GetAssetLoader() {
+	return _instance.asset_loader;
 }
 
 AudioManager& Engine::GetAudioManager() {

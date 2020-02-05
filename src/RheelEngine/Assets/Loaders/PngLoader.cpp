@@ -1,9 +1,11 @@
 /*
- * Copyright (c) Levi van Rheenen. All rights reserved.
+ * Copyright (c) 2020 Levi van Rheenen
  */
-#include "Image.h"
+#include "PngLoader.h"
 
 #include <png.h>
+
+#include <fstream>
 
 #define FLOAT(x) ((x) / 255.0f)
 #define BYTE(x) ((png_byte) ((x) * 255))
@@ -24,7 +26,17 @@ static bool validatePNG(std::istream& input) {
 	return png_sig_cmp(signature, 0, 8) == 0;
 }
 
-void Image::_LoadPNG(std::istream& input) {
+Image PngLoader::_DoLoad(const std::string& path) {
+	std::ifstream f(path, std::ios::binary);
+
+	if (!f) {
+		throw std::runtime_error("Error while reading image file: " + path);
+	}
+
+	return _LoadPNG(f);
+}
+
+Image PngLoader::_LoadPNG(std::istream& input) {
 	if (!validatePNG(input)) {
 		throw std::runtime_error("An error occurred while reading PNG file: PNG signature not valid.");
 	}
@@ -47,7 +59,7 @@ void Image::_LoadPNG(std::istream& input) {
 
 	// jump here if something goes wrong in the parsing.
 	if (setjmp(png_jmpbuf(pngPtr))) {
-		png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) 0);
+		png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) nullptr);
 		delete[] rows;
 		delete[] data;
 		throw std::runtime_error("An error occurred while reading the PNG file.");
@@ -57,7 +69,7 @@ void Image::_LoadPNG(std::istream& input) {
 	png_set_read_fn(pngPtr, static_cast<png_voidp>(&input),
 			[](png_structp pngPtr, png_bytep data, png_size_t length) {
 
-		std::istream *stream = static_cast<std::istream*>(png_get_io_ptr(pngPtr));
+		auto stream = static_cast<std::istream*>(png_get_io_ptr(pngPtr));
 		stream->read((char *) data, length);
 	});
 
@@ -68,8 +80,8 @@ void Image::_LoadPNG(std::istream& input) {
 	png_read_info(pngPtr, infoPtr);
 
 	// parse the png info
-	_width = png_get_image_width(pngPtr, infoPtr);
-	_height = png_get_image_height(pngPtr, infoPtr);
+	unsigned width = png_get_image_width(pngPtr, infoPtr);
+	unsigned height = png_get_image_height(pngPtr, infoPtr);
 
 	unsigned int bitDepth = png_get_bit_depth(pngPtr, infoPtr);
 	unsigned int channels = png_get_channels(pngPtr, infoPtr);
@@ -87,6 +99,8 @@ void Image::_LoadPNG(std::istream& input) {
 				bitDepth = 8;
 			}
 			break;
+		default:
+			abort();
 	}
 
 	if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
@@ -102,16 +116,16 @@ void Image::_LoadPNG(std::istream& input) {
 
 	// check if we have a readable image for this class
 	if (!(channels == 1 || channels == 3 || channels == 4)) {
-		png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) 0);
+		png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) nullptr);
 		throw std::runtime_error("Invalid number of channels. Can only work with 1, 3, or 4.");
 	}
 
 	// create the reading pointers
-	unsigned stride = _width * bitDepth * channels / 8;
-	rows = new png_bytep[_height];
-	data = new unsigned char[_height * stride];
+	unsigned stride = width * bitDepth * channels / 8;
+	rows = new png_bytep[height];
+	data = new unsigned char[height * stride];
 
-	for (unsigned i = 0; i < _height; i++) {
+	for (unsigned i = 0; i < height; i++) {
 		rows[i] = (png_bytep) data + stride * i;
 	}
 
@@ -119,13 +133,14 @@ void Image::_LoadPNG(std::istream& input) {
 	png_read_image(pngPtr, rows);
 
 	// create the actual image class storage
-	_pixels.resize(_width * _height);
+	std::vector<Color> pixels;
+	pixels.resize(width * height);
 
 	// upload the data from the temporary buffer to the class storage
-	for (unsigned pixel = 0; pixel < _width * _height; pixel++) {
-		switch (channels) {
+	for (unsigned pixel = 0; pixel < width * height; pixel++) {
+		switch (channels) { // NOLINT(hicpp-multiway-paths-covered)
 			case 1: // greyscale
-				_pixels[pixel] = {
+				pixels[pixel] = {
 						FLOAT(data[pixel]),
 						FLOAT(data[pixel]),
 						FLOAT(data[pixel]),
@@ -134,7 +149,7 @@ void Image::_LoadPNG(std::istream& input) {
 				break;
 
 			case 3: // RGB
-				_pixels[pixel] = {
+				pixels[pixel] = {
 						FLOAT(data[3 * pixel + 0]),
 						FLOAT(data[3 * pixel + 1]),
 						FLOAT(data[3 * pixel + 2]),
@@ -143,7 +158,7 @@ void Image::_LoadPNG(std::istream& input) {
 				break;
 
 			case 4: // RGBA
-				_pixels[pixel] = {
+				pixels[pixel] = {
 						FLOAT(data[4 * pixel + 0]),
 						FLOAT(data[4 * pixel + 1]),
 						FLOAT(data[4 * pixel + 2]),
@@ -154,9 +169,11 @@ void Image::_LoadPNG(std::istream& input) {
 	}
 
 	// delete the png handle and the temporary buffers
-	png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) 0);
+	png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) nullptr);
 	delete[] rows;
 	delete[] data;
+
+	return Image(width, height, std::move(pixels));
 }
 
 }

@@ -3,6 +3,8 @@
  */
 #include "ForwardSceneRenderer.h"
 
+#include <utility>
+
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
 #include "../Scene.h"
@@ -10,7 +12,7 @@
 namespace rheel {
 
 ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height) :
-		SceneRenderer(manager, cameraName, width, height,
+		SceneRenderer(manager, std::move(cameraName), width, height,
 				Engine::GetDisplayConfiguration().SampleCount(), true) {}
 
 void ForwardSceneRenderer::Render(float dt) {
@@ -74,8 +76,8 @@ void ForwardSceneRenderer::Render(float dt) {
 	}
 
 	// render all the models
-	for (const auto& pair : GetManager()->RenderMap()) {
-		pair.second.RenderObjects();
+	for (const auto& [_, renderer] : GetManager()->RenderMap()) {
+		renderer.RenderObjects();
 	}
 
 	// clear everything again to return to normal

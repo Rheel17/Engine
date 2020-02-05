@@ -5,7 +5,7 @@
 #define AUDIOCLIP_H_
 #include "../_common.h"
 
-#include "../Resources/Sound.h"
+#include "../Assets/Sound.h"
 #include "OpenAL/ALBuffer.h"
 
 namespace rheel {
@@ -13,7 +13,7 @@ namespace rheel {
 class RE_API AudioClip {
 
 public:
-	explicit AudioClip(const Sound& sound);
+	explicit AudioClip(Sound sound);
 
 	const ALBuffer& Buffer() const;
 

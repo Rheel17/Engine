@@ -1,18 +1,11 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#include "ModelResource.h"
+#include "ModelGenerator.h"
 
 namespace rheel {
 
-std::unordered_map<vec3, std::unique_ptr<ModelResource>> ModelResource::_boxes;
-
-ModelResource& ModelResource::Box(const vec3& dimensions) {
-	auto iter = _boxes.find(dimensions);
-	if (iter != _boxes.end()) {
-		return *iter->second;
-	}
-
+Model ModelGenerator::Box(vec3 dimensions) {
 	vec3 position_0 = vec3(-1.0f, -1.0f, -1.0f) * dimensions;
 	vec3 position_1 = vec3(-1.0f, -1.0f,  1.0f) * dimensions;
 	vec3 position_2 = vec3(-1.0f,  1.0f, -1.0f) * dimensions;
@@ -29,7 +22,7 @@ ModelResource& ModelResource::Box(const vec3& dimensions) {
 	vec3 normal_zn = {  0.0f,  0.0f, -1.0f };
 	vec3 normal_zp = {  0.0f,  0.0f,  1.0f };
 
-	std::vector<Model::Vertex> vertices = {
+	std::vector<ModelVertex> vertices = {
 			{ position_0, normal_xn, vec2() },
 			{ position_1, normal_xn, vec2() },
 			{ position_2, normal_xn, vec2() },
@@ -70,12 +63,7 @@ ModelResource& ModelResource::Box(const vec3& dimensions) {
 			20, 23, 22, 20, 21, 23
 	};
 
-	Model *model = new Model(vertices, indices);
-	auto resource = std::unique_ptr<ModelResource>(new ModelResource("engine:constructed_box", model));
-	ModelResource& ref = *resource;
-
-	_boxes[dimensions] = std::move(resource);
-	return ref;
+	return Model(std::move(vertices), std::move(indices));
 }
 
 }

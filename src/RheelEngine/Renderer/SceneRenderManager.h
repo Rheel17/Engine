@@ -7,7 +7,7 @@
 #include "../_common.h"
 
 #include "ModelRenderer.h"
-#include "../Resources/ModelResource.h"
+#include "../Assets/Model.h"
 #include "../Scene.h"
 #include "OpenGL/GLFramebuffer.h"
 
@@ -19,7 +19,7 @@ class ShadowMap;
 class RE_API SceneRenderManager {
 
 public:
-	SceneRenderManager(Scene *scene);
+	explicit SceneRenderManager(Scene *scene);
 
 	/**
 	 * Returns true only if shadows are enabled and at least one light in the
@@ -36,7 +36,7 @@ public:
 	 * Returns a ModelRenderer instance to render the specified model. Multiple
 	 * calls with the same model will result in the same model renderer.
 	 */
-	ModelRenderer& GetModelRenderer(ModelResource& model);
+	ModelRenderer& GetModelRenderer(const Model& model);
 
 	/**
 	 * Creates and returns a SceneRenderer managed by this manager.
@@ -57,7 +57,7 @@ public:
 	 * Returns the render map containing all models and their renderers in the
 	 * scene managed by this render manager.
 	 */
-	const std::unordered_map<Model *, ModelRenderer>& RenderMap() const;
+	const std::unordered_map<std::uintptr_t, ModelRenderer>& RenderMap() const;
 
 	/**
 	 * Returns a reference to the lighting shader, with all lights initialized.
@@ -78,7 +78,7 @@ private:
 	int _ShadowLevel();
 
 	Scene *_scene;
-	std::unordered_map<Model *, ModelRenderer> _render_map;
+	std::unordered_map<std::uintptr_t, ModelRenderer> _render_map;
 
 	std::vector<int> _lights_type;
 	std::vector<vec3> _lights_position;

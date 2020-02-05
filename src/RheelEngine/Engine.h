@@ -6,6 +6,7 @@
 #include "_common.h"
 
 #include "Game.h"
+#include "Assets/AssetLoader.h"
 #include "Audio/AudioManager.h"
 #include "Renderer/SceneRenderManager.h"
 #include "Renderer/Window.h"
@@ -18,6 +19,9 @@ class RE_API Engine {
 		RE_NO_COPY(EngineInstance);
 		RE_NO_MOVE(EngineInstance);
 		EngineInstance() = default;
+
+		// assets
+		AssetLoader asset_loader;
 
 		// display
 		DisplayConfiguration display_configuration;
@@ -58,6 +62,11 @@ public:
 	 * Gets the current UI
 	 */
 	static UI& GetUI();
+
+	/**
+	 * Returns the global asset loader
+	 */
+	 static AssetLoader& GetAssetLoader();
 
 	/**
 	 * Returns the audio manager in use.

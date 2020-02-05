@@ -9,7 +9,7 @@
 
 #include "InputCallback.h"
 #include "../Color.h"
-#include "../Resources/ImageResource.h"
+#include "../Assets/Image.h"
 #include "../Renderer/OpenGL/GLShaderProgram.h"
 #include "../Renderer/OpenGL/GLVertexArray.h"
 #include "../Renderer/OpenGL/GLTexture2D.h"
@@ -39,14 +39,14 @@ protected:
 	class Vertex {
 
 	public:
-		Vertex(vec2 position) :
-				_position(std::move(position)), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(0.0f, 0.0f) {}
+		explicit Vertex(vec2 position) :
+				_position(position), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(0.0f, 0.0f) {}
 
 		Vertex(vec2 position, vec4 color) :
-				_position(std::move(position)), _color(std::move(color)), _texture(0.0f, 0.0f) {}
+				_position(position), _color(color), _texture(0.0f, 0.0f) {}
 
 		Vertex(vec2 position, vec2 texture) :
-				_position(std::move(position)), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(std::move(texture)) {}
+				_position(position), _color(1.0f, 1.0f, 1.0f, 1.0f), _texture(texture) {}
 
 	private:
 		vec2 _position;
@@ -56,7 +56,7 @@ protected:
 	};
 
 public:
-	virtual ~Element() = default;
+	~Element() override = default;
 
 	/**
 	 * Sets the default width and height of this Element.
@@ -154,7 +154,7 @@ public:
 	 * Removes an input callback. Removed input callbacks will no longer receive
 	 * input events.
 	 */
-	void RemoveInputCallback(std::shared_ptr<InputCallback> callback);
+	void RemoveInputCallback(const std::shared_ptr<InputCallback>& callback);
 
 	/**
 	 * Draws this UI element.
@@ -170,8 +170,10 @@ protected:
 	void _MoveSuperFields(Element&& element);
 
 private:
-	void _Callback(std::function<void(const _CBPtr&)> callback);
+	void _Callback(const std::function<void(const _CBPtr&)>& callback);
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-virtual-near-miss"
 	void _OnResize();
 	void _OnFocusGained();
 	void _OnFocusLost();
@@ -187,9 +189,10 @@ private:
 	void _OnMouseJump(const vec2& position);
 	void _OnMouseDrag(const vec2& origin, const vec2& position);
 	void _OnMouseScroll(const vec2& scrollComponents);
+#pragma clang diagnostic pop
 
 	Container *_parent_container;
-	Bounds _bounds;
+	Bounds _bounds{};
 	bool _has_initialized_bounds = false;
 
 	unsigned _default_width = 20;
@@ -239,13 +242,13 @@ protected:
 	 * Draws a textured quad. Vertices are specified in pixel-space. Coutner-clockwise
 	 * ordering is required.
 	 */
-	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const ImageResource& image, float alpha = 1.0f);
+	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, Image image, float alpha = 1.0f);
 
 	/**
 	 * Draws the texture at the specified rectangle. The entire texture will be scaled to
 	 * fit the rectangle.
 	 */
-	static void _DrawTexturedQuad(const Bounds& bounds, const ImageResource& image, float alpha = 1.0f);
+	static void _DrawTexturedQuad(const Bounds& bounds, Image image, float alpha = 1.0f);
 
 private:
 	static void _Draw(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f);

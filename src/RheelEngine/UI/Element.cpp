@@ -3,6 +3,8 @@
  */
 #include "Element.h"
 
+#include <utility>
+
 #include "../Engine.h"
 #include "../EngineResources.h"
 
@@ -73,7 +75,7 @@ void Element::SetBounds(Element::Bounds bounds) {
 	_has_initialized_bounds = true;
 
 	if (_bounds != bounds) {
-		_bounds = std::move(bounds);
+		_bounds = bounds;
 		OnResize();
 	}
 }
@@ -102,7 +104,7 @@ const Container *Element::RootContainer() const {
 		return _parent_container->RootContainer();
 	}
 
-	if (const Container *container = dynamic_cast<const Container *>(this)) {
+	if (auto container = dynamic_cast<const Container *>(this)) {
 		return container;
 	}
 
@@ -114,7 +116,7 @@ Container *Element::RootContainer() {
 		return _parent_container->RootContainer();
 	}
 
-	if (Container *container = dynamic_cast<Container *>(this)) {
+	if (auto container = dynamic_cast<Container *>(this)) {
 		return container;
 	}
 
@@ -125,24 +127,26 @@ void Element::AddInputCallback(std::shared_ptr<InputCallback> callback) {
 	_callback_list.push_back(std::move(callback));
 }
 
-void Element::RemoveInputCallback(std::shared_ptr<InputCallback> callback) {
+void Element::RemoveInputCallback(const std::shared_ptr<InputCallback>& callback) {
 	_callback_list.erase(std::find(_callback_list.begin(), _callback_list.end(), callback));
 }
 
 void Element::_MoveSuperFields(Element&& element) {
 	_parent_container = element._parent_container;
-	_bounds = std::move(element._bounds);
+	_bounds = element._bounds;
 	_has_initialized_bounds = element._has_initialized_bounds;
 	_default_width = element._default_width;
 	_default_height = element._default_height;
 }
 
-void Element::_Callback(std::function<void(const _CBPtr&)> callback) {
+void Element::_Callback(const std::function<void(const _CBPtr&)>& callback) {
 	for (const _CBPtr& ptr : _callback_list) {
 		callback(ptr);
 	}
 }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-virtual-near-miss"
 void Element::_OnResize() {
 	OnResize();
 	_Callback([](const _CBPtr& ptr) { ptr->OnResize(); });
@@ -217,6 +221,7 @@ void Element::_OnMouseScroll(const vec2& scrollComponents) {
 	OnMouseScroll(scrollComponents);
 	_Callback([scrollComponents](const _CBPtr& ptr) { ptr->OnMouseScroll(scrollComponents); });
 }
+#pragma clang diagnostic pop
 
 void Element::_DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3) {
 	_Draw({ v1, v2, v3 }, MODE_COLORED);
@@ -253,18 +258,19 @@ void Element::_DrawTexturedQuad(const Bounds& bounds, const GLTexture2D& texture
 			texture);
 }
 
-void Element::_DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const ImageResource& image, float alpha) {
-	image.GetImageTexture().Bind(0);
+void Element::_DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, Image image, float alpha) {
+	// TODO: get image texture, bind
+	// image.GetImageTexture().Bind(0);
 	_Draw({ v1, v2, v3, v3, v4, v1 }, MODE_TEXTURED, alpha);
 }
 
-void Element::_DrawTexturedQuad(const Bounds& bounds, const ImageResource& image, float alpha) {
+void Element::_DrawTexturedQuad(const Bounds& bounds, Image image, float alpha) {
 	_DrawTexturedQuad(
 			Vertex({ bounds.x, bounds.y }, { 0.0f, 1.0f }),
 			Vertex({ bounds.x, bounds.y + bounds.height }, { 0.0f, 0.0f }),
 			Vertex({ bounds.x + bounds.width, bounds.y + bounds.height }, { 1.0f, 0.0f }),
 			Vertex({ bounds.x + bounds.width, bounds.y }, { 1.0f, 1.0f }),
-			image, alpha);
+			std::move(image), alpha);
 }
 
 void Element::_Draw(const std::vector<Vertex>& vertices, int mode, float alpha) {

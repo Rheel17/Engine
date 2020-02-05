@@ -7,7 +7,7 @@
 
 #include "../Component.h"
 #include "../Material.h"
-#include "../Resources/ModelResource.h"
+#include "../Assets/Model.h"
 #include "../Renderer/ModelRenderer.h"
 
 namespace rheel {
@@ -18,7 +18,7 @@ namespace rheel {
 class RE_API ModelRenderComponent : public Component {
 
 public:
-	ModelRenderComponent(ModelResource& model, Material material);
+	ModelRenderComponent(Model model, Material material);
 
 	/**
 	 * Sets the material to use when rendering.
@@ -35,7 +35,7 @@ public:
 	void Deactivate() override;
 
 private:
-	ModelResource& _model;
+	Model _model;
 	Material _material;
 	ModelRenderer::ObjectDataPtr _object_data;
 

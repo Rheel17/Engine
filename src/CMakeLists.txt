@@ -12,6 +12,21 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Scene.cpp RheelEngine/Scene.h 
 		RheelEngine/Transform.cpp RheelEngine/Transform.h 
 		RheelEngine/_common.h 
+		RheelEngine/Assets/Asset.h 
+		RheelEngine/Assets/AssetLoader.h 
+		RheelEngine/Assets/Image.cpp RheelEngine/Assets/Image.h 
+		RheelEngine/Assets/Model.cpp RheelEngine/Assets/Model.h 
+		RheelEngine/Assets/Sound.cpp RheelEngine/Assets/Sound.h 
+		RheelEngine/Assets/VoxelImage.cpp RheelEngine/Assets/VoxelImage.h 
+		RheelEngine/Assets/Generators/ModelGenerator.h 
+		RheelEngine/Assets/Generators/ModelGeneratorBox.cpp 
+		RheelEngine/Assets/Generators/ModelGeneratorCapsule.cpp 
+		RheelEngine/Assets/Generators/ModelGeneratorSphere.cpp 
+		RheelEngine/Assets/Loaders/ColladaLoader.cpp RheelEngine/Assets/Loaders/ColladaLoader.h 
+		RheelEngine/Assets/Loaders/Loader.h 
+		RheelEngine/Assets/Loaders/PngLoader.cpp RheelEngine/Assets/Loaders/PngLoader.h 
+		RheelEngine/Assets/Loaders/VoxelLoader.cpp RheelEngine/Assets/Loaders/VoxelLoader.h 
+		RheelEngine/Assets/Loaders/WaveLoader.cpp RheelEngine/Assets/Loaders/WaveLoader.h 
 		RheelEngine/Audio/AudioClip.cpp RheelEngine/Audio/AudioClip.h 
 		RheelEngine/Audio/AudioManager.cpp RheelEngine/Audio/AudioManager.h 
 		RheelEngine/Audio/AudioSource.cpp RheelEngine/Audio/AudioSource.h 
@@ -40,6 +55,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/SceneRenderManager.cpp RheelEngine/Renderer/SceneRenderManager.h 
 		RheelEngine/Renderer/ShadowMap.cpp RheelEngine/Renderer/ShadowMap.h 
 		RheelEngine/Renderer/ShadowMapDirectional.cpp RheelEngine/Renderer/ShadowMapDirectional.h 
+		RheelEngine/Renderer/VoxelRenderer.cpp RheelEngine/Renderer/VoxelRenderer.h 
 		RheelEngine/Renderer/Window.cpp RheelEngine/Renderer/Window.h 
 		RheelEngine/Renderer/OpenGL/GL.cpp RheelEngine/Renderer/OpenGL/GL.h 
 		RheelEngine/Renderer/OpenGL/GLBuffer.cpp RheelEngine/Renderer/OpenGL/GLBuffer.h 
@@ -53,23 +69,6 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/Text/Character.cpp RheelEngine/Renderer/Text/Character.h 
 		RheelEngine/Renderer/Text/Font.cpp RheelEngine/Renderer/Text/Font.h 
 		RheelEngine/Renderer/Text/TextRenderer.cpp RheelEngine/Renderer/Text/TextRenderer.h 
-		RheelEngine/Resources/ColladaParser.cpp RheelEngine/Resources/ColladaParser.h 
-		RheelEngine/Resources/Image.cpp RheelEngine/Resources/Image.h 
-		RheelEngine/Resources/Image3D.cpp RheelEngine/Resources/Image3D.h 
-		RheelEngine/Resources/Image3DResource.cpp RheelEngine/Resources/Image3DResource.h 
-		RheelEngine/Resources/Image3DVOX.cpp 
-		RheelEngine/Resources/ImagePNG.cpp 
-		RheelEngine/Resources/ImageResource.cpp RheelEngine/Resources/ImageResource.h 
-		RheelEngine/Resources/Model.cpp RheelEngine/Resources/Model.h 
-		RheelEngine/Resources/ModelBuiltInBox.cpp 
-		RheelEngine/Resources/ModelBuiltInCapsule.cpp 
-		RheelEngine/Resources/ModelBuiltInSphere.cpp 
-		RheelEngine/Resources/ModelResource.cpp RheelEngine/Resources/ModelResource.h 
-		RheelEngine/Resources/Resource.h 
-		RheelEngine/Resources/ResourceManager.cpp RheelEngine/Resources/ResourceManager.h 
-		RheelEngine/Resources/Sound.cpp RheelEngine/Resources/Sound.h 
-		RheelEngine/Resources/SoundResource.cpp RheelEngine/Resources/SoundResource.h 
-		RheelEngine/Resources/SoundWAV.cpp 
 		RheelEngine/UI/Constraint.cpp RheelEngine/UI/Constraint.h 
 		RheelEngine/UI/Container.cpp RheelEngine/UI/Container.h 
 		RheelEngine/UI/Element.cpp RheelEngine/UI/Element.h 

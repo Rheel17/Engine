@@ -19,9 +19,10 @@ private:
 };
 
 static void createCube(Entity *cube) {
+	static Model boxModel = ModelGenerator::Box({ 0.5f, 0.5f, 0.5f });
+
 	cube->AddComponent<ModelRenderComponent>(
-			ModelResource::Box({ 0.5f, 0.5f, 0.5f }),
-			Material(ResourceManager::GetImage("uv_grid.png"), 0.7f, 0.5f));
+			boxModel, Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.5f));
 
 	cube->AddComponent<RigidBody>(
 			PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }), 5.0f, 0.05f);
@@ -29,7 +30,7 @@ static void createCube(Entity *cube) {
 
 static void createRamp(Entity *ramp) {
 	ramp->AddComponent<ModelRenderComponent>(
-			ModelResource::Box({ 4.0f, 0.5f, 5.0f }),
+			ModelGenerator::Box({ 4.0f, 0.5f, 5.0f }),
 			Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f));
 
 	ramp->AddComponent<RigidBody>(
@@ -38,7 +39,7 @@ static void createRamp(Entity *ramp) {
 
 static void createFloor(Entity *ramp) {
 	ramp->AddComponent<ModelRenderComponent>(
-			ModelResource::Box({ 20.0f, 0.5f, 20.0f }),
+			ModelGenerator::Box({ 20.0f, 0.5f, 20.0f }),
 			Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f));
 
 	ramp->AddComponent<RigidBody>(
@@ -92,14 +93,10 @@ class SandboxGame : public Game {
 		config.vsync = true;
 
 		Engine::SetDisplayConfiguration(std::move(config));
-
-		ResourceManager::SetResourcePath("Resources");
 	}
 
 	void Start() override {
 		Engine::SetActiveScene(createScene());
-
-		ResourceManager::GetImage3D("monu10.vox");
 
 		Container ui;
 

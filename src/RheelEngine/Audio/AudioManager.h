@@ -8,7 +8,6 @@
 #include <AL/alc.h>
 
 #include "AudioSource.h"
-#include "../Resources/SoundResource.h"
 #include "OpenAL/ALListener.h"
 
 namespace rheel {
@@ -27,13 +26,13 @@ public:
 	 * Plays a sound. The returned AudioSource pointer can be used to control
 	 * the sound.
 	 */
-	AudioSource *Play(const SoundResource& resource);
+	AudioSource *Play(Sound sound);
 
 	/**
 	 * Plays a sound, looping when it reaches the end. The returned AudioSource
 	 * pointer can be used to control the sound.
 	 */
-	AudioSource *Loop(const SoundResource& resource);
+	AudioSource *Loop(Sound sound);
 
 	/**
 	 * Stops the sound. When calling this method, the audio source is deleted,
@@ -44,7 +43,7 @@ public:
 	/**
 	 * Returns the global audio listener.
 	 */
-	ALListener& GlobalListener();
+	static ALListener& GlobalListener();
 
 private:
 	void _StopAll();

@@ -9,17 +9,17 @@ void ImageTexture::Bind(unsigned textureUnit) const {
 	_texture.Bind(textureUnit);
 }
 
-ImageTexture::ImageTexture(const Image& image)
-		: _texture(image.Width(), image.Height(), GL_RGBA) {
+ImageTexture::ImageTexture(Image image)
+		: _texture(image.GetWidth(), image.GetHeight(), GL_RGBA) {
 
 	_texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
 	_texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
 	_texture.SetWrapParameterS(GL::WrapParameter::REPEAT);
 	_texture.SetWrapParameterT(GL::WrapParameter::REPEAT);
 
-	unsigned w = image.Width(), h = image.Height();
-	const float *data = image.Data();
-	float *glData = new float[w * h * 4];
+	unsigned w = image.GetWidth(), h = image.GetHeight();
+	const float *data = image.GetRawColorData();
+	auto glData = new float[w * h * 4];
 
 	// reverse the y-coordinate of the image for OpenGL.
 	for (unsigned y = 0; y < h; y++) {

@@ -6,7 +6,7 @@
 #include "_common.h"
 
 #include "Color.h"
-#include "Resources/ImageResource.h"
+#include "Assets/Image.h"
 
 namespace rheel {
 
@@ -38,20 +38,20 @@ public:
 	 * specular values will be clamped between 0.0 and 1.0. Ambient will be
 	 * calculated using 1.0f - diffuse.
 	 */
-	Material(ImageResource& texture, float diffuse, float specular, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(const Image& texture, float diffuse, float specular, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
 	/**
 	 * Creates a fully-textured material, with separate textures for the
 	 * ambient, diffuse, and specular components.
 	 */
-	Material(ImageResource& ambientTexture, ImageResource& diffuseTexture, ImageResource& specularTexture, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
 	/**
 	 * Creates a fully-textured material, with separate textures for the
 	 * ambient, diffuse, and specular components. This constructor also allows
 	 * a factor to be set for each of these textures.
 	 */
-	Material(ImageResource& ambientTexture, ImageResource& diffuseTexture, ImageResource& specularTexture,
+	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture,
 			float ambientFactor, float diffuseFactor, float specularFactor,
 			float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
@@ -97,31 +97,28 @@ public:
 	void BindTextures() const;
 
 	/**
-	 * Returns the ambient texture of this material, if present. Otherwise, it
-	 * will return nullptr.
+	 * Returns the ambient texture of this material.
 	 */
-	const ImageResource *AmbientTexture() const;
+	Image GetAmbientTexture() const;
 
 	/**
-	 * Returns the diffuse texture of this material, if present. Otherwise, it
-	 * will return nullptr.
+	 * Returns the diffuse texture of this material.
 	 */
-	const ImageResource *DiffuseTexture() const;
+	Image GetDiffuseTexture() const;
 
 	/**
-	 * Returns the specular texture of this material, if present. Otherwise, it
-	 * will return nullptr.
+	 * Returns the specular texture of this material.
 	 */
-	const ImageResource *SpecularTexture() const;
+	Image GetSpecularTexture() const;
 
 private:
 	MaterialType _type;
 
 	Color _color;
 
-	ImageResource *_ambient_texture;
-	ImageResource *_diffuse_texture;
-	ImageResource *_specular_texture;
+	Image _ambient_texture = Image::Null();
+	Image _diffuse_texture = Image::Null();
+	Image _specular_texture = Image::Null();
 
 	float _ambient_factor;
 	float _diffuse_factor;

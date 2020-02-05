@@ -63,14 +63,11 @@ void SceneRenderManager::Update() {
 	_shadow_level = _ShadowLevel();
 }
 
-ModelRenderer& SceneRenderManager::GetModelRenderer(ModelResource& model) {
-	Model& modelRef = model.Get();
-	Model *modelPtr = &modelRef;
-
-	auto iter = _render_map.find(modelPtr);
+ModelRenderer& SceneRenderManager::GetModelRenderer(const Model& model) {
+	auto iter = _render_map.find(model.GetAddress());
 
 	if (iter == _render_map.end()) {
-		iter = _render_map.emplace(modelPtr, modelRef).first;
+		iter = _render_map.emplace(model.GetAddress(), model).first;
 	}
 
 	return iter->second;
@@ -96,7 +93,7 @@ Scene *SceneRenderManager::GetScene() {
 	return _scene;
 }
 
-const std::unordered_map<Model *, ModelRenderer>& SceneRenderManager::RenderMap() const {
+const std::unordered_map<std::uintptr_t, ModelRenderer>& SceneRenderManager::RenderMap() const {
 	return _render_map;
 }
 

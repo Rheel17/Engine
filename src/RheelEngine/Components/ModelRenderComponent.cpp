@@ -9,8 +9,8 @@
 
 namespace rheel {
 
-ModelRenderComponent::ModelRenderComponent(ModelResource& model, Material material) :
-		_model(model), _material(material) {}
+ModelRenderComponent::ModelRenderComponent(Model model, Material material) :
+		_model(std::move(model)), _material(material) {}
 
 void ModelRenderComponent::SetMaterial(Material material) {
 	bool wasTextured = _material.Type() == Material::Textured;

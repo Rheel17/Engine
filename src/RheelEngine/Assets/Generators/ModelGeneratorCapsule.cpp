@@ -1,27 +1,25 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#include "ModelResource.h"
+#include "ModelGenerator.h"
 
 namespace rheel {
 
-std::unordered_map<vec2, std::unique_ptr<ModelResource>> ModelResource::_spheres;
-
-ModelResource& ModelResource::Sphere(float radius, unsigned subdivisions) {
-	auto iter = _spheres.find({ radius, subdivisions });
-	if (iter != _spheres.end()) {
-		return *iter->second;
-	}
-
-	std::vector<Model::Vertex> vertices;
+Model ModelGenerator::Capsule(float radius, float straightHeight, unsigned subdivisions) {
+	std::vector<ModelVertex> vertices;
 	std::vector<unsigned> indices;
 
 	// add the vertices and indices
-	for (unsigned latIdx = 0; latIdx <= subdivisions; latIdx++) {
-		float latitude = (M_PI * latIdx) / subdivisions;
+	unsigned latDivisions = ((subdivisions + 1) / 2) * 2 + 1;
+	unsigned latSplit = latDivisions / 2;
+
+	for (unsigned latIdx = 0; latIdx <= latDivisions; latIdx++) {
+		float latitude = (M_PI * (latIdx - (latIdx > latSplit))) / subdivisions;
 
 		float sinLat = std::sin(latitude);
 		float cosLat = std::cos(latitude);
+
+		vec3 modifier(0.0f, (straightHeight / 2.0f) * (latIdx <= latSplit ? 1 : -1), 0.0f);
 
 		for (unsigned lonIdx = 0; lonIdx < subdivisions; lonIdx++) {
 			float longitude = (2 * M_PI * lonIdx) / subdivisions;
@@ -31,17 +29,17 @@ ModelResource& ModelResource::Sphere(float radius, unsigned subdivisions) {
 			float cosLon = std::cos(longitude);
 
 			vec3 v(sinLon * sinLat, cosLat, cosLon * sinLat);
-			vertices.push_back({ v * radius, v, vec2() });
+			vertices.push_back({ v * radius + modifier, v, vec2() });
 
-			if (latIdx == subdivisions) {
+			if (latIdx == latDivisions) {
 				continue;
 			}
 
 			// calculate the indices
 			unsigned nextLonIdx = (lonIdx + 1) % subdivisions;
-			unsigned nextLatIdx = (latIdx + 1) % (subdivisions + 1);
+			unsigned nextLatIdx = (latIdx + 1) % (latDivisions + 1);
 
-			if (latIdx + 1 != subdivisions) {
+			if (latIdx + 1 != latDivisions) {
 				indices.push_back(latIdx * subdivisions + lonIdx);
 				indices.push_back(nextLatIdx * subdivisions + lonIdx);
 				indices.push_back(nextLatIdx * subdivisions + nextLonIdx);
@@ -55,12 +53,7 @@ ModelResource& ModelResource::Sphere(float radius, unsigned subdivisions) {
 		}
 	}
 
-	Model *model = new Model(vertices, indices);
-	auto resource = std::unique_ptr<ModelResource>(new ModelResource("engine:constructed_sphere", model));
-	ModelResource& ref = *resource;
-
-	_spheres[{ radius, subdivisions }] = std::move(resource);
-	return ref;
+	return Model(std::move(vertices), std::move(indices));
 }
 
 }

@@ -8,7 +8,8 @@
 // TODO: do this automatically?
 
 #include "RheelEngine/Engine.h"
-#include "RheelEngine/Resources/ResourceManager.h"
+
+#include "RheelEngine/Assets/Generators/ModelGenerator.h"
 
 #include "RheelEngine/Components/CollisionComponent.h"
 #include "RheelEngine/Components/DirectionalLight.h"

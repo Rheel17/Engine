@@ -5,8 +5,8 @@
 
 namespace rheel {
 
-AudioClip::AudioClip(const Sound& sound) {
-	_buffer.SetData(ALenum(sound.Format()), sound.Data(), sound.Size(), sound.Frequency());
+AudioClip::AudioClip(Sound sound) {
+	_buffer.SetData(ALenum(sound.GetFormat()), sound.GetRawSampleData(), sound.GetRawSampleSize(), sound.GetSampleFrequency());
 }
 
 const ALBuffer& AudioClip::Buffer() const {

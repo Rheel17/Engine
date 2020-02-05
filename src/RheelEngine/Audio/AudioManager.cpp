@@ -36,28 +36,38 @@ AudioManager::~AudioManager() {
 	alcCloseDevice(_device);
 }
 
-AudioSource *AudioManager::Play(const SoundResource& resource) {
-	const AudioClip& clip = resource.GetAudioClip();
+AudioSource *AudioManager::Play(Sound sound) {
+	/*
+	const AudioClip& clip = sound.GetAudioClip();
 
-	AudioSource *src = new AudioSource(this, clip);
+	auto src = new AudioSource(this, clip);
 	auto source = std::unique_ptr<AudioSource>(src);
 
 	source->Play();
 
 	_sources.push_back(std::move(source));
 	return src;
+	 */
+
+	// TODO: fix this with the new asset system
+	return nullptr;
 }
 
-AudioSource *AudioManager::Loop(const SoundResource& resource) {
+AudioSource *AudioManager::Loop(Sound resource) {
+	/*
 	const AudioClip& clip = resource.GetAudioClip();
 
-	AudioSource *src = new AudioSource(this, clip);
+	auto src = new AudioSource(this, clip);
 	auto source = std::unique_ptr<AudioSource>(src);
 
 	source->Loop();
 
 	_sources.push_back(std::move(source));
 	return src;
+	*/
+
+	// TODO: fix this with the new asset system
+	return nullptr;
 }
 
 void AudioManager::Stop(AudioSource *source) {
