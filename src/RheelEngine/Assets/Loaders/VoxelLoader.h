@@ -14,7 +14,7 @@ class RE_API VoxelLoader : public Loader<VoxelImage> {
 	friend class AssetLoader;
 
 protected:
-	VoxelImage _DoLoad(const std::string& path) override;
+	VoxelImage _DoLoad(const std::string& path) const override;
 
 private:
 	VoxelLoader() = default;

@@ -26,7 +26,7 @@ static bool validatePNG(std::istream& input) {
 	return png_sig_cmp(signature, 0, 8) == 0;
 }
 
-Image PngLoader::_DoLoad(const std::string& path) {
+Image PngLoader::_DoLoad(const std::string& path) const {
 	std::ifstream f(path, std::ios::binary);
 
 	if (!f) {

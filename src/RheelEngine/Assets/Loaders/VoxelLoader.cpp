@@ -145,7 +145,7 @@ private:
 // ACTUAL .VOX READING //
 /////////////////////////
 
-VoxelImage VoxelLoader::_DoLoad(const std::string& path) {
+VoxelImage VoxelLoader::_DoLoad(const std::string& path) const {
 	std::ifstream f(path, std::ios::binary);
 
 	if (!f) {

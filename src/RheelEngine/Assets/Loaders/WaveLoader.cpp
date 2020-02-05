@@ -8,7 +8,7 @@
 namespace rheel {
 
 
-Sound WaveLoader::_DoLoad(const std::string& path) {
+Sound WaveLoader::_DoLoad(const std::string& path) const {
 	// copy the file name into a non-const ALbyte array for alut to handle
 	std::size_t len = path.length();
 	ALbyte file[len + 1];

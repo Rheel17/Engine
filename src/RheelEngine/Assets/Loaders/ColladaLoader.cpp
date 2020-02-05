@@ -149,7 +149,7 @@ std::vector<float> ColladaLoader::Geometry::_ReadSource(_XmlNode *source) {
 	return _CreateVectorFloat(float_array, strtoul(count->value(), nullptr, 10));
 }
 
-void ColladaLoader::ParseCOLLADA() {
+void ColladaLoader::ParseCOLLADA() const {
 	// get the up vector
 	_XmlNode *root = _xml_document->first_node();
 	assert(root);
@@ -178,14 +178,14 @@ void ColladaLoader::ParseCOLLADA() {
 	}
 }
 
-void ColladaLoader::ParseGeometry(_XmlNode *geometry) {
+void ColladaLoader::ParseGeometry(_XmlNode *geometry) const {
 	_XmlAttribute *id = geometry->first_attribute("id");
 	assert(id);
 
 	_geometries.insert({ "#" + std::string(id->value()), Geometry(geometry) });
 }
 
-void ColladaLoader::ParseScene(_XmlNode *scene) {
+void ColladaLoader::ParseScene(_XmlNode *scene) const {
 	for (_XmlNode *node = scene->first_node("node"); node; node = node->next_sibling("node")) {
 		mat4 transform = glm::identity<mat4>();
 
@@ -208,7 +208,7 @@ void ColladaLoader::ParseScene(_XmlNode *scene) {
 	}
 }
 
-void ColladaLoader::AddGeometry(const Geometry& geometry, const mat4& transform) {
+void ColladaLoader::AddGeometry(const Geometry& geometry, const mat4& transform) const {
 	unsigned indexOffset = _vertices.size();
 
 	for (const ModelVertex& vertex : geometry._vertices) {
@@ -226,7 +226,7 @@ void ColladaLoader::AddGeometry(const Geometry& geometry, const mat4& transform)
 	}
 }
 
-Model ColladaLoader::_DoLoad(const std::string& path) {
+Model ColladaLoader::_DoLoad(const std::string& path) const {
 	_xml_file = std::make_unique<_XmlFile>(path.c_str());
 	_xml_document = std::make_unique<_XmlDocument>();
 	_xml_document->parse<0>(_xml_file->data());

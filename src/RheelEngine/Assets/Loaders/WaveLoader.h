@@ -14,7 +14,7 @@ class RE_API WaveLoader : public Loader<Sound> {
 	friend class AssetLoader;
 
 protected:
-	Sound _DoLoad(const std::string& path) override;
+	Sound _DoLoad(const std::string& path) const override;
 
 private:
 	WaveLoader() = default;

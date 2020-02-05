@@ -13,7 +13,7 @@ class RE_API Loader {
 public:
 	virtual ~Loader() = default;
 
-	T Load(const std::string& path) {
+	T Load(const std::string& path) const {
 		auto iter = _cache.find(path);
 
 		if (iter == _cache.end()) {
@@ -26,10 +26,10 @@ public:
 protected:
 	Loader() = default;
 
-	virtual T _DoLoad(const std::string& path) = 0;
+	virtual T _DoLoad(const std::string& path) const = 0;
 
 private:
-	std::unordered_map<std::string, T> _cache;
+	mutable std::unordered_map<std::string, T> _cache;
 
 };
 

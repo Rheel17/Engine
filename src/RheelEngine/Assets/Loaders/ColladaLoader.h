@@ -52,25 +52,26 @@ private:
 	};
 
 protected:
-	Model _DoLoad(const std::string& path) override;
+	Model _DoLoad(const std::string& path) const override;
 
 private:
 	ColladaLoader() = default;
 
-	void ParseCOLLADA();
-	void ParseGeometry(_XmlNode *geometry);
-	void ParseScene(_XmlNode *scene);
+	void ParseCOLLADA() const;
+	void ParseGeometry(_XmlNode *geometry) const;
+	void ParseScene(_XmlNode *scene) const;
 
-	void AddGeometry(const Geometry& geometry, const mat4& transform);
+	void AddGeometry(const Geometry& geometry, const mat4& transform) const;
 
-	std::unique_ptr<_XmlFile> _xml_file;
-	std::unique_ptr<_XmlDocument> _xml_document;
+	// TODO: clean up mutable mess
+	mutable std::unique_ptr<_XmlFile> _xml_file;
+	mutable std::unique_ptr<_XmlDocument> _xml_document;
 
-	std::unordered_map<std::string, Geometry> _geometries;
-	std::vector<ModelVertex> _vertices;
-	std::vector<unsigned> _indices;
+	mutable std::unordered_map<std::string, Geometry> _geometries;
+	mutable std::vector<ModelVertex> _vertices;
+	mutable std::vector<unsigned> _indices;
 
-	char _up = 'y';
+	mutable char _up = 'y';
 
 private:
 	static std::vector<unsigned> _CreateVectorUnsigned(_XmlNode *node, int size = -1);
