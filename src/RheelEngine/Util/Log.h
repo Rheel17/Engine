@@ -20,7 +20,7 @@ namespace rheel {
 
 using _SourceLoc = std::experimental::source_location;
 
-class Log {
+class RE_API Log {
 
 private:
 	enum class _Level {

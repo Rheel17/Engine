@@ -45,6 +45,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Components/PointLight.cpp RheelEngine/Components/PointLight.h 
 		RheelEngine/Components/Rigidbody.cpp RheelEngine/Components/Rigidbody.h 
 		RheelEngine/Components/SpotLight.cpp RheelEngine/Components/SpotLight.h 
+		RheelEngine/Components/VoxelRenderComponent.cpp RheelEngine/Components/VoxelRenderComponent.h 
 		RheelEngine/Renderer/DisplayConfiguration.cpp RheelEngine/Renderer/DisplayConfiguration.h 
 		RheelEngine/Renderer/ForwardSceneRenderer.cpp RheelEngine/Renderer/ForwardSceneRenderer.h 
 		RheelEngine/Renderer/ImageTexture.cpp RheelEngine/Renderer/ImageTexture.h 
