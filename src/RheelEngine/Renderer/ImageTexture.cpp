@@ -16,10 +16,16 @@ void ImageTexture::Bind(unsigned textureUnit) const {
 ImageTexture::ImageTexture(const Image& image)
 		: _texture(image.GetWidth(), image.GetHeight(), GL_RGBA) {
 
-	_texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
+	if (Engine::GetDisplayConfiguration().enable_mipmaps) {
+		_texture.SetMinifyingFilter(GL::FilterFunction::LINEAR_MIPMAP_LINEAR);
+	} else {
+		_texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
+	}
+
 	_texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
 	_texture.SetWrapParameterS(GL::WrapParameter::REPEAT);
 	_texture.SetWrapParameterT(GL::WrapParameter::REPEAT);
+	_texture.SetAnisotropyParameter(Engine::GetDisplayConfiguration().anisotropic_level);
 
 	unsigned w = image.GetWidth(), h = image.GetHeight();
 	const float *data = image.GetRawColorData();

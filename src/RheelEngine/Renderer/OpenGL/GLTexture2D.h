@@ -45,6 +45,11 @@ public:
 	void SetWrapParameterT(GL::WrapParameter parameter);
 
 	/**
+	 * Sets the anisotropy parameter
+	 */
+	void SetAnisotropyParameter(float parameter);
+
+	/**
 	 * Generates the mipmap for this texture
 	 */
 	void GenerateMipmap();

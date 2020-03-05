@@ -43,6 +43,11 @@ void GLTexture2D::SetWrapParameterT(GL::WrapParameter parameter) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GLint(parameter));
 }
 
+void GLTexture2D::SetAnisotropyParameter(float parameter) {
+	Bind();
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, parameter);
+}
+
 void GLTexture2D::GenerateMipmap() {
 	Bind();
 	glGenerateMipmap(GL_TEXTURE_2D);

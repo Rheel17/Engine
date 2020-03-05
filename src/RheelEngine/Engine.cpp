@@ -24,8 +24,12 @@ void Engine::_Run(Game *game) {
 	game->Initialize();
 
 	_instance.display_configuration._CalculateActualResolution();
+
 	_instance.window = new Window(_instance.display_configuration);
 	_instance.window->Show();
+
+	_instance.display_configuration._ClampAnisotropicLevel();
+
 	_instance.ui = new UI(
 				_instance.display_configuration.resolution.width,
 				_instance.display_configuration.resolution.height);

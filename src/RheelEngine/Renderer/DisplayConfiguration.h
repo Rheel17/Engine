@@ -23,6 +23,8 @@ public:
 		int height;
 	};
 
+	static constexpr float ANISOTROPIC_LEVEL_MAX = std::numeric_limits<float>::infinity();
+
 public:
 	unsigned SampleCount() const;
 
@@ -33,9 +35,11 @@ public:
 	AntiAliasing aa_mode = AA_OFF;
 	ShadowQuality shadow_quality = SHADOW_OFF;
 	bool enable_mipmaps = false;
+	float anisotropic_level = 1.0f;
 
 private:
 	void _CalculateActualResolution();
+	void _ClampAnisotropicLevel();
 
 public:
 	static const Resolution RESOLUTION_NATIVE;

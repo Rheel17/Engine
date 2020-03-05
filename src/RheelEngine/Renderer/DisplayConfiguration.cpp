@@ -3,6 +3,7 @@
  */
 #include "DisplayConfiguration.h"
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 namespace rheel {
@@ -35,6 +36,27 @@ void DisplayConfiguration::_CalculateActualResolution() {
 
 	resolution.width = resolutionWidth;
 	resolution.height = resolutionHeight;
+}
+
+void DisplayConfiguration::_ClampAnisotropicLevel() {
+	if (anisotropic_level < 1.0f) {
+		Log::Warning() << "Anisotropic level too low: " << anisotropic_level <<
+				" (min: 1.0). Automatically set to min." << std::endl;
+
+		anisotropic_level = 1.0f;
+	} else if (anisotropic_level > 0.0f) {
+		float max;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max);
+
+		if (anisotropic_level > max) {
+			if (anisotropic_level != ANISOTROPIC_LEVEL_MAX) {
+				Log::Warning() << "Anisotropic level too high: " << anisotropic_level << " (max: " << max <<
+						"). Automatically set to max." << std::endl;
+			}
+
+			anisotropic_level = max;
+		}
+	}
 }
 
 }
