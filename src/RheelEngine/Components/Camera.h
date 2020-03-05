@@ -6,6 +6,7 @@
 #include "../_common.h"
 
 #include "../Component.h"
+#include "../Scene.h"
 
 #include <array>
 
@@ -17,13 +18,23 @@ public:
 	/**
 	 * Creates a camera object with a starting position and rotation.
 	 */
-	Camera(std::string name);
+	explicit Camera(std::string name);
 
 	void TransformChanged() override;
 
 	void Activate() override;
 
-	virtual ~Camera() = default;
+	void Deactivate() override;
+
+	/**
+	 * Returns the skybox distance
+	 */
+	virtual float GetSkyboxDistance() const = 0;
+
+	/**
+	 * Returns the projection matrix of this camera.
+	 */
+	virtual mat4 GetProjectionMatrix(unsigned width, unsigned height) const = 0;
 
 	/**
 	 * Returns the view matrix of this camera.
@@ -31,10 +42,15 @@ public:
 	mat4 GetViewMatrix() const;
 
 	/**
+	 * Returns the rotation matrix of this camera.
+	 */
+	mat4 GetRotationMatrix() const;
+
+	/**
 	 * Creates the matrix which transforms vertices from world space into view
 	 * space.
 	 */
-	virtual mat4 CreateMatrix(unsigned width, unsigned height) const = 0;
+	mat4 CreateMatrix(unsigned width, unsigned height) const;
 
 	/**
 	 * Returns an array of 8 vertices at the corners of the view space of this
@@ -57,7 +73,7 @@ public:
 private:
 	std::string _name;
 
-	mutable mat4 _view_matrix;
+	mutable mat4 _view_matrix{};
 	mutable bool _has_view_matrix = false;
 
 };

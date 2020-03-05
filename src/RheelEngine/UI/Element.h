@@ -159,7 +159,7 @@ public:
 	/**
 	 * Draws this UI element.
 	 */
-	virtual void Draw(float dt) const = 0;
+	virtual void Draw(float time, float dt) const = 0;
 
 protected:
 	Element();

@@ -32,11 +32,25 @@ void ForwardSceneRenderer::Render(float dt) {
 	ResultBuffer().Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// initialize the model shader
-	GLShaderProgram& modelShader = ModelRenderer::GetForwardModelShader();
-	GetManager()->InitializeShaderLights(modelShader);
-	modelShader["cameraMatrix"] = camera->CreateMatrix(Width(), Height());
-	modelShader["cameraPosition"] = camera->CalculateAbsoluteTransform().GetTranslation();
+	// render the skybox
+	_RenderSkybox(Width(), Height());
+
+	// get the shaders for the custom shaded models, add the normal
+	// model shader
+	auto modelShaders = GetManager()->CustomShaderPrograms();
+	modelShaders.emplace_back(ModelRenderer::GetForwardModelShader());
+
+	// initialize the model shaders
+	for (auto modelShaderRef : modelShaders) {
+		GLShaderProgram& modelShader = modelShaderRef;
+
+		GetManager()->InitializeShaderLights(modelShader);
+		modelShader["_cameraMatrix"] = camera->CreateMatrix(Width(), Height());
+
+		if (modelShader.HasUniform("_cameraPosition")) {
+			modelShader["_cameraPosition"] = camera->CalculateAbsoluteTransform().GetTranslation();
+		}
+	}
 
 	// bind the shadow objects
 	int shadowMapCount = 0;
@@ -55,11 +69,23 @@ void ForwardSceneRenderer::Render(float dt) {
 
 			for (int i = 0; i < shadowMapCount; i++) {
 				sm->Textures()[i].Bind(textureUnit++);
-				modelShader["lightspaceMatrix" + std::to_string(i)] = sm->LightMatrices()[i];
+
+				for (auto modelShaderRef : modelShaders) {
+					GLShaderProgram& modelShader = modelShaderRef;
+					std::string uniformName = "_lightspaceMatrix" + std::to_string(i);
+
+					if (modelShader.HasUniform(uniformName)) {
+						modelShader[uniformName] = sm->LightMatrices()[i];
+					}
+				}
 			}
 
-			modelShader["shadowMapCount"] = shadowMapCount;
-			modelShader["baseBias"] = sm->Bias();
+			for (auto modelShaderRef : modelShaders) {
+				GLShaderProgram& modelShader = modelShaderRef;
+
+				if (modelShader.HasUniform("_shadowMapCount")) modelShader["_shadowMapCount"] = shadowMapCount;
+				if (modelShader.HasUniform("_baseBias")) modelShader["_baseBias"] = sm->Bias();
+			}
 		}
 	}
 
@@ -77,6 +103,11 @@ void ForwardSceneRenderer::Render(float dt) {
 
 	// render all the models
 	for (const auto& [_, renderer] : GetManager()->RenderMap()) {
+		renderer.RenderObjects();
+	}
+
+	// render all models with custom shaders
+	for (const auto& [_, renderer] : GetManager()->CustomShaderRenderMap()) {
 		renderer.RenderObjects();
 	}
 

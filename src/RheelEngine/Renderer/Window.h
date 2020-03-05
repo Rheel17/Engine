@@ -18,7 +18,7 @@ public:
 	 * Creates a window using the given display configuration.
 	 * Use Show() to show the window.
 	 */
-	Window(DisplayConfiguration& configuration);
+	explicit Window(DisplayConfiguration& configuration);
 	~Window();
 
 	void Show();

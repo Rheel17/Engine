@@ -14,13 +14,14 @@ layout (location = 7) in mat4 inst_NormalModelMatrix;
 layout (location = 11) in vec4 inst_MaterialVector;
 layout (location = 12) in vec4 inst_MaterialColor;
  
-uniform mat4 cameraMatrix;
+uniform mat4 _cameraMatrix;
 
-out vec3 vf_Position;
-out vec3 vf_Normal;
-out vec2 vf_Texture;
-out vec4 vf_Material;
-out vec4 vf_Color;
+out vec3 _vf_ModelPosition;
+out vec3 _vf_Position;
+out vec3 _vf_Normal;
+out vec2 _vf_Texture;
+out vec4 _vf_Material;
+out vec4 _vf_Color;
 
 void main(void) {
 	// calculate the position and normal vector
@@ -28,12 +29,13 @@ void main(void) {
 	vec4 normal = normalize(inst_NormalModelMatrix * vec4(vert_Normal, 0.0));
 
 	// set variables to be passed to the fragment shader
-	vf_Position = position.xyz;
-	vf_Normal = normal.xyz;
-	vf_Texture = vert_Texture;
-	vf_Material = inst_MaterialVector;
-	vf_Color = inst_MaterialColor;
+	_vf_ModelPosition = vert_Position.xyz;
+	_vf_Position = position.xyz;
+	_vf_Normal = normal.xyz;
+	_vf_Texture = vert_Texture;
+	_vf_Material = inst_MaterialVector;
+	_vf_Color = inst_MaterialColor;
 
 	// set the position
-	gl_Position = cameraMatrix * position;
+	gl_Position = _cameraMatrix * position;
 }

@@ -87,8 +87,12 @@ void ShadowMapDirectional::Update(Camera *camera, unsigned width, unsigned heigh
 		_shadow_buffers[i].Bind();
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		for (const auto& pair : GetManager()->RenderMap()) {
-			pair.second.RenderObjects();
+		for (const auto& [model, renderer] : GetManager()->RenderMap()) {
+			renderer.RenderObjects();
+		}
+
+		for (const auto& [model, renderer] : GetManager()->CustomShaderRenderMap()) {
+			renderer.RenderToShadowMap();
 		}
 	}
 

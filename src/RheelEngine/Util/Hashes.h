@@ -28,6 +28,20 @@ inline constexpr std::size_t hash_all(const T& first, const Rest&... rest) {
 
 namespace std {
 
+	template<typename T1, typename T2>
+	struct RE_API hash<std::pair<T1, T2>> {
+		constexpr std::size_t operator()(const std::pair<T1, T2>& p) const {
+			return rheel::hash_all(p.first, p.second);
+		}
+	};
+
+	template<>
+	struct RE_API hash<ivec2> {
+		constexpr std::size_t operator()(const ivec2& v) const {
+			return rheel::hash_all(v.x, v.y);
+		}
+	};
+
 	template<>
 	struct RE_API hash<vec2> {
 		constexpr std::size_t operator()(const vec2& v) const {

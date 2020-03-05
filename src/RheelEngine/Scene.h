@@ -6,16 +6,19 @@
 #include "_common.h"
 
 #include "Entity.h"
+#include "Assets/Image.h"
 
 namespace rheel {
 
 class Camera;
 class Light;
+class Skybox;
 class ComponentInputProxy;
 
 class RE_API Scene {
 	friend class Camera;
 	friend class Light;
+	friend class Skybox;
 	friend class ComponentInputProxy;
 
 	RE_NO_MOVE(Scene);
@@ -100,15 +103,14 @@ public:
 	Camera *GetCamera(const std::string& name);
 
 	/**
-	 * Returns the light of the given name. If no light exists with that name,
-	 * nullptr is returned.
-	 */
-	Light *GetLight(const std::string& name);
-
-	/**
 	 * Returns a vector of all lights in the scene.
 	 */
 	const std::vector<Light *>& GetLights();
+
+	/**
+	 * Returns the skybox for this scene.
+	 */
+	Skybox *GetSkybox();
 
 	/**
 	 * Returns the components registered to receive input events
@@ -125,6 +127,8 @@ private:
 
 	std::unordered_map<std::string, Camera *> _cameras;
 	std::vector<Light *> _lights;
+	Skybox *_skybox = nullptr;
+
 	std::vector<Entity *> _entities;
 	std::vector<ComponentInputProxy *> _input_components;
 

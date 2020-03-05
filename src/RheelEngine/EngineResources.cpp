@@ -5,6 +5,8 @@
 
 #include <sstream>
 
+#include <_res.h>
+
 namespace rheel {
 
 std::string EngineResources::AsString(const std::string& resourceName) {

@@ -34,7 +34,7 @@ PostProcessingStack& SceneElement::GetPostProcessingStack() {
 	return *_post_processing_stack;
 }
 
-void SceneElement::Draw(float dt) const {
+void SceneElement::Draw(float time, float dt) const {
 	const Bounds& bounds = GetBounds();
 	_InitializeRenderer(bounds);
 

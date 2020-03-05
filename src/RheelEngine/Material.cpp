@@ -41,6 +41,9 @@ Material::Material(Image ambientTexture, Image diffuseTexture, Image specularTex
 		_diffuse_factor(diffuseFactor), _specular_factor(specularFactor),
 		_specular_exponent(specularExponent) {}
 
+Material::Material(Shader fragmentShader) :
+		_type(CustomShader), _custom_shader(std::move(fragmentShader)) {}
+
 Material::MaterialType Material::Type() const {
 	return _type;
 }
@@ -81,6 +84,10 @@ Image Material::GetDiffuseTexture() const {
 
 Image Material::GetSpecularTexture() const {
 	return _specular_texture;
+}
+
+Shader Material::GetCustomShader() const {
+	return _custom_shader;
 }
 
 }

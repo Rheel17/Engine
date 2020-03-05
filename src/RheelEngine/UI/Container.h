@@ -53,7 +53,7 @@ public:
 	/**
 	 * Moves the given container into a new container
 	 */
-	explicit Container(Container&& container) noexcept;
+	Container(Container&& container) noexcept;
 
 	~Container() override;
 
@@ -185,7 +185,7 @@ public:
 	/**
 	 * Draws the container.
 	 */
-	void Draw(float dt) const override;
+	void Draw(float time, float dt) const override;
 
 	/**
 	 * Called when this element has been resized.
@@ -195,7 +195,7 @@ public:
 private:
 	using TempBoundsMap = std::map<Element *, TemporaryBounds>;
 
-	Container(UI *ui);
+	explicit Container(UI *ui);
 
 	void _CheckElement(Element *element, std::string sourceOrDestination) const;
 	void _DeleteConstraintTree(ConstraintTreeNode *node);

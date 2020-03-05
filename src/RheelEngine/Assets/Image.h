@@ -29,12 +29,13 @@ public:
 	 */
 	Image(unsigned width, unsigned height, std::vector<Color> pixels);
 
-
 	unsigned GetWidth() const;
 	unsigned GetHeight() const;
 
 	const Color& At(unsigned x, unsigned y) const;
 	Color& At(unsigned x, unsigned y);
+
+	Image SubImage(unsigned x, unsigned y, unsigned width, unsigned height) const;
 
 	const float *GetRawColorData() const;
 

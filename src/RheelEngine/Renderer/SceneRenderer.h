@@ -15,7 +15,7 @@ namespace rheel {
 class RE_API SceneRenderer {
 
 public:
-	virtual ~SceneRenderer();
+	virtual ~SceneRenderer() = default;
 
 	void SetSize(unsigned width, unsigned height);
 
@@ -27,6 +27,8 @@ protected:
 	SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height, unsigned samples, bool depthComponent);
 
 	void _RenderShadowMaps();
+
+	void _RenderSkybox(unsigned width, unsigned height);
 
 	SceneRenderManager *GetManager() const;
 

@@ -5,8 +5,6 @@
 #define ENGINERESOURCES_H_
 #include "_common.h"
 
-#include <_res.h>
-
 namespace rheel {
 
 class RE_API EngineResources {

@@ -16,6 +16,7 @@
 namespace rheel {
 
 class RE_API ModelRenderer {
+	friend class CustomShaderModelRenderer;
 
 public:
 	class ObjectDataPtr;
@@ -42,6 +43,7 @@ public:
 	class ObjectDataPtr {
 		friend class ObjectData;
 		friend class ModelRenderer;
+		friend class CustomShaderModelRenderer;
 
 		RE_NO_COPY(ObjectDataPtr)
 
@@ -65,6 +67,10 @@ private:
 	using _ObjectDataVector = std::vector<ObjectData>;
 
 	struct _MaterialTextureCompare {
+		bool operator()(const Material& mat1, const Material& mat2) const;
+	};
+
+	struct _MaterialShaderCompare {
 		bool operator()(const Material& mat1, const Material& mat2) const;
 	};
 
@@ -95,14 +101,12 @@ private:
 
 public:
 	static GLShaderProgram& GetForwardModelShader();
-	static GLShaderProgram& GetDeferredModelShader();
 	static GLShaderProgram& GetOpaqueShader();
 
 private:
 	static void _InitializeShaders();
 
 	static GLShaderProgram _forward_model_shader;
-	static GLShaderProgram _deferred_model_shader;
 	static GLShaderProgram _opaque_shader;
 	static bool _are_shaders_initialized;
 

@@ -14,7 +14,7 @@ ColorElement::ColorElement(unsigned width, unsigned height, Color color) :
 	SetDefaultSize(width, height);
 }
 
-void ColorElement::Draw(float dt) const {
+void ColorElement::Draw(float time, float dt) const {
 	_DrawColoredQuad(GetBounds(), _color);
 }
 

@@ -23,7 +23,7 @@ public:
 	 */
 	ColorElement(unsigned width, unsigned height, Color color);
 
-	void Draw(float dt) const override;
+	void Draw(float time, float dt) const override;
 
 private:
 	Color _color;

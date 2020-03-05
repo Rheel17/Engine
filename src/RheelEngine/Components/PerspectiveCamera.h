@@ -14,7 +14,9 @@ class RE_API PerspectiveCamera : public Camera {
 public:
 	PerspectiveCamera(std::string name, float fov, float near, float far);
 
-	mat4 CreateMatrix(unsigned width, unsigned height) const override;
+	float GetSkyboxDistance() const override;
+
+	mat4 GetProjectionMatrix(unsigned width, unsigned height) const override;
 
 	std::array<vec3, 8> ViewspaceCorners(unsigned width, unsigned height, float near, float far) const override;
 

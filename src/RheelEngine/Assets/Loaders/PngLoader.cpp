@@ -84,44 +84,41 @@ Image PngLoader::_LoadPNG(std::istream& input) {
 	unsigned height = png_get_image_height(pngPtr, infoPtr);
 
 	unsigned int bitDepth = png_get_bit_depth(pngPtr, infoPtr);
-	unsigned int channels = png_get_channels(pngPtr, infoPtr);
 	unsigned int colorType = png_get_color_type(pngPtr, infoPtr);
 
 	// set the conversion to rgba with 8 bits per channel
-	switch(colorType) {
-		case PNG_COLOR_TYPE_PALETTE:
-			png_set_palette_to_rgb(pngPtr);
-			channels = 3;
-			break;
-		case PNG_COLOR_TYPE_GRAY:
-			if (bitDepth < 8) {
-				png_set_expand_gray_1_2_4_to_8(pngPtr);
-				bitDepth = 8;
-			}
-			break;
-		default:
-			abort();
-	}
-
-	if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
-		png_set_tRNS_to_alpha(pngPtr);
-		channels++;
-	}
-
 	if (bitDepth == 16) {
 		png_set_strip_16(pngPtr);
 	}
 
-	png_read_update_info(pngPtr, infoPtr);
-
-	// check if we have a readable image for this class
-	if (!(channels == 1 || channels == 3 || channels == 4)) {
-		png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) nullptr);
-		throw std::runtime_error("Invalid number of channels. Can only work with 1, 3, or 4.");
+	switch (colorType) {
+		case PNG_COLOR_TYPE_GRAY:
+			if (bitDepth < 8) {
+				png_set_expand_gray_1_2_4_to_8(pngPtr);
+			}
+			// Fallthrough
+		case PNG_COLOR_TYPE_GRAY_ALPHA:
+			png_set_gray_to_rgb(pngPtr);
+			break;
+		case PNG_COLOR_TYPE_PALETTE:
+			png_set_palette_to_rgb(pngPtr);
+			break;
+		default:
+			break;
 	}
 
-	// create the reading pointers
-	unsigned stride = width * bitDepth * channels / 8;
+	if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
+		png_set_tRNS_to_alpha(pngPtr);
+	}
+
+	// no alpha channel supplied: fill with 0xFF
+	if (colorType == PNG_COLOR_TYPE_RGB || colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_PALETTE) {
+		png_set_filler(pngPtr, 0xFF, PNG_FILLER_AFTER);
+	}
+
+	png_read_update_info(pngPtr, infoPtr);
+
+	size_t stride = png_get_rowbytes(pngPtr, infoPtr);
 	rows = new png_bytep[height];
 	data = new unsigned char[height * stride];
 
@@ -138,34 +135,12 @@ Image PngLoader::_LoadPNG(std::istream& input) {
 
 	// upload the data from the temporary buffer to the class storage
 	for (unsigned pixel = 0; pixel < width * height; pixel++) {
-		switch (channels) { // NOLINT(hicpp-multiway-paths-covered)
-			case 1: // greyscale
-				pixels[pixel] = {
-						FLOAT(data[pixel]),
-						FLOAT(data[pixel]),
-						FLOAT(data[pixel]),
-						1.0f
-				};
-				break;
-
-			case 3: // RGB
-				pixels[pixel] = {
-						FLOAT(data[3 * pixel + 0]),
-						FLOAT(data[3 * pixel + 1]),
-						FLOAT(data[3 * pixel + 2]),
-						1.0f
-				};
-				break;
-
-			case 4: // RGBA
-				pixels[pixel] = {
-						FLOAT(data[4 * pixel + 0]),
-						FLOAT(data[4 * pixel + 1]),
-						FLOAT(data[4 * pixel + 2]),
-						FLOAT(data[4 * pixel + 3]),
-				};
-				break;
-		}
+		pixels[pixel] = {
+				FLOAT(data[4 * pixel + 0]),
+				FLOAT(data[4 * pixel + 1]),
+				FLOAT(data[4 * pixel + 2]),
+				FLOAT(data[4 * pixel + 3]),
+		};
 	}
 
 	// delete the png handle and the temporary buffers

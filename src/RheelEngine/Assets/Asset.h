@@ -15,6 +15,8 @@ class RE_API Asset : public AssetBase {
 public:
 	virtual ~Asset() = default;
 
+	Asset& operator=(const Asset&) = default;
+
 	/*
 	 * Checks whether this asset is empty (null)
 	 */
@@ -32,6 +34,9 @@ public:
 		}
 	}
 
+	/**
+	 * Returns the address of the raw pointer
+	 */
 	std::uintptr_t GetAddress() const {
 		return std::uintptr_t(_data.get());
 	}

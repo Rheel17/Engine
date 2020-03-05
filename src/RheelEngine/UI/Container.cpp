@@ -91,7 +91,7 @@ Container& Container::operator=(Container&& container) noexcept {
 	}
 
 	// move the constraint tree
-	_constraint_tree = std::move(container._constraint_tree);
+	_constraint_tree = container._constraint_tree;
 	container._constraint_tree = nullptr;
 
 	// perform the Element moving
@@ -125,7 +125,7 @@ Element *Container::ElementAt(unsigned x, unsigned y) {
 				bounds.y <= y && y < bounds.y + bounds.height) {
 
 			// nested resolve
-			if (Container *container = dynamic_cast<Container *>(element)) {
+			if (auto container = dynamic_cast<Container *>(element)) {
 				return container->ElementAt(x, y);
 			}
 
@@ -149,7 +149,7 @@ Element *Container::OpaqueElementAt(unsigned x, unsigned y) {
 				element->IsOpaque()) {
 
 			// nested resolve
-			if (Container *container = dynamic_cast<Container *>(element)) {
+			if (auto container = dynamic_cast<Container *>(element)) {
 				Element *result = container->OpaqueElementAt(x, y);
 
 				if (result == nullptr) {
@@ -297,9 +297,9 @@ void Container::Layout() {
 	}
 }
 
-void Container::Draw(float dt) const {
+void Container::Draw(float time, float dt) const {
 	for (auto elem : _elements) {
-		elem->Draw(dt);
+		elem->Draw(time, dt);
 	}
 }
 

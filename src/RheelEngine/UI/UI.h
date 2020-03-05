@@ -18,9 +18,18 @@ public:
 	UI(unsigned width, unsigned height);
 
 	/**
-	 * Sets the contents of the UI to the container.
+	 * Sets the contents of the UI to the container. Note: for custom
+	 * subclasses of Container use the
+	 * SetContainer(std::unqiue_ptr<Container>) overload to prevent
+	 * object slicing.
 	 */
 	void SetContainer(Container&& container);
+
+	/**
+	 * Sets the contents of the UI to the container. Use this overload for
+	 * custom subclasses of Container.
+	 */
+	void SetContainer(std::unique_ptr<Container> container);
 
 	/**
 	 * Returns the container which contains the UI elements of this UI.
@@ -64,7 +73,7 @@ public:
 	/**
 	 * Draws this UI
 	 */
-	void Draw(float dt) const;
+	void Draw(float time, float dt) const;
 
 	void OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, Input::Modifiers mods);
 
@@ -79,7 +88,7 @@ public:
 	void OnFocusChanged(bool focus);
 
 private:
-	Container _ui_container = Container(this);
+	std::unique_ptr<Container> _ui_container = std::unique_ptr<Container>(new Container(this));
 
 	Element *_mouseover_element = nullptr;
 	Element *_focus_element = nullptr;

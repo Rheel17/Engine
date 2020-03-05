@@ -17,19 +17,11 @@ class RE_API GLShaderProgramBindings {
 	friend class GLShaderUniform;
 	friend class GLShaderProgram;
 
+public:
 	GLShaderProgramBindings() = delete;
 
 private:
-	inline static void Use(GLuint program) {
-		if (programInUse != program) {
-
-#if RE_GL_DEBUG
-			std::cout << "glUseProgram(" << program << ")" << std::endl;
-#endif
-			glUseProgram(program);
-			programInUse = program;
-		}
-	}
+	static void Use(GLuint program);
 
 	static GLuint programInUse;
 
@@ -38,63 +30,69 @@ private:
 class RE_API GLShaderUniform {
 
 public:
-	GLShaderUniform(GLuint program = 0, GLuint location = -1) : _program(program), _location(location) {}
+	explicit GLShaderUniform(GLuint program = 0, GLuint location = -1) : _program(program), _location(location) {}
 
-	inline void operator=(GLfloat value)     { _Use(); glUniform1f(_location, value); }
-	inline void operator=(const vec2& value) { _Use(); glUniform2f(_location, value.x, value.y); }
-	inline void operator=(const vec3& value) { _Use(); glUniform3f(_location, value.x, value.y, value.z); }
-	inline void operator=(const vec4& value) { _Use(); glUniform4f(_location, value.x, value.y, value.z, value.w); }
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-c-copy-assignment-signature"
+#pragma ide diagnostic ignored "misc-unconventional-assign-operator"
 
-	inline void operator=(GLint value)        { _Use(); glUniform1i(_location, value); }
-	inline void operator=(const ivec2& value) { _Use(); glUniform2i(_location, value.x, value.y); }
-	inline void operator=(const ivec3& value) { _Use(); glUniform3i(_location, value.x, value.y, value.z); }
-	inline void operator=(const ivec4& value) { _Use(); glUniform4i(_location, value.x, value.y, value.z, value.w); }
+	void operator=(GLfloat value);
+	void operator=(const vec2& value);
+	void operator=(const vec3& value);
+	void operator=(const vec4& value);
 
-	inline void operator=(GLuint value)       { _Use(); glUniform1ui(_location, value); }
-	inline void operator=(const uvec2& value) { _Use(); glUniform2ui(_location, value.x, value.y); }
-	inline void operator=(const uvec3& value) { _Use(); glUniform3ui(_location, value.x, value.y, value.z); }
-	inline void operator=(const uvec4& value) { _Use(); glUniform4ui(_location, value.x, value.y, value.z, value.w); }
+	void operator=(GLint value);
+	void operator=(const ivec2& value);
+	void operator=(const ivec3& value);
+	void operator=(const ivec4& value);
 
-	inline void operator=(const std::vector<GLfloat>& values) { _Use(); glUniform1fv(_location, values.size(), values.data()); }
-	inline void operator=(const std::vector<vec2>& values)    { _Use(); glUniform2fv(_location, values.size(), reinterpret_cast<const GLfloat *>(values.data())); }
-	inline void operator=(const std::vector<vec3>& values)    { _Use(); glUniform3fv(_location, values.size(), reinterpret_cast<const GLfloat *>(values.data())); }
-	inline void operator=(const std::vector<vec4>& values)    { _Use(); glUniform4fv(_location, values.size(), reinterpret_cast<const GLfloat *>(values.data())); }
+	void operator=(GLuint value);
+	void operator=(const uvec2& value);
+	void operator=(const uvec3& value);
+	void operator=(const uvec4& value);
 
-	inline void operator=(const std::vector<GLint>& values) { _Use(); glUniform1iv(_location, values.size(), values.data()); }
-	inline void operator=(const std::vector<ivec2>& values) { _Use(); glUniform2iv(_location, values.size(), reinterpret_cast<const GLint *>(values.data())); }
-	inline void operator=(const std::vector<ivec3>& values) { _Use(); glUniform3iv(_location, values.size(), reinterpret_cast<const GLint *>(values.data())); }
-	inline void operator=(const std::vector<ivec4>& values) { _Use(); glUniform4iv(_location, values.size(), reinterpret_cast<const GLint *>(values.data())); }
+	void operator=(const std::vector<GLfloat>& values);
+	void operator=(const std::vector<vec2>& values);
+	void operator=(const std::vector<vec3>& values);
+	void operator=(const std::vector<vec4>& values);
 
-	inline void operator=(const std::vector<GLuint>& values) { _Use(); glUniform1uiv(_location, values.size(), values.data()); }
-	inline void operator=(const std::vector<uvec2>& values)  { _Use(); glUniform2uiv(_location, values.size(), reinterpret_cast<const GLuint *>(values.data())); }
-	inline void operator=(const std::vector<uvec3>& values)  { _Use(); glUniform3uiv(_location, values.size(), reinterpret_cast<const GLuint *>(values.data())); }
-	inline void operator=(const std::vector<uvec4>& values)  { _Use(); glUniform4uiv(_location, values.size(), reinterpret_cast<const GLuint *>(values.data())); }
+	void operator=(const std::vector<GLint>& values);
+	void operator=(const std::vector<ivec2>& values);
+	void operator=(const std::vector<ivec3>& values);
+	void operator=(const std::vector<ivec4>& values);
 
-	inline void operator=(const mat2& value)   { _Use();   glUniformMatrix2fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
-	inline void operator=(const mat3& value)   { _Use();   glUniformMatrix3fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
-	inline void operator=(const mat4& value)   { _Use();   glUniformMatrix4fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
-	inline void operator=(const mat2x3& value) { _Use(); glUniformMatrix2x3fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
-	inline void operator=(const mat3x2& value) { _Use(); glUniformMatrix3x2fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
-	inline void operator=(const mat2x4& value) { _Use(); glUniformMatrix2x4fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
-	inline void operator=(const mat4x2& value) { _Use(); glUniformMatrix4x2fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
-	inline void operator=(const mat3x4& value) { _Use(); glUniformMatrix3x4fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
-	inline void operator=(const mat4x3& value) { _Use(); glUniformMatrix4x3fv(_location, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(&value)); }
+	void operator=(const std::vector<GLuint>& values);
+	void operator=(const std::vector<uvec2>& values);
+	void operator=(const std::vector<uvec3>& values);
+	void operator=(const std::vector<uvec4>& values);
 
-	inline void operator=(const std::vector<mat2>& value)   { _Use();   glUniformMatrix2fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
-	inline void operator=(const std::vector<mat3>& value)   { _Use();   glUniformMatrix3fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
-	inline void operator=(const std::vector<mat4>& value)   { _Use();   glUniformMatrix4fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
-	inline void operator=(const std::vector<mat2x3>& value) { _Use(); glUniformMatrix2x3fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
-	inline void operator=(const std::vector<mat3x2>& value) { _Use(); glUniformMatrix3x2fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
-	inline void operator=(const std::vector<mat2x4>& value) { _Use(); glUniformMatrix2x4fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
-	inline void operator=(const std::vector<mat4x2>& value) { _Use(); glUniformMatrix4x2fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
-	inline void operator=(const std::vector<mat3x4>& value) { _Use(); glUniformMatrix3x4fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
-	inline void operator=(const std::vector<mat4x3>& value) { _Use(); glUniformMatrix4x3fv(_location, value.size(), GL_FALSE, reinterpret_cast<const GLfloat *>(value.data())); }
+	void operator=(const mat2& value);
+	void operator=(const mat3& value);
+	void operator=(const mat4& value);
+	void operator=(const mat2x3& value);
+	void operator=(const mat3x2& value);
+	void operator=(const mat2x4& value);
+	void operator=(const mat4x2& value);
+	void operator=(const mat3x4& value);
+	void operator=(const mat4x3& value);
+
+	void operator=(const std::vector<mat2>& value);
+	void operator=(const std::vector<mat3>& value);
+	void operator=(const std::vector<mat4>& value);
+	void operator=(const std::vector<mat2x3>& value);
+	void operator=(const std::vector<mat3x2>& value);
+	void operator=(const std::vector<mat2x4>& value);
+	void operator=(const std::vector<mat4x2>& value);
+	void operator=(const std::vector<mat3x4>& value);
+	void operator=(const std::vector<mat4x3>& value);
+
+#pragma clang diagnostic pop
 
 private:
 	GLuint _program;
 	GLint _location;
 
-	inline void _Use() { GLShaderProgramBindings::Use(_program); }
+	void _Use() { GLShaderProgramBindings::Use(_program); }
 
 };
 
@@ -123,7 +121,7 @@ public:
 
 	/**
 	 * Adds a shader from a source file. Multiple calls with the same type will
-	 * only add the last-added shader to the program.Note that the file will be
+	 * only add the last-added shader to the program. Note that the file will be
 	 * read when the shader is linked, not at the call of this method.
 	 */
 	void AddShaderFromFile(ShaderType type, std::string file);
@@ -169,7 +167,17 @@ public:
 	 * shader will be in use after A uniform is set, but not necessarily after
 	 * this method call.
 	 */
-	GLShaderUniform& GetUniform(const char* name) const;
+	GLShaderUniform& GetUniform(const char *name) const;
+
+	/**
+	 * Use this method to find out whether a shader has a uniform
+	 */
+	 bool HasUniform(const std::string& name) const;
+
+	/**
+	 * Use this method to find out whether a shader has a uniform
+	 */
+	 bool HasUniform(const char *name) const;
 
 private:
 	GLuint _AddShaderFromSource(GLuint type, std::string source);

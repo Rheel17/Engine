@@ -14,7 +14,7 @@ class RE_API CrosshairElement : public Element {
 public:
 	CrosshairElement(unsigned size);
 
-	void Draw(float dt) const override;
+	void Draw(float time, float dt) const override;
 
 	bool IsOpaque() override;
 

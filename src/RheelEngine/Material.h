@@ -7,6 +7,7 @@
 
 #include "Color.h"
 #include "Assets/Image.h"
+#include "Assets/Shader.h"
 
 namespace rheel {
 
@@ -14,7 +15,7 @@ class RE_API Material {
 
 public:
 	enum MaterialType {
-		Colored, Textured
+		Colored, Textured, CustomShader
 	};
 
 public:
@@ -54,6 +55,12 @@ public:
 	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture,
 			float ambientFactor, float diffuseFactor, float specularFactor,
 			float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+
+	/**
+	 * Creates a material with custom fragment shader. The shader type must be
+	 * a fragment shader.
+	 */
+	explicit Material(Shader fragmentShader);
 
 	/**
 	 * Returns the type of this material.
@@ -111,19 +118,26 @@ public:
 	 */
 	Image GetSpecularTexture() const;
 
+	/**
+	 * Returns the custom shader of this material.
+	 */
+	Shader GetCustomShader() const;
+
 private:
 	MaterialType _type;
 
-	Color _color;
+	Color _color{ 1.0f, 1.0f, 1.0f, 1.0f };
 
 	Image _ambient_texture = Image::Null();
 	Image _diffuse_texture = Image::Null();
 	Image _specular_texture = Image::Null();
 
-	float _ambient_factor;
-	float _diffuse_factor;
-	float _specular_factor;
-	float _specular_exponent;
+	float _ambient_factor = 0.0f;
+	float _diffuse_factor = 0.0f;
+	float _specular_factor = 0.0f;
+	float _specular_exponent = DEFAULT_SPECULAR_EXPONENT;
+
+	Shader _custom_shader = Shader::Null();
 
 public:
 	static constexpr float DEFAULT_SPECULAR_EXPONENT = 50.0f;

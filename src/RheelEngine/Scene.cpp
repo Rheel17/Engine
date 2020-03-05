@@ -38,6 +38,10 @@ const std::vector<Entity *>& Scene::GetEntities() const {
 	return _entities;
 }
 
+void Scene::RemoveRootComponent(ComponentBase *component) {
+	return _root_entity->RemoveComponent(component);
+}
+
 Camera *Scene::GetCamera(const std::string& name) {
 	auto iter = _cameras.find(name);
 
@@ -50,6 +54,10 @@ Camera *Scene::GetCamera(const std::string& name) {
 
 const std::vector<Light *>& Scene::GetLights() {
 	return _lights;
+}
+
+Skybox *Scene::GetSkybox() {
+	return _skybox;
 }
 
 const std::vector<ComponentInputProxy *>& Scene::GetInputComponents() const {

@@ -19,8 +19,6 @@ SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName
 	_result_buffer.Create();
 }
 
-SceneRenderer::~SceneRenderer() {}
-
 void SceneRenderer::SetSize(unsigned width, unsigned height) {
 	if (_width == width && _height == height) {
 		return;
@@ -50,12 +48,22 @@ void SceneRenderer::_RenderShadowMaps() {
 	}
 }
 
+void SceneRenderer::_RenderSkybox(unsigned width, unsigned height) {
+	_manager->GetSkyboxRenderer().Render(GetCamera(), width, height);
+}
+
 SceneRenderManager *SceneRenderer::GetManager() const {
 	return _manager;
 }
 
 Camera *SceneRenderer::GetCamera() const {
-	return _manager->GetScene()->GetCamera(_camera_name);
+	Camera *camera = _manager->GetScene()->GetCamera(_camera_name);
+
+	if (camera == nullptr) {
+		Log::Error() << "Camera '" << _camera_name << "' not found" << std::endl;
+	}
+
+	return camera;
 }
 
 unsigned SceneRenderer::Width() const {

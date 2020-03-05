@@ -19,6 +19,10 @@ void Camera::Activate() {
 	}
 }
 
+void Camera::Deactivate() {
+	GetParent()->scene->_cameras.erase(_name);
+}
+
 mat4 Camera::GetViewMatrix() const {
 	if (!_has_view_matrix) {
 		_view_matrix = glm::inverse(CalculateAbsoluteTransformationMatrix());
@@ -26,6 +30,14 @@ mat4 Camera::GetViewMatrix() const {
 	}
 
 	return _view_matrix;
+}
+
+mat4 Camera::GetRotationMatrix() const {
+	return glm::mat4_cast(CalculateAbsoluteTransform().GetRotation());
+}
+
+mat4 Camera::CreateMatrix(unsigned width, unsigned height) const {
+	return GetProjectionMatrix(width, height) * GetViewMatrix();
 }
 
 vec3 Camera::RayDirection(unsigned width, unsigned height, const vec2& pixel) const {

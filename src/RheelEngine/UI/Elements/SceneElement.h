@@ -52,7 +52,7 @@ public:
 	 */
 	PostProcessingStack& GetPostProcessingStack();
 
-	void Draw(float dt) const override;
+	void Draw(float time, float dt) const override;
 
 	// Override methods to pass input events to scripts
 	void OnFocusGained() override;

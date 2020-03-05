@@ -8,7 +8,7 @@
 #include "Loaders/ColladaLoader.h"
 #include "Loaders/PngLoader.h"
 #include "Loaders/VoxelLoader.h"
-
+#include "Loaders/GlslLoader.h"
 
 namespace rheel {
 
@@ -31,9 +31,13 @@ public:
 	 */
 	const VoxelLoader voxel = VoxelLoader();
 
+	/**
+	 * Loader for glsl (.glsl) shader source files
+	 */
+	const GlslLoader glsl = GlslLoader();
+
 private:
 	AssetLoader() = default;
-
 
 };
 

@@ -9,7 +9,9 @@
 
 #include "RheelEngine/Engine.h"
 
-#include "RheelEngine/Assets/Generators/ModelGenerator.h"
+#include "RheelEngine/Assets/Generators/StaticModelGeneratorBox.h"
+#include "RheelEngine/Assets/Generators/StaticModelGeneratorCapsule.h"
+#include "RheelEngine/Assets/Generators/StaticModelGeneratorSphere.h"
 
 #include "RheelEngine/Components/CollisionComponent.h"
 #include "RheelEngine/Components/DirectionalLight.h"
@@ -20,6 +22,7 @@
 #include "RheelEngine/Components/PhysicsScene.h"
 #include "RheelEngine/Components/PointLight.h"
 #include "RheelEngine/Components/Rigidbody.h"
+#include "RheelEngine/Components/Skybox.h"
 #include "RheelEngine/Components/SpotLight.h"
 
 #include "RheelEngine/UI/Elements/ColorElement.h"
@@ -27,6 +30,8 @@
 #include "RheelEngine/UI/Elements/EmptyElement.h"
 #include "RheelEngine/UI/Elements/SceneElement.h"
 #include "RheelEngine/UI/Elements/TextElement.h"
+
+#include "RheelEngine/Renderer/ImageTexture.h"
 
 // includes for entry point
 #include <type_traits>

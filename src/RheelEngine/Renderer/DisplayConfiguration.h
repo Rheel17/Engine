@@ -32,6 +32,7 @@ public:
 	bool vsync = true;
 	AntiAliasing aa_mode = AA_OFF;
 	ShadowQuality shadow_quality = SHADOW_OFF;
+	bool enable_mipmaps = false;
 
 private:
 	void _CalculateActualResolution();

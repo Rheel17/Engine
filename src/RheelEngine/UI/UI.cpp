@@ -11,17 +11,23 @@ UI::UI(unsigned width, unsigned height) :
 		_width(width), _height(height) {}
 
 void UI::SetContainer(Container&& container) {
+	_ui_container->operator=(std::forward<Container>(container));
+	_ui_container->_parent_ui = this;
+	_ui_container->SetBounds({ 0, 0, _width, _height });
+}
+
+void UI::SetContainer(std::unique_ptr<Container> container) {
 	_ui_container = std::move(container);
-	_ui_container._parent_ui = this;
-	_ui_container.SetBounds({ 0, 0, _width, _height });
+	_ui_container->_parent_ui = this;
+	_ui_container->SetBounds({ 0, 0, _width, _height });
 }
 
 const Container& UI::GetContainer() const {
-	return _ui_container;
+	return *_ui_container;
 }
 
 Element *UI::ElementAt(unsigned x, unsigned y) {
-	return _ui_container.ElementAt(x, y);
+	return _ui_container->ElementAt(x, y);
 }
 
 bool UI::RequestFocus(Element *element) {
@@ -67,8 +73,8 @@ void UI::ReleaseMouse() {
 	_mouse_jump = true;
 }
 
-void UI::Draw(float dt) const {
-	_ui_container.Draw(dt);
+void UI::Draw(float time, float dt) const {
+	_ui_container->Draw(time, dt);
 }
 
 void UI::OnKey(Input::Key key, Input::Scancode scancode, Input::Action action, Input::Modifiers mods) {
@@ -103,7 +109,7 @@ void UI::OnMouseMove(float x, float y) {
 		return;
 	}
 
-	Element *newMouseOverElement = _ui_container.OpaqueElementAt((unsigned) x, (unsigned) y);
+	Element *newMouseOverElement = _ui_container->OpaqueElementAt((unsigned) x, (unsigned) y);
 
 	if (newMouseOverElement != _mouseover_element && !_mouse_grabbed) {
 		if (_mouseover_element) {

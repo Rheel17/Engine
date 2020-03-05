@@ -5,6 +5,7 @@
 
 #include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
+#include "SkyboxRenderer.h"
 #include "../Engine.h"
 #include "../EngineResources.h"
 #include "../Components/DirectionalLight.h"
@@ -13,13 +14,12 @@
 
 namespace rheel {
 
-GLShaderProgram SceneRenderManager::_deferred_lighting_shader;
 std::unique_ptr<GLVertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
 std::unique_ptr<GLBuffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
 bool SceneRenderManager::_lighting_quad_initialized = false;
 
 SceneRenderManager::SceneRenderManager(Scene *scene) :
-		_scene(scene) {
+		_scene(scene), _skybox_renderer(std::make_shared<SkyboxRenderer>(this)) {
 
 	_Initialize();
 }
@@ -42,7 +42,7 @@ void SceneRenderManager::Update() {
 		if (auto pointLight = dynamic_cast<PointLight *>(light)) {
 			_lights_type.push_back(0);
 			_lights_position.push_back(pointLight->Position());
-			_lights_direction.push_back(vec3());
+			_lights_direction.emplace_back();
 			_lights_attenuation.push_back(pointLight->Attenuation());
 			_lights_spot_attenuation.push_back(0.0f);
 		} else if (auto spotLight = dynamic_cast<SpotLight *>(light)) {
@@ -53,7 +53,7 @@ void SceneRenderManager::Update() {
 			_lights_spot_attenuation.push_back(spotLight->SpotAttenuation());
 		} else if (auto directionalLight = dynamic_cast<DirectionalLight *>(light)) {
 			_lights_type.push_back(2);
-			_lights_position.push_back(vec3());
+			_lights_position.emplace_back();
 			_lights_direction.push_back(directionalLight->Direction());
 			_lights_attenuation.push_back(0.0f);
 			_lights_spot_attenuation.push_back(0.0f);
@@ -68,6 +68,16 @@ ModelRenderer& SceneRenderManager::GetModelRenderer(const Model& model) {
 
 	if (iter == _render_map.end()) {
 		iter = _render_map.emplace(model.GetAddress(), model).first;
+	}
+
+	return iter->second;
+}
+
+CustomShaderModelRenderer& SceneRenderManager::GetModelRendererForCustomShader(const Model& model, const Shader& shader) {
+	auto iter = _custom_shader_render_map.find(std::make_pair(model.GetAddress(), shader.GetAddress()));
+
+	if (iter == _custom_shader_render_map.end()) {
+		iter = _custom_shader_render_map.emplace(std::make_pair(model.GetAddress(), shader.GetAddress()), CustomShaderModelRenderer(model, shader)).first;
 	}
 
 	return iter->second;
@@ -97,25 +107,33 @@ const std::unordered_map<std::uintptr_t, ModelRenderer>& SceneRenderManager::Ren
 	return _render_map;
 }
 
-GLShaderProgram& SceneRenderManager::InitializedDeferredLightingShader() const {
-	InitializeShaderLights(_deferred_lighting_shader);
-	return _deferred_lighting_shader;
+const std::unordered_map<std::pair<std::uintptr_t, std::uintptr_t>, CustomShaderModelRenderer>& SceneRenderManager::CustomShaderRenderMap() const {
+	return _custom_shader_render_map;
+}
+
+const SkyboxRenderer& SceneRenderManager::GetSkyboxRenderer() const {
+	return *_skybox_renderer;
+}
+
+std::vector<std::reference_wrapper<GLShaderProgram>> SceneRenderManager::CustomShaderPrograms() {
+	std::vector<std::reference_wrapper<GLShaderProgram>> shaders;
+
+	for (auto& [key, value] : _custom_shader_render_map) {
+		shaders.emplace_back(value.GetShaderProgram());
+	}
+
+	return shaders;
 }
 
 void SceneRenderManager::InitializeShaderLights(GLShaderProgram& shaderProgram) const {
-	shaderProgram["lights_type"] = _lights_type;
-	shaderProgram["lights_position"] = _lights_position;
-	shaderProgram["lights_direction"] = _lights_direction;
-	shaderProgram["lights_color"] = _lights_color;
-	shaderProgram["lights_attenuation"] = _lights_attenuation;
-	shaderProgram["lights_spot_attenuation"] = _lights_spot_attenuation;
-	shaderProgram["lightCount"] = (GLint) _lights_type.size();
-	shaderProgram["shadowLevel"] = (GLint) _shadow_level;
-}
-
-void SceneRenderManager::DrawDeferredLightingQuad() const {
-	_lighting_quad_vao->Bind();
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	if (shaderProgram.HasUniform("_lights_type")) shaderProgram["_lights_type"] = _lights_type;
+	if (shaderProgram.HasUniform("_lights_position")) shaderProgram["_lights_position"] = _lights_position;
+	if (shaderProgram.HasUniform("_lights_direction")) shaderProgram["_lights_direction"] = _lights_direction;
+	if (shaderProgram.HasUniform("_lights_color")) shaderProgram["_lights_color"] = _lights_color;
+	if (shaderProgram.HasUniform("_lights_attenuation")) shaderProgram["_lights_attenuation"] = _lights_attenuation;
+	if (shaderProgram.HasUniform("_lights_spot_attenuation")) shaderProgram["_lights_spot_attenuation"] = _lights_spot_attenuation;
+	if (shaderProgram.HasUniform("_lightCount")) shaderProgram["_lightCount"] = (GLint) _lights_type.size();
+	if (shaderProgram.HasUniform("_shadowLevel")) shaderProgram["_shadowLevel"] = (GLint) _shadow_level;
 }
 
 int SceneRenderManager::_ShadowLevel() {
@@ -132,21 +150,6 @@ void SceneRenderManager::_Initialize() {
 	if (_lighting_quad_initialized) {
 		return;
 	}
-
-	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_deferred_lightingshader_vert_glsl"));
-	_deferred_lighting_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_deferred_lightingshader_frag_glsl"));
-	_deferred_lighting_shader.Link();
-	_deferred_lighting_shader["gBufferColor"] = 0;
-	_deferred_lighting_shader["gBufferPosition"] = 1;
-	_deferred_lighting_shader["gBufferNormal"] = 2;
-	_deferred_lighting_shader["gBufferAmbient"] = 3;
-	_deferred_lighting_shader["gBufferDiffuse"] = 4;
-	_deferred_lighting_shader["gBufferSpecular"] = 5;
-	_deferred_lighting_shader["gBufferMaterialParameters"] = 6;
-	_deferred_lighting_shader["shadowMap0"] = 7;
-	_deferred_lighting_shader["shadowMap1"] = 8;
-	_deferred_lighting_shader["shadowMap2"] = 9;
-	_deferred_lighting_shader["shadowMap3"] = 10;
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
 	_lighting_quad_vbo = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);

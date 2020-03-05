@@ -2,34 +2,34 @@
  * Copyright (c) 2020 Levi van Rheenen
  */
 // shadow objects
-uniform int shadowLevel;
-uniform int shadowMapCount;
-uniform float baseBias;
-uniform sampler2DShadow shadowMap0;
-uniform sampler2DShadow shadowMap1;
-uniform sampler2DShadow shadowMap2;
-uniform sampler2DShadow shadowMap3;
-uniform mat4 lightspaceMatrix0;
-uniform mat4 lightspaceMatrix1;
-uniform mat4 lightspaceMatrix2;
-uniform mat4 lightspaceMatrix3;
+uniform int _shadowLevel;
+uniform int _shadowMapCount;
+uniform float _baseBias;
+uniform sampler2DShadow _shadowMap0;
+uniform sampler2DShadow _shadowMap1;
+uniform sampler2DShadow _shadowMap2;
+uniform sampler2DShadow _shadowMap3;
+uniform mat4 _lightspaceMatrix0;
+uniform mat4 _lightspaceMatrix1;
+uniform mat4 _lightspaceMatrix2;
+uniform mat4 _lightspaceMatrix3;
 
 // light parameters
-uniform int lights_type[64];
-uniform vec3 lights_position[64];
-uniform vec3 lights_direction[64];
-uniform vec4 lights_color[64];
-uniform float lights_attenuation[64];
-uniform float lights_spot_attenuation[64];
-uniform int lightCount;
+uniform int _lights_type[64];
+uniform vec3 _lights_position[64];
+uniform vec3 _lights_direction[64];
+uniform vec4 _lights_color[64];
+uniform float _lights_attenuation[64];
+uniform float _lights_spot_attenuation[64];
+uniform int _lightCount;
 
 // light type definitions
-#define TYPE_PointLight         0
-#define TYPE_SpotLight          1
-#define TYPE_DirectionalLight   2
+#define _TYPE_PointLight         0
+#define _TYPE_SpotLight          1
+#define _TYPE_DirectionalLight   2
 
 // camera parameters
-uniform vec3 cameraPosition;
+uniform vec3 _cameraPosition;
 
 struct Material {
 	vec3 ambient;
@@ -52,10 +52,10 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 	// set the bias
 	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 	float cosAngle = max(dot(N, -L), 0.0);
-	float bias = (baseBias * biasFactor) * (1 - 0.99 * cosAngle);
+	float bias = (_baseBias * biasFactor) * (1 - 0.99 * cosAngle);
 
 	// calculating the PCF parameters
-	float pcfLevel = 2.0 * shadowLevel - 1.0;
+	float pcfLevel = 2.0 * _shadowLevel - 1.0;
 	float pcfOffset = (pcfLevel - 1.0) / 2.0;
 	
 	// sample the shadow map using PCF
@@ -73,27 +73,27 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 }
 
 float getShadowFactor(vec3 P, vec3 N, vec3 L) {
-	if (shadowLevel <= 0) {
+	if (_shadowLevel <= 0) {
 		return 1.0;
 	}
 
 	float shadowFactor;
 	
-	shadowFactor = calculateShadowFactor(P, N, L, shadowMap0, lightspaceMatrix0, 0.8);
+	shadowFactor = calculateShadowFactor(P, N, L, _shadowMap0, _lightspaceMatrix0, 0.8);
 	if (shadowFactor <= 1.0) { return shadowFactor; }
-	if (shadowMapCount <= 1) { return 1.0; }
+	if (_shadowMapCount <= 1) { return 1.0; }
 
-	shadowFactor = calculateShadowFactor(P, N, L, shadowMap1, lightspaceMatrix1, 1.5);
+	shadowFactor = calculateShadowFactor(P, N, L, _shadowMap1, _lightspaceMatrix1, 1.5);
 	if (shadowFactor <= 1.0) { return shadowFactor; }
-	if (shadowMapCount <= 2) { return 1.0; }
+	if (_shadowMapCount <= 2) { return 1.0; }
 
-	shadowFactor = calculateShadowFactor(P, N, L, shadowMap2, lightspaceMatrix2, 2.0);
+	shadowFactor = calculateShadowFactor(P, N, L, _shadowMap2, _lightspaceMatrix2, 2.0);
 	if (shadowFactor <= 1.0) { return shadowFactor; }
-	if (shadowMapCount <= 3) { return 1.0; }
+	if (_shadowMapCount <= 3) { return 1.0; }
 
-	shadowFactor = calculateShadowFactor(P, N, L, shadowMap3, lightspaceMatrix3, 2.5);
+	shadowFactor = calculateShadowFactor(P, N, L, _shadowMap3, _lightspaceMatrix3, 2.5);
 	if (shadowFactor <= 1.0) { return shadowFactor; }
-	if (shadowMapCount <= 4) { return 1.0; }
+	if (_shadowMapCount <= 4) { return 1.0; }
 
 	return 1.0;
 }
@@ -101,7 +101,7 @@ float getShadowFactor(vec3 P, vec3 N, vec3 L) {
 vec3 abstractLight(Material material, vec3 P, vec3 N, vec3 L, vec4 color) {
 	// calculate vectors
 	vec3 R = reflect(L, N);
-	vec3 V = normalize(cameraPosition - P);
+	vec3 V = normalize(_cameraPosition - P);
 
     //diffuse component
 	vec3 Id = max(dot(N, L), 0.0) * material.diffuse;
@@ -139,7 +139,7 @@ vec3 spotLight(Material material, vec3 P, vec3 N, vec3 position, vec3 direction,
 
 	if (f <= 0.0) {
 		// if the cosine of spot angle is <= 0, no light falls on this point, so don't continue.
-		// return vec3(1, 0, 1);
+		return vec3(1, 0, 1);
 	}
 
 	// apply spot attenuation
@@ -171,16 +171,16 @@ vec3 calculateLights(vec3 position, vec3 normal, vec3 ambient, vec3 diffuse, vec
 	vec3 color = vec3(0.0);
 
 	// for each light: calculate color of pixel with that light, and add it to the accumulator.
-	for (int i = 0; i < lightCount; i++) {
-		switch (lights_type[i]) {
-			case TYPE_PointLight:
-				color += pointLight(material, position, normal, lights_position[i], lights_color[i], lights_attenuation[i]);
+	for (int i = 0; i < _lightCount; i++) {
+		switch (_lights_type[i]) {
+			case _TYPE_PointLight:
+				color += pointLight(material, position, normal, _lights_position[i], _lights_color[i], _lights_attenuation[i]);
 				break;
-			case TYPE_SpotLight:
-				color += spotLight(material, position, normal, lights_position[i], lights_direction[i], lights_color[i], lights_attenuation[i], lights_spot_attenuation[i]);
+			case _TYPE_SpotLight:
+				color += spotLight(material, position, normal, _lights_position[i], _lights_direction[i], _lights_color[i], _lights_attenuation[i], _lights_spot_attenuation[i]);
 				break;
-			case TYPE_DirectionalLight:
-				color += directionalLight(material, position, normal, lights_direction[i], lights_color[i]);
+			case _TYPE_DirectionalLight:
+				color += directionalLight(material, position, normal, _lights_direction[i], _lights_color[i]);
 				break;
 		}
 	}

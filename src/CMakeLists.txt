@@ -16,13 +16,15 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Assets/AssetLoader.h 
 		RheelEngine/Assets/Image.cpp RheelEngine/Assets/Image.h 
 		RheelEngine/Assets/Model.cpp RheelEngine/Assets/Model.h 
+		RheelEngine/Assets/Shader.cpp RheelEngine/Assets/Shader.h 
 		RheelEngine/Assets/Sound.cpp RheelEngine/Assets/Sound.h 
 		RheelEngine/Assets/VoxelImage.cpp RheelEngine/Assets/VoxelImage.h 
-		RheelEngine/Assets/Generators/ModelGenerator.h 
-		RheelEngine/Assets/Generators/ModelGeneratorBox.cpp 
-		RheelEngine/Assets/Generators/ModelGeneratorCapsule.cpp 
-		RheelEngine/Assets/Generators/ModelGeneratorSphere.cpp 
+		RheelEngine/Assets/Generators/StaticModelGenerator.cpp RheelEngine/Assets/Generators/StaticModelGenerator.h 
+		RheelEngine/Assets/Generators/StaticModelGeneratorBox.cpp RheelEngine/Assets/Generators/StaticModelGeneratorBox.h 
+		RheelEngine/Assets/Generators/StaticModelGeneratorCapsule.cpp RheelEngine/Assets/Generators/StaticModelGeneratorCapsule.h 
+		RheelEngine/Assets/Generators/StaticModelGeneratorSphere.cpp RheelEngine/Assets/Generators/StaticModelGeneratorSphere.h 
 		RheelEngine/Assets/Loaders/ColladaLoader.cpp RheelEngine/Assets/Loaders/ColladaLoader.h 
+		RheelEngine/Assets/Loaders/GlslLoader.cpp RheelEngine/Assets/Loaders/GlslLoader.h 
 		RheelEngine/Assets/Loaders/Loader.h 
 		RheelEngine/Assets/Loaders/PngLoader.cpp RheelEngine/Assets/Loaders/PngLoader.h 
 		RheelEngine/Assets/Loaders/VoxelLoader.cpp RheelEngine/Assets/Loaders/VoxelLoader.h 
@@ -44,8 +46,10 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Components/PhysicsScene.cpp RheelEngine/Components/PhysicsScene.h 
 		RheelEngine/Components/PointLight.cpp RheelEngine/Components/PointLight.h 
 		RheelEngine/Components/Rigidbody.cpp RheelEngine/Components/Rigidbody.h 
+		RheelEngine/Components/Skybox.cpp RheelEngine/Components/Skybox.h 
 		RheelEngine/Components/SpotLight.cpp RheelEngine/Components/SpotLight.h 
 		RheelEngine/Components/VoxelRenderComponent.cpp RheelEngine/Components/VoxelRenderComponent.h 
+		RheelEngine/Renderer/CustomShaderModelRenderer.cpp RheelEngine/Renderer/CustomShaderModelRenderer.h 
 		RheelEngine/Renderer/DisplayConfiguration.cpp RheelEngine/Renderer/DisplayConfiguration.h 
 		RheelEngine/Renderer/ForwardSceneRenderer.cpp RheelEngine/Renderer/ForwardSceneRenderer.h 
 		RheelEngine/Renderer/ImageTexture.cpp RheelEngine/Renderer/ImageTexture.h 
@@ -56,6 +60,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/SceneRenderManager.cpp RheelEngine/Renderer/SceneRenderManager.h 
 		RheelEngine/Renderer/ShadowMap.cpp RheelEngine/Renderer/ShadowMap.h 
 		RheelEngine/Renderer/ShadowMapDirectional.cpp RheelEngine/Renderer/ShadowMapDirectional.h 
+		RheelEngine/Renderer/SkyboxRenderer.cpp RheelEngine/Renderer/SkyboxRenderer.h 
 		RheelEngine/Renderer/VoxelRenderer.cpp RheelEngine/Renderer/VoxelRenderer.h 
 		RheelEngine/Renderer/Window.cpp RheelEngine/Renderer/Window.h 
 		RheelEngine/Renderer/OpenGL/GL.cpp RheelEngine/Renderer/OpenGL/GL.h 

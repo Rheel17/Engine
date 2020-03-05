@@ -7,6 +7,8 @@
 #include "../_common.h"
 
 #include "ModelRenderer.h"
+#include "CustomShaderModelRenderer.h"
+#include "SkyboxRenderer.h"
 #include "../Assets/Model.h"
 #include "../Scene.h"
 #include "OpenGL/GLFramebuffer.h"
@@ -39,6 +41,13 @@ public:
 	ModelRenderer& GetModelRenderer(const Model& model);
 
 	/**
+	 * Returns a CustomShaderModelRenderer instance to render the specified model
+	 * using the specified shader. Multiple calls with the same model and shader
+	 * pair will result in the same custom shader model renderer.
+	 */
+	CustomShaderModelRenderer& GetModelRendererForCustomShader(const Model& model, const Shader& shader);
+
+	/**
 	 * Creates and returns a SceneRenderer managed by this manager.
 	 */
 	std::unique_ptr<SceneRenderer> CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height);
@@ -60,25 +69,35 @@ public:
 	const std::unordered_map<std::uintptr_t, ModelRenderer>& RenderMap() const;
 
 	/**
-	 * Returns a reference to the lighting shader, with all lights initialized.
+	 * Returns the render map containing all models with custom shaders and their
+	 * renderes in the scene managed by this render manager.
 	 */
-	GLShaderProgram& InitializedDeferredLightingShader() const;
+	const std::unordered_map<std::pair<std::uintptr_t, std::uintptr_t>, CustomShaderModelRenderer>& CustomShaderRenderMap() const;
+
+	/**
+	 * Returns the skybox renderer for the scene managed by this render manager
+	 */
+	const SkyboxRenderer& GetSkyboxRenderer() const;
+
+	/**
+	 * Returns references to all custom shader programs attached to custom shaded
+	 * models managed by this render manager.
+	 */
+	std::vector<std::reference_wrapper<GLShaderProgram>> CustomShaderPrograms();
 
 	/**
 	 * Initializes all lights in the shader program.
 	 */
 	void InitializeShaderLights(GLShaderProgram& shaderProgram) const;
 
-	/**
-	 * Binds and draws the VAO of the lighting quad.
-	 */
-	void DrawDeferredLightingQuad() const;
-
 private:
 	int _ShadowLevel();
 
 	Scene *_scene;
+
 	std::unordered_map<std::uintptr_t, ModelRenderer> _render_map;
+	std::unordered_map<std::pair<uintptr_t, uintptr_t>, CustomShaderModelRenderer> _custom_shader_render_map;
+	std::shared_ptr<SkyboxRenderer> _skybox_renderer;
 
 	std::vector<int> _lights_type;
 	std::vector<vec3> _lights_position;
@@ -86,12 +105,11 @@ private:
 	std::vector<vec4> _lights_color;
 	std::vector<float> _lights_attenuation;
 	std::vector<float> _lights_spot_attenuation;
-	int _shadow_level;
+	int _shadow_level{};
 
 private:
 	static void _Initialize();
 
-	static GLShaderProgram _deferred_lighting_shader;
 	static std::unique_ptr<GLVertexArray> _lighting_quad_vao;
 	static std::unique_ptr<GLBuffer> _lighting_quad_vbo;
 	static bool _lighting_quad_initialized;

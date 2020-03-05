@@ -46,8 +46,7 @@ public:
 	 */
 	void SetText(std::wstring text);
 
-	void Draw(float dt) const override;
-
+	void Draw(float time, float dt) const override;
 
 private:
 	std::string _text;

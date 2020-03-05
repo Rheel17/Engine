@@ -45,6 +45,11 @@ public:
 	void SetWrapParameterT(GL::WrapParameter parameter);
 
 	/**
+	 * Generates the mipmap for this texture
+	 */
+	void GenerateMipmap();
+
+	/**
 	 * Initializes this texture with empty data. All-zero bytes will be written
 	 * to the complete texture.
 	 */

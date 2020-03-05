@@ -3,6 +3,8 @@
  */
 #include "ImageTexture.h"
 
+#include "../Engine.h"
+
 namespace rheel {
 
 std::unordered_map<std::uintptr_t, ImageTexture> ImageTexture::_texture_cache;
@@ -29,6 +31,10 @@ ImageTexture::ImageTexture(const Image& image)
 	}
 
 	_texture.SetData(GL_RGBA, GL_FLOAT, glData);
+
+	if (Engine::GetDisplayConfiguration().enable_mipmaps) {
+		_texture.GenerateMipmap();
+	}
 
 	delete[] glData;
 }

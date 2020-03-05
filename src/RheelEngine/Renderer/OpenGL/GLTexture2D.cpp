@@ -43,6 +43,11 @@ void GLTexture2D::SetWrapParameterT(GL::WrapParameter parameter) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GLint(parameter));
 }
 
+void GLTexture2D::GenerateMipmap() {
+	Bind();
+	glGenerateMipmap(GL_TEXTURE_2D);
+}
+
 void GLTexture2D::InitializeEmpty(GLenum format) {
 	std::vector<GLubyte> zeroBytes(_width * _height * 16, 0);
 	SetData(format, GL_UNSIGNED_BYTE, zeroBytes.data());

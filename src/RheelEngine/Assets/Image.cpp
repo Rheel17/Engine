@@ -3,6 +3,8 @@
  */
 #include "Image.h"
 
+#include <iterator>
+
 namespace rheel {
 
 Image::Image(unsigned width, unsigned height) :
@@ -30,6 +32,17 @@ const Color& Image::At(unsigned x, unsigned y) const {
 Color& Image::At(unsigned x, unsigned y) {
 	auto data = _GetRaw();
 	return data->pixels[y * data->width + x];
+}
+
+Image Image::SubImage(unsigned x, unsigned y, unsigned width, unsigned height) const {
+	Image image(width, height);
+	for (unsigned i = 0; i < width; i++) {
+		for (unsigned j = 0; j < height; j++) {
+			image.At(i, j) = At(i + x, j + y);
+		}
+	}
+
+	return std::move(image);
 }
 
 const float *Image::GetRawColorData() const {
