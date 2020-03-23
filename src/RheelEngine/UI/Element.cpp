@@ -14,9 +14,9 @@ namespace rheel {
 #define MODE_COLORED    1
 #define MODE_TEXTURED   2
 
-std::unique_ptr<GLShaderProgram> Element::_ui_shader(nullptr);
-std::unique_ptr<GLVertexArray> Element::_ui_vao(nullptr);
-std::unique_ptr<GLBuffer> Element::_ui_vertex_data(nullptr);
+std::unique_ptr<_GLShaderProgram> Element::_ui_shader(nullptr);
+std::unique_ptr<_GLVertexArray> Element::_ui_vao(nullptr);
+std::unique_ptr<_GLBuffer> Element::_ui_vertex_data(nullptr);
 bool Element::_initialized = false;
 
 bool Element::Bounds::operator==(const Bounds& bounds) const {
@@ -240,17 +240,17 @@ void Element::_DrawColoredQuad(const Bounds& bounds, const Color& color) {
 			Vertex({ bounds.x + bounds.width, bounds.y }, color));
 }
 
-void Element::_DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const GLTexture2D& texture) {
+void Element::_DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const _GLTexture2D& texture) {
 	texture.Bind(0);
 	_Draw({ v1, v2, v3 }, MODE_TEXTURED);
 }
 
-void Element::_DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const GLTexture2D& texture) {
+void Element::_DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const _GLTexture2D& texture) {
 	texture.Bind(0);
 	_Draw({ v1, v2, v3, v3, v4, v1 }, MODE_TEXTURED);
 }
 
-void Element::_DrawTexturedQuad(const Bounds& bounds, const GLTexture2D& texture) {
+void Element::_DrawTexturedQuad(const Bounds& bounds, const _GLTexture2D& texture) {
 	_DrawTexturedQuad(
 			Vertex({ bounds.x, bounds.y }, { 0.0f, 1.0f }),
 			Vertex({ bounds.x, bounds.y + bounds.height }, { 0.0f, 0.0f }),
@@ -278,7 +278,7 @@ void Element::_Draw(const std::vector<Vertex>& vertices, int mode, float alpha) 
 
 	_ui_shader->GetUniform("uiMode") = mode;
 	_ui_shader->GetUniform("alpha") = alpha;
-	_ui_vertex_data->SetData(vertices, GLBuffer::STREAM_DRAW);
+	_ui_vertex_data->SetData(vertices, _GLBuffer::STREAM_DRAW);
 	_ui_vao->Bind();
 
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
@@ -289,16 +289,16 @@ void Element::_Initialize() {
 		return;
 	}
 
-	_ui_shader = std::make_unique<GLShaderProgram>();
-	_ui_shader->AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
-	_ui_shader->AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_uishader_frag_glsl"));
+	_ui_shader = std::make_unique<_GLShaderProgram>();
+	_ui_shader->AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
+	_ui_shader->AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_uishader_frag_glsl"));
 	_ui_shader->Link();
 
 	const DisplayConfiguration::Resolution& screenDimension = Engine::GetDisplayConfiguration().resolution;
 	_ui_shader->GetUniform("screenDimensions") = vec2 { screenDimension.width, screenDimension.height };
 
-	_ui_vertex_data = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);
-	_ui_vao = std::make_unique<GLVertexArray>();
+	_ui_vertex_data = std::make_unique<_GLBuffer>(_GL::BufferTarget::ARRAY);
+	_ui_vao = std::make_unique<_GLVertexArray>();
 	_ui_vao->SetVertexAttributes<vec2, vec4, vec2>(*_ui_vertex_data);
 
 	_initialized = true;

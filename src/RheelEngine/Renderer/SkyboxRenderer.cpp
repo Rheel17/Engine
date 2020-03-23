@@ -19,13 +19,13 @@ namespace rheel {
 
 SkyboxRenderer::SkyboxRenderer(SceneRenderManager *manager) :
 		_manager(manager),
-		_vertex_buffer_object(GL::BufferTarget::ARRAY),
-		_element_array_buffer(GL::BufferTarget::ELEMENT_ARRAY),
+		_vertex_buffer_object(_GL::BufferTarget::ARRAY),
+		_element_array_buffer(_GL::BufferTarget::ELEMENT_ARRAY),
 		_texture_parts({{ Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null() }}) {
 
 	// initialize the shader
-	_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_skybox_vert_glsl"));
-	_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_skybox_frag_glsl"));
+	_shader.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_skybox_vert_glsl"));
+	_shader.AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_skybox_frag_glsl"));
 	_shader.Link();
 	_shader["textures"] = std::vector<GLint>{ 0, 1, 2, 3, 4, 5 };
 
@@ -68,10 +68,10 @@ void SkyboxRenderer::Render(Camera *camera, unsigned width, unsigned height) con
 
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
 
-		GL::ClearVertexArrayBinding();
+		_GL::ClearVertexArrayBinding();
 
 		for (int i = 0; i < 6; i++) {
-			GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, i);
+			_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, i);
 		}
 	}
 }

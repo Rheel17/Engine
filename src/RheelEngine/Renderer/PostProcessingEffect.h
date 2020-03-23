@@ -5,8 +5,8 @@
 #define POSTPROCESSINGEFFECT_H_
 #include "../_common.h"
 
-#include "OpenGL/GLFramebuffer.h"
-#include "OpenGL/GLVertexArray.h"
+#include "_OpenGL/_GLFramebuffer.h"
+#include "_OpenGL/_GLVertexArray.h"
 
 namespace rheel {
 
@@ -21,7 +21,7 @@ public:
 	/**
 	 * Renders this effect
 	 */
-	virtual const GLFramebuffer& Render(const GLFramebuffer& input) const = 0;
+	virtual const _GLFramebuffer& Render(const _GLFramebuffer& input) const = 0;
 
 protected:
 	/**
@@ -32,12 +32,12 @@ protected:
 	/**
 	 * Returns the index of a temporary framebuffer
 	 */
-	unsigned _GetFramebufferIndex(const GLFramebuffer& buffer) const;
+	unsigned _GetFramebufferIndex(const _GLFramebuffer& buffer) const;
 
 	/**
 	 * Returns the temporary framebuffer at an index
 	 */
-	GLFramebuffer& _Framebuffer(unsigned index) const;
+	_GLFramebuffer& _Framebuffer(unsigned index) const;
 
 	/**
 	 * Sets the use flag of a temporary framebuffer
@@ -52,8 +52,8 @@ private:
 protected:
 	static void _DrawScreenQuad();
 
-	static std::unique_ptr<GLBuffer> _screen_quad_buffer;
-	static std::unique_ptr<GLVertexArray> _screen_quad;
+	static std::unique_ptr<_GLBuffer> _screen_quad_buffer;
+	static std::unique_ptr<_GLVertexArray> _screen_quad;
 
 };
 

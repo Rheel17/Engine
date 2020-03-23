@@ -95,7 +95,7 @@ public:
 	float SpecularFactor() const;
 
 	/**
-	 * Binds the texture images as OpenGL textures.
+	 * Binds the texture images as _OpenGL textures.
 	 *
 	 * 0: ambient
 	 * 1: diffuse

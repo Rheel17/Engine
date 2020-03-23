@@ -14,10 +14,10 @@
 
 namespace rheel {
 
-class GL;
+class _GL;
 
 class RE_API GLhandle {
-	friend class GL;
+	friend class _GL;
 
 	typedef std::function<void(GLsizei, GLuint *)> _Generator;
 	typedef std::function<void(GLsizei, GLuint *)> _Deleter;
@@ -27,7 +27,7 @@ public:
 	GLhandle() : _valid(false), _handle(nullptr) {}
 
 	/*
-	 * When the handle is valid, it returns the OpenGL id of the object. If
+	 * When the handle is valid, it returns the _OpenGL id of the object. If
 	 * the handle is not valid, it always returns 0.
 	 */
 	inline operator GLuint() const { return _valid ? *_handle : 0; }
@@ -41,7 +41,7 @@ private:
 	GLhandle(_Generator generator, _Deleter deleter) :
 			_valid(true) {
 
-		// create the OpenGL object
+		// create the _OpenGL object
 		GLuint *id = new GLuint;
 		generator(1, id);
 
@@ -58,18 +58,16 @@ private:
 
 };
 
-class RE_API GL {
+class RE_API _GL {
 
 private:
 	struct _BindingState {
 		std::array<GLuint, 13> bound_buffer = { 0 };
 		std::array<GLuint, 2> bound_framebuffer = { 0 };
+		std::array<ivec2, 2> bound_framebuffer_sizes = {};
 		GLuint bound_renderbuffer = 0;
 		std::array<std::array<GLuint, 11>, 16> bound_texture = { 0 };
 		GLuint bound_vertex_array = 0;
-
-		GLuint bound_framebuffer_width = 0;
-		GLuint bound_framebuffer_height = 0;
 	};
 
 public:
@@ -134,10 +132,10 @@ private:
 
 	// Delete all the default con/de-structors, copy/assignment, etc.
 private:
-	GL() = delete;
-	~GL() = delete;
-	GL(const GL&) = delete;
-	GL operator=(const GL&) = delete;
+	_GL() = delete;
+	~_GL() = delete;
+	_GL(const _GL&) = delete;
+	_GL operator=(const _GL&) = delete;
 
 public:
 	// GLhandle creators
@@ -185,12 +183,12 @@ private:
 	static bool _BindVertexArray(GLuint handle);
 
 public:
-	static bool BindBuffer(GLhandle handle, BufferTarget target);
-	static bool BindFramebuffer(GLhandle handle, GLuint width, GLuint height, FramebufferTarget target);
-	static bool BindFramebuffer(GLhandle handle, GLuint width, GLuint height);
-	static bool BindRenderbuffer(GLhandle handle);
-	static bool BindTexture(GLhandle handle, TextureTarget target, GLuint textureUnit = 0);
-	static bool BindVertexArray(GLhandle handle);
+	static bool BindBuffer(const GLhandle& handle, BufferTarget target);
+	static bool BindFramebuffer(const GLhandle& handle, GLuint width, GLuint height, FramebufferTarget target);
+	static bool BindFramebuffer(const GLhandle& handle, GLuint width, GLuint height);
+	static bool BindRenderbuffer(const GLhandle& handle);
+	static bool BindTexture(const GLhandle& handle, TextureTarget target, GLuint textureUnit = 0);
+	static bool BindVertexArray(const GLhandle& handle);
 
 	static bool ClearBufferBinding(BufferTarget target, bool force = false);
 	static bool ClearFramebufferBinding(FramebufferTarget target);

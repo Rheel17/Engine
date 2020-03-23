@@ -31,7 +31,7 @@ void SceneRenderer::SetSize(unsigned width, unsigned height) {
 	Resize(width, height);
 }
 
-const GLFramebuffer& SceneRenderer::ResultBuffer() const {
+const _GLFramebuffer& SceneRenderer::ResultBuffer() const {
 	return _result_buffer;
 }
 

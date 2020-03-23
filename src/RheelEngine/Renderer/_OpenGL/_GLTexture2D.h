@@ -5,17 +5,17 @@
 #define GLTEXTURE2D_H_
 #include "../../_common.h"
 
-#include "GL.h"
+#include "_GL.h"
 
 namespace rheel {
 
-class RE_API GLTexture2D {
+class RE_API _GLTexture2D {
 
 public:
-	GLTexture2D(GLuint width, GLuint height, GLuint internalFormat);
+	_GLTexture2D(GLuint width, GLuint height, GLuint internalFormat);
 
 	/**
-	 * Returns the internal OpenGL ID of this texture.
+	 * Returns the internal _OpenGL ID of this texture.
 	 */
 	GLuint ID() const;
 
@@ -27,22 +27,22 @@ public:
 	/**
 	 * Sets the minifying function for this texture.
 	 */
-	void SetMinifyingFilter(GL::FilterFunction filterFunction);
+	void SetMinifyingFilter(_GL::FilterFunction filterFunction);
 
 	/**
 	 * Sets the magnification function for this texture.
 	 */
-	void SetMagnificationFilter(GL::FilterFunction filterFuntion);
+	void SetMagnificationFilter(_GL::FilterFunction filterFuntion);
 
 	/**
 	 * Sets the wrapping parameter for the horizontal direction.
 	 */
-	void SetWrapParameterS(GL::WrapParameter parameter);
+	void SetWrapParameterS(_GL::WrapParameter parameter);
 
 	/**
 	 * Sets the wrapping parameter for the vertical direction.
 	 */
-	void SetWrapParameterT(GL::WrapParameter parameter);
+	void SetWrapParameterT(_GL::WrapParameter parameter);
 
 	/**
 	 * Sets the anisotropy parameter

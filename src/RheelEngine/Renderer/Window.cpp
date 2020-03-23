@@ -88,7 +88,7 @@ void Window::Show() {
 	glfwSetScrollCallback(window, glfw_ScrollCallback);
 	glfwSetWindowFocusCallback(window, glfw_WindowFocusCallback);
 
-	// initialize OpenGL
+	// initialize _OpenGL
 	glfwMakeContextCurrent(window);
 	if (glewInit() != GLEW_OK) {
 		throw std::runtime_error("Failed to initialize GLEW.");
@@ -100,7 +100,7 @@ void Window::Show() {
 	}
 
 #ifdef RE_DEBUG
-	// initialize OpenGL debugging
+	// initialize _OpenGL debugging
 	GLint debugFlags;
 	glGetIntegerv(GL_CONTEXT_FLAGS, &debugFlags);
 
@@ -151,8 +151,8 @@ void Window::Loop() {
 			Engine::GetSceneRenderManager(scene).Update();
 		}
 
-		// initialize OpenGL state
-		GLShaderProgram::ClearUse();
+		// initialize _OpenGL state
+		_GLShaderProgram::ClearUse();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// draw the game
@@ -228,7 +228,7 @@ static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity
 	}
 
 	std::stringstream ss;
-	ss << "OpenGL " << id << ": ";
+	ss << "_OpenGL " << id << ": ";
 
 	switch (source) {
 		case GL_DEBUG_SOURCE_API:			  ss << "source=API";				break;

@@ -7,12 +7,12 @@
 
 namespace rheel {
 
-std::unordered_map<std::uintptr_t, GLShaderProgram> CustomShaderModelRenderer::_shader_cache;
+std::unordered_map<std::uintptr_t, _GLShaderProgram> CustomShaderModelRenderer::_shader_cache;
 
 CustomShaderModelRenderer::CustomShaderModelRenderer(const Model& model, const Shader& shader) :
-		_vertex_buffer_object(GL::BufferTarget::ARRAY),
-		_element_array_buffer(GL::BufferTarget::ELEMENT_ARRAY),
-		_object_data_buffer(GL::BufferTarget::ARRAY),
+		_vertex_buffer_object(_GL::BufferTarget::ARRAY),
+		_element_array_buffer(_GL::BufferTarget::ELEMENT_ARRAY),
+		_object_data_buffer(_GL::BufferTarget::ARRAY),
 		_index_count(model.GetIndices().size()),
 		_shader(_GetCompiledShader(shader)) {
 
@@ -24,7 +24,7 @@ CustomShaderModelRenderer::CustomShaderModelRenderer(const Model& model, const S
 	_vao.SetVertexIndices(_element_array_buffer);
 	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ModelRenderer::ObjectData), true);
 
-	GL::ClearVertexArrayBinding();
+	_GL::ClearVertexArrayBinding();
 }
 
 ModelRenderer::ObjectDataPtr CustomShaderModelRenderer::AddObject() {
@@ -44,28 +44,28 @@ void CustomShaderModelRenderer::RemoveObject(ModelRenderer::ObjectDataPtr&& obje
 void CustomShaderModelRenderer::RenderToShadowMap() const {
 	_vao.Bind();
 
-	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
+	_object_data_buffer.SetData(_objects, _GLBuffer::STREAM_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
 
-	GL::ClearVertexArrayBinding();
+	_GL::ClearVertexArrayBinding();
 }
 
 void CustomShaderModelRenderer::RenderObjects() const {
 	_shader.Use();
 	_vao.Bind();
 
-	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
+	_object_data_buffer.SetData(_objects, _GLBuffer::STREAM_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
 
-	GL::ClearVertexArrayBinding();
-	GLShaderProgram::ClearUse();
+	_GL::ClearVertexArrayBinding();
+	_GLShaderProgram::ClearUse();
 }
 
-GLShaderProgram& CustomShaderModelRenderer::GetShaderProgram() {
+_GLShaderProgram& CustomShaderModelRenderer::GetShaderProgram() {
 	return _shader;
 }
 
-GLShaderProgram& CustomShaderModelRenderer::_GetCompiledShader(const Shader& shader) {
+_GLShaderProgram& CustomShaderModelRenderer::_GetCompiledShader(const Shader& shader) {
 	auto address = shader.GetAddress();
 	auto iter = _shader_cache.find(address);
 
@@ -75,9 +75,9 @@ GLShaderProgram& CustomShaderModelRenderer::_GetCompiledShader(const Shader& sha
 		shaderSource += "#line 1\n";
 		shaderSource += shader.GetSource();
 
-		GLShaderProgram shaderProgram;
-		shaderProgram.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
-		shaderProgram.AddShaderFromSource(GLShaderProgram::FRAGMENT, std::move(shaderSource));
+		_GLShaderProgram shaderProgram;
+		shaderProgram.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
+		shaderProgram.AddShaderFromSource(_GLShaderProgram::FRAGMENT, std::move(shaderSource));
 		shaderProgram.Link();
 
 		iter = _shader_cache.emplace(shader.GetAddress(), std::move(shaderProgram)).first;

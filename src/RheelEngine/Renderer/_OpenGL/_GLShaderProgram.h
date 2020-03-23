@@ -9,13 +9,13 @@
 #include <iostream>
 #endif
 
-#include "GL.h"
+#include "_GL.h"
 
 namespace rheel {
 
 class RE_API GLShaderProgramBindings {
 	friend class GLShaderUniform;
-	friend class GLShaderProgram;
+	friend class _GLShaderProgram;
 
 public:
 	GLShaderProgramBindings() = delete;
@@ -97,14 +97,14 @@ private:
 };
 
 /**
- * Use this class for a high-level representation of an OpenGL shader. After
+ * Use this class for a high-level representation of an _OpenGL shader. After
  * creating an instance, add shader source by calling AddShaderFromSource(...)
  * or AddShaderFromFile(...). Before the first use, call Link() to actually
  * compile and link the Shaders. The function Use() should be used to use this
  * shader program. The operator [] with string arguments can be used to set
  * uniform variables.
  */
-class RE_API GLShaderProgram {
+class RE_API _GLShaderProgram {
 
 public:
 	enum ShaderType {

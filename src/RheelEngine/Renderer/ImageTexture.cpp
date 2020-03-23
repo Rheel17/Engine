@@ -17,21 +17,21 @@ ImageTexture::ImageTexture(const Image& image)
 		: _texture(image.GetWidth(), image.GetHeight(), GL_RGBA) {
 
 	if (Engine::GetDisplayConfiguration().enable_mipmaps) {
-		_texture.SetMinifyingFilter(GL::FilterFunction::LINEAR_MIPMAP_LINEAR);
+		_texture.SetMinifyingFilter(_GL::FilterFunction::LINEAR_MIPMAP_LINEAR);
 	} else {
-		_texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
+		_texture.SetMinifyingFilter(_GL::FilterFunction::LINEAR);
 	}
 
-	_texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
-	_texture.SetWrapParameterS(GL::WrapParameter::REPEAT);
-	_texture.SetWrapParameterT(GL::WrapParameter::REPEAT);
+	_texture.SetMagnificationFilter(_GL::FilterFunction::LINEAR);
+	_texture.SetWrapParameterS(_GL::WrapParameter::REPEAT);
+	_texture.SetWrapParameterT(_GL::WrapParameter::REPEAT);
 	_texture.SetAnisotropyParameter(Engine::GetDisplayConfiguration().anisotropic_level);
 
 	unsigned w = image.GetWidth(), h = image.GetHeight();
 	const float *data = image.GetRawColorData();
 	auto glData = new float[w * h * 4];
 
-	// reverse the y-coordinate of the image for OpenGL.
+	// reverse the y-coordinate of the image for _OpenGL.
 	for (unsigned y = 0; y < h; y++) {
 		memcpy(glData + y * w * 4, data + (h - y - 1) * w * 4, w * 4 * sizeof(float));
 	}

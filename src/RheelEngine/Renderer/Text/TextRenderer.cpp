@@ -14,12 +14,15 @@
 
 namespace rheel {
 
-std::unique_ptr<GLBuffer> TextRenderer::_triangle_buffer(nullptr);
-std::unique_ptr<GLVertexArray> TextRenderer::_vao(nullptr);
-std::unique_ptr<GLBuffer> TextRenderer::_resolve_vbo(nullptr);
-std::unique_ptr<GLVertexArray> TextRenderer::_resolve_vao(nullptr);
-GLShaderProgram TextRenderer::_shader;
+std::unique_ptr<_GLBuffer> TextRenderer::_triangle_buffer(nullptr);
+std::unique_ptr<_GLVertexArray> TextRenderer::_vao(nullptr);
+std::unique_ptr<_GLBuffer> TextRenderer::_resolve_vbo(nullptr);
+std::unique_ptr<_GLVertexArray> TextRenderer::_resolve_vao(nullptr);
+std::unique_ptr<_GLFramebuffer> TextRenderer::_text_buffer(nullptr);
+_GLShaderProgram TextRenderer::_shader;
 bool TextRenderer::_initialized(false);
+unsigned TextRenderer::_width(1);
+unsigned TextRenderer::_height(1);
 
 // This text rendering system is based on the amazing blog post by Evan Wallace:
 // https://medium.com/@evanwallace/easy-scalable-text-rendering-on-the-gpu-c3f4d782c5ac
@@ -51,24 +54,40 @@ void TextRenderer::_Initialize() {
 		return;
 	}
 
-	_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
-	_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
+	_shader.AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
+	_shader.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
 	_shader.Link();
 
-	_triangle_buffer = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);
+	_triangle_buffer = std::make_unique<_GLBuffer>(_GL::BufferTarget::ARRAY);
 	_triangle_buffer->SetData(nullptr, 0);
 
-	_vao = std::make_unique<GLVertexArray>();
+	_vao = std::make_unique<_GLVertexArray>();
 	_vao->SetVertexAttributes<vec3>(*_triangle_buffer);
 
 	GLfloat triangles[] = { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
-	_resolve_vbo = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);
+	_resolve_vbo = std::make_unique<_GLBuffer>(_GL::BufferTarget::ARRAY);
 	_resolve_vbo->SetData(triangles, sizeof(triangles));
 
-	_resolve_vao = std::make_unique<GLVertexArray>();
+	_resolve_vao = std::make_unique<_GLVertexArray>();
 	_resolve_vao->SetVertexAttributes<vec2>(*_resolve_vbo);
 
+	_text_buffer = std::make_unique<_GLFramebuffer>(_width, _height);
+	_text_buffer->AddTexture(GL_RGBA, GL_RGBA);
+	_text_buffer->AddRenderbuffer(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+	_text_buffer->Create();
+
 	_initialized = true;
+}
+
+void TextRenderer::_ResizeBuffer(unsigned width, unsigned height) {
+	if (_text_buffer) {
+		if (_text_buffer->Width() != width || _text_buffer->Height() != height) {
+			*_text_buffer = _text_buffer->ResizedCopy(width, height);
+		}
+	} else {
+		_width = width;
+		_height = height;
+	}
 }
 
 int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
@@ -95,7 +114,7 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	std::vector<Character::Triangle> triangles;
 	std::vector<Character::Triangle> bezierCurves;
 
-	// load the characters and populate the triangle and Bézier curve vectors.
+	// load the characters and populate the triangle and BÃ©zier curve vectors.
 	for (unsigned i = 0; i < length; i++) {
 		const Character& c = font.LoadCharacter(text[i]);
 		std::vector<Character::Triangle> cTriangles = c.Triangles();
@@ -112,6 +131,11 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 		px += c.Advance() * sx;
 	}
 
+	// set the text buffer as render target
+	_GL::PushState();
+	_text_buffer->BindForDrawing();
+	glClearDepth(GL_COLOR_BUFFER_BIT);
+
 	// enable the stencil buffer
 	glEnable(GL_STENCIL_TEST);
 
@@ -119,10 +143,12 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	bool isBlend = glIsEnabled(GL_BLEND);
 	glEnable(GL_BLEND);
 
-	GLint src, dst;
-	glGetIntegerv(GL_BLEND_SRC, &src);
-	glGetIntegerv(GL_BLEND_DST, &dst);
-	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+	GLint srcRGB, dstRGB, srcAlpha, dstAlpha;
+	glGetIntegerv(GL_BLEND_SRC_RGB, &srcRGB);
+	glGetIntegerv(GL_BLEND_DST_RGB, &dstRGB);
+	glGetIntegerv(GL_BLEND_SRC_ALPHA, &srcAlpha);
+	glGetIntegerv(GL_BLEND_DST_ALPHA, &dstAlpha);
+	glBlendFunc(GL_ONE, GL_ONE);
 
 	float subpixelWidth = 2.0f / (screen.width * 8);
 	float subpixelHeight = 2.0f / (screen.height * 8);
@@ -135,13 +161,23 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	_DrawTriangles(triangles, bezierCurves, { subpixelWidth *  1, subpixelHeight * -3 });
 
 	// reset the gl state
-	glBlendFunc(src, dst);
+	glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
 
 	if (!isBlend) {
 		glDisable(GL_BLEND);
 	}
 
 	glDisable(GL_STENCIL_TEST);
+	_GL::PopState();
+
+	// draw the text to the current framebuffer
+	_GL::PushState();
+	_text_buffer->BindForReading();
+
+	glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+	_GL::PopState();
+
 	return x;
 }
 

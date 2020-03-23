@@ -1,11 +1,11 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#include "GLFramebuffer.h"
+#include "_GLFramebuffer.h"
 
 namespace rheel {
 
-GLFramebuffer::GLFramebuffer(GLuint width, GLuint height, GLuint samples, bool forceMultisampled) :
+_GLFramebuffer::_GLFramebuffer(GLuint width, GLuint height, GLuint samples, bool forceMultisampled) :
 		_width(width), _height(height), _samples(samples),
 		_is_multisampled(samples != 1 || forceMultisampled), _created(false) {
 
@@ -17,15 +17,15 @@ GLFramebuffer::GLFramebuffer(GLuint width, GLuint height, GLuint samples, bool f
 		_height = 1;
 	}
 
-	_id = GL::GenFramebuffer();
+	_id = _GL::GenFramebuffer();
 }
 
-GLuint GLFramebuffer::ID() const {
+GLuint _GLFramebuffer::ID() const {
 	return _id;
 }
 
-GLFramebuffer GLFramebuffer::ResizedCopy(GLuint width, GLuint height) {
-	GLFramebuffer newBuffer(width, height, _samples);
+_GLFramebuffer _GLFramebuffer::ResizedCopy(GLuint width, GLuint height) {
+	_GLFramebuffer newBuffer(width, height, _samples);
 
 	for (auto t : _texture_add_info) {
 		newBuffer.AddTexture(std::get<0>(t), std::get<1>(t), std::get<2>(t));
@@ -42,31 +42,31 @@ GLFramebuffer GLFramebuffer::ResizedCopy(GLuint width, GLuint height) {
 	return newBuffer;
 }
 
-void GLFramebuffer::Bind() const {
-	GL::BindFramebuffer(_id, _width, _height);
+void _GLFramebuffer::Bind() const {
+	_GL::BindFramebuffer(_id, _width, _height);
 }
 
-void GLFramebuffer::BindForReading() const {
-	GL::BindFramebuffer(_id, _width, _height, GL::FramebufferTarget::READ);
+void _GLFramebuffer::BindForReading() const {
+	_GL::BindFramebuffer(_id, _width, _height, _GL::FramebufferTarget::READ);
 }
 
-void GLFramebuffer::BindForDrawing() const {
-	GL::BindFramebuffer(_id, _width, _height, GL::FramebufferTarget::DRAW);
+void _GLFramebuffer::BindForDrawing() const {
+	_GL::BindFramebuffer(_id, _width, _height, _GL::FramebufferTarget::DRAW);
 }
 
-void GLFramebuffer::ClearBinding() {
-	GL::ClearFramebufferBinding();
+void _GLFramebuffer::ClearBinding() {
+	_GL::ClearFramebufferBinding();
 }
 
-void GLFramebuffer::ClearBindingForReading() {
-	GL::ClearFramebufferBinding(GL::FramebufferTarget::READ);
+void _GLFramebuffer::ClearBindingForReading() {
+	_GL::ClearFramebufferBinding(_GL::FramebufferTarget::READ);
 }
 
-void GLFramebuffer::ClearBindingForDrawing() {
-	GL::ClearFramebufferBinding(GL::FramebufferTarget::DRAW);
+void _GLFramebuffer::ClearBindingForDrawing() {
+	_GL::ClearFramebufferBinding(_GL::FramebufferTarget::DRAW);
 }
 
-void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format) {
+void _GLFramebuffer::AddTexture(GLint internalFormat, GLenum format) {
 	// get the maximum color attachment
 	int maxColorAttachments;
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
@@ -82,7 +82,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format) {
 	throw std::runtime_error("Ran out of color attachments (max=" + std::to_string(maxColorAttachments) + ")");
 }
 
-void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attachment) {
+void _GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attachment) {
 	if (_created) {
 		throw std::runtime_error("Framebuffer already created");
 	}
@@ -94,7 +94,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attac
 			throw std::runtime_error("Attachment " + std::to_string(attachment) + " already in use.");
 		}
 	} else {
-		if (attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT) {
+		if (attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT && attachment != GL_DEPTH_STENCIL_ATTACHMENT) {
 			throw std::runtime_error("Invalid attachment");
 		}
 
@@ -107,7 +107,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attac
 
 	if (_is_multisampled) {
 		// generate and bind the texture
-		GLTexture2DMultisample texture(_width, _height, _samples);
+		_GLTexture2DMultisample texture(_width, _height, _samples);
 		texture.Bind();
 
 		// initialize texture
@@ -119,14 +119,14 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attac
 		_multisample_textures.push_back(texture);
 	} else {
 		// generate and bind the texture
-		GLTexture2D texture(_width, _height, internalFormat);
+		_GLTexture2D texture(_width, _height, internalFormat);
 		texture.Bind();
 
 		// set texture parameters
-		texture.SetWrapParameterS(GL::WrapParameter::CLAMP_TO_EDGE);
-		texture.SetWrapParameterT(GL::WrapParameter::CLAMP_TO_EDGE);
-		texture.SetMinifyingFilter(GL::FilterFunction::LINEAR);
-		texture.SetMagnificationFilter(GL::FilterFunction::LINEAR);
+		texture.SetWrapParameterS(_GL::WrapParameter::CLAMP_TO_EDGE);
+		texture.SetWrapParameterT(_GL::WrapParameter::CLAMP_TO_EDGE);
+		texture.SetMinifyingFilter(_GL::FilterFunction::LINEAR);
+		texture.SetMagnificationFilter(_GL::FilterFunction::LINEAR);
 
 		// upload empty texture data
 		texture.InitializeEmpty(format);
@@ -146,7 +146,7 @@ void GLFramebuffer::AddTexture(GLint internalFormat, GLenum format, GLenum attac
 	}
 }
 
-void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
+void _GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
 	if (_created) {
 		throw std::runtime_error("Framebuffer already created");
 	}
@@ -158,7 +158,7 @@ void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
 			throw std::runtime_error("Attachment " + std::to_string(attachment) + " already in use.");
 		}
 	} else {
-		if (attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT) {
+		if (attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT && attachment != GL_DEPTH_STENCIL_ATTACHMENT) {
 			throw std::runtime_error("Invalid attachment");
 		}
 
@@ -170,7 +170,7 @@ void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
 	Bind();
 
 	// generate and bind the renderbuffer
-	GLRenderbuffer renderbuffer(_width, _height, internalFormat, _samples, _is_multisampled);
+	_GLRenderbuffer renderbuffer(_width, _height, internalFormat, _samples, _is_multisampled);
 	renderbuffer.Bind();
 
 	// add the renderbuffer to the framebuffer
@@ -186,7 +186,7 @@ void GLFramebuffer::AddRenderbuffer(GLenum internalFormat, GLenum attachment) {
 	}
 }
 
-void GLFramebuffer::Create() {
+void _GLFramebuffer::Create() {
 	if (_created) {
 		return;
 	}
@@ -212,31 +212,31 @@ void GLFramebuffer::Create() {
 	_created = true;
 }
 
-unsigned GLFramebuffer::Width() const {
+unsigned _GLFramebuffer::Width() const {
 	return _width;
 }
 
-unsigned GLFramebuffer::Height() const {
+unsigned _GLFramebuffer::Height() const {
 	return _height;
 }
 
-bool GLFramebuffer::IsMultisampled() const {
+bool _GLFramebuffer::IsMultisampled() const {
 	return _is_multisampled;
 }
 
-const std::vector<GLTexture2DMultisample>& GLFramebuffer::MultisampleTextures() const {
+const std::vector<_GLTexture2DMultisample>& _GLFramebuffer::MultisampleTextures() const {
 	return _multisample_textures;
 }
 
-const std::vector<GLTexture2D>& GLFramebuffer::Textures() const {
+const std::vector<_GLTexture2D>& _GLFramebuffer::Textures() const {
 	return _textures;
 }
 
-const std::vector<GLRenderbuffer>& GLFramebuffer::Renderbuffers() const {
+const std::vector<_GLRenderbuffer>& _GLFramebuffer::Renderbuffers() const {
 	return _renderbuffers;
 }
 
-bool GLFramebuffer::_IsColorAttachment(GLenum attachment) {
+bool _GLFramebuffer::_IsColorAttachment(GLenum attachment) {
 	if (attachment < GL_COLOR_ATTACHMENT0) {
 		return false;
 	}

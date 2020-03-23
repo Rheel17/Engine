@@ -53,7 +53,7 @@ void TextElement::SetText(std::string text) {
 }
 
 void TextElement::SetText(std::wstring text) {
-	_w_text = text;
+	_w_text = std::move(text);
 	_wide = false;
 
 	SetDefaultSize(_font.StringWidth(_w_text, _size), _font_ascend + _font_descend);

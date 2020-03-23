@@ -5,11 +5,11 @@
 #define GLBUFFER_H_
 #include "../../_common.h"
 
-#include "GL.h"
+#include "_GL.h"
 
 namespace rheel {
 
-class RE_API GLBuffer {
+class RE_API _GLBuffer {
 
 public:
 	enum Usage {
@@ -26,19 +26,19 @@ public:
 
 public:
 	/**
-	 * Creates an OpenGL buffer, with the specified target.
+	 * Creates an _OpenGL buffer, with the specified target.
 	 */
-	GLBuffer(GL::BufferTarget target);
+	_GLBuffer(_GL::BufferTarget target);
 
 	/**
-	 * Returns the internal OpenGL ID of this buffer.
+	 * Returns the internal _OpenGL ID of this buffer.
 	 */
 	GLuint ID() const;
 
 	/**
 	 * Returns the binding target of this buffer.
 	 */
-	GL::BufferTarget Target() const;
+	_GL::BufferTarget Target() const;
 
 	/**
 	 * Binds this buffer to the previously specified target.
@@ -55,20 +55,20 @@ public:
 	 * force is false (the default), calling this method will only guarantee that the
 	 * next Bind() call will call glBindBuffer.
 	 */
-	static void ClearBinding(GL::BufferTarget target, bool force = false);
+	static void ClearBinding(_GL::BufferTarget target, bool force = false);
 
 	/**
 	 * Set the contents of the buffer. Size bytes will be read from the data pointer.
-	 * Use the usage parameter to specify usage hits to OpenGL. Default is STATIC_DRAW.
-	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * Use the usage parameter to specify usage hits to _OpenGL. Default is STATIC_DRAW.
+	 * See https://www.khronos.org/registry/_OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
 	void SetData(const void *data, GLsizeiptr size, Usage usage = STATIC_DRAW);
 
 	/**
 	 * Sets the contents of the buffer. The complete vector will be read in its order.
-	 * Use the usage parameter to specify usage hits to OpenGL. Default is STATIC_DRAW.
-	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * Use the usage parameter to specify usage hits to _OpenGL. Default is STATIC_DRAW.
+	 * See https://www.khronos.org/registry/_OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
 	template<typename T, typename _Alloc>
@@ -78,7 +78,7 @@ public:
 
 private:
 	GLhandle _id;
-	GL::BufferTarget _target;
+	_GL::BufferTarget _target;
 
 };
 

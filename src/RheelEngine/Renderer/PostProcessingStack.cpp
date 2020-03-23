@@ -7,9 +7,9 @@ namespace rheel {
 
 PostProcessingStack::PostProcessingStack() :
 		_temp_buffers({
-				std::make_pair<GLFramebuffer>(GLFramebuffer(1, 1), false),
-				std::make_pair<GLFramebuffer>(GLFramebuffer(1, 1), false),
-				std::make_pair<GLFramebuffer>(GLFramebuffer(1, 1), false)
+				std::make_pair<_GLFramebuffer>(_GLFramebuffer(1, 1), false),
+				std::make_pair<_GLFramebuffer>(_GLFramebuffer(1, 1), false),
+				std::make_pair<_GLFramebuffer>(_GLFramebuffer(1, 1), false)
 		}) {
 
 	for (auto& b : _temp_buffers) {
@@ -18,7 +18,7 @@ PostProcessingStack::PostProcessingStack() :
 	}
 }
 
-void PostProcessingStack::Render(const GLFramebuffer& input, const ivec2& pos, const ivec2& size) const {
+void PostProcessingStack::Render(const _GLFramebuffer& input, const ivec2& pos, const ivec2& size) const {
 	// set size
 	_width = size.x;
 	_height = size.y;
@@ -29,13 +29,13 @@ void PostProcessingStack::Render(const GLFramebuffer& input, const ivec2& pos, c
 	}
 
 	// resolve the input as first buffer
-	std::reference_wrapper<const GLFramebuffer> inputBuffer =
+	std::reference_wrapper<const _GLFramebuffer> inputBuffer =
 			std::ref(_ResolveInput(input));
 
 	// helper function for rendering a single effect
 	static const auto pp = [&inputBuffer, this](const auto& effect) {
 		if (effect) {
-			const GLFramebuffer& prev = inputBuffer.get();
+			const _GLFramebuffer& prev = inputBuffer.get();
 			inputBuffer = std::ref(effect->Render(inputBuffer.get()));
 
 			if (&inputBuffer.get() != &prev) {
@@ -49,7 +49,7 @@ void PostProcessingStack::Render(const GLFramebuffer& input, const ivec2& pos, c
 
 	// resolve to the default frame buffer
 	inputBuffer.get().BindForReading();
-	GL::ClearFramebufferBinding(GL::FramebufferTarget::DRAW);
+	_GL::ClearFramebufferBinding(_GL::FramebufferTarget::DRAW);
 
 	glBlitFramebuffer(
 			0, 0, _width, _height,
@@ -57,14 +57,14 @@ void PostProcessingStack::Render(const GLFramebuffer& input, const ivec2& pos, c
 			GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
-const GLFramebuffer& PostProcessingStack::_ResolveInput(const GLFramebuffer& input) const {
+const _GLFramebuffer& PostProcessingStack::_ResolveInput(const _GLFramebuffer& input) const {
 	// if the input is multisampled, blit it to the first temporary
 	// framebuffer to result the multisampling.
 	if (input.IsMultisampled()) {
 
 		// setup the framebuffers
 		unsigned index = _UnusedFramebufferIndex();
-		GLFramebuffer& tmp = _Framebuffer(index);
+		_GLFramebuffer& tmp = _Framebuffer(index);
 		_MarkFramebufferUse(index, true);
 
 		tmp.BindForDrawing();
@@ -101,7 +101,7 @@ unsigned PostProcessingStack::_UnusedFramebufferIndex() const {
 	throw std::runtime_error("Out of temp buffers!");
 }
 
-unsigned PostProcessingStack::_GetFramebufferIndex(const GLFramebuffer& buffer) const {
+unsigned PostProcessingStack::_GetFramebufferIndex(const _GLFramebuffer& buffer) const {
 	for (unsigned i = 0; i < _temp_buffers.size(); i++) {
 		if (&_temp_buffers[i].first == &buffer) {
 			return i;
@@ -111,8 +111,8 @@ unsigned PostProcessingStack::_GetFramebufferIndex(const GLFramebuffer& buffer) 
 	throw std::runtime_error("");
 }
 
-GLFramebuffer& PostProcessingStack::_Framebuffer(unsigned index) const {
-	GLFramebuffer& fbo = _temp_buffers[index].first;
+_GLFramebuffer& PostProcessingStack::_Framebuffer(unsigned index) const {
+	_GLFramebuffer& fbo = _temp_buffers[index].first;
 
 	if (fbo.Width() != _width || fbo.Height() != _height) {
 		_temp_buffers[index].first = _temp_buffers[index].first.ResizedCopy(_width, _height);

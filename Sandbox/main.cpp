@@ -10,7 +10,9 @@ public:
 	}
 
 	void Update() override {
-		_element->SetText(std::to_string(int(std::round(1.0 / GetTimeDelta()))) + " FPS");
+		if (_element) {
+			_element->SetText(std::to_string(int(std::round(1.0 / GetTimeDelta()))) + " FPS");
+		}
 	}
 
 private:
@@ -44,11 +46,7 @@ static void createFloor(Entity *floor) {
 
 static Scene *createScene() {
 	auto scene = new Scene();
-
-	static Image skybox = Engine::GetAssetLoader().png.Load("Resources/skybox.png");
-
 	scene->AddRootComponent<FpsUpdater>();
-	scene->AddRootComponent<Skybox>(skybox);
 
 	auto physicsScene = scene->AddRootComponent<PhysicsScene>();
 	physicsScene->SetGravity({ 0.0f, -9.81f, 0.0f });
@@ -99,23 +97,27 @@ class SandboxGame : public Game {
 
 		Container ui;
 
-		SceneElement *sceneElement = ui.InsertElement(SceneElement("main_camera"));
+		auto sceneElement = ui.InsertElement(SceneElement("main_camera"));
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
-		CrosshairElement *crosshairElement = ui.InsertElement(CrosshairElement(20));
+//		auto vignetteElement = ui.InsertElement(VignetteElement());
+//		ui.AddConstraint(vignetteElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
+//		ui.AddConstraint(vignetteElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+
+		auto crosshairElement = ui.InsertElement(CrosshairElement(20));
 		ui.AddConstraint(crosshairElement, Constraint::LEFT, nullptr, Constraint::LEFT);
 		ui.AddConstraint(crosshairElement, Constraint::RIGHT, nullptr, Constraint::RIGHT);
 		ui.AddConstraint(crosshairElement, Constraint::TOP, nullptr, Constraint::TOP);
 		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM);
 
-		TextElement *fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
-		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
+		// auto fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
+		// ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
 
 		Engine::GetUI().SetContainer(std::move(ui));
 		sceneElement->RequestFocus();
 
-		Engine::GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
+		// Engine::GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
 	}
 
 };

@@ -3,7 +3,8 @@
  */
 #include "Engine.h"
 
-#include "Renderer/Text/Font.h"
+#include "Renderer/Text/TextRenderer.h"
+#include "Renderer/OpenGL/State.h"
 
 namespace rheel {
 
@@ -34,7 +35,10 @@ void Engine::_Run(Game *game) {
 				_instance.display_configuration.resolution.width,
 				_instance.display_configuration.resolution.height);
 
-	GL::SetWindowFramebufferSize(
+	GL::StateBindings::_SetDefaultViewport(
+			_instance.display_configuration.resolution.width,
+			_instance.display_configuration.resolution.height);
+	TextRenderer::_ResizeBuffer(
 			_instance.display_configuration.resolution.width,
 			_instance.display_configuration.resolution.height);
 

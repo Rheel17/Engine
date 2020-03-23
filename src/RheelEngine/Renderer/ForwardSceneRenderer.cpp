@@ -42,7 +42,7 @@ void ForwardSceneRenderer::Render(float dt) {
 
 	// initialize the model shaders
 	for (auto modelShaderRef : modelShaders) {
-		GLShaderProgram& modelShader = modelShaderRef;
+		_GLShaderProgram& modelShader = modelShaderRef;
 
 		GetManager()->InitializeShaderLights(modelShader);
 		modelShader["_cameraMatrix"] = camera->CreateMatrix(Width(), Height());
@@ -71,7 +71,7 @@ void ForwardSceneRenderer::Render(float dt) {
 				sm->Textures()[i].Bind(textureUnit++);
 
 				for (auto modelShaderRef : modelShaders) {
-					GLShaderProgram& modelShader = modelShaderRef;
+					_GLShaderProgram& modelShader = modelShaderRef;
 					std::string uniformName = "_lightspaceMatrix" + std::to_string(i);
 
 					if (modelShader.HasUniform(uniformName)) {
@@ -81,7 +81,7 @@ void ForwardSceneRenderer::Render(float dt) {
 			}
 
 			for (auto modelShaderRef : modelShaders) {
-				GLShaderProgram& modelShader = modelShaderRef;
+				_GLShaderProgram& modelShader = modelShaderRef;
 
 				if (modelShader.HasUniform("_shadowMapCount")) modelShader["_shadowMapCount"] = shadowMapCount;
 				if (modelShader.HasUniform("_baseBias")) modelShader["_baseBias"] = sm->Bias();
@@ -90,7 +90,7 @@ void ForwardSceneRenderer::Render(float dt) {
 	}
 
 	// Bind empty shadow map textures to the remaining (if any) shadow map
-	// texture units, to make sure OpenGL doesn't complain about non-depth
+	// texture units, to make sure _OpenGL doesn't complain about non-depth
 	// textures bound to sampler2DShadow uniforms.
 	for (int i = shadowMapCount; i < 4; i++) {
 		ShadowMapDirectional::EmptyShadowMap().Bind(textureUnit++);
@@ -112,8 +112,8 @@ void ForwardSceneRenderer::Render(float dt) {
 	}
 
 	// clear everything again to return to normal
-	GL::ClearFramebufferBinding();
-	GLShaderProgram::ClearUse();
+	_GL::ClearFramebufferBinding();
+	_GLShaderProgram::ClearUse();
 }
 
 void ForwardSceneRenderer::Resize(unsigned width, unsigned height) {}

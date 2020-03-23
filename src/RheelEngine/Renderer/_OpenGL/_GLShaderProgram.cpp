@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#include "GLShaderProgram.h"
+#include "_GLShaderProgram.h"
 
 #include <iostream>
 #include <fstream>
@@ -68,54 +68,54 @@ void GLShaderUniform::operator=(const vec3& value) { _Use(); glUniform3f(_locati
 void GLShaderUniform::operator=(const vec2& value) { _Use(); glUniform2f(_location, value.x, value.y); }
 #pragma clang diagnostic pop
 
-void GLShaderProgram::AddShaderFromSource(ShaderType type, std::string source) {
+void _GLShaderProgram::AddShaderFromSource(ShaderType type, std::string source) {
 	_EnsureNotLinked();
 	_shaders_to_add[type] = std::make_pair(false, std::move(source));
 }
 
-void GLShaderProgram::AddShaderFromFile(ShaderType type, std::string file) {
+void _GLShaderProgram::AddShaderFromFile(ShaderType type, std::string file) {
 	_EnsureNotLinked();
 	_shaders_to_add[type] = std::make_pair(true, std::move(file));
 }
 
-GLShaderUniform& GLShaderProgram::operator[](const std::string& name) const {
+GLShaderUniform& _GLShaderProgram::operator[](const std::string& name) const {
 	_EnsureLinked();
 	_EnsureUniformInstance(name);
 	return _uniforms[name];
 }
 
-GLShaderUniform& GLShaderProgram::operator[](const char *name) const {
+GLShaderUniform& _GLShaderProgram::operator[](const char *name) const {
 	_EnsureLinked();
 	_EnsureUniformInstance(name);
 	return _uniforms[name];
 }
 
-GLShaderUniform& GLShaderProgram::GetUniform(const std::string& name) const {
+GLShaderUniform& _GLShaderProgram::GetUniform(const std::string& name) const {
 	_EnsureLinked();
 	_EnsureUniformInstance(name);
 	return _uniforms[name];
 }
 
-GLShaderUniform& GLShaderProgram::GetUniform(const char *name) const {
+GLShaderUniform& _GLShaderProgram::GetUniform(const char *name) const {
 	_EnsureLinked();
 	_EnsureUniformInstance(name);
 	return _uniforms[name];
 }
 
-bool GLShaderProgram::HasUniform(const std::string& name) const {
+bool _GLShaderProgram::HasUniform(const std::string& name) const {
 	// TODO: optimize by caching the uniform location of all names
 	return glGetUniformLocation(_id, name.c_str()) >= 0;
 }
 
-bool GLShaderProgram::HasUniform(const char *name) const {
+bool _GLShaderProgram::HasUniform(const char *name) const {
 	return glGetUniformLocation(_id, name) >= 0;
 }
 
-void GLShaderProgram::Link() {
+void _GLShaderProgram::Link() {
 	_EnsureNotLinked();
 
-	// create the OpenGL program
-	_id = GL::CreateProgram();
+	// create the _OpenGL program
+	_id = _GL::CreateProgram();
 
 	// actually adds the Shaders to the program
 	std::vector<GLuint> shaders;
@@ -162,7 +162,7 @@ void GLShaderProgram::Link() {
 	_linked = true;
 }
 
-GLuint GLShaderProgram::_AddShaderFromSource(GLuint type, std::string source) {
+GLuint _GLShaderProgram::_AddShaderFromSource(GLuint type, std::string source) {
 	// create the shader object
 	GLuint shader = glCreateShader(type);
 	if (shader == 0) {
@@ -198,7 +198,7 @@ GLuint GLShaderProgram::_AddShaderFromSource(GLuint type, std::string source) {
 	return shader;
 }
 
-GLuint GLShaderProgram::_AddShaderFromFile(GLuint type, std::string file) {
+GLuint _GLShaderProgram::_AddShaderFromFile(GLuint type, std::string file) {
 	std::ifstream f(file);
 
 	if (!f) {
@@ -210,13 +210,13 @@ GLuint GLShaderProgram::_AddShaderFromFile(GLuint type, std::string file) {
 	return _AddShaderFromSource(type, std::move(source));
 }
 
-void GLShaderProgram::_EnsureUniformInstance(const std::string& name) const {
+void _GLShaderProgram::_EnsureUniformInstance(const std::string& name) const {
 	if (_uniforms.find(name) == _uniforms.end()) {
 		_uniforms.emplace(name, GLShaderUniform(_id, _GetUniformLocation(name)));
 	}
 }
 
-GLint GLShaderProgram::_GetUniformLocation(const std::string& name) const {
+GLint _GLShaderProgram::_GetUniformLocation(const std::string& name) const {
 	GLint location = glGetUniformLocation(_id, name.c_str());
 
 	if (location < 0) {
@@ -226,13 +226,13 @@ GLint GLShaderProgram::_GetUniformLocation(const std::string& name) const {
 	return location;
 }
 
-void GLShaderProgram::_EnsureLinked() const {
+void _GLShaderProgram::_EnsureLinked() const {
 	if (!_linked) {
 		throw std::runtime_error("Operation not available before the program is linked");
 	}
 }
 
-void GLShaderProgram::_EnsureNotLinked() const {
+void _GLShaderProgram::_EnsureNotLinked() const {
 	if (_linked) {
 		throw std::runtime_error("Operation not available after the program has been linked");
 	}

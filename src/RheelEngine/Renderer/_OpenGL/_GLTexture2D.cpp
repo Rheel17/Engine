@@ -1,31 +1,31 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#include "GLTexture2D.h"
+#include "_GLTexture2D.h"
 
 namespace rheel {
 
-GLTexture2D::GLTexture2D(GLuint width, GLuint height, GLuint internalFormat) :
+_GLTexture2D::_GLTexture2D(GLuint width, GLuint height, GLuint internalFormat) :
 		_width(width), _height(height), _internal_format(internalFormat) {
 
-	_id = GL::GenTexture();
+	_id = _GL::GenTexture();
 }
 
-GLuint GLTexture2D::ID() const {
+GLuint _GLTexture2D::ID() const {
 	return _id;
 }
 
-void GLTexture2D::Bind(GLuint textureUnit) const {
-	GL::BindTexture(_id, GL::TextureTarget::TEXTURE_2D, textureUnit);
+void _GLTexture2D::Bind(GLuint textureUnit) const {
+	_GL::BindTexture(_id, _GL::TextureTarget::TEXTURE_2D, textureUnit);
 }
 
-void GLTexture2D::SetMinifyingFilter(GL::FilterFunction filterFunction) {
+void _GLTexture2D::SetMinifyingFilter(_GL::FilterFunction filterFunction) {
 	Bind();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GLint(filterFunction));
 }
 
-void GLTexture2D::SetMagnificationFilter(GL::FilterFunction filterFunction) {
-	if (filterFunction != GL::FilterFunction::NEAREST && filterFunction != GL::FilterFunction::LINEAR) {
+void _GLTexture2D::SetMagnificationFilter(_GL::FilterFunction filterFunction) {
+	if (filterFunction != _GL::FilterFunction::NEAREST && filterFunction != _GL::FilterFunction::LINEAR) {
 		throw std::invalid_argument("filterFunction must be NEAREST of LINEAR");
 	}
 
@@ -33,39 +33,39 @@ void GLTexture2D::SetMagnificationFilter(GL::FilterFunction filterFunction) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GLint(filterFunction));
 }
 
-void GLTexture2D::SetWrapParameterS(GL::WrapParameter parameter) {
+void _GLTexture2D::SetWrapParameterS(_GL::WrapParameter parameter) {
 	Bind();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GLint(parameter));
 }
 
-void GLTexture2D::SetWrapParameterT(GL::WrapParameter parameter) {
+void _GLTexture2D::SetWrapParameterT(_GL::WrapParameter parameter) {
 	Bind();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GLint(parameter));
 }
 
-void GLTexture2D::SetAnisotropyParameter(float parameter) {
+void _GLTexture2D::SetAnisotropyParameter(float parameter) {
 	Bind();
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, parameter);
 }
 
-void GLTexture2D::GenerateMipmap() {
+void _GLTexture2D::GenerateMipmap() {
 	Bind();
 	glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-void GLTexture2D::InitializeEmpty(GLenum format) {
+void _GLTexture2D::InitializeEmpty(GLenum format) {
 	std::vector<GLubyte> zeroBytes(_width * _height * 16, 0);
 	SetData(format, GL_UNSIGNED_BYTE, zeroBytes.data());
 }
 
-void GLTexture2D::SetData(GLenum format, GLenum type, const void *data) {
+void _GLTexture2D::SetData(GLenum format, GLenum type, const void *data) {
 	Bind();
 	glTexImage2D(GL_TEXTURE_2D, 0, _internal_format, _width, _height, 0, format, type, data);
 
 	_has_initialized = true;
 }
 
-void GLTexture2D::SetPartialData(int x, int y, unsigned width, unsigned height, GLenum format, GLenum type, const void *data) {
+void _GLTexture2D::SetPartialData(int x, int y, unsigned width, unsigned height, GLenum format, GLenum type, const void *data) {
 	if (!_has_initialized) {
 		InitializeEmpty(format);
 	}

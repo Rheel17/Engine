@@ -1,21 +1,24 @@
 /*
- * Copyright (c) Levi van Rheenen. All rights reserved.
+ * Copyright (c) 2020 Levi van Rheenen
  */
-#include "GLVertexArray.h"
+#include "VertexArray.h"
 
-namespace rheel {
+#include "State.h"
+#include "Capabilities.h"
 
-GLVertexArray::VertexAttribute::VertexAttribute(GLuint index, GLint size, GLenum type, GLsizei stride, GLsizeiptr offset, bool normalize) :
+namespace rheel::GL {
+
+VertexArray::VertexAttribute::VertexAttribute(GLuint index, GLint size, GLenum type, GLsizei stride, GLsizeiptr offset, bool normalize) :
 		_index(index), _size(size), _type(type), _stride(stride), _offset(offset), _normalize(normalize) {
 
-	if (size < 1 && size > 4 && size != GL_RGBA) {
+	if ((size < 1 || size > 4) && size != GL_RGBA) {
 		throw std::invalid_argument("size argument in VertexAttribute must be 1, 2, 3, 4, or GL_RGBA.");
 	}
 
 	if (type != GL_BYTE && type != GL_UNSIGNED_BYTE && type != GL_SHORT && type != GL_UNSIGNED_SHORT &&
-			type != GL_INT && type != GL_UNSIGNED_INT && type != GL_HALF_FLOAT && type != GL_FLOAT &&
-			type != GL_DOUBLE && type != GL_FIXED && type != GL_INT_2_10_10_10_REV &&
-			type != GL_UNSIGNED_INT_2_10_10_10_REV && type != GL_UNSIGNED_INT_10F_11F_11F_REV) {
+		type != GL_INT && type != GL_UNSIGNED_INT && type != GL_HALF_FLOAT && type != GL_FLOAT &&
+		type != GL_DOUBLE && type != GL_FIXED && type != GL_INT_2_10_10_10_REV &&
+		type != GL_UNSIGNED_INT_2_10_10_10_REV && type != GL_UNSIGNED_INT_10F_11F_11F_REV) {
 		throw std::invalid_argument("type argument in VertexAttribute is invalid.");
 	}
 
@@ -36,10 +39,12 @@ GLVertexArray::VertexAttribute::VertexAttribute(GLuint index, GLint size, GLenum
 	}
 }
 
-GLVertexArray::VertexAttribute::VertexAttribute() :
+VertexArray::VertexAttribute::VertexAttribute() :
 		_index(0), _size(0), _type(0), _stride(0), _offset(0), _normalize(false) {}
 
-GLsizei GLVertexArray::VertexAttribute::_ByteSize() const {
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-branch-clone"
+GLsizei VertexArray::VertexAttribute::_ByteSize() const {
 	switch (_type) {
 		case GL_BYTE: 							return _size;
 		case GL_UNSIGNED_BYTE: 					return _size == GL_RGBA ? 4 : _size;
@@ -59,46 +64,39 @@ GLsizei GLVertexArray::VertexAttribute::_ByteSize() const {
 			return 0;
 	}
 }
+#pragma clang diagnostic pop
 
-GLVertexArray::GLVertexArray() {
-	_id = GL::GenVertexArray();
+VertexArray::VertexArray() {
+	int maxVertexAttribs = Capabilities::GetMaxVertexAttribs();
 
-	GLint maxVertexAttribs;
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
-
-	for (GLint i = 0; i < maxVertexAttribs; i++) {
-		_unused_attribute_indices.insert(i);
+	for (int i = 0; i < maxVertexAttribs; i++) {
+		_unused_attribute_indices.insert(GLuint(i));
 	}
 }
 
-GLuint GLVertexArray::ID() const {
-	return _id;
+void VertexArray::Bind() const {
+	State::BindVertexArray(*this);
 }
 
-void GLVertexArray::Bind() const {
-	GL::BindVertexArray(_id);
-}
-
-void GLVertexArray::SetVertexAttributes(const GLBuffer& buffer, const std::vector<VertexAttribute>& attributes, bool instanced) {
-	if (buffer.Target() != GL::BufferTarget::ARRAY) {
+void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, bool instanced) {
+	if (buffer.GetTarget() != Buffer::Target::ARRAY) {
 		throw std::invalid_argument("buffer must have target ARRAY");
 	}
 
 	Bind();
 
-	// force that glBindBuffer() is actually called when this VAO is bound.
-	GL::ClearBufferBinding(GL::BufferTarget::ARRAY);
+	// TODO: bind the buffer
 	buffer.Bind();
 
 	for (auto attribute : attributes) {
 		glEnableVertexAttribArray(attribute._index);
 		glVertexAttribPointer(
-				attribute._index,
-				attribute._size,
-				attribute._type,
-				attribute._normalize,
-				attribute._stride,
-				(GLvoid *) attribute._offset);
+		attribute._index,
+		attribute._size,
+		attribute._type,
+		attribute._normalize,
+		attribute._stride,
+		(GLvoid *) attribute._offset);
 
 		if (instanced) {
 			glVertexAttribDivisor(attribute._index, 1);
@@ -106,19 +104,18 @@ void GLVertexArray::SetVertexAttributes(const GLBuffer& buffer, const std::vecto
 	}
 }
 
-void GLVertexArray::SetVertexIndices(const GLBuffer& buffer) {
-	if (buffer.Target() != GL::BufferTarget::ELEMENT_ARRAY) {
+void VertexArray::SetVertexIndices(const Buffer& buffer) {
+	if (buffer.GetTarget() != Buffer::Target::ELEMENT_ARRAY) {
 		throw std::invalid_argument("buffer must have target ELEMENT_ARRAY");
 	}
 
 	Bind();
 
-	// force that glBindBuffer() is actually called when this VAO is bound.
-	GL::ClearBufferBinding(GL::BufferTarget::ELEMENT_ARRAY);
+	// TODO: bind the buffer
 	buffer.Bind();
 }
 
-void GLVertexArray::_SetVertexAttributes(const GLBuffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced) {
+void VertexArray::_SetVertexAttributes(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced) {
 	std::vector<VertexAttribute> attributes;
 
 	GLsizeiptr offset = 0;
@@ -175,19 +172,19 @@ void GLVertexArray::_SetVertexAttributes(const GLBuffer& buffer, const std::vect
 	SetVertexAttributes(buffer, attributes, instanced);
 }
 
-GLuint GLVertexArray::_FirstUnusedIndex(GLuint consecutive) const {
+GLuint VertexArray::_FirstUnusedIndex(GLuint consecutive) const {
 	GLuint count = 0;
 	GLuint startIndex = 0;
 
-	for (auto iter = _unused_attribute_indices.begin(); iter != _unused_attribute_indices.end(); iter++) {
+	for (unsigned int _unused_attribute_indice : _unused_attribute_indices) {
 		if (count == 0) {
 			count = 1;
-			startIndex = *iter;
-		} else if (*iter == startIndex + count) {
+			startIndex = _unused_attribute_indice;
+		} else if (_unused_attribute_indice == startIndex + count) {
 			count++;
 		} else {
 			count = 1;
-			startIndex = *iter;
+			startIndex = _unused_attribute_indice;
 		}
 
 		if (count == consecutive) {

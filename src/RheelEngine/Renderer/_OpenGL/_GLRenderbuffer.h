@@ -5,15 +5,15 @@
 #define GLRENDERBUFFER_H_
 #include "../../_common.h"
 
-#include "GL.h"
+#include "_GL.h"
 
 namespace rheel {
 
-class RE_API GLRenderbuffer {
+class RE_API _GLRenderbuffer {
 
 public:
 	/**
-	 * Creates an OpenGL renderbuffer with the specified width, height, and internal format.
+	 * Creates an _OpenGL renderbuffer with the specified width, height, and internal format.
 	 * The renderbuffer is automatically initialized using
 	 * glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height).
 	 *
@@ -21,11 +21,11 @@ public:
 	 * renderbuffer is initialized using
 	 * glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, internalFormat, width, height).
 	 */
-	GLRenderbuffer(GLuint width, GLuint height, GLenum internalFormat, GLuint samples = 1,
-			bool forceMultisampled = false);
+	_GLRenderbuffer(GLuint width, GLuint height, GLenum internalFormat, GLuint samples = 1,
+					bool forceMultisampled = false);
 
 	/**
-	 * Returns the internal OpenGL ID of this renderbuffer.
+	 * Returns the internal _OpenGL ID of this renderbuffer.
 	 */
 	GLuint ID() const;
 

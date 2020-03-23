@@ -5,7 +5,7 @@
 #define INPUT_H_
 #include "../_common.h"
 
-// Include only GLFW, not OpenGL. We're only using the constants.
+// Include only GLFW, not _OpenGL. We're only using the constants.
 #ifdef GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #else

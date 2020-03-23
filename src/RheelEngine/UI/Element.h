@@ -10,9 +10,9 @@
 #include "InputCallback.h"
 #include "../Color.h"
 #include "../Assets/Image.h"
-#include "../Renderer/OpenGL/GLShaderProgram.h"
-#include "../Renderer/OpenGL/GLVertexArray.h"
-#include "../Renderer/OpenGL/GLTexture2D.h"
+#include "../Renderer/_OpenGL/_GLShaderProgram.h"
+#include "../Renderer/_OpenGL/_GLVertexArray.h"
+#include "../Renderer/_OpenGL/_GLTexture2D.h"
 
 namespace rheel {
 
@@ -224,19 +224,19 @@ protected:
 	 * Draws a textured quad. Vertices are specified in pixel-space. Counter-clockwise
 	 * ordering is recommended.
 	 */
-	static void _DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const GLTexture2D& texture);
+	static void _DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const _GLTexture2D& texture);
 
 	/**
 	 * Draws a textured quad. Vertices are specified in pixel-space. Coutner-clockwise
 	 * ordering is required.
 	 */
-	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const GLTexture2D& texture);
+	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const _GLTexture2D& texture);
 
 	/**
 	 * Draws the texture at the specified rectangle. The entire texture will be scaled to
 	 * fit the rectangle.
 	 */
-	static void _DrawTexturedQuad(const Bounds& bounds, const GLTexture2D& texture);
+	static void _DrawTexturedQuad(const Bounds& bounds, const _GLTexture2D& texture);
 
 	/**
 	 * Draws a textured quad. Vertices are specified in pixel-space. Coutner-clockwise
@@ -254,9 +254,9 @@ private:
 	static void _Draw(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f);
 	static void _Initialize();
 
-	static std::unique_ptr<GLShaderProgram> _ui_shader;
-	static std::unique_ptr<GLVertexArray> _ui_vao;
-	static std::unique_ptr<GLBuffer> _ui_vertex_data;
+	static std::unique_ptr<_GLShaderProgram> _ui_shader;
+	static std::unique_ptr<_GLVertexArray> _ui_vao;
+	static std::unique_ptr<_GLBuffer> _ui_vertex_data;
 	static bool _initialized;
 
 };

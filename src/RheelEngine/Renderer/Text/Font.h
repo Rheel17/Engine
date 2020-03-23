@@ -8,7 +8,7 @@
 #include <list>
 
 #include "Character.h"
-#include "../OpenGL/GLTexture2D.h"
+#include "../_OpenGL/_GLTexture2D.h"
 
 namespace rheel {
 

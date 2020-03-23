@@ -13,14 +13,14 @@ public:
 	virtual ~Game() = default;
 
 	/**
-	 * Initializes the game. This is before a window with OpenGL context is
+	 * Initializes the game. This is before a window with _OpenGL context is
 	 * created. Any render initialization cannot be done in this method, use
 	 * Game::Start() for that.
 	 */
 	virtual void Initialize() {}
 
 	/**
-	 * Called when the game is started. At this point, a window and OpenGL
+	 * Called when the game is started. At this point, a window and _OpenGL
 	 * context are present. This is the final method called before the main game
 	 * loop.
 	 */

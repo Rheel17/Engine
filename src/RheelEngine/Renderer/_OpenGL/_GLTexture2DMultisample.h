@@ -5,17 +5,17 @@
 #define GLTEXTURE2DMULTISAMPLE_H_
 #include "../../_common.h"
 
-#include "GL.h"
+#include "_GL.h"
 
 namespace rheel {
 
-class RE_API GLTexture2DMultisample {
+class RE_API _GLTexture2DMultisample {
 
 public:
-	GLTexture2DMultisample(GLuint width, GLuint height, GLuint samples);
+	_GLTexture2DMultisample(GLuint width, GLuint height, GLuint samples);
 
 	/**
-	 * Returns the internal OpenGL ID of this texture.
+	 * Returns the internal _OpenGL ID of this texture.
 	 */
 	GLuint ID() const;
 

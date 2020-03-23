@@ -1,22 +1,26 @@
 /*
- * Copyright (c) Levi van Rheenen. All rights reserved.
+ * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef GLVERTEXARRAY_H_
-#define GLVERTEXARRAY_H_
+#ifndef RHEELENGINE_GL_VERTEXARRAY_H
+#define RHEELENGINE_GL_VERTEXARRAY_H
 #include "../../_common.h"
 
 #include <typeindex>
 #include <set>
 
-#include "GLBuffer.h"
+#include "Buffer.h"
 
-namespace rheel {
+namespace rheel::GL {
 
-class RE_API GLVertexArray {
+OPENGL_GENDEL_FUNCTION(glGenVertexArrays, _GenVertexArrays);
+OPENGL_GENDEL_FUNCTION(glDeleteVertexArrays, _DeleteVertexArrays);
+
+class RE_API VertexArray : public Object<_GenVertexArrays, _DeleteVertexArrays> {
+
 
 public:
 	class VertexAttribute {
-		friend class GLVertexArray;
+		friend class VertexArray;
 
 	public:
 		/**
@@ -25,10 +29,10 @@ public:
 		 * index:     the shader index of the attribute
 		 * size:      the number of components per attribute. Must be 1, 2, 3, 4, or GL_RGBA.
 		 * type:      the data type of each component. See
-		 *            https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glVertexAttribPointer.xhtml
+		 *            https://www.khronos.org/registry/_OpenGL-Refpages/gl4/html/glVertexAttribPointer.xhtml
 		 *            for a list of accepted types.
 		 * offset:    the offset in the buffer.
-		 * normalize: when true, OpenGL will normalize the data before they are accessed. (default: false)
+		 * normalize: when true, _OpenGL will normalize the data before they are accessed. (default: false)
 		 */
 		VertexAttribute(GLuint index, GLint size, GLenum type, GLsizei stride, GLsizeiptr offset, bool normalize = false);
 
@@ -46,19 +50,8 @@ public:
 	};
 
 public:
-	/**
-	 * Creates an OpenGL Vertex Array Object.
-	 */
-	GLVertexArray();
+	VertexArray();
 
-	/**
-	 * Returns the internal OpenGL ID of this buffer.
-	 */
-	GLuint ID() const;
-
-	/**
-	 * Binds this buffer to the previously specified target.
-	 */
 	void Bind() const;
 
 	/**
@@ -66,7 +59,7 @@ public:
 	 * an ARRAY target. Use the attributes vector the specify actual vertex
 	 * attributes.
 	 */
-	void SetVertexAttributes(const GLBuffer& buffer, const std::vector<VertexAttribute>& attributes, bool instanced = false);
+	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, bool instanced = false);
 
 	/**
 	 * Set the vertex attributes of this VAO. The specified buffer must have
@@ -89,7 +82,7 @@ public:
 	 * custom VertexAttribute values.
 	 */
 	template<typename... Types>
-	void SetVertexAttributes(const GLBuffer& buffer, GLsizei stride = 0, bool instanced = false) {
+	void SetVertexAttributes(const Buffer& buffer, GLsizei stride = 0, bool instanced = false) {
 		_SetVertexAttributes(buffer, { typeid(Types)... }, stride, instanced);
 	}
 
@@ -97,13 +90,12 @@ public:
 	 * Set the vertex indices of this VAO. The specified buffer must have an
 	 * ELEMENT_ARRAY target.
 	 */
-	void SetVertexIndices(const GLBuffer& buffer);
+	void SetVertexIndices(const Buffer& buffer);
 
 private:
-	void _SetVertexAttributes(const GLBuffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced);
+	void _SetVertexAttributes(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced);
 	GLuint _FirstUnusedIndex(GLuint consecutive = 1) const;
 
-	GLhandle _id;
 	std::set<GLuint> _unused_attribute_indices;
 
 };

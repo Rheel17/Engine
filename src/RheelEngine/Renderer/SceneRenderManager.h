@@ -11,7 +11,7 @@
 #include "SkyboxRenderer.h"
 #include "../Assets/Model.h"
 #include "../Scene.h"
-#include "OpenGL/GLFramebuffer.h"
+#include "_OpenGL/_GLFramebuffer.h"
 
 namespace rheel {
 
@@ -83,12 +83,12 @@ public:
 	 * Returns references to all custom shader programs attached to custom shaded
 	 * models managed by this render manager.
 	 */
-	std::vector<std::reference_wrapper<GLShaderProgram>> CustomShaderPrograms();
+	std::vector<std::reference_wrapper<_GLShaderProgram>> CustomShaderPrograms();
 
 	/**
 	 * Initializes all lights in the shader program.
 	 */
-	void InitializeShaderLights(GLShaderProgram& shaderProgram) const;
+	void InitializeShaderLights(_GLShaderProgram& shaderProgram) const;
 
 private:
 	int _ShadowLevel();
@@ -110,8 +110,8 @@ private:
 private:
 	static void _Initialize();
 
-	static std::unique_ptr<GLVertexArray> _lighting_quad_vao;
-	static std::unique_ptr<GLBuffer> _lighting_quad_vbo;
+	static std::unique_ptr<_GLVertexArray> _lighting_quad_vao;
+	static std::unique_ptr<_GLBuffer> _lighting_quad_vbo;
 	static bool _lighting_quad_initialized;
 
 };

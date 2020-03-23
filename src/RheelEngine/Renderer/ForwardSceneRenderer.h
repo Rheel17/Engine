@@ -16,7 +16,7 @@ public:
 	void Render(float dt) override;
 
 protected:
-	GLFramebuffer CreateResultBuffer(unsigned width, unsigned height) const;
+	_GLFramebuffer CreateResultBuffer(unsigned width, unsigned height) const;
 
 	void Resize(unsigned width, unsigned height) override;
 

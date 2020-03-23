@@ -7,18 +7,18 @@
 
 namespace rheel {
 
-std::unique_ptr<GLBuffer> PostProcessingEffect::_screen_quad_buffer;
-std::unique_ptr<GLVertexArray> PostProcessingEffect::_screen_quad;
+std::unique_ptr<_GLBuffer> PostProcessingEffect::_screen_quad_buffer;
+std::unique_ptr<_GLVertexArray> PostProcessingEffect::_screen_quad;
 
 unsigned PostProcessingEffect::_UnusedFramebufferIndex() const {
 	return _Stack()->_UnusedFramebufferIndex();
 }
 
-unsigned PostProcessingEffect::_GetFramebufferIndex(const GLFramebuffer& buffer) const {
+unsigned PostProcessingEffect::_GetFramebufferIndex(const _GLFramebuffer& buffer) const {
 	return _Stack()->_GetFramebufferIndex(buffer);
 }
 
-GLFramebuffer& PostProcessingEffect::_Framebuffer(unsigned index) const {
+_GLFramebuffer& PostProcessingEffect::_Framebuffer(unsigned index) const {
 	return _Stack()->_Framebuffer(index);
 }
 
@@ -37,10 +37,10 @@ PostProcessingStack *PostProcessingEffect::_Stack() const {
 void PostProcessingEffect::_DrawScreenQuad() {
 	if (!_screen_quad) {
 		GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
-		_screen_quad_buffer = std::make_unique<GLBuffer>(GL::BufferTarget::ARRAY);
+		_screen_quad_buffer = std::make_unique<_GLBuffer>(_GL::BufferTarget::ARRAY);
 		_screen_quad_buffer->SetData(triangles, sizeof(triangles));
 
-		_screen_quad = std::make_unique<GLVertexArray>();
+		_screen_quad = std::make_unique<_GLVertexArray>();
 		_screen_quad->SetVertexAttributes<vec2>(*_screen_quad_buffer);
 	}
 

@@ -9,8 +9,8 @@
 
 namespace rheel {
 
-GLShaderProgram ModelRenderer::_forward_model_shader;
-GLShaderProgram ModelRenderer::_opaque_shader;
+_GLShaderProgram ModelRenderer::_forward_model_shader;
+_GLShaderProgram ModelRenderer::_opaque_shader;
 bool ModelRenderer::_are_shaders_initialized = false;
 
 ModelRenderer::ObjectData::ObjectData() :
@@ -94,9 +94,9 @@ bool ModelRenderer::_MaterialShaderCompare::operator()(const Material& mat1, con
 }
 
 ModelRenderer::ModelRenderer(const Model& model) :
-		_vertex_buffer_object(GL::BufferTarget::ARRAY),
-		_element_array_buffer(GL::BufferTarget::ELEMENT_ARRAY),
-		_object_data_buffer(GL::BufferTarget::ARRAY),
+		_vertex_buffer_object(_GL::BufferTarget::ARRAY),
+		_element_array_buffer(_GL::BufferTarget::ELEMENT_ARRAY),
+		_object_data_buffer(_GL::BufferTarget::ARRAY),
 		_index_count(model.GetIndices().size()) {
 
 	_vertex_buffer_object.SetData(model.GetVertices());
@@ -107,7 +107,7 @@ ModelRenderer::ModelRenderer(const Model& model) :
 	_vao.SetVertexIndices(_element_array_buffer);
 	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ObjectData), true);
 
-	GL::ClearVertexArrayBinding();
+	_GL::ClearVertexArrayBinding();
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddObject() {
@@ -126,12 +126,12 @@ void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectDataPtr
 	_Remove(_textured_objects[material], std::forward<ObjectDataPtr>(object));
 }
 
-GLShaderProgram& ModelRenderer::GetForwardModelShader() {
+_GLShaderProgram& ModelRenderer::GetForwardModelShader() {
 	_InitializeShaders();
 	return _forward_model_shader;
 }
 
-GLShaderProgram& ModelRenderer::GetOpaqueShader() {
+_GLShaderProgram& ModelRenderer::GetOpaqueShader() {
 	_InitializeShaders();
 	return _opaque_shader;
 }
@@ -139,21 +139,21 @@ GLShaderProgram& ModelRenderer::GetOpaqueShader() {
 void ModelRenderer::RenderObjects() const {
 	_vao.Bind();
 
-	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 0);
-	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 1);
-	GL::ClearTextureBinding(GL::TextureTarget::TEXTURE_2D, 2);
+	_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, 0);
+	_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, 1);
+	_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, 2);
 
-	_object_data_buffer.SetData(_objects, GLBuffer::STREAM_DRAW);
+	_object_data_buffer.SetData(_objects, _GLBuffer::STREAM_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
 
 	for (const auto& [material, objects] : _textured_objects) {
 		material.BindTextures();
 
-		_object_data_buffer.SetData(objects, GLBuffer::STREAM_DRAW);
+		_object_data_buffer.SetData(objects, _GLBuffer::STREAM_DRAW);
 		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, objects.size());
 	}
 
-	GL::ClearVertexArrayBinding();
+	_GL::ClearVertexArrayBinding();
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::_Add(_ObjectDataVector& objects) {
@@ -175,8 +175,8 @@ void ModelRenderer::_InitializeShaders() {
 		return;
 	}
 
-	_forward_model_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
-	_forward_model_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
+	_forward_model_shader.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
+	_forward_model_shader.AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
 	_forward_model_shader.Link();
 	_forward_model_shader["ambientTexture"] = 0;
 	_forward_model_shader["diffuseTexture"] = 1;
@@ -186,8 +186,8 @@ void ModelRenderer::_InitializeShaders() {
 	_forward_model_shader["_shadowMap2"] = 5;
 	_forward_model_shader["_shadowMap3"] = 6;
 
-	_opaque_shader.AddShaderFromSource(GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
-	_opaque_shader.AddShaderFromSource(GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
+	_opaque_shader.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
+	_opaque_shader.AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
 	_opaque_shader.Link();
 
 	_are_shaders_initialized = true;

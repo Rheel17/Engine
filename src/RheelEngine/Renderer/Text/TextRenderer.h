@@ -6,13 +6,16 @@
 #include "../../_common.h"
 
 #include "Font.h"
-#include "../OpenGL/GLVertexArray.h"
-#include "../OpenGL/GLShaderProgram.h"
+#include "../_OpenGL/_GLVertexArray.h"
+#include "../_OpenGL/_GLShaderProgram.h"
+#include "../_OpenGL/_GLFramebuffer.h"
 #include "../../Color.h"
 
 namespace rheel {
 
 class RE_API TextRenderer {
+	friend class Engine;
+
 	RE_NO_CONSTRUCT(TextRenderer)
 
 public:
@@ -24,6 +27,7 @@ public:
 
 private:
 	static void _Initialize();
+	static void _ResizeBuffer(unsigned width, unsigned height);
 
 	static int _DrawChars(Font& font, const Color& color, const wchar_t *text, unsigned length,
 			int x, int y, unsigned size);
@@ -31,12 +35,18 @@ private:
 			const std::vector<Character::Triangle>& bezierCurves,
 			vec2 multisampleOffset);
 
-	static std::unique_ptr<GLBuffer> _triangle_buffer;
-	static std::unique_ptr<GLVertexArray> _vao;
-	static std::unique_ptr<GLBuffer> _resolve_vbo;
-	static std::unique_ptr<GLVertexArray> _resolve_vao;
-	static GLShaderProgram _shader;
+	static std::unique_ptr<_GLBuffer> _triangle_buffer;
+	static std::unique_ptr<_GLVertexArray> _vao;
+
+	static std::unique_ptr<_GLBuffer> _resolve_vbo;
+	static std::unique_ptr<_GLVertexArray> _resolve_vao;
+
+	static std::unique_ptr<_GLFramebuffer> _text_buffer;
+	static _GLShaderProgram _shader;
+
 	static bool _initialized;
+	static unsigned _width;
+	static unsigned _height;
 
 };
 
