@@ -10,15 +10,27 @@
 #include "StateBindings.h"
 #include "StateEnables.h"
 #include "StateFunctions.h"
+#include "VertexArray.h"
+#include "Program.h"
+
+namespace rheel {
+
+class Window;
+
+}
 
 namespace rheel::GL {
 
 class RE_API State {
 	friend class Uniform;
+	friend class rheel::Window;
+
+	RE_NO_MOVE(State);
+	RE_NO_COPY(State);
 
 public:
-	static void PushState();
-	static void PopState();
+	static void Push();
+	static void Pop();
 
 	static void Enable(Capability cap);
 	static void Disable(Capability cap);
@@ -29,6 +41,13 @@ public:
 	static void BindTexture(unsigned unit, const Texture& texture);
 	static void BindVertexArray(const VertexArray& vertexArray);
 	static void UseProgram(const Program& program);
+
+	static void ClearBuffer(Buffer::Target target);
+	static void ClearFramebuffer(Framebuffer::Target target);
+	static void ClearRenderbuffer();
+	static void ClearTexture(unsigned unit, Texture::Target target);
+	static void ClearVertexArray();
+	static void ClearProgram();
 
 	static void SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor);
 	static void SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha);
@@ -48,10 +67,10 @@ private:
 	void _ResetChanges();
 
 private:
-	static std::stack<State *> _global_state_stack;
+	static void _Initialize();
+	static State& _S();
 
-	static State *_S();
-
+	static std::stack<std::unique_ptr<State>> _global_state_stack;
 
 };
 

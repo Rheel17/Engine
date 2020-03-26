@@ -63,6 +63,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/SkyboxRenderer.cpp RheelEngine/Renderer/SkyboxRenderer.h 
 		RheelEngine/Renderer/VoxelRenderer.cpp RheelEngine/Renderer/VoxelRenderer.h 
 		RheelEngine/Renderer/Window.cpp RheelEngine/Renderer/Window.h 
+		RheelEngine/Renderer/OpenGL/AbstractTexture.cpp RheelEngine/Renderer/OpenGL/AbstractTexture.h 
 		RheelEngine/Renderer/OpenGL/Buffer.cpp RheelEngine/Renderer/OpenGL/Buffer.h 
 		RheelEngine/Renderer/OpenGL/Capabilities.cpp RheelEngine/Renderer/OpenGL/Capabilities.h 
 		RheelEngine/Renderer/OpenGL/Enums.h 
@@ -79,20 +80,13 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/StateFunctions.cpp RheelEngine/Renderer/OpenGL/StateFunctions.h 
 		RheelEngine/Renderer/OpenGL/Texture.cpp RheelEngine/Renderer/OpenGL/Texture.h 
 		RheelEngine/Renderer/OpenGL/Texture2D.cpp RheelEngine/Renderer/OpenGL/Texture2D.h 
+		RheelEngine/Renderer/OpenGL/Texture2DMultisample.cpp RheelEngine/Renderer/OpenGL/Texture2DMultisample.h 
 		RheelEngine/Renderer/OpenGL/Uniform.cpp RheelEngine/Renderer/OpenGL/Uniform.h 
 		RheelEngine/Renderer/OpenGL/VertexArray.cpp RheelEngine/Renderer/OpenGL/VertexArray.h 
 		RheelEngine/Renderer/PostProcessing/Bloom.cpp RheelEngine/Renderer/PostProcessing/Bloom.h 
 		RheelEngine/Renderer/Text/Character.cpp RheelEngine/Renderer/Text/Character.h 
 		RheelEngine/Renderer/Text/Font.cpp RheelEngine/Renderer/Text/Font.h 
 		RheelEngine/Renderer/Text/TextRenderer.cpp RheelEngine/Renderer/Text/TextRenderer.h 
-		RheelEngine/Renderer/_OpenGL/_GL.cpp RheelEngine/Renderer/_OpenGL/_GL.h 
-		RheelEngine/Renderer/_OpenGL/_GLBuffer.cpp RheelEngine/Renderer/_OpenGL/_GLBuffer.h 
-		RheelEngine/Renderer/_OpenGL/_GLFramebuffer.cpp RheelEngine/Renderer/_OpenGL/_GLFramebuffer.h 
-		RheelEngine/Renderer/_OpenGL/_GLRenderbuffer.cpp RheelEngine/Renderer/_OpenGL/_GLRenderbuffer.h 
-		RheelEngine/Renderer/_OpenGL/_GLShaderProgram.cpp RheelEngine/Renderer/_OpenGL/_GLShaderProgram.h 
-		RheelEngine/Renderer/_OpenGL/_GLTexture2D.cpp RheelEngine/Renderer/_OpenGL/_GLTexture2D.h 
-		RheelEngine/Renderer/_OpenGL/_GLTexture2DMultisample.cpp RheelEngine/Renderer/_OpenGL/_GLTexture2DMultisample.h 
-		RheelEngine/Renderer/_OpenGL/_GLVertexArray.cpp RheelEngine/Renderer/_OpenGL/_GLVertexArray.h 
 		RheelEngine/UI/Constraint.cpp RheelEngine/UI/Constraint.h 
 		RheelEngine/UI/Container.cpp RheelEngine/UI/Container.h 
 		RheelEngine/UI/Element.cpp RheelEngine/UI/Element.h 

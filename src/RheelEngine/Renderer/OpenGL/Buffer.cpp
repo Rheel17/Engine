@@ -18,9 +18,8 @@ Buffer::Target Buffer::GetTarget() const {
 	return _target;
 }
 
-void Buffer::SetData(const void *data, ptrdiff_t size, Buffer::Usage usage) {
-	Bind();
-	glBufferData(GLenum(_target), size, data, GLenum(usage));
+void Buffer::SetDataEmpty(Buffer::Usage usage) {
+	glBufferData(GLenum(_target), 0, nullptr, GLenum(usage));
 }
 
 }

@@ -5,8 +5,8 @@
 #define RHEELENGINE_SKYBOXRENDERER_H
 #include "../_common.h"
 
-#include "_OpenGL/_GLShaderProgram.h"
-#include "_OpenGL/_GLVertexArray.h"
+#include "OpenGL/Program.h"
+#include "OpenGL/VertexArray.h"
 #include "../Assets/Image.h"
 #include "../Components/Camera.h"
 
@@ -33,11 +33,11 @@ private:
 
 	SceneRenderManager *_manager;
 
-	_GLVertexArray _vao;
-	_GLBuffer _vertex_buffer_object;
-	_GLBuffer _element_array_buffer;
+	GL::VertexArray _vao;
+	GL::Buffer _vertex_buffer_object;
+	GL::Buffer _element_array_buffer;
 
-	_GLShaderProgram _shader;
+	GL::Program _shader;
 
 	mutable std::uintptr_t _current_image{};
 	mutable std::array<Image, 6> _texture_parts;

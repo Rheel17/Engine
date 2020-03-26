@@ -7,10 +7,10 @@
 
 #include <GL/glew.h>
 
-namespace rheel {
+namespace rheel::GL {
 
 enum class Capability {
-	BLEND = GL_BLEND
+	BLEND = GL_BLEND, STENCIL_TEST = GL_STENCIL_TEST
 };
 
 class RE_API StateEnables {

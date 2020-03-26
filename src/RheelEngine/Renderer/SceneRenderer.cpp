@@ -8,15 +8,23 @@ namespace rheel {
 SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount, bool depthComponent) :
 		_manager(manager), _camera_name(std::move(cameraName)),
 		_width(width), _height(height),
-		_result_buffer(width, height, sampleCount) {
+		_result_buffer(width, height) {
 
-	_result_buffer.AddTexture(GL_RGB8, GL_RGB);
+	if (sampleCount > 1) {
+		_result_buffer.AttachTextureMultisample(GL::InternalFormat::RGB8, sampleCount, 0);
 
-	if (depthComponent) {
-		_result_buffer.AddRenderbuffer(GL_DEPTH_COMPONENT32, GL_DEPTH_ATTACHMENT);
+		if (depthComponent) {
+			_result_buffer.AttachRenderbufferMultisample(GL::InternalFormat::DEPTH_COMPONENT_32F, sampleCount, GL::Framebuffer::Attachment::DEPTH);
+		}
+	} else {
+		_result_buffer.AttachTexture(GL::InternalFormat::RGB8, GL::Format::RGB, 0);
+
+		if (depthComponent) {
+			_result_buffer.AttachRenderbuffer(GL::InternalFormat::DEPTH_COMPONENT_32F, GL::Framebuffer::Attachment::DEPTH);
+		}
 	}
 
-	_result_buffer.Create();
+	_result_buffer.SetDrawBuffers({ 0 });
 }
 
 void SceneRenderer::SetSize(unsigned width, unsigned height) {
@@ -27,11 +35,11 @@ void SceneRenderer::SetSize(unsigned width, unsigned height) {
 	_width = width;
 	_height = height;
 
-	_result_buffer = _result_buffer.ResizedCopy(width, height);
+	_result_buffer = GL::Framebuffer(_result_buffer, width, height);
 	Resize(width, height);
 }
 
-const _GLFramebuffer& SceneRenderer::ResultBuffer() const {
+const GL::Framebuffer& SceneRenderer::ResultBuffer() const {
 	return _result_buffer;
 }
 

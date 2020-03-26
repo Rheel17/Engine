@@ -10,8 +10,8 @@
 
 namespace rheel::GL {
 
-OPENGL_GENDEL_FUNCTION(glGenRenderbuffers, _GenRenderbuffers);
-OPENGL_GENDEL_FUNCTION(glDeleteRenderbuffers, _DeleteRenderbuffers);
+OPENGL_GEN_FUNCTION(glGenRenderbuffers, _GenRenderbuffers);
+OPENGL_DELETE_FUNCTION(glDeleteRenderbuffers, _DeleteRenderbuffers);
 
 class RE_API Renderbuffer : public Object<_GenRenderbuffers, _DeleteRenderbuffers> {
 

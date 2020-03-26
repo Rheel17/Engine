@@ -5,10 +5,11 @@
 
 #include "../Engine.h"
 #include "../Components/DirectionalLight.h"
+#include "OpenGL/State.h"
 
 namespace rheel {
 
-std::unique_ptr<_GLTexture2D> ShadowMapDirectional::_empty_shadow_map;
+std::unique_ptr<GL::Texture2D> ShadowMapDirectional::_empty_shadow_map;
 
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *light) :
 		ShadowMap(manager, light) {
@@ -49,43 +50,37 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *l
 		accumulator += _csm_split[i];
 
 		// initialize the buffer
-		_GLFramebuffer buffer(textureSize, textureSize);
-		buffer.AddTexture(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
-		buffer.Create();
+		GL::Framebuffer buffer(textureSize, textureSize);
+		buffer.AttachTexture(GL::InternalFormat::DEPTH_COMPONENT_32F, GL::Format::DEPTH_COMPONENT, GL::Framebuffer::Attachment::DEPTH);
 
 		// set the texture paramters
-		_GLTexture2D texture = buffer.Textures()[0];
-		texture.Bind();
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-		_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D);
+		GL::Texture2D& texture = buffer.GetTextureAttachment(GL::Framebuffer::Attachment::DEPTH);
+		texture.SetCompareMode(GL::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
+		texture.SetCompareFunction(GL::Texture::CompareFunction::LEQUAL);
 
-		_shadow_buffers.emplace_back(buffer);
+		_shadow_buffers.emplace_back(std::move(buffer));
 	}
 
 	for (unsigned i = 0; i <= _csm_count; i++) {
 		_csm_borders[i] /= accumulator;
 	}
-
-	_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, 0);
 }
 
 ShadowMapDirectional::~ShadowMapDirectional() = default;
 
 void ShadowMapDirectional::Update(Camera *camera, unsigned width, unsigned height) {
-	_GL::PushState();
+	GL::State::Push();
 
 	// set the lightspace matrices
 	 _CalculateViewProjectionMatrices(camera, width, height);
 
-	_GLShaderProgram& modelShader = ModelRenderer::GetOpaqueShader();
+	GL::Program& modelShader = ModelRenderer::GetOpaqueShader();
 
 	for (unsigned i = 0; i < _csm_count; i++) {
 		modelShader["lightspaceMatrix"] = _light_matrices[i];
 
 		// write the scene to the framebuffer.
-		_shadow_buffers[i].Bind();
-		glClear(GL_DEPTH_BUFFER_BIT);
+		_shadow_buffers[i].Clear(GL::Framebuffer::ClearParameter::DEPTH);
 
 		for (const auto& [model, renderer] : GetManager()->RenderMap()) {
 			renderer.RenderObjects();
@@ -96,15 +91,15 @@ void ShadowMapDirectional::Update(Camera *camera, unsigned width, unsigned heigh
 		}
 	}
 
-	_GL::PopState();
+	GL::State::Pop();
 }
 
-std::vector<_GLTexture2D> ShadowMapDirectional::Textures() const {
-	std::vector<_GLTexture2D> textures;
+std::vector<std::reference_wrapper<const GL::Texture2D>> ShadowMapDirectional::Textures() const {
+	std::vector<std::reference_wrapper<const GL::Texture2D>> textures;
 	textures.reserve(_csm_count);
 
 	for (const auto& shadowBuffer : _shadow_buffers) {
-		textures.emplace_back(shadowBuffer.Textures()[0]);
+		textures.push_back(std::ref(shadowBuffer.GetTextureAttachment(GL::Framebuffer::Attachment::DEPTH)));
 	}
 
 	return textures;
@@ -177,13 +172,12 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(Camera *camera, unsi
 	}
 }
 
-const _GLTexture2D& ShadowMapDirectional::EmptyShadowMap() {
+const GL::Texture2D& ShadowMapDirectional::EmptyShadowMap() {
 	if (!_empty_shadow_map) {
-		_empty_shadow_map = std::make_unique<_GLTexture2D>(1, 1, GL_DEPTH_COMPONENT32);
-		_empty_shadow_map->InitializeEmpty(GL_DEPTH_COMPONENT);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		_empty_shadow_map = std::make_unique<GL::Texture2D>();
+		_empty_shadow_map->SetEmpty(GL::InternalFormat::DEPTH_COMPONENT_32F, 1, 1, GL::Format::DEPTH_COMPONENT);
+		_empty_shadow_map->SetCompareMode(GL::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
+		_empty_shadow_map->SetCompareFunction(GL::Texture::CompareFunction::LEQUAL);
 	}
 
 	return *_empty_shadow_map;

@@ -8,6 +8,7 @@
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
 #include "../Scene.h"
+#include "OpenGL/State.h"
 
 namespace rheel {
 
@@ -25,12 +26,13 @@ void ForwardSceneRenderer::Render(float dt) {
 		return;
 	}
 
+	GL::State::Push();
+
 	// render the shadows
 	_RenderShadowMaps();
 
 	// bind and reset the result buffer to start writing there
-	ResultBuffer().Bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	ResultBuffer().Clear(GL::Framebuffer::ClearParameter::COLOR_DEPTH);
 
 	// render the skybox
 	_RenderSkybox(Width(), Height());
@@ -42,7 +44,7 @@ void ForwardSceneRenderer::Render(float dt) {
 
 	// initialize the model shaders
 	for (auto modelShaderRef : modelShaders) {
-		_GLShaderProgram& modelShader = modelShaderRef;
+		GL::Program& modelShader = modelShaderRef;
 
 		GetManager()->InitializeShaderLights(modelShader);
 		modelShader["_cameraMatrix"] = camera->CreateMatrix(Width(), Height());
@@ -68,10 +70,10 @@ void ForwardSceneRenderer::Render(float dt) {
 			shadowMapCount = sm->Textures().size();
 
 			for (int i = 0; i < shadowMapCount; i++) {
-				sm->Textures()[i].Bind(textureUnit++);
+				sm->Textures()[i].get().Bind(textureUnit++);
 
 				for (auto modelShaderRef : modelShaders) {
-					_GLShaderProgram& modelShader = modelShaderRef;
+					GL::Program& modelShader = modelShaderRef;
 					std::string uniformName = "_lightspaceMatrix" + std::to_string(i);
 
 					if (modelShader.HasUniform(uniformName)) {
@@ -81,7 +83,7 @@ void ForwardSceneRenderer::Render(float dt) {
 			}
 
 			for (auto modelShaderRef : modelShaders) {
-				_GLShaderProgram& modelShader = modelShaderRef;
+				GL::Program& modelShader = modelShaderRef;
 
 				if (modelShader.HasUniform("_shadowMapCount")) modelShader["_shadowMapCount"] = shadowMapCount;
 				if (modelShader.HasUniform("_baseBias")) modelShader["_baseBias"] = sm->Bias();
@@ -112,8 +114,7 @@ void ForwardSceneRenderer::Render(float dt) {
 	}
 
 	// clear everything again to return to normal
-	_GL::ClearFramebufferBinding();
-	_GLShaderProgram::ClearUse();
+	GL::State::Pop();
 }
 
 void ForwardSceneRenderer::Resize(unsigned width, unsigned height) {}

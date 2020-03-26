@@ -6,7 +6,7 @@
 #include "../../_common.h"
 
 #include "../PostProcessingEffect.h"
-#include "../_OpenGL/_GLShaderProgram.h"
+#include "../OpenGL/Program.h"
 
 namespace rheel {
 
@@ -15,7 +15,7 @@ class RE_API Bloom : public PostProcessingEffect {
 public:
 	Bloom(float thresholdStart, float thresholdEnd, float multiplier, float sigma, unsigned samples);
 
-	const _GLFramebuffer& Render(const _GLFramebuffer& input) const override;
+	const GL::Framebuffer& Render(const GL::Framebuffer& input) const override;
 
 private:
 	float _threshold_start;
@@ -24,11 +24,11 @@ private:
 	std::vector<float> _kernel;
 
 private:
-	static _GLShaderProgram& _BloomShader();
-	static _GLShaderProgram& _CombineShader();
+	static GL::Program& _BloomShader();
+	static GL::Program& _CombineShader();
 
-	static std::unique_ptr<_GLShaderProgram> _bloom_shader;
-	static std::unique_ptr<_GLShaderProgram> _combine_shader;
+	static std::unique_ptr<GL::Program> _bloom_shader;
+	static std::unique_ptr<GL::Program> _combine_shader;
 
 };
 

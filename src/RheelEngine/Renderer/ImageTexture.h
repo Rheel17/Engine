@@ -6,7 +6,7 @@
 #include "../_common.h"
 
 #include "../Assets/Image.h"
-#include "_OpenGL/_GLTexture2D.h"
+#include "OpenGL/Texture2D.h"
 
 namespace rheel {
 
@@ -18,7 +18,7 @@ public:
 private:
 	explicit ImageTexture(const Image& image);
 
-	_GLTexture2D _texture;
+	GL::Texture2D _texture;
 
 public:
 	static const ImageTexture& Get(const Image& image);

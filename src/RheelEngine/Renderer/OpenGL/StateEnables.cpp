@@ -3,7 +3,7 @@
  */
 #include "StateEnables.h"
 
-namespace rheel {
+namespace rheel::GL {
 
 std::unordered_map<Capability, bool> StateEnables::_defaults;
 

@@ -8,7 +8,6 @@
 #include <list>
 
 #include "Character.h"
-#include "../_OpenGL/_GLTexture2D.h"
 
 namespace rheel {
 
@@ -18,7 +17,7 @@ class RE_API Font {
 
 private:
 	struct _CharacterCacheItem {
-		wchar_t character;
+		wchar_t character{};
 		Character character_data;
 	};
 
@@ -29,7 +28,7 @@ private:
 	};
 
 public:
-	Font(FT_Face face);
+	explicit Font(FT_Face face);
 	~Font();
 
 	const Character& LoadCharacter(wchar_t c);

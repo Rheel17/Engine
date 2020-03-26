@@ -7,7 +7,7 @@
 
 #include "SceneRenderManager.h"
 #include "ShadowMap.h"
-#include "_OpenGL/_GLFramebuffer.h"
+#include "OpenGL/Framebuffer.h"
 #include "../Components/Camera.h"
 
 namespace rheel {
@@ -19,7 +19,7 @@ public:
 
 	void SetSize(unsigned width, unsigned height);
 
-	const _GLFramebuffer& ResultBuffer() const;
+	const GL::Framebuffer& ResultBuffer() const;
 
 	virtual void Render(float dt) = 0;
 
@@ -50,7 +50,7 @@ private:
 	unsigned _width;
 	unsigned _height;
 
-	_GLFramebuffer _result_buffer;
+	GL::Framebuffer _result_buffer;
 
 	std::unordered_map<Light *, std::unique_ptr<ShadowMap>> _shadow_maps;
 

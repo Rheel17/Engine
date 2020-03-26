@@ -26,7 +26,7 @@ public:
 	 * as outputted by a SceneRenderer. The final scene will be drawn to the
 	 * quad at pos with dimensions size.
 	 */
-	void Render(const _GLFramebuffer& input, const ivec2& pos, const ivec2& size) const;
+	void Render(const GL::Framebuffer& input, const ivec2& pos, const ivec2& size) const;
 
 	/**
 	 * Enables the bloom effect.
@@ -39,18 +39,18 @@ public:
 	void ClearBloom();
 
 private:
-	const _GLFramebuffer& _ResolveInput(const _GLFramebuffer& input) const;
+	const GL::Framebuffer& _ResolveInput(const GL::Framebuffer& input) const;
 
 	unsigned _UnusedFramebufferIndex() const;
-	unsigned _GetFramebufferIndex(const _GLFramebuffer& buffer) const;
-	_GLFramebuffer& _Framebuffer(unsigned index) const;
+	unsigned _GetFramebufferIndex(const GL::Framebuffer& buffer) const;
+	GL::Framebuffer& _Framebuffer(unsigned index) const;
 	void _MarkFramebufferUse(unsigned index, bool flag) const;
 
 	std::optional<Bloom> _bloom;
 
 	mutable unsigned _width = 0;
 	mutable unsigned _height = 0;
-	mutable std::array<std::pair<_GLFramebuffer, bool>, 3> _temp_buffers;
+	mutable std::array<std::pair<GL::Framebuffer, bool>, 3> _temp_buffers;
 
 };
 

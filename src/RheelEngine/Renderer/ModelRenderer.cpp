@@ -3,14 +3,15 @@
  */
 #include "ModelRenderer.h"
 
+#include "OpenGL/State.h"
 #include "../EngineResources.h"
 
 #include <array>
 
 namespace rheel {
 
-_GLShaderProgram ModelRenderer::_forward_model_shader;
-_GLShaderProgram ModelRenderer::_opaque_shader;
+GL::Program ModelRenderer::_forward_model_shader;
+GL::Program ModelRenderer::_opaque_shader;
 bool ModelRenderer::_are_shaders_initialized = false;
 
 ModelRenderer::ObjectData::ObjectData() :
@@ -94,9 +95,9 @@ bool ModelRenderer::_MaterialShaderCompare::operator()(const Material& mat1, con
 }
 
 ModelRenderer::ModelRenderer(const Model& model) :
-		_vertex_buffer_object(_GL::BufferTarget::ARRAY),
-		_element_array_buffer(_GL::BufferTarget::ELEMENT_ARRAY),
-		_object_data_buffer(_GL::BufferTarget::ARRAY),
+		_vertex_buffer_object(GL::Buffer::Target::ARRAY),
+		_element_array_buffer(GL::Buffer::Target::ELEMENT_ARRAY),
+		_object_data_buffer(GL::Buffer::Target::ARRAY),
 		_index_count(model.GetIndices().size()) {
 
 	_vertex_buffer_object.SetData(model.GetVertices());
@@ -104,10 +105,10 @@ ModelRenderer::ModelRenderer(const Model& model) :
 	_object_data_buffer.SetData(std::vector<ObjectData>());
 
 	_vao.SetVertexAttributes<vec3, vec3, vec2>(_vertex_buffer_object);
-	_vao.SetVertexIndices(_element_array_buffer);
+	_vao.SetVertexIndices(_element_array_buffer, GL::VertexArray::IndexType::UNSIGNED_INT);
 	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ObjectData), true);
 
-	_GL::ClearVertexArrayBinding();
+
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddObject() {
@@ -126,12 +127,12 @@ void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectDataPtr
 	_Remove(_textured_objects[material], std::forward<ObjectDataPtr>(object));
 }
 
-_GLShaderProgram& ModelRenderer::GetForwardModelShader() {
+GL::Program& ModelRenderer::GetForwardModelShader() {
 	_InitializeShaders();
 	return _forward_model_shader;
 }
 
-_GLShaderProgram& ModelRenderer::GetOpaqueShader() {
+GL::Program& ModelRenderer::GetOpaqueShader() {
 	_InitializeShaders();
 	return _opaque_shader;
 }
@@ -139,21 +140,21 @@ _GLShaderProgram& ModelRenderer::GetOpaqueShader() {
 void ModelRenderer::RenderObjects() const {
 	_vao.Bind();
 
-	_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, 0);
-	_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, 1);
-	_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, 2);
+	GL::State::ClearTexture(0, GL::Texture::Target::TEXTURE_2D);
+	GL::State::ClearTexture(1, GL::Texture::Target::TEXTURE_2D);
+	GL::State::ClearTexture(2, GL::Texture::Target::TEXTURE_2D);
 
-	_object_data_buffer.SetData(_objects, _GLBuffer::STREAM_DRAW);
-	glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, _objects.size());
+	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
+	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
 
 	for (const auto& [material, objects] : _textured_objects) {
 		material.BindTextures();
 
-		_object_data_buffer.SetData(objects, _GLBuffer::STREAM_DRAW);
-		glDrawElementsInstanced(GL_TRIANGLES, _index_count, GL_UNSIGNED_INT, nullptr, objects.size());
+		_object_data_buffer.SetData(objects, GL::Buffer::Usage::STREAM_DRAW);
+		_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
 	}
 
-	_GL::ClearVertexArrayBinding();
+
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::_Add(_ObjectDataVector& objects) {
@@ -175,8 +176,8 @@ void ModelRenderer::_InitializeShaders() {
 		return;
 	}
 
-	_forward_model_shader.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
-	_forward_model_shader.AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
+	_forward_model_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
+	_forward_model_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
 	_forward_model_shader.Link();
 	_forward_model_shader["ambientTexture"] = 0;
 	_forward_model_shader["diffuseTexture"] = 1;
@@ -186,8 +187,8 @@ void ModelRenderer::_InitializeShaders() {
 	_forward_model_shader["_shadowMap2"] = 5;
 	_forward_model_shader["_shadowMap3"] = 6;
 
-	_opaque_shader.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
-	_opaque_shader.AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
+	_opaque_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
+	_opaque_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
 	_opaque_shader.Link();
 
 	_are_shaders_initialized = true;

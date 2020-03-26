@@ -6,7 +6,7 @@
 namespace rheel::GL {
 
 Texture2D::Texture2D() :
-Texture(Target::TEXTURE_2D) {}
+		AbstractTexture(Target::TEXTURE_2D) {}
 
 void Texture2D::SetWrapParameterS(Texture::WrapParameter parameter) {
 	Bind();
@@ -18,10 +18,20 @@ void Texture2D::SetWrapParameterT(Texture::WrapParameter parameter) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GLint(parameter));
 }
 
-void Texture2D::SetEmpty(InternalFormat internalFormat, unsigned width, unsigned height) {
+void Texture2D::SetCompareFunction(Texture::CompareFunction parameter) {
+	Bind();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GLint(parameter));
+}
+
+void Texture2D::SetCompareMode(Texture::CompareMode parameter) {
+	Bind();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GLint(parameter));
+}
+
+void Texture2D::SetEmpty(InternalFormat internalFormat, unsigned width, unsigned height, Format format) {
 	std::vector<float> zeros;
 	zeros.resize(width * height * 4);
-	SetData(internalFormat, width, height, Format::RGBA, zeros.data());
+	SetData(internalFormat, width, height, format, zeros.data());
 }
 
 void Texture2D::SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, Type type, const void *data) {

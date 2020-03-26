@@ -12,12 +12,39 @@ namespace rheel::GL {
 Framebuffer::Framebuffer(unsigned viewportWidth, unsigned viewportHeight) :
 		_viewport_width(viewportWidth), _viewport_height(viewportHeight) {}
 
+Framebuffer::Framebuffer(const Framebuffer& original, unsigned newWidth, unsigned newHeight) :
+		_viewport_width(newWidth), _viewport_height(newHeight) {
+
+	for (const auto& [attachment, texture] : original._attached_textures) {
+		_AttachTexture(texture.internalFormat, texture.format, attachment);
+	}
+
+	for (const auto& [attachment, texture] : original._attached_multisample_textures) {
+		_AttachTextureMultisample(texture.internalFormat, texture.samples, attachment);
+	}
+
+	for (const auto& [attachment, buffer] : original._attached_renderbuffers) {
+		_AttachRenderbuffer(buffer.internalFormat, attachment);
+	}
+
+	for (const auto& [attachment, buffer] : original._attached_multisample_renderbuffers) {
+		_AttachRenderbufferMultisample(buffer.internalFormat, buffer.samples, attachment);
+	}
+
+	SetDrawBuffers(_draw_buffers);
+}
+
 void Framebuffer::BindForDrawing() const {
 	State::BindFramebuffer(Target::DRAW, *this);
 }
 
 void Framebuffer::BindForReading() const {
 	State::BindFramebuffer(Target::READ, *this);
+}
+
+void Framebuffer::Clear(ClearParameter buffersToClear) const {
+	BindForDrawing();
+	glClear(GLenum(buffersToClear));
 }
 
 unsigned Framebuffer::GetViewportWidth() const {
@@ -28,170 +55,188 @@ unsigned Framebuffer::GetViewportHeight() const {
 	return _viewport_height;
 }
 
-void Framebuffer::AttachTexture(InternalFormat format, unsigned colorAttachment) {
-	AttachTexture(Texture2D(), colorAttachment);
-	auto& texture = GetTextureAttachment(colorAttachment);
-
-	texture.SetEmpty(format, _viewport_width, _viewport_height);
-	texture.SetWrapParameterS(Texture::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetWrapParameterT(Texture::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetMinifyingFilter(Texture::FilterFunction::LINEAR);
-	texture.SetMagnificationFilter(Texture::FilterFunction::LINEAR);
+void Framebuffer::AttachTexture(InternalFormat internalFormat, Format format, unsigned colorAttachment) {
+	_AttachTexture(internalFormat, format, GL_COLOR_ATTACHMENT0 + colorAttachment);
 }
 
-void Framebuffer::AttachTexture(InternalFormat format, Attachment attachment) {
-	AttachTexture(Texture2D(), attachment);
-	auto& texture = GetTextureAttachment(attachment);
-
-	texture.SetEmpty(format, _viewport_width, _viewport_height);
-	texture.SetWrapParameterS(Texture::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetWrapParameterT(Texture::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetMinifyingFilter(Texture::FilterFunction::LINEAR);
-	texture.SetMagnificationFilter(Texture::FilterFunction::LINEAR);
+void Framebuffer::AttachTexture(InternalFormat internalFormat, Format format, Attachment attachment) {
+	_AttachTexture(internalFormat, format, GLenum(attachment));
 }
 
-void Framebuffer::AttachTexture(Texture2D texture, unsigned colorAttachment) {
-	if (_attached_textures.find(GL_COLOR_ATTACHMENT0 + colorAttachment) == _attached_textures.end() ||
-			_attached_renderbuffers.find(GL_COLOR_ATTACHMENT0 + colorAttachment) == _attached_renderbuffers.end()) {
-		Log::Error() << "Color attachment" << colorAttachment << "already has an attachment" << std::endl;
-		abort();
-	}
-
-	GLuint name = texture.GetName();
-	_attached_textures[GL_COLOR_ATTACHMENT0 + colorAttachment] = std::move(texture);
-
-	BindForDrawing();
-	glFramebufferTexture2D(GLenum(Target::DRAW), GL_COLOR_ATTACHMENT0 + colorAttachment, GL_TEXTURE_2D, name, 0);
+void Framebuffer::AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, unsigned colorAttachment) {
+	_AttachTextureMultisample(internalFormat, samples, GL_COLOR_ATTACHMENT0 + colorAttachment);
 }
 
-void Framebuffer::AttachTexture(Texture2D texture, Attachment attachment) {
-	if (_attached_textures.find(GLenum(attachment)) == _attached_textures.end() ||
-		_attached_renderbuffers.find(GLenum(attachment)) == _attached_renderbuffers.end()) {
-		Log::Error() << "Attachment 0x" << std::hex << GLenum(attachment) << "already has an attachment" << std::endl;
-		abort();
-	}
-
-	GLuint name = texture.GetName();
-	_attached_textures[GLenum(attachment)] = std::move(texture);
-
-	BindForDrawing();
-	glFramebufferTexture2D(GLenum(Target::DRAW), GLenum(attachment), GL_TEXTURE_2D, name, 0);
+void Framebuffer::AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, Attachment attachment) {
+	_AttachTextureMultisample(internalFormat, samples, GLenum(attachment));
 }
 
 void Framebuffer::AttachRenderbuffer(InternalFormat format, unsigned colorAttachment) {
-	AttachRenderbuffer(Renderbuffer(), colorAttachment);
-	GetRenderbufferAttachment(colorAttachment).SetStorage(format, _viewport_width, _viewport_height);
+	_AttachRenderbuffer(format, GL_COLOR_ATTACHMENT0 + colorAttachment);
 }
 
 void Framebuffer::AttachRenderbuffer(InternalFormat format, Attachment attachment) {
-	AttachRenderbuffer(Renderbuffer(), attachment);
-	GetRenderbufferAttachment(attachment).SetStorage(format, _viewport_width, _viewport_height);
+	_AttachRenderbuffer(format, GLenum(attachment));
 }
 
-void Framebuffer::AttachRenderbuffer(Renderbuffer renderbuffer, unsigned colorAttachment) {
-	if (_attached_textures.find(GL_COLOR_ATTACHMENT0 + colorAttachment) == _attached_textures.end() ||
-		_attached_renderbuffers.find(GL_COLOR_ATTACHMENT0 + colorAttachment) == _attached_renderbuffers.end()) {
-		Log::Error() << "Color attachment" << colorAttachment << "already has an attachment" << std::endl;
-		abort();
-	}
-
-	GLuint name = renderbuffer.GetName();
-	_attached_renderbuffers[GL_COLOR_ATTACHMENT0 + colorAttachment] = std::move(renderbuffer);
-
-	BindForDrawing();
-	glFramebufferRenderbuffer(GLenum(Target::DRAW), GL_COLOR_ATTACHMENT0 + colorAttachment, GL_RENDERBUFFER, name);
+void Framebuffer::AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, unsigned colorAttachment) {
+	_AttachRenderbufferMultisample(internalFormat, samples, GL_COLOR_ATTACHMENT0 + colorAttachment);
 }
 
-void Framebuffer::AttachRenderbuffer(Renderbuffer renderbuffer, Attachment attachment) {
-	if (_attached_textures.find(GLenum(attachment)) == _attached_textures.end() ||
-		_attached_renderbuffers.find(GLenum(attachment)) == _attached_renderbuffers.end()) {
-		Log::Error() << "Attachment 0x" << std::hex << GLenum(attachment) << "already has an attachment" << std::endl;
-		abort();
-	}
-
-	GLuint name = renderbuffer.GetName();
-	_attached_renderbuffers[GLenum(attachment)] = std::move(renderbuffer);
-
-	BindForDrawing();
-	glFramebufferRenderbuffer(GLenum(Target::DRAW), GLenum(attachment), GL_RENDERBUFFER, name);
+void Framebuffer::AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, Attachment attachment) {
+	_AttachRenderbufferMultisample(internalFormat, samples, GLenum(attachment));
 }
 
 Texture2D& Framebuffer::GetTextureAttachment(unsigned colorAttachment) {
-	auto iter = _attached_textures.find(GL_COLOR_ATTACHMENT0 + colorAttachment);
-	if (iter == _attached_textures.end()) {
-		Log::Error() << "No texture attached to color attachment " << colorAttachment << std::endl;
-		abort();
-	}
-	return iter->second;
+	return _GetAttachment(_attached_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
 }
 
 const Texture2D& Framebuffer::GetTextureAttachment(unsigned colorAttachment) const {
-	auto iter = _attached_textures.find(GL_COLOR_ATTACHMENT0 + colorAttachment);
-	if (iter == _attached_textures.end()) {
-		Log::Error() << "No texture attached to color attachment " << colorAttachment << std::endl;
-		abort();
-	}
-	return iter->second;
+	return _GetAttachment(_attached_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
 }
 
 Texture2D& Framebuffer::GetTextureAttachment(Attachment attachment) {
-	auto iter = _attached_textures.find(GLenum(attachment));
-	if (iter == _attached_textures.end()) {
-		Log::Error() << "No texture attached to attachment 0x" << std::hex << GLenum(attachment) << std::endl;
-		abort();
-	}
-	return iter->second;
+	return _GetAttachment(_attached_textures, GLenum(attachment)).texture;
 }
 
 const Texture2D& Framebuffer::GetTextureAttachment(Attachment attachment) const {
-	auto iter = _attached_textures.find(GLenum(attachment));
-	if (iter == _attached_textures.end()) {
-		Log::Error() << "No texture attached to attachment 0x" << std::hex << GLenum(attachment) << std::endl;
-		abort();
-	}
-	return iter->second;
+	return _GetAttachment(_attached_textures, GLenum(attachment)).texture;
+}
+
+Texture2DMultisample& Framebuffer::GetTextureMultisampleAttachment(unsigned colorAttachment) {
+	return _GetAttachment(_attached_multisample_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
+}
+
+const Texture2DMultisample& Framebuffer::GetTextureMultisampleAttachment(unsigned colorAttachment) const {
+	return _GetAttachment(_attached_multisample_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
+}
+
+Texture2DMultisample& Framebuffer::GetTextureMultisampleAttachment(Attachment attachment) {
+	return _GetAttachment(_attached_multisample_textures, GLenum(attachment)).texture;
+}
+
+const Texture2DMultisample& Framebuffer::GetTextureMultisampleAttachment(Attachment attachment) const {
+	return _GetAttachment(_attached_multisample_textures, GLenum(attachment)).texture;
 }
 
 Renderbuffer& Framebuffer::GetRenderbufferAttachment(unsigned colorAttachment) {
-	auto iter = _attached_renderbuffers.find(GL_COLOR_ATTACHMENT0 + colorAttachment);
-	if (iter == _attached_renderbuffers.end()) {
-		Log::Error() << "No renderbuffer attached to color attachment " << colorAttachment << std::endl;
-		abort();
-	}
-	return iter->second;
+	return _GetAttachment(_attached_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
 }
 
 const Renderbuffer& Framebuffer::GetRenderbufferAttachment(unsigned colorAttachment) const {
-	auto iter = _attached_renderbuffers.find(GL_COLOR_ATTACHMENT0 + colorAttachment);
-	if (iter == _attached_renderbuffers.end()) {
-		Log::Error() << "No renderbuffer attached to color attachment " << colorAttachment << std::endl;
-		abort();
-	}
-	return iter->second;
+	return _GetAttachment(_attached_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
 }
 
 Renderbuffer& Framebuffer::GetRenderbufferAttachment(Attachment attachment) {
-	auto iter = _attached_renderbuffers.find(GLenum(attachment));
-	if (iter == _attached_renderbuffers.end()) {
-		Log::Error() << "No renderbuffer attached to attachment 0x" << std::hex << GLenum(attachment) << std::endl;
-		abort();
-	}
-	return iter->second;
+	return _GetAttachment(_attached_renderbuffers, GLenum(attachment)).buffer;
 }
 
 const Renderbuffer& Framebuffer::GetRenderbufferAttachment(Attachment attachment) const {
-	auto iter = _attached_renderbuffers.find(GLenum(attachment));
-	if (iter == _attached_renderbuffers.end()) {
-		Log::Error() << "No renderbuffer attached to attachment 0x" << std::hex << GLenum(attachment) << std::endl;
-		abort();
-	}
-	return iter->second;
+	return _GetAttachment(_attached_renderbuffers, GLenum(attachment)).buffer;
+}
+
+Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(unsigned colorAttachment) {
+	return _GetAttachment(_attached_multisample_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
+}
+
+const Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(unsigned colorAttachment) const {
+	return _GetAttachment(_attached_multisample_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
+}
+
+Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(Attachment attachment) {
+	return _GetAttachment(_attached_multisample_renderbuffers, GLenum(attachment)).buffer;
+}
+
+const Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(Attachment attachment) const {
+	return _GetAttachment(_attached_multisample_renderbuffers, GLenum(attachment)).buffer;
 }
 
 void Framebuffer::SetDrawBuffers(std::vector<unsigned> colorAttachments) {
 	BindForDrawing();
-	glDrawBuffers(colorAttachments.size(), colorAttachments.data());
+
+	std::vector<GLenum> data;
+	for (unsigned a : colorAttachments) {
+		data.push_back(GL_COLOR_ATTACHMENT0 + a);
+	}
+
+	glDrawBuffers(data.size(), data.data());
 	_CheckStatus();
+
+	_draw_buffers = std::move(colorAttachments);
+}
+
+void Framebuffer::_AttachTexture(InternalFormat internalFormat, Format format, GLenum attachment) {
+	if (_HasAttachment(attachment)) {
+		Log::Error() << "Framebuffer already has attachment attached for 0x" << std::hex << attachment << std::endl;
+		abort();
+	}
+
+	// default-construct the texture in place
+	Texture2D& texture = (_attached_textures[attachment] = { Texture2D(), internalFormat, format }).texture;
+
+	// initialize texture
+	texture.SetEmpty(internalFormat, _viewport_width, _viewport_height, format);
+	texture.SetWrapParameterS(Texture::WrapParameter::CLAMP_TO_EDGE);
+	texture.SetWrapParameterT(Texture::WrapParameter::CLAMP_TO_EDGE);
+	texture.SetMinifyingFilter(Texture::FilterFunction::LINEAR);
+	texture.SetMagnificationFilter(Texture::FilterFunction::LINEAR);
+
+	// attach the texture to the framebuffer
+	BindForDrawing();
+	glFramebufferTexture2D(GLenum(Target::DRAW), attachment, GLenum(Texture::Target::TEXTURE_2D), texture.GetName(), 0);
+}
+
+void Framebuffer::_AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, GLenum attachment) {
+	if (_HasAttachment(attachment)) {
+		Log::Error() << "Framebuffer already has attachment attached for 0x" << std::hex << attachment << std::endl;
+		abort();
+	}
+
+	// default-construct the texture in place
+	Texture2DMultisample& texture = (_attached_multisample_textures[attachment] = { Texture2DMultisample(), internalFormat, samples }).texture;
+
+	// initialize texture
+	texture.Initialize(internalFormat, _viewport_width, _viewport_height, samples);
+	texture.SetWrapParameterS(Texture::WrapParameter::CLAMP_TO_EDGE);
+	texture.SetWrapParameterT(Texture::WrapParameter::CLAMP_TO_EDGE);
+
+	// attach the texture to the framebuffer
+	BindForDrawing();
+	glFramebufferTexture2D(GLenum(Target::DRAW), attachment, GLenum(Texture::Target::TEXTURE_2D_MULTISAMPLE), texture.GetName(), 0);
+}
+
+void Framebuffer::_AttachRenderbuffer(InternalFormat internalFormat, GLenum attachment) {
+	if (_HasAttachment(attachment)) {
+		Log::Error() << "Framebuffer already has attachment attached for 0x" << std::hex << attachment << std::endl;
+		abort();
+	}
+
+	// default-construct the renderbuffer in place
+	Renderbuffer& buffer = (_attached_renderbuffers[attachment] = { Renderbuffer(), internalFormat }).buffer;
+
+	// initialize buffer
+	buffer.SetStorage(internalFormat, _viewport_width, _viewport_height);
+
+	// attach the renderbuffer to the framebuffer
+	BindForDrawing();
+	glFramebufferRenderbuffer(GLenum(Target::DRAW), attachment, GL_RENDERBUFFER, buffer.GetName());
+}
+
+void Framebuffer::_AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, GLenum attachment) {
+	if (_HasAttachment(attachment)) {
+		Log::Error() << "Framebuffer already has attachment attached for 0x" << std::hex << attachment << std::endl;
+		abort();
+	}
+
+	// default-construct the renderbuffer in place
+	Renderbuffer& buffer = (_attached_multisample_renderbuffers[attachment] = { Renderbuffer(), internalFormat, samples }).buffer;
+
+	// initialize buffer
+	buffer.SetStorageMultisample(internalFormat, _viewport_width, _viewport_height, samples);
+
+	// attach the renderbuffer to the framebuffer
+	BindForDrawing();
+	glFramebufferRenderbuffer(GLenum(Target::DRAW), attachment, GL_RENDERBUFFER, buffer.GetName());
 }
 
 void Framebuffer::_CheckStatus() const {
@@ -200,6 +245,12 @@ void Framebuffer::_CheckStatus() const {
 		Log::Error() << "Framebuffer is not complete (0x" << std::hex << status << ")" << std::endl;
 		abort();
 	}
+}
+
+bool Framebuffer::_HasAttachment(GLenum attachment) const {
+	return !(_attached_textures.find(attachment) == _attached_textures.end() &&
+			 _attached_multisample_textures.find(attachment) == _attached_multisample_textures.end() &&
+			 _attached_renderbuffers.find(attachment) == _attached_renderbuffers.end());
 }
 
 }

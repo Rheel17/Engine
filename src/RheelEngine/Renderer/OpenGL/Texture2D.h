@@ -5,12 +5,12 @@
 #define RHEELENGINE_GL_TEXTURE2D_H
 #include "../../_common.h"
 
-#include "Texture.h"
+#include "AbstractTexture.h"
 #include "Enums.h"
 
 namespace rheel::GL {
 
-class RE_API Texture2D : public Texture {
+class RE_API Texture2D : public AbstractTexture {
 
 public:
 	Texture2D();
@@ -26,9 +26,20 @@ public:
 	void SetWrapParameterT(WrapParameter parameter);
 
 	/**
+	 *Specifies the comparison operator used. Only usefull with
+	 * SetCompareMode(COMPARE_REF_TO_TEXTURE).
+	 */
+	void SetCompareFunction(CompareFunction parameter);
+
+	/**
+	 * Specifies the texture comparison mode.
+	 */
+	void SetCompareMode(CompareMode parameter);
+
+	/**
 	 * Clears the texture and sets the size.
 	 */
-	void SetEmpty(InternalFormat internalFormat, unsigned width, unsigned height);
+	void SetEmpty(InternalFormat internalFormat, unsigned width, unsigned height, Format format);
 
 	/**
 	 * Sets the data of this texture. A raw data pointer is used. Make sure the type and

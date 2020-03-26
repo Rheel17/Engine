@@ -9,11 +9,12 @@
 #include <set>
 
 #include "Buffer.h"
+#include "Enums.h"
 
 namespace rheel::GL {
 
-OPENGL_GENDEL_FUNCTION(glGenVertexArrays, _GenVertexArrays);
-OPENGL_GENDEL_FUNCTION(glDeleteVertexArrays, _DeleteVertexArrays);
+OPENGL_GEN_FUNCTION(glGenVertexArrays, _GenVertexArrays);
+OPENGL_DELETE_FUNCTION(glDeleteVertexArrays, _DeleteVertexArrays);
 
 class RE_API VertexArray : public Object<_GenVertexArrays, _DeleteVertexArrays> {
 
@@ -34,12 +35,12 @@ public:
 		 * offset:    the offset in the buffer.
 		 * normalize: when true, _OpenGL will normalize the data before they are accessed. (default: false)
 		 */
-		VertexAttribute(GLuint index, GLint size, GLenum type, GLsizei stride, GLsizeiptr offset, bool normalize = false);
+		VertexAttribute(GLuint index, GLint size, Type type, GLsizei stride, GLsizeiptr offset, bool normalize = false);
 
 	private:
 		GLuint _index;
 		GLint _size;
-		GLenum _type;
+		Type _type;
 		GLsizei _stride;
 		GLsizeiptr _offset;
 		bool _normalize;
@@ -49,9 +50,28 @@ public:
 
 	};
 
-public:
-	VertexArray();
+	enum class Mode {
+		POINTS = GL_POINTS,
+		LINE_STRIP = GL_LINE_STRIP,
+		LINE_LOOP = GL_LINE_LOOP,
+		LINES = GL_LINES,
+		LINE_STRIP_ADJACENCY = GL_LINE_STRIP_ADJACENCY,
+		LINES_ADJACENCY = GL_LINES_ADJACENCY,
+		TRIANGLE_STRIP = GL_TRIANGLE_STRIP,
+		TRIANGLE_FAN = GL_TRIANGLE_FAN,
+		TRIANGLES = GL_TRIANGLES,
+		TRIANGLE_STRIP_ADJACENCY = GL_TRIANGLE_STRIP_ADJACENCY,
+		TRIANGLES_ADJACENCY = GL_TRIANGLES_ADJACENCY,
+		PATCHES = GL_PATCHES
+	};
 
+	enum class IndexType {
+		UNSIGNED_BYTE = GL_UNSIGNED_BYTE,
+		UNSIGNED_SHORT = GL_UNSIGNED_SHORT,
+		UNSIGNED_INT = GL_UNSIGNED_INT
+	};
+
+public:
 	void Bind() const;
 
 	/**
@@ -90,12 +110,30 @@ public:
 	 * Set the vertex indices of this VAO. The specified buffer must have an
 	 * ELEMENT_ARRAY target.
 	 */
-	void SetVertexIndices(const Buffer& buffer);
+	void SetVertexIndices(const Buffer& buffer, IndexType indexType);
+
+	/**
+	 * Draws the contents of the VAO using glDrawArrays or glDrawArraysInstanced,
+	 * depending on the number of indices. Make sure that the VAO is complete, i.e.
+	 * it has vertex data. The index buffer will not be used for this draw call, use
+	 * DrawElements(...) for that.
+	 */
+	void DrawArrays(Mode mode, int first, unsigned count, unsigned instances = 1) const;
+
+	/**
+	 * Draws the contents of the VAO using glDrawElements or glDrawElementsInstanced,
+	 * depending on the number of indices. Make sure that the VAO is complete, i.e.
+	 * it has vertex data and indices.
+	 */
+	void DrawElements(Mode mode, unsigned count, unsigned offset = 0, unsigned instances = 1) const;
 
 private:
 	void _SetVertexAttributes(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced);
-	GLuint _FirstUnusedIndex(GLuint consecutive = 1) const;
+	GLuint _FirstUnusedIndex(GLuint consecutive = 1);
 
+	IndexType _index_type{};
+
+	bool _has_initialized_unused_attribute_indices = false;
 	std::set<GLuint> _unused_attribute_indices;
 
 };

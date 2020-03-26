@@ -7,12 +7,21 @@
 
 #include <GL/glew.h>
 
-#define OPENGL_GENDEL_FUNCTION(func, name)          \
-struct RE_API name {                                \
-	void operator()(GLsizei n, GLuint *ptr) const { \
-		func(n, ptr);                               \
-	}                                               \
-};
+#define OPENGL_GEN_FUNCTION(func, structName)    \
+struct RE_API structName {                       \
+	GLuint operator()() const {                  \
+		GLuint name;							 \
+		func(1, &name);                          \
+		return name;                             \
+	}                                            \
+}
+
+#define OPENGL_DELETE_FUNCTION(func, structName) \
+struct RE_API structName {                       \
+	void operator()(GLuint name) const {         \
+		func(1, &name);                          \
+	}                                            \
+}
 
 namespace rheel::GL {
 
@@ -22,13 +31,9 @@ class RE_API Handle {
 
 public:
 	/**
-	 * Generates a handle with the generator.
+	 * The real name is generated lazily - when it is needed.
 	 */
-	Handle() :
-			_name(0) {
-
-		_generator(1, &_name);
-	}
+	Handle() = default;
 
 	/**
 	 * Uses the raw OpenGL handle as id.
@@ -41,7 +46,7 @@ public:
 	 */
 	~Handle() {
 		if (_name != 0) {
-			_deleter(1, &_name);
+			_deleter(_name);
 		}
 	}
 
@@ -51,6 +56,7 @@ public:
 	Handle(Handle&& h) noexcept :
 			_generator(std::move(h._generator)),
 			_deleter(std::move(h._deleter)),
+			_generated(h._generated),
 			_name(h._name) {
 
 		// invalidate the original handle
@@ -60,14 +66,16 @@ public:
 	Handle& operator=(Handle&& h) noexcept {
 		// delete the current handle
 		if (_name != 0) {
-			_deleter(1, &_name);
+			_deleter(_name);
 		}
 
 		_generator = std::move(h._generator);
 		_deleter = std::move(h._deleter);
+		_generated = h._generated;
 		_name = h._name;
 
 		// invalidate the original handle
+		h._generated = true;
 		h._name = 0;
 
 		return *this;
@@ -77,6 +85,11 @@ public:
 	 * Returns the OpenGL name of this handle.
 	 */
 	GLuint GetName() const {
+		if (!_generated) {
+			_name = _generator();
+			_generated = true;
+		}
+
 		return _name;
 	}
 
@@ -84,7 +97,8 @@ private:
 	Generator _generator;
 	Deleter _deleter;
 
-	GLuint _name;
+	mutable bool _generated = false;
+	mutable GLuint _name = 0;
 
 };
 

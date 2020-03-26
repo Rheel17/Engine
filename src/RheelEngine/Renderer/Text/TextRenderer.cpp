@@ -7,6 +7,7 @@
 
 #include "../../Engine.h"
 #include "../../EngineResources.h"
+#include "../OpenGL/State.h"
 
 #define STAGE_TRIANGLES		0
 #define STAGE_BEZIER		1
@@ -14,12 +15,15 @@
 
 namespace rheel {
 
-std::unique_ptr<_GLBuffer> TextRenderer::_triangle_buffer(nullptr);
-std::unique_ptr<_GLVertexArray> TextRenderer::_vao(nullptr);
-std::unique_ptr<_GLBuffer> TextRenderer::_resolve_vbo(nullptr);
-std::unique_ptr<_GLVertexArray> TextRenderer::_resolve_vao(nullptr);
-std::unique_ptr<_GLFramebuffer> TextRenderer::_text_buffer(nullptr);
-_GLShaderProgram TextRenderer::_shader;
+GL::Buffer TextRenderer::_triangle_buffer(GL::Buffer::Target::ARRAY);
+GL::VertexArray TextRenderer::_vao;
+
+GL::Buffer TextRenderer::_resolve_vbo(GL::Buffer::Target::ARRAY);
+GL::VertexArray TextRenderer::_resolve_vao;
+
+std::unique_ptr<GL::Framebuffer> TextRenderer::_text_buffer;
+GL::Program TextRenderer::_shader;
+
 bool TextRenderer::_initialized(false);
 unsigned TextRenderer::_width(1);
 unsigned TextRenderer::_height(1);
@@ -54,35 +58,29 @@ void TextRenderer::_Initialize() {
 		return;
 	}
 
-	_shader.AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
-	_shader.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
+	_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
+	_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
 	_shader.Link();
 
-	_triangle_buffer = std::make_unique<_GLBuffer>(_GL::BufferTarget::ARRAY);
-	_triangle_buffer->SetData(nullptr, 0);
-
-	_vao = std::make_unique<_GLVertexArray>();
-	_vao->SetVertexAttributes<vec3>(*_triangle_buffer);
+	_triangle_buffer.SetDataEmpty();
+	_vao.SetVertexAttributes<vec3>(_triangle_buffer);
 
 	GLfloat triangles[] = { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
-	_resolve_vbo = std::make_unique<_GLBuffer>(_GL::BufferTarget::ARRAY);
-	_resolve_vbo->SetData(triangles, sizeof(triangles));
+	_resolve_vbo.SetData(triangles, sizeof(triangles));
+	_resolve_vao.SetVertexAttributes<vec2>(_resolve_vbo);
 
-	_resolve_vao = std::make_unique<_GLVertexArray>();
-	_resolve_vao->SetVertexAttributes<vec2>(*_resolve_vbo);
-
-	_text_buffer = std::make_unique<_GLFramebuffer>(_width, _height);
-	_text_buffer->AddTexture(GL_RGBA, GL_RGBA);
-	_text_buffer->AddRenderbuffer(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
-	_text_buffer->Create();
+	_text_buffer = std::make_unique<GL::Framebuffer>(_width, _height);
+	_text_buffer->AttachTexture(GL::InternalFormat::RGBA, GL::Format::RGBA, 0);
+	_text_buffer->AttachRenderbuffer(GL::InternalFormat::DEPTH24_STENCIL8, GL::Framebuffer::Attachment::DEPTH_STENCIL);
+	_text_buffer->SetDrawBuffers({ 0 });
 
 	_initialized = true;
 }
 
 void TextRenderer::_ResizeBuffer(unsigned width, unsigned height) {
 	if (_text_buffer) {
-		if (_text_buffer->Width() != width || _text_buffer->Height() != height) {
-			*_text_buffer = _text_buffer->ResizedCopy(width, height);
+		if (_text_buffer->GetViewportWidth() != width || _text_buffer->GetViewportHeight() != height) {
+			*_text_buffer = GL::Framebuffer(*_text_buffer, width, height);
 		}
 	} else {
 		_width = width;
@@ -132,23 +130,15 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	}
 
 	// set the text buffer as render target
-	_GL::PushState();
-	_text_buffer->BindForDrawing();
-	glClearDepth(GL_COLOR_BUFFER_BIT);
+	GL::State::Push();
+	_text_buffer->Clear(GL::Framebuffer::ClearParameter::COLOR);
 
 	// enable the stencil buffer
-	glEnable(GL_STENCIL_TEST);
+	GL::State::Enable(GL::Capability::STENCIL_TEST);
 
 	// for anti-aliasing, enable GL_BLEND
-	bool isBlend = glIsEnabled(GL_BLEND);
-	glEnable(GL_BLEND);
-
-	GLint srcRGB, dstRGB, srcAlpha, dstAlpha;
-	glGetIntegerv(GL_BLEND_SRC_RGB, &srcRGB);
-	glGetIntegerv(GL_BLEND_DST_RGB, &dstRGB);
-	glGetIntegerv(GL_BLEND_SRC_ALPHA, &srcAlpha);
-	glGetIntegerv(GL_BLEND_DST_ALPHA, &dstAlpha);
-	glBlendFunc(GL_ONE, GL_ONE);
+	GL::State::Enable(GL::Capability::BLEND);
+	GL::State::SetBlendFunction(GL::BlendFactor::ONE, GL::BlendFactor::ONE);
 
 	float subpixelWidth = 2.0f / (screen.width * 8);
 	float subpixelHeight = 2.0f / (screen.height * 8);
@@ -161,29 +151,23 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	_DrawTriangles(triangles, bezierCurves, { subpixelWidth *  1, subpixelHeight * -3 });
 
 	// reset the gl state
-	glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
-
-	if (!isBlend) {
-		glDisable(GL_BLEND);
-	}
-
-	glDisable(GL_STENCIL_TEST);
-	_GL::PopState();
+	GL::State::Pop();
 
 	// draw the text to the current framebuffer
-	_GL::PushState();
+	GL::State::Push();
 	_text_buffer->BindForReading();
 
 	glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-	_GL::PopState();
-
+	GL::State::Pop();
 	return x;
 }
 
 void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triangles,
 		const std::vector<Character::Triangle>& bezierCurves,
 		vec2 multisampleOffset) {
+
+	// TODO: put colorMask and depthMask on the state
 
 	// only draw on the stencil buffer
 	GLboolean colorMask[4];
@@ -193,8 +177,10 @@ void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triang
 	glColorMask(false, false, false, false);
 	glDepthMask(false);
 
+	// TODO: put stencilFunc, stencilOp, stencilMask on the state
+
 	// initialize the stencil buffer
-	glClear(GL_STENCIL_BUFFER_BIT);
+	_text_buffer->Clear(GL::Framebuffer::ClearParameter::STENCIL);
 	glStencilFunc(GL_NEVER, 1, 0xFF);
 	glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
 	glStencilMask(0x01);
@@ -202,16 +188,16 @@ void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triang
 	// draw the simple triangles
 	_shader["stage"] = STAGE_TRIANGLES;
 	_shader["multisampleOffset"] = multisampleOffset;
-	_vao->Bind();
-	_triangle_buffer->SetData(triangles);
+	_vao.Bind();
+	_triangle_buffer.SetData(triangles);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3 * triangles.size());
+	_vao.DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, 3 * triangles.size());
 
 	// flip the bezier curves
 	_shader["stage"] = STAGE_BEZIER;
-	_triangle_buffer->SetData(bezierCurves);
+	_triangle_buffer.SetData(bezierCurves);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3 * bezierCurves.size());
+	_vao.DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, 3 * bezierCurves.size());
 
 	// restore color and depth mask
 	glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
@@ -243,8 +229,7 @@ void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triang
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
 	// resolve the stencil buffer
-	_resolve_vao->Bind();
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	_resolve_vao.DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, 6);
 }
 
 }

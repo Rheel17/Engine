@@ -6,9 +6,9 @@
 #include "../../_common.h"
 
 #include "Font.h"
-#include "../_OpenGL/_GLVertexArray.h"
-#include "../_OpenGL/_GLShaderProgram.h"
-#include "../_OpenGL/_GLFramebuffer.h"
+#include "../OpenGL/VertexArray.h"
+#include "../OpenGL/Program.h"
+#include "../OpenGL/Framebuffer.h"
 #include "../../Color.h"
 
 namespace rheel {
@@ -35,14 +35,14 @@ private:
 			const std::vector<Character::Triangle>& bezierCurves,
 			vec2 multisampleOffset);
 
-	static std::unique_ptr<_GLBuffer> _triangle_buffer;
-	static std::unique_ptr<_GLVertexArray> _vao;
+	static GL::Buffer _triangle_buffer;
+	static GL::VertexArray _vao;
 
-	static std::unique_ptr<_GLBuffer> _resolve_vbo;
-	static std::unique_ptr<_GLVertexArray> _resolve_vao;
+	static GL::Buffer _resolve_vbo;
+	static GL::VertexArray _resolve_vao;
 
-	static std::unique_ptr<_GLFramebuffer> _text_buffer;
-	static _GLShaderProgram _shader;
+	static std::unique_ptr<GL::Framebuffer> _text_buffer;
+	static GL::Program _shader;
 
 	static bool _initialized;
 	static unsigned _width;

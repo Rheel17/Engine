@@ -114,6 +114,8 @@ private:
 	GLuint _program_handle;
 	GLint _location;
 
+public:
+	static GLint GetUniformLocation(GLuint programHandle, const std::string& name);
 
 };
 

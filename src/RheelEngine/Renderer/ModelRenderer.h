@@ -10,8 +10,8 @@
 #include "../Material.h"
 #include "../Assets/Model.h"
 
-#include "_OpenGL/_GLShaderProgram.h"
-#include "_OpenGL/_GLVertexArray.h"
+#include "OpenGL/Program.h"
+#include "OpenGL/VertexArray.h"
 
 namespace rheel {
 
@@ -89,10 +89,10 @@ private:
 	static ObjectDataPtr _Add(_ObjectDataVector& objects);
 	static void _Remove(_ObjectDataVector& objects, ObjectDataPtr&& data);
 
-	_GLVertexArray _vao;
-	_GLBuffer _vertex_buffer_object;
-	_GLBuffer _element_array_buffer;
-	mutable _GLBuffer _object_data_buffer;
+	GL::VertexArray _vao;
+	GL::Buffer _vertex_buffer_object;
+	GL::Buffer _element_array_buffer;
+	mutable GL::Buffer _object_data_buffer;
 
 	unsigned _index_count;
 
@@ -100,14 +100,14 @@ private:
 	std::map<Material, _ObjectDataVector, _MaterialTextureCompare> _textured_objects;
 
 public:
-	static _GLShaderProgram& GetForwardModelShader();
-	static _GLShaderProgram& GetOpaqueShader();
+	static GL::Program& GetForwardModelShader();
+	static GL::Program& GetOpaqueShader();
 
 private:
 	static void _InitializeShaders();
 
-	static _GLShaderProgram _forward_model_shader;
-	static _GLShaderProgram _opaque_shader;
+	static GL::Program _forward_model_shader;
+	static GL::Program _opaque_shader;
 	static bool _are_shaders_initialized;
 
 };

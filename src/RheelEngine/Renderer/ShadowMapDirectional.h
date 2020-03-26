@@ -13,11 +13,11 @@ class RE_API ShadowMapDirectional : public ShadowMap {
 	friend class SceneRenderManager;
 
 public:
-	~ShadowMapDirectional();
+	~ShadowMapDirectional() override;
 
 	void Update(Camera *camera, unsigned width, unsigned height) override;
 
-	std::vector<_GLTexture2D> Textures() const;
+	std::vector<std::reference_wrapper<const GL::Texture2D>> Textures() const;
 
 	const std::vector<mat4>& LightMatrices() const;
 
@@ -33,14 +33,14 @@ private:
 	unsigned _csm_count;
 	float _bias;
 
-	std::vector<_GLFramebuffer> _shadow_buffers;
+	std::vector<GL::Framebuffer> _shadow_buffers;
 	std::vector<mat4> _light_matrices;
 
 public:
-	static const _GLTexture2D& EmptyShadowMap();
+	static const GL::Texture2D& EmptyShadowMap();
 
 private:
-	static std::unique_ptr<_GLTexture2D> _empty_shadow_map;
+	static std::unique_ptr<GL::Texture2D> _empty_shadow_map;
 
 };
 

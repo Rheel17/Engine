@@ -8,17 +8,16 @@
 namespace rheel::GL {
 
 Uniform::Uniform(GLuint programHandle, const std::string& name) :
-		_program_handle(programHandle) {
+		_program_handle(programHandle), _location(GetUniformLocation(programHandle, name)) {
 
-	_location = glGetUniformLocation(programHandle, name.c_str());
 	if (_location < 0) {
 		Log::Warning() << "shader doesn't have uniform " << name << std::endl;
 	}
 }
 
 bool Uniform::_Init() const {
-	if (_location < 0) {
-		State::_S()->_bindings._UseProgram(_program_handle);
+	if (_location >= 0) {
+		State::_S()._bindings.UseProgram(_program_handle);
 		return true;
 	}
 
@@ -555,6 +554,10 @@ Uniform& Uniform::operator=(const std::vector<dmat4x3>& values) {
 		glUniformMatrix4x3dv(_location, values.size(), GL_FALSE, reinterpret_cast<const GLdouble *>(values.data()));
 	}
 	return *this;
+}
+
+GLint Uniform::GetUniformLocation(GLuint programHandle, const std::string& name) {
+	return glGetUniformLocation(programHandle, name.c_str());
 }
 
 }

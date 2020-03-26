@@ -9,8 +9,8 @@
 
 namespace rheel::GL {
 
-OPENGL_GENDEL_FUNCTION(glGenTextures, _GenTextures);
-OPENGL_GENDEL_FUNCTION(glDeleteTextures, _DeleteTexture);
+OPENGL_GEN_FUNCTION(glGenTextures, _GenTextures);
+OPENGL_DELETE_FUNCTION(glDeleteTextures, _DeleteTexture);
 
 class RE_API Texture : public Object<_GenTextures, _DeleteTexture> {
 
@@ -41,32 +41,27 @@ public:
 		MIRRORED_CLAMP_TO_EDGE = GL_MIRROR_CLAMP_TO_EDGE
 	};
 
+	enum class CompareFunction {
+		LEQUAL   = GL_LEQUAL,
+		GEQUAL   = GL_GEQUAL,
+		LESS     = GL_LESS,
+		GREATER  = GL_GREATER,
+		EQUAL    = GL_EQUAL,
+		NOTEQUAL = GL_NOTEQUAL,
+		ALWAYS   = GL_ALWAYS,
+		NEVER    = GL_NEVER
+	};
+
+	enum class CompareMode {
+		COMPARE_REF_TO_TEXTURE = GL_COMPARE_REF_TO_TEXTURE, NONE = GL_NONE
+	};
+
 public:
 	explicit Texture(Target target);
 
 	void Bind(unsigned int textureUnit = 0) const;
 
 	Target GetTarget() const;
-
-	/**
-	 * Sets the minifying function for this texture.
-	 */
-	void SetMinifyingFilter(FilterFunction filterFunction);
-
-	/**
-	 * Sets the magnification function for this texture.
-	 */
-	void SetMagnificationFilter(FilterFunction filterFunction);
-
-	/**
-	 * Sets the anisotropy parameter
-	 */
-	void SetAnisotropyParameter(float parameter);
-
-	/**
-	 * Generates the mipmap for this texture
-	 */
-	void GenerateMipmap();
 
 private:
 	Target _target;

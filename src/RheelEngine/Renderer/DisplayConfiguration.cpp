@@ -3,7 +3,7 @@
  */
 #include "DisplayConfiguration.h"
 
-#include <GL/glew.h>
+#include "OpenGL/Capabilities.h"
 #include <GLFW/glfw3.h>
 
 namespace rheel {
@@ -45,8 +45,7 @@ void DisplayConfiguration::_ClampAnisotropicLevel() {
 
 		anisotropic_level = 1.0f;
 	} else if (anisotropic_level > 0.0f) {
-		float max;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max);
+		float max = GL::Capabilities::GetMaxTextureMaxAnisotropy();
 
 		if (anisotropic_level > max) {
 			if (anisotropic_level != ANISOTROPIC_LEVEL_MAX) {

@@ -14,8 +14,8 @@
 
 namespace rheel {
 
-std::unique_ptr<_GLVertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
-std::unique_ptr<_GLBuffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
+std::unique_ptr<GL::VertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
+std::unique_ptr<GL::Buffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
 bool SceneRenderManager::_lighting_quad_initialized = false;
 
 SceneRenderManager::SceneRenderManager(Scene *scene) :
@@ -115,8 +115,8 @@ const SkyboxRenderer& SceneRenderManager::GetSkyboxRenderer() const {
 	return *_skybox_renderer;
 }
 
-std::vector<std::reference_wrapper<_GLShaderProgram>> SceneRenderManager::CustomShaderPrograms() {
-	std::vector<std::reference_wrapper<_GLShaderProgram>> shaders;
+std::vector<std::reference_wrapper<GL::Program>> SceneRenderManager::CustomShaderPrograms() {
+	std::vector<std::reference_wrapper<GL::Program>> shaders;
 
 	for (auto& [key, value] : _custom_shader_render_map) {
 		shaders.emplace_back(value.GetShaderProgram());
@@ -125,7 +125,7 @@ std::vector<std::reference_wrapper<_GLShaderProgram>> SceneRenderManager::Custom
 	return shaders;
 }
 
-void SceneRenderManager::InitializeShaderLights(_GLShaderProgram& shaderProgram) const {
+void SceneRenderManager::InitializeShaderLights(GL::Program& shaderProgram) const {
 	if (shaderProgram.HasUniform("_lights_type")) shaderProgram["_lights_type"] = _lights_type;
 	if (shaderProgram.HasUniform("_lights_position")) shaderProgram["_lights_position"] = _lights_position;
 	if (shaderProgram.HasUniform("_lights_direction")) shaderProgram["_lights_direction"] = _lights_direction;
@@ -152,10 +152,10 @@ void SceneRenderManager::_Initialize() {
 	}
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
-	_lighting_quad_vbo = std::make_unique<_GLBuffer>(_GL::BufferTarget::ARRAY);
+	_lighting_quad_vbo = std::make_unique<GL::Buffer>(GL::Buffer::Target::ARRAY);
 	_lighting_quad_vbo->SetData(triangles, sizeof(triangles));
 
-	_lighting_quad_vao = std::make_unique<_GLVertexArray>();
+	_lighting_quad_vao = std::make_unique<GL::VertexArray>();
 	_lighting_quad_vao->SetVertexAttributes<vec2>(*_lighting_quad_vbo);
 
 	_lighting_quad_initialized = true;

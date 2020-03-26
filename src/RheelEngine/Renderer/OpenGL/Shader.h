@@ -19,7 +19,11 @@ public:
 	};
 
 public:
-	explicit Shader(ShaderType type, const std::string& source);
+	/**
+	 * Creates and compiles a shader. Note: can only be called when an OpenGL context
+	 * is active!
+	 */
+	Shader(ShaderType type, const std::string& source);
 	~Shader();
 
 	Shader(Shader&& s) noexcept;

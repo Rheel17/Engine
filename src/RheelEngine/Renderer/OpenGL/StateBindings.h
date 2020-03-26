@@ -7,10 +7,6 @@
 
 #include "Buffer.h"
 #include "Framebuffer.h"
-#include "Renderbuffer.h"
-#include "Texture.h"
-#include "VertexArray.h"
-#include "Program.h"
 
 namespace rheel {
 	class Engine;
@@ -20,24 +16,21 @@ namespace rheel::GL {
 
 class RE_API StateBindings {
 	friend class rheel::Engine;
-	friend class Uniform;
 
 public:
 	StateBindings();
 	explicit StateBindings(const StateBindings *parent);
 
-	void BindBuffer(const Buffer& buffer);
-	void BindFramebuffer(Framebuffer::Target target, const Framebuffer& framebuffer);
-	void BindRenderbuffer(const Renderbuffer& renderbuffer);
-	void BindTexture(unsigned unit, const Texture& texture);
-	void BindVertexArray(const VertexArray& vertexArray);
-	void UseProgram(const Program& program);
+	void BindBuffer(Buffer::Target target, GLuint name);
+	void BindFramebuffer(Framebuffer::Target target, GLuint name, unsigned width, unsigned height);
+	void BindRenderbuffer(GLuint name);
+	void BindTexture(unsigned unit, Texture::Target target, GLuint name);
+	void BindVertexArray(GLuint name);
+	void UseProgram(GLuint handle);
 
 	void ResetChanges();
 
 private:
-	void _UseProgram(GLuint programHandle);
-
 	GLuint _GetBuffer(Buffer::Target target) const;
 	GLuint _GetFramebuffer(Framebuffer::Target target) const;
 	GLuint _GetRenderbuffer() const;

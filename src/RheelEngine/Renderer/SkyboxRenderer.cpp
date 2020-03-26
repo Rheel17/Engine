@@ -7,6 +7,7 @@
 #include "ImageTexture.h"
 #include "../EngineResources.h"
 #include "../Components/Skybox.h"
+#include "OpenGL/State.h"
 
 #define PART_NORTH   0
 #define PART_EAST    1
@@ -19,13 +20,13 @@ namespace rheel {
 
 SkyboxRenderer::SkyboxRenderer(SceneRenderManager *manager) :
 		_manager(manager),
-		_vertex_buffer_object(_GL::BufferTarget::ARRAY),
-		_element_array_buffer(_GL::BufferTarget::ELEMENT_ARRAY),
+		_vertex_buffer_object(GL::Buffer::Target::ARRAY),
+		_element_array_buffer(GL::Buffer::Target::ELEMENT_ARRAY),
 		_texture_parts({{ Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null() }}) {
 
 	// initialize the shader
-	_shader.AddShaderFromSource(_GLShaderProgram::VERTEX, EngineResources::PreprocessShader("Shaders_skybox_vert_glsl"));
-	_shader.AddShaderFromSource(_GLShaderProgram::FRAGMENT, EngineResources::PreprocessShader("Shaders_skybox_frag_glsl"));
+	_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_skybox_vert_glsl"));
+	_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_skybox_frag_glsl"));
 	_shader.Link();
 	_shader["textures"] = std::vector<GLint>{ 0, 1, 2, 3, 4, 5 };
 
@@ -33,7 +34,7 @@ SkyboxRenderer::SkyboxRenderer(SceneRenderManager *manager) :
 	_vertex_buffer_object.SetData(_CreateSkyboxVertices());
 	_element_array_buffer.SetData(_CreateSkyboxIndices());
 	_vao.SetVertexAttributes<vec3, vec3>(_vertex_buffer_object);
-	_vao.SetVertexIndices(_element_array_buffer);
+	_vao.SetVertexIndices(_element_array_buffer, GL::VertexArray::IndexType::UNSIGNED_INT);
 }
 
 void SkyboxRenderer::Render(Camera *camera, unsigned width, unsigned height) const {
@@ -66,12 +67,10 @@ void SkyboxRenderer::Render(Camera *camera, unsigned width, unsigned height) con
 			ImageTexture::Get(_texture_parts[i]).Bind(i);
 		}
 
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
-
-		_GL::ClearVertexArrayBinding();
+		_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, 36);
 
 		for (int i = 0; i < 6; i++) {
-			_GL::ClearTextureBinding(_GL::TextureTarget::TEXTURE_2D, i);
+			GL::State::ClearTexture(i, GL::Texture::Target::TEXTURE_2D);
 		}
 	}
 }

@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include "../Engine.h"
+#include "OpenGL/State.h"
 
 namespace rheel {
 
@@ -94,6 +95,9 @@ void Window::Show() {
 		throw std::runtime_error("Failed to initialize GLEW.");
 	}
 
+	// FROM THIS POINT WE HAVE AN OPENGL CONTEXT!
+	GL::State::_Initialize();
+
 	// enable or disable vsync
 	if (!_configuration.vsync) {
 		glfwSwapInterval(0);
@@ -151,8 +155,8 @@ void Window::Loop() {
 			Engine::GetSceneRenderManager(scene).Update();
 		}
 
-		// initialize _OpenGL state
-		_GLShaderProgram::ClearUse();
+		// initialize OpenGL state
+		GL::State::ClearProgram();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// draw the game
@@ -160,6 +164,8 @@ void Window::Loop() {
 
 		// finish the update/render cycle
 		glfwSwapBuffers(window);
+
+		// TODO: GL state push/pop check for consistency
 	}
 }
 
