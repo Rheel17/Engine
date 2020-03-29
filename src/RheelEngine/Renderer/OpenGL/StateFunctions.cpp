@@ -185,47 +185,47 @@ void StateFunctions::SetStencilOp(StencilFunction sfail, StencilFunction dpfail,
 
 void StateFunctions::ResetChanges() {
 	if (_clear_color.has_value()) {
-		const auto& [red, green, blue, alpha] = *_clear_color;
+		const auto& [red, green, blue, alpha] = _parent == nullptr ? _default_clear_color : _parent->_GetClearColor();
 		glClearColor(red, green, blue, alpha);
 	}
 
 	if (_blending_factors.has_value()) {
-		const auto& [srcRGB, dstRGB, srcAlpha, dstAlpha] = *_blending_factors;
+		const auto& [srcRGB, dstRGB, srcAlpha, dstAlpha] = _parent == nullptr ? _default_blending_factors : _parent->_GetBlendFunction();
 		glBlendFuncSeparate(GLenum(srcRGB), GLenum(dstRGB), GLenum(srcAlpha), GLenum(dstAlpha));
 	}
 
 	if (_depth_function.has_value()) {
-		const auto& func = *_depth_function;
+		const auto& func = _parent == nullptr ? _default_depth_function : _parent->_GetDepthFunction();
 		glDepthFunc(GLenum(func));
 	}
 
 	if (_cull_face.has_value()) {
-		const auto& cullFace = *_cull_face;
+		const auto& cullFace = _parent == nullptr ? _default_cull_face : _parent->_GetCullFace();
 		glCullFace(GLenum(cullFace));
 	}
 
 	if (_color_mask.has_value()) {
-		const auto& [red, green, blue, alpha] = *_color_mask;
+		const auto& [red, green, blue, alpha] = _parent == nullptr ? _default_color_mask : _parent->_GetColorMask();
 		glColorMask(red, green, blue, alpha);
 	}
 
 	if (_depth_mask.has_value()) {
-		const auto& depthMask = *_depth_mask;
+		const auto& depthMask = _parent == nullptr ? _default_depth_mask : _parent->_GetDepthMask();
 		glDepthMask(depthMask);
 	}
 
 	if (_stencil_func.has_value()) {
-		const auto& [func, ref, mask] = *_stencil_func;
+		const auto& [func, ref, mask] = _parent == nullptr ? _default_stencil_func : _parent->_GetStencilFunc();
 		glStencilFunc(GLenum(func), ref, mask);
 	}
 
 	if (_stencil_mask.has_value()) {
-		const auto& mask = *_stencil_mask;
+		const auto& mask = _parent == nullptr ? _default_stencil_mask : _parent->_GetStencilMask();
 		glStencilMask(mask);
 	}
 
 	if (_stencil_op.has_value()) {
-		const auto& [sfail, dpfail, dppass] = *_stencil_op;
+		const auto& [sfail, dpfail, dppass] = _parent == nullptr ? _default_stencil_op : _parent->_GetStencilOp();
 		glStencilOp(GLenum(sfail), GLenum(dpfail), GLenum(dppass));
 	}
 
