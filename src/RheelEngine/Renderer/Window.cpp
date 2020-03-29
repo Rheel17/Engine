@@ -107,7 +107,7 @@ void Window::Show() {
 	GL::Debug::SetDebugCallback([](unsigned id, GL::Debug::Source source, GL::Debug::Type type,
 			GL::Debug::Severity severity, const std::string& message) {
 
-		if (id == 131169 || id == 131204 || severity == GL::Debug::Severity::NOTIFICATION) {
+		if (id == 131169 || id == 131204 || id == 131218 || severity == GL::Debug::Severity::NOTIFICATION) {
 			return;
 		}
 
