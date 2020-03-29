@@ -12,6 +12,7 @@
 #define STAGE_TRIANGLES		0
 #define STAGE_BEZIER		1
 #define STAGE_RESOLVE		2
+#define STAGE_COPY          3
 
 namespace rheel {
 
@@ -61,6 +62,7 @@ void TextRenderer::_Initialize() {
 	_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
 	_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
 	_shader.Link();
+	_shader["textBuffer"] = 0;
 
 	_triangle_buffer.SetDataEmpty();
 	_vao.SetVertexAttributes<vec3>(_triangle_buffer);
@@ -132,54 +134,56 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 
 	// set the text buffer as render target
 	GL::State::Push();
-//	_text_buffer->Clear(GL::Framebuffer::BitField::COLOR);
+	_text_buffer->Clear(GL::Framebuffer::BitField::COLOR);
 
-//	// enable the stencil buffer
-//	GL::State::Enable(GL::Capability::STENCIL_TEST);
-//
-//	// for anti-aliasing, enable GL_BLEND
-//	GL::State::Enable(GL::Capability::BLEND);
-//	GL::State::SetBlendFunction(GL::BlendFactor::ONE, GL::BlendFactor::ONE);
-//
-//	float subpixelWidth = 2.0f / (screen.width * 8);
-//	float subpixelHeight = 2.0f / (screen.height * 8);
-//
-//	_shader["color"] = vec4 { color.r, color.g, color.b, color.a / 4.0f };
-//
-//	// find the bounds of the final quad
-//	constexpr float fmin = std::numeric_limits<float>::lowest();
-//	constexpr float fmax = std::numeric_limits<float>::max();
-//	vec4 bounds { fmax, fmax, fmin, fmin };
-//
-//	for (const auto& t : bezierCurves) {
-//		for (int i = 0; i < 3; i++) {
-//			bounds[0] = std::min(bounds[0], t[i].x);
-//			bounds[1] = std::min(bounds[1], t[i].y);
-//			bounds[2] = std::max(bounds[2], t[i].x);
-//			bounds[3] = std::max(bounds[3], t[i].y);
-//		}
-//	}
-//
-//	bounds[0] -= 1.0f;
-//	bounds[1] -= 1.0f;
-//	bounds[2] += 1.0f;
-//	bounds[3] += 1.0f;
-//
-//	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth * -1, subpixelHeight *  3 });
-//	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth *  3, subpixelHeight *  1 });
-//	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth * -3, subpixelHeight * -1 });
-//	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth *  1, subpixelHeight * -3 });
-//
-//	// reset the gl state
-//	GL::State::Pop();
-//
-//	// draw the text to the current framebuffer
-//	GL::State::Push();
-//	_text_buffer->BindForReading();
-//
-//	glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	// enable the stencil buffer, disable the depth buffer
+	GL::State::Enable(GL::Capability::STENCIL_TEST);
+	GL::State::Disable(GL::Capability::DEPTH_TEST);
 
+	// for anti-aliasing, enable GL_BLEND
+	GL::State::Enable(GL::Capability::BLEND);
+	GL::State::SetBlendFunction(GL::BlendFactor::ONE, GL::BlendFactor::ONE);
+
+	float subpixelWidth = 2.0f / (screen.width * 8);
+	float subpixelHeight = 2.0f / (screen.height * 8);
+
+	_shader["color"] = vec4 { color.r, color.g, color.b, color.a / 4.0f };
+
+	// find the bounds of the final quad
+	constexpr float fmin = std::numeric_limits<float>::lowest();
+	constexpr float fmax = std::numeric_limits<float>::max();
+	vec4 bounds { fmax, fmax, fmin, fmin };
+
+	for (const auto& t : bezierCurves) {
+		for (int i = 0; i < 3; i++) {
+			bounds[0] = std::min(bounds[0], t[i].x);
+			bounds[1] = std::min(bounds[1], t[i].y);
+			bounds[2] = std::max(bounds[2], t[i].x);
+			bounds[3] = std::max(bounds[3], t[i].y);
+		}
+	}
+
+	bounds[0] -= 4.0f / screen.width;
+	bounds[1] -= 4.0f / screen.width;
+	bounds[2] += 4.0f / screen.width;
+	bounds[3] += 4.0f / screen.width;
+
+	_shader["bounds"] = bounds;
+
+	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth * -1, subpixelHeight *  3 });
+	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth *  3, subpixelHeight *  1 });
+	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth * -3, subpixelHeight * -1 });
+	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth *  1, subpixelHeight * -3 });
+
+	// reset the gl state
 	GL::State::Pop();
+
+	// draw the text to the current framebuffer
+	_shader["stage"] = STAGE_COPY;
+	_text_buffer->GetTextureAttachment(0).Bind(0);
+
+	_resolve_vao.DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, 6);
+
 	return x;
 }
 
@@ -191,8 +195,6 @@ void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triang
 	GL::State::Push();
 	GL::State::SetColorMask(false, false, false, false);
 	GL::State::SetDepthMask(false);
-
-	// TODO: put stencilFunc, stencilOp, stencilMask on the state
 
 	// initialize the stencil buffer
 	_text_buffer->Clear(GL::Framebuffer::BitField::STENCIL);
@@ -219,7 +221,6 @@ void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triang
 
 	// setup the resolve stage
 	_shader["stage"] = STAGE_RESOLVE;
-	_shader["bounds"] = bounds;
 	GL::State::SetStencilFunc(GL::CompareFunction::EQUAL, 0x01, 0xFF);
 	GL::State::SetStencilOp(GL::StencilFunction::KEEP, GL::StencilFunction::KEEP, GL::StencilFunction::KEEP);
 
