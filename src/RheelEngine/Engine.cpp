@@ -35,9 +35,6 @@ void Engine::_Run(Game *game) {
 				_instance.display_configuration.resolution.width,
 				_instance.display_configuration.resolution.height);
 
-	GL::StateBindings::_SetDefaultViewport(
-			_instance.display_configuration.resolution.width,
-			_instance.display_configuration.resolution.height);
 	TextRenderer::_ResizeBuffer(
 			_instance.display_configuration.resolution.width,
 			_instance.display_configuration.resolution.height);

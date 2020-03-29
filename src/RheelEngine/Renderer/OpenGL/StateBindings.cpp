@@ -5,8 +5,6 @@
 
 namespace rheel::GL {
 
-uvec2 StateBindings::_default_viewport;
-
 StateBindings::StateBindings() :
 		_parent(nullptr) {}
 
@@ -23,16 +21,10 @@ StateBindings::StateBindings(const StateBindings *parent) :
 void StateBindings::BindBuffer(Buffer::Target target, GLuint name) {
 	// perform the state change
 	glBindBuffer(GLenum(target), name);
-	_buffer_changes.emplace(target, name);
+	_buffer_changes[target] = name;
 }
 
 void StateBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, unsigned width, unsigned height) {
-	// fix dimensions for 0-buffer
-	if (name == 0) {
-		width = _default_viewport.x;
-		height = _default_viewport.y;
-	}
-
 	// get targets
 	std::vector<Framebuffer::Target> targets;
 
@@ -61,13 +53,13 @@ void StateBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, uns
 		_SetViewport({ width, height });
 	}
 
-	_framebuffer_changes.emplace(target, name);
+	_framebuffer_changes[target] = name;
 }
 
 void StateBindings::BindRenderbuffer(GLuint name) {
 	// perform the state change
 	glBindRenderbuffer(GL_RENDERBUFFER, name);
-	_renderbuffer_change.emplace(name);
+	_renderbuffer_change = name;
 }
 
 void StateBindings::BindTexture(unsigned unit, Texture::Target target, GLuint name) {
@@ -76,7 +68,7 @@ void StateBindings::BindTexture(unsigned unit, Texture::Target target, GLuint na
 	// perform the state change
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GLenum(target), name);
-	_texture_changes.emplace(key, name);
+	_texture_changes[key] = name;
 }
 
 void StateBindings::BindVertexArray(GLuint name) {
@@ -99,7 +91,7 @@ void StateBindings::ResetChanges() {
 	}
 
 	if (_viewport_change.has_value()) {
-		const auto& viewport = _parent == nullptr ? _default_viewport : _parent->_GetViewport();
+		const auto& viewport = _parent == nullptr ? Framebuffer::DefaultViewport() : _parent->_GetViewport();
 		glViewport(0, 0, viewport.x, viewport.y);
 	}
 
@@ -229,7 +221,7 @@ void StateBindings::_SetViewport(uvec2 dim) {
 	glViewport(0, 0, dim.x, dim.y);
 
 	// store the state change
-	if ((_parent == nullptr && dim == _default_viewport) || (_parent != nullptr && _parent->_GetViewport() == dim)) {
+	if ((_parent == nullptr && dim == Framebuffer::DefaultViewport()) || (_parent != nullptr && _parent->_GetViewport() == dim)) {
 		// this was a reversal of the current change
 		_viewport_change.reset();
 	} else {
@@ -250,11 +242,7 @@ uvec2 StateBindings::_GetViewport() const {
 	}
 
 	// default: no binding
-	return _default_viewport;
-}
-
-void StateBindings::_SetDefaultViewport(unsigned width, unsigned height) {
-	_default_viewport = { width, height };
+	return Framebuffer::DefaultViewport();
 }
 
 }

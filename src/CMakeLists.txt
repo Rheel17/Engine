@@ -66,6 +66,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/AbstractTexture.cpp RheelEngine/Renderer/OpenGL/AbstractTexture.h 
 		RheelEngine/Renderer/OpenGL/Buffer.cpp RheelEngine/Renderer/OpenGL/Buffer.h 
 		RheelEngine/Renderer/OpenGL/Capabilities.cpp RheelEngine/Renderer/OpenGL/Capabilities.h 
+		RheelEngine/Renderer/OpenGL/Debug.cpp RheelEngine/Renderer/OpenGL/Debug.h 
 		RheelEngine/Renderer/OpenGL/Enums.h 
 		RheelEngine/Renderer/OpenGL/Framebuffer.cpp RheelEngine/Renderer/OpenGL/Framebuffer.h 
 		RheelEngine/Renderer/OpenGL/Handle.h 

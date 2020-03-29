@@ -53,42 +53,37 @@ void PostProcessingStack::Render(const GL::Framebuffer& input, const ivec2& pos,
 	// resolve to the default frame buffer
 	GL::State::Pop();
 	GL::State::Push();
-	inputBuffer.get().BindForReading();
-	GL::State::ClearFramebuffer(GL::Framebuffer::Target::DRAW);
 
-	glBlitFramebuffer(
-			0, 0, _width, _height,
-			pos.x, pos.y, pos.x + size.x, pos.y + size.y,
-			GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	inputBuffer.get().Blit({ 0, 0, _width, _height }, { pos.x, pos.y, size.x, size.y }, GL::Framebuffer::BitField::COLOR);
 
 	GL::State::Pop();
 }
 
 const GL::Framebuffer& PostProcessingStack::_ResolveInput(const GL::Framebuffer& input) const {
-	// TODO: multisampling
+	auto type = input.GetAttachmentType(0);
 
 	// if the input is multisampled, blit it to the first temporary
 	// framebuffer to result the multisampling.
-//	if (input.IsMultisampled()) {
-//
-//		// setup the framebuffers
-//		unsigned index = _UnusedFramebufferIndex();
-//		GL::Framebuffer& tmp = _Framebuffer(index);
-//		_MarkFramebufferUse(index, true);
-//
-//		tmp.BindForDrawing();
-//		input.BindForReading();
-//
-//		// blit
-//		glBlitFramebuffer(
-//				0, 0, input.Width(), input.Height(),
-//				0, 0, _width, _height,
-//				GL_COLOR_BUFFER_BIT, GL_NEAREST);
-//
-//		return tmp;
-//	} else {
+	if (type == GL::Framebuffer::AttachmentType::TEXTURE_MULTISAMPLE) {
+		// setup the framebuffers
+		unsigned index = _UnusedFramebufferIndex();
+		GL::Framebuffer& tmp = _Framebuffer(index);
+		_MarkFramebufferUse(index, true);
+
+		// blit
+		GL::State::Push();
+
+		tmp.BindForDrawing();
+		input.Blit({ 0, 0, input.GetViewportWidth(), input.GetViewportHeight() },
+				   { 0, 0, _width, _height },
+				   GL::Framebuffer::BitField::COLOR);
+
+		GL::State::Pop();
+
+		return tmp;
+	} else {
 		return input;
-//	}
+	}
 }
 
 void PostProcessingStack::SetBloom(Bloom bloom) {
@@ -124,7 +119,6 @@ GL::Framebuffer& PostProcessingStack::_Framebuffer(unsigned index) const {
 	GL::Framebuffer& fbo = _temp_buffers[index].first;
 
 	if (fbo.GetViewportWidth() != _width || fbo.GetViewportHeight() != _height) {
-
 		_temp_buffers[index].first = GL::Framebuffer(_temp_buffers[index].first, _width, _height);
 		return _temp_buffers[index].first;
 	}

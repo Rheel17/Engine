@@ -10,6 +10,7 @@
 
 #include "../Engine.h"
 #include "OpenGL/State.h"
+#include "OpenGL/Debug.h"
 
 namespace rheel {
 
@@ -25,9 +26,6 @@ static void glfw_MouseMoveCallback(GLFWwindow *glfw_window, double xpos, double 
 static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int action, int mods);
 static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y);
 static void glfw_WindowFocusCallback(GLFWwindow *glfw_window, int focus);
-
-static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
-		GLsizei length, const GLchar *message, const void *userParam);
 
 Window::Window(DisplayConfiguration& configuration) :
 		_configuration(configuration) {}
@@ -96,7 +94,8 @@ void Window::Show() {
 	}
 
 	// FROM THIS POINT WE HAVE AN OPENGL CONTEXT!
-	GL::State::_Initialize();
+	GL::Framebuffer::InitializeDefaultFramebuffer(uvec2{ unsigned(realWidth), unsigned(realHeight) });
+	GL::State::Initialize();
 
 	// enable or disable vsync
 	if (!_configuration.vsync) {
@@ -104,28 +103,39 @@ void Window::Show() {
 	}
 
 #ifdef RE_DEBUG
-	// initialize _OpenGL debugging
-	GLint debugFlags;
-	glGetIntegerv(GL_CONTEXT_FLAGS, &debugFlags);
+	// initialize OpenGL debugging
+	GL::Debug::SetDebugCallback([](unsigned id, GL::Debug::Source source, GL::Debug::Type type,
+			GL::Debug::Severity severity, const std::string& message) {
 
-	if (debugFlags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		glDebugMessageCallback(glDebugOutput, nullptr);
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-	}
+		if (id == 131169 || id == 131204 || severity == GL::Debug::Severity::NOTIFICATION) {
+			return;
+		}
+
+		std::stringstream ss;
+		ss << "OpenGL " << id << " [" <<
+				"source=" << GL::Debug::GetString(source) << ", " <<
+				"type=" << GL::Debug::GetString(type) << "," <<
+				"severity=" << GL::Debug::GetString(severity) << "]: " << message;
+
+		switch (severity) {
+			case GL::Debug::Severity::HIGH:         Log::Error() << ss.str() << std::endl; break;
+			case GL::Debug::Severity::MEDIUM:       Log::Warning() << ss.str() << std::endl; break;
+			case GL::Debug::Severity::LOW:
+			case GL::Debug::Severity::NOTIFICATION: Log::Info() << ss.str() << std::endl; break;
+		}
+	});
 #endif
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	GL::State::SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+	GL::State::Enable(GL::Capability::DEPTH_TEST);
+	GL::State::SetDepthFunction(GL::CompareFunction::LEQUAL);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	GL::State::Enable(GL::Capability::CULL_FACE);
+	GL::State::SetCullFace(GL::CullFace::BACK);
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	GL::State::Enable(GL::Capability::BLEND);
+	GL::State::SetBlendFunction(GL::BlendFactor::SRC_ALPHA, GL::BlendFactor::ONE_MINUS_SRC_ALPHA);
 }
 
 void Window::Loop() {
@@ -157,14 +167,13 @@ void Window::Loop() {
 
 		// initialize OpenGL state
 		GL::State::ClearProgram();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GL::Framebuffer::DefaultFramebuffer().Clear(GL::Framebuffer::BitField::COLOR_DEPTH);
 
 		// draw the game
 		Engine::GetUI().Draw(time, dt);
 
 		// finish the update/render cycle
 		glfwSwapBuffers(window);
-
 		// TODO: GL state push/pop check for consistency
 	}
 }
@@ -220,62 +229,6 @@ static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y) {
 
 static void glfw_WindowFocusCallback(GLFWwindow *glfw_window, int focus) {
 	Engine::GetUI().OnFocusChanged(focus);
-}
-
-static void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
-		GLsizei length, const GLchar *message, const void *userParam) {
-
-	if (id == 131169 || id == 131204) {
-		return;
-	}
-
-	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) {
-		return;
-	}
-
-	std::stringstream ss;
-	ss << "_OpenGL " << id << ": ";
-
-	switch (source) {
-		case GL_DEBUG_SOURCE_API:			  ss << "source=API";				break;
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   ss << "source=WINDOW_SYSTEM";		break;
-		case GL_DEBUG_SOURCE_SHADER_COMPILER: ss << "source=SHADER_COMPILER";	break;
-		case GL_DEBUG_SOURCE_THIRD_PARTY:	  ss << "source=THIRD_PARTY";	 	break;
-		case GL_DEBUG_SOURCE_APPLICATION:	  ss << "source=APPLICATION";		break;
-		case GL_DEBUG_SOURCE_OTHER:			  ss << "source=OTHER";				break;
-	}
-
-	ss << ", ";
-
-	switch (type) {
-		case GL_DEBUG_TYPE_ERROR: 				ss << "type=ERROR"; 				break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ss << "type=DEPRECATED_BEHAVIOR";	break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: 	ss << "type=UNDEFINED_BEHAVIOR";	break;
-		case GL_DEBUG_TYPE_PORTABILITY: 		ss << "type=PORTABILITY";			break;
-		case GL_DEBUG_TYPE_PERFORMANCE:		 	ss << "type=PERFORMANCE";			break;
-		case GL_DEBUG_TYPE_MARKER: 				ss << "type=MARKER";				break;
-		case GL_DEBUG_TYPE_PUSH_GROUP: 			ss << "type=PUSH_GROUP";			break;
-		case GL_DEBUG_TYPE_POP_GROUP: 			ss << "type=POP_GROUP";				break;
-		case GL_DEBUG_TYPE_OTHER: 				ss << "type=OTHER";					break;
-	}
-
-	ss << ", ";
-
-	switch (severity) {
-		case GL_DEBUG_SEVERITY_HIGH:         ss << "severity=HIGH";         break;
-		case GL_DEBUG_SEVERITY_MEDIUM:       ss << "severity=MEDIUM";       break;
-		case GL_DEBUG_SEVERITY_LOW:          ss << "severity=LOW";          break;
-		case GL_DEBUG_SEVERITY_NOTIFICATION: ss << "severity=NOTIFICATION"; break;
-	}
-
-	ss << ", " << std::string(message, length);
-
-	switch (severity) {
-		case GL_DEBUG_SEVERITY_HIGH:         Log::Error() 	<< ss.str() << std::endl; break;
-		case GL_DEBUG_SEVERITY_MEDIUM:       Log::Warning() << ss.str() << std::endl; break;
-		case GL_DEBUG_SEVERITY_LOW:          Log::Info() 	<< ss.str() << std::endl; break;
-		case GL_DEBUG_SEVERITY_NOTIFICATION: Log::Info() 	<< ss.str() << std::endl; break;
-	}
 }
 
 }

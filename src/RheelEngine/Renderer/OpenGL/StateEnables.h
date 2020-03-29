@@ -10,7 +10,10 @@
 namespace rheel::GL {
 
 enum class Capability {
-	BLEND = GL_BLEND, STENCIL_TEST = GL_STENCIL_TEST
+	BLEND = GL_BLEND,
+	DEPTH_TEST = GL_DEPTH_TEST,
+	STENCIL_TEST = GL_STENCIL_TEST,
+	CULL_FACE = GL_CULL_FACE
 };
 
 class RE_API StateEnables {

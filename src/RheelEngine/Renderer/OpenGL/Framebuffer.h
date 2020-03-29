@@ -15,6 +15,7 @@ OPENGL_GEN_FUNCTION(glGenFramebuffers, _GenFramebuffers);
 OPENGL_DELETE_FUNCTION(glDeleteFramebuffers, _DeleteFramebuffers);
 
 class RE_API Framebuffer : public Object<_GenFramebuffers, _DeleteFramebuffers> {
+	friend class Window;
 
 public:
 	enum class Target {
@@ -29,7 +30,7 @@ public:
 		DEPTH_STENCIL = GL_DEPTH_STENCIL_ATTACHMENT
 	};
 
-	enum class ClearParameter {
+	enum class BitField {
 		COLOR = GL_COLOR_BUFFER_BIT,
 		DEPTH = GL_DEPTH_BUFFER_BIT,
 		STENCIL = GL_STENCIL_BUFFER_BIT,
@@ -39,6 +40,10 @@ public:
 		DEPTH_STENCIL = GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 
 		COLOR_DEPTH_STENCIL = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
+	};
+
+	enum class AttachmentType {
+		NONE, TEXTURE, TEXTURE_MULTISAMPLE, RENDERBUFFER, RENDERBUFFER_MULTISAMPLE
 	};
 
 private:
@@ -72,7 +77,13 @@ public:
 	void BindForDrawing() const;
 	void BindForReading() const;
 
-	void Clear(ClearParameter buffersToClear) const;
+	void Clear(BitField buffersToClear) const;
+
+	/**
+	 * Blits the contents of this framebuffer to the currently draw-bound framebuffer.
+	 * bounds format: { x, y, width, height }
+	 */
+	void Blit(ivec4 inBounds, ivec4 outBounds, BitField buffers, bool linear = false) const;
 
 	unsigned GetViewportWidth() const;
 	unsigned GetViewportHeight() const;
@@ -217,6 +228,16 @@ public:
 	 */
 	const Renderbuffer& GetRenderbufferMultisampleAttachment(Attachment attachment) const;
 
+	/**
+	 * Returns the type of attachment attached to the specified color
+	 * attachment
+	 */
+	AttachmentType GetAttachmentType(unsigned colorAttachment) const;
+
+	/**
+	 * Returns the type of attachment attached to the specified attachment.
+	 */
+	AttachmentType GetAttachmentType(Attachment attachment) const;
 
 	/**
 	 * Set which color attachments can be drawn to. These color attachments
@@ -225,6 +246,9 @@ public:
 	void SetDrawBuffers(std::vector<unsigned> colorAttachments);
 
 private:
+	// constructor for the default framebuffer
+	Framebuffer(uvec2 defaultViewport);
+
 	void _AttachTexture(InternalFormat internalFormat, Format format, GLenum attachment);
 	void _AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, GLenum attachment);
 	void _AttachRenderbuffer(InternalFormat internalFormat, GLenum attachment);
@@ -263,6 +287,14 @@ private:
 	std::unordered_map<GLenum, _TextureMultisampleAttachment> _attached_multisample_textures;
 	std::unordered_map<GLenum, _RenderbufferAttachment> _attached_renderbuffers;
 	std::unordered_map<GLenum, _RenderbufferMultisampleAttachment> _attached_multisample_renderbuffers;
+
+public:
+	static void InitializeDefaultFramebuffer(uvec2 screenSize);
+	static const Framebuffer& DefaultFramebuffer();
+	static uvec2 DefaultViewport();
+
+private:
+	static std::unique_ptr<Framebuffer> _default_framebuffer;
 
 };
 

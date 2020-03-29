@@ -12,12 +12,14 @@
 namespace rheel::GL {
 
 struct RE_API _CreateProgram {
+	static constexpr auto glfn = "glCreateProgram";
 	GLuint operator()() const {
 		return glCreateProgram();
 	}
 };
 
 struct RE_API _DeleteProgram {
+	static constexpr auto glfn = "glDeleteProgram";
 	void operator()(GLuint name) const {
 		glDeleteProgram(name);
 	}
@@ -69,6 +71,8 @@ public:
 private:
 	void _EnsureLinked() const;
 	void _EnsureNotLinked() const;
+
+	Uniform& _GetUniform(const std::string& name, bool checkWarning) const;
 
 	bool _linked = false;
 

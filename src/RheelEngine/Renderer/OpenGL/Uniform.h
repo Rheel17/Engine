@@ -16,7 +16,9 @@ class RE_API Uniform {
 	RE_NO_MOVE(Uniform);
 
 public:
-	Uniform(GLuint programHandle, const std::string& name);
+	Uniform(GLuint programHandle, const std::string& name, bool checkWarning);
+
+	bool IsValid() const;
 
 	Uniform& operator=(float value);
 	Uniform& operator=(double value);

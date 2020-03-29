@@ -56,7 +56,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *l
 		// set the texture paramters
 		GL::Texture2D& texture = buffer.GetTextureAttachment(GL::Framebuffer::Attachment::DEPTH);
 		texture.SetCompareMode(GL::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
-		texture.SetCompareFunction(GL::Texture::CompareFunction::LEQUAL);
+		texture.SetCompareFunction(GL::CompareFunction::LEQUAL);
 
 		_shadow_buffers.emplace_back(std::move(buffer));
 	}
@@ -80,7 +80,7 @@ void ShadowMapDirectional::Update(Camera *camera, unsigned width, unsigned heigh
 		modelShader["lightspaceMatrix"] = _light_matrices[i];
 
 		// write the scene to the framebuffer.
-		_shadow_buffers[i].Clear(GL::Framebuffer::ClearParameter::DEPTH);
+		_shadow_buffers[i].Clear(GL::Framebuffer::BitField::DEPTH);
 
 		for (const auto& [model, renderer] : GetManager()->RenderMap()) {
 			renderer.RenderObjects();
@@ -177,7 +177,7 @@ const GL::Texture2D& ShadowMapDirectional::EmptyShadowMap() {
 		_empty_shadow_map = std::make_unique<GL::Texture2D>();
 		_empty_shadow_map->SetEmpty(GL::InternalFormat::DEPTH_COMPONENT_32F, 1, 1, GL::Format::DEPTH_COMPONENT);
 		_empty_shadow_map->SetCompareMode(GL::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
-		_empty_shadow_map->SetCompareFunction(GL::Texture::CompareFunction::LEQUAL);
+		_empty_shadow_map->SetCompareFunction(GL::CompareFunction::LEQUAL);
 	}
 
 	return *_empty_shadow_map;

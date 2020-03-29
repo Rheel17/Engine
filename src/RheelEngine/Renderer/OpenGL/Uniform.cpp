@@ -7,16 +7,20 @@
 
 namespace rheel::GL {
 
-Uniform::Uniform(GLuint programHandle, const std::string& name) :
+Uniform::Uniform(GLuint programHandle, const std::string& name, bool checkWarning) :
 		_program_handle(programHandle), _location(GetUniformLocation(programHandle, name)) {
 
-	if (_location < 0) {
+	if (_location < 0 && checkWarning) {
 		Log::Warning() << "shader doesn't have uniform " << name << std::endl;
 	}
 }
 
+bool Uniform::IsValid() const {
+	return _location >= 0;
+}
+
 bool Uniform::_Init() const {
-	if (_location >= 0) {
+	if (IsValid()) {
 		State::_S()._bindings.UseProgram(_program_handle);
 		return true;
 	}

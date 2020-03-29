@@ -9,6 +9,8 @@
 
 namespace rheel::GL {
 
+std::unique_ptr<Framebuffer> Framebuffer::_default_framebuffer(nullptr);
+
 Framebuffer::Framebuffer(unsigned viewportWidth, unsigned viewportHeight) :
 		_viewport_width(viewportWidth), _viewport_height(viewportHeight) {}
 
@@ -31,8 +33,11 @@ Framebuffer::Framebuffer(const Framebuffer& original, unsigned newWidth, unsigne
 		_AttachRenderbufferMultisample(buffer.internalFormat, buffer.samples, attachment);
 	}
 
-	SetDrawBuffers(_draw_buffers);
+	SetDrawBuffers(original._draw_buffers);
 }
+
+Framebuffer::Framebuffer(uvec2 defaultViewport) :
+		Object(0), _viewport_width(defaultViewport.x), _viewport_height(defaultViewport.y) {}
 
 void Framebuffer::BindForDrawing() const {
 	State::BindFramebuffer(Target::DRAW, *this);
@@ -42,9 +47,18 @@ void Framebuffer::BindForReading() const {
 	State::BindFramebuffer(Target::READ, *this);
 }
 
-void Framebuffer::Clear(ClearParameter buffersToClear) const {
+void Framebuffer::Clear(BitField buffersToClear) const {
 	BindForDrawing();
 	glClear(GLenum(buffersToClear));
+}
+
+void Framebuffer::Blit(ivec4 inBounds, ivec4 outBounds, BitField buffers, bool linear) const {
+	BindForReading();
+	glBlitFramebuffer(
+			inBounds.x, inBounds.y, inBounds.x + inBounds.z, inBounds.y + inBounds.w,
+			outBounds.x, outBounds.y, outBounds.x + outBounds.z, outBounds.y + outBounds.w,
+			GLenum(buffers),
+			linear ? GL_LINEAR : GL_NEAREST);
 }
 
 unsigned Framebuffer::GetViewportWidth() const {
@@ -151,6 +165,46 @@ const Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(Attachment
 	return _GetAttachment(_attached_multisample_renderbuffers, GLenum(attachment)).buffer;
 }
 
+Framebuffer::AttachmentType Framebuffer::GetAttachmentType(unsigned colorAttachment) const {
+	if (_attached_textures.find(GL_COLOR_ATTACHMENT0 + colorAttachment) != _attached_textures.end()) {
+		return AttachmentType::TEXTURE;
+	}
+
+	if (_attached_multisample_textures.find(GL_COLOR_ATTACHMENT0 + colorAttachment) != _attached_multisample_textures.end()) {
+		return AttachmentType::TEXTURE_MULTISAMPLE;
+	}
+
+	if (_attached_renderbuffers.find(GL_COLOR_ATTACHMENT0 + colorAttachment) != _attached_renderbuffers.end()) {
+		return AttachmentType::RENDERBUFFER;
+	}
+
+	if (_attached_multisample_renderbuffers.find(GL_COLOR_ATTACHMENT0 + colorAttachment) != _attached_multisample_renderbuffers.end()) {
+		return AttachmentType::RENDERBUFFER_MULTISAMPLE;
+	}
+
+	return AttachmentType::NONE;
+}
+
+Framebuffer::AttachmentType Framebuffer::GetAttachmentType(Framebuffer::Attachment attachment) const {
+	if (_attached_textures.find(GLenum(attachment)) != _attached_textures.end()) {
+		return AttachmentType::TEXTURE;
+	}
+
+	if (_attached_multisample_textures.find(GLenum(attachment)) != _attached_multisample_textures.end()) {
+		return AttachmentType::TEXTURE_MULTISAMPLE;
+	}
+
+	if (_attached_renderbuffers.find(GLenum(attachment)) != _attached_renderbuffers.end()) {
+		return AttachmentType::RENDERBUFFER;
+	}
+
+	if (_attached_multisample_renderbuffers.find(GLenum(attachment)) != _attached_multisample_renderbuffers.end()) {
+		return AttachmentType::RENDERBUFFER_MULTISAMPLE;
+	}
+
+	return AttachmentType::NONE;
+}
+
 void Framebuffer::SetDrawBuffers(std::vector<unsigned> colorAttachments) {
 	BindForDrawing();
 
@@ -163,6 +217,18 @@ void Framebuffer::SetDrawBuffers(std::vector<unsigned> colorAttachments) {
 	_CheckStatus();
 
 	_draw_buffers = std::move(colorAttachments);
+}
+
+void Framebuffer::InitializeDefaultFramebuffer(uvec2 screenSize) {
+	_default_framebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(screenSize));
+}
+
+const Framebuffer& Framebuffer::DefaultFramebuffer() {
+	return *_default_framebuffer;
+}
+
+uvec2 Framebuffer::DefaultViewport() {
+	return { _default_framebuffer->_viewport_width, _default_framebuffer->_viewport_height };
 }
 
 void Framebuffer::_AttachTexture(InternalFormat internalFormat, Format format, GLenum attachment) {
@@ -197,8 +263,6 @@ void Framebuffer::_AttachTextureMultisample(InternalFormat internalFormat, unsig
 
 	// initialize texture
 	texture.Initialize(internalFormat, _viewport_width, _viewport_height, samples);
-	texture.SetWrapParameterS(Texture::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetWrapParameterT(Texture::WrapParameter::CLAMP_TO_EDGE);
 
 	// attach the texture to the framebuffer
 	BindForDrawing();

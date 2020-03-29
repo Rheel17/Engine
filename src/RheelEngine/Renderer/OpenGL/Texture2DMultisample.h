@@ -16,16 +16,6 @@ public:
 	Texture2DMultisample();
 
 	/**
-	 * Sets the wrapping parameter for the horizontal direction.
-	 */
-	void SetWrapParameterS(WrapParameter parameter);
-
-	/**
-	 * Sets the wrapping parameter for the vertical direction.
-	 */
-	void SetWrapParameterT(WrapParameter parameter);
-
-	/**
 	 * Initialize the data storage for this texture.
 	 */
 	void Initialize(InternalFormat internalFormat, unsigned width, unsigned height, unsigned samples, bool fixedSampleLocations = true);

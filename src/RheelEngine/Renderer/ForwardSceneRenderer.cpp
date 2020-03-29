@@ -14,7 +14,7 @@ namespace rheel {
 
 ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height) :
 		SceneRenderer(manager, std::move(cameraName), width, height,
-				Engine::GetDisplayConfiguration().SampleCount(), true) {}
+		Engine::GetDisplayConfiguration().SampleCount(), true) {}
 
 void ForwardSceneRenderer::Render(float dt) {
 	// get the camera
@@ -32,7 +32,7 @@ void ForwardSceneRenderer::Render(float dt) {
 	_RenderShadowMaps();
 
 	// bind and reset the result buffer to start writing there
-	ResultBuffer().Clear(GL::Framebuffer::ClearParameter::COLOR_DEPTH);
+	ResultBuffer().Clear(GL::Framebuffer::BitField::COLOR_DEPTH);
 
 	// render the skybox
 	_RenderSkybox(Width(), Height());

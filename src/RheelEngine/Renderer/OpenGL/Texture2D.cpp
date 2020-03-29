@@ -8,22 +8,22 @@ namespace rheel::GL {
 Texture2D::Texture2D() :
 		AbstractTexture(Target::TEXTURE_2D) {}
 
-void Texture2D::SetWrapParameterS(Texture::WrapParameter parameter) {
+void Texture2D::SetWrapParameterS(WrapParameter parameter) {
 	Bind();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GLint(parameter));
 }
 
-void Texture2D::SetWrapParameterT(Texture::WrapParameter parameter) {
+void Texture2D::SetWrapParameterT(WrapParameter parameter) {
 	Bind();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GLint(parameter));
 }
 
-void Texture2D::SetCompareFunction(Texture::CompareFunction parameter) {
+void Texture2D::SetCompareFunction(CompareFunction parameter) {
 	Bind();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GLint(parameter));
 }
 
-void Texture2D::SetCompareMode(Texture::CompareMode parameter) {
+void Texture2D::SetCompareMode(CompareMode parameter) {
 	Bind();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GLint(parameter));
 }

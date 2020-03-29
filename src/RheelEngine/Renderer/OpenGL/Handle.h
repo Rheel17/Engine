@@ -9,6 +9,7 @@
 
 #define OPENGL_GEN_FUNCTION(func, structName)    \
 struct RE_API structName {                       \
+	static constexpr auto glfn = #func;			 \
 	GLuint operator()() const {                  \
 		GLuint name;							 \
 		func(1, &name);                          \
@@ -18,6 +19,7 @@ struct RE_API structName {                       \
 
 #define OPENGL_DELETE_FUNCTION(func, structName) \
 struct RE_API structName {                       \
+	static constexpr auto glfn = #func;			 \
 	void operator()(GLuint name) const {         \
 		func(1, &name);                          \
 	}                                            \
@@ -39,7 +41,7 @@ public:
 	 * Uses the raw OpenGL handle as id.
 	 */
 	explicit Handle(GLuint raw) :
-			_name(raw) {}
+			_name(raw), _generated(true) {}
 
 	/**
 	 * Deletes the handle using the deleter.

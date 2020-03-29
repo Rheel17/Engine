@@ -92,6 +92,10 @@ void State::ClearProgram() {
 	_S()._bindings.UseProgram(0);
 }
 
+void State::SetClearColor(float red, float green, float blue, float alpha) {
+	_S()._functions.SetClearColor(red, green, blue, alpha);
+}
+
 void State::SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor) {
 	_S()._functions.SetBlendFunction(sfactor, dfactor);
 }
@@ -100,13 +104,41 @@ void State::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor
 	_S()._functions.SetBlendFunction(srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
+void State::SetDepthFunction(CompareFunction func) {
+	_S()._functions.SetDepthFunction(func);
+}
+
+void State::SetCullFace(CullFace mode) {
+	_S()._functions.SetCullFace(mode);
+}
+
+void State::SetColorMask(bool red, bool green, bool blue, bool alpha) {
+	_S()._functions.SetColorMask(red, green, blue, alpha);
+}
+
+void State::SetDepthMask(bool mask) {
+	_S()._functions.SetDepthMask(mask);
+}
+
+void State::SetStencilFunc(CompareFunction func, uint8_t reference, uint8_t mask) {
+	_S()._functions.SetStencilFunc(func, reference, mask);
+}
+
+void State::SetStencilMask(uint8_t mask) {
+	_S()._functions.SetStencilMask(mask);
+}
+
+void State::SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass) {
+	_S()._functions.SetStencilOp(sfail, dpfail, dppass);
+}
+
 void State::_ResetChanges() {
 	_bindings.ResetChanges();
 	_enables.ResetChanges();
 	_functions.ResetChanges();
 }
 
-void State::_Initialize() {
+void State::Initialize() {
 	_global_state_stack.push(std::unique_ptr<State>(new State));
 }
 

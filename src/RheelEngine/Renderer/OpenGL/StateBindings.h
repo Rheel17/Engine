@@ -52,11 +52,6 @@ private:
 
 	const StateBindings *_parent;
 
-private:
-	static void _SetDefaultViewport(unsigned width, unsigned height);
-
-	static uvec2 _default_viewport;
-
 };
 
 }

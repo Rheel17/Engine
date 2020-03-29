@@ -17,6 +17,12 @@ public:
 		return _handle.GetName();
 	}
 
+protected:
+	Object() = default;
+
+	explicit Object(GLuint name) :
+			_handle(name) {}
+
 private:
 	Handle<Generator, Deleter> _handle;
 

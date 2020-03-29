@@ -13,17 +13,10 @@
 #include "VertexArray.h"
 #include "Program.h"
 
-namespace rheel {
-
-class Window;
-
-}
-
 namespace rheel::GL {
 
 class RE_API State {
 	friend class Uniform;
-	friend class rheel::Window;
 
 	RE_NO_MOVE(State);
 	RE_NO_COPY(State);
@@ -49,8 +42,16 @@ public:
 	static void ClearVertexArray();
 	static void ClearProgram();
 
+	static void SetClearColor(float red, float green, float blue, float alpha);
 	static void SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor);
 	static void SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha);
+	static void SetDepthFunction(CompareFunction func);
+	static void SetCullFace(CullFace mode);
+	static void SetColorMask(bool red, bool green, bool blue, bool alpha);
+	static void SetDepthMask(bool mask);
+	static void SetStencilFunc(CompareFunction func, uint8_t reference, uint8_t mask);
+	static void SetStencilMask(uint8_t mask);
+	static void SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass);
 
 private:
 	State *_parent;
@@ -66,8 +67,10 @@ private:
 	 */
 	void _ResetChanges();
 
+public:
+	static void Initialize();
+
 private:
-	static void _Initialize();
 	static State& _S();
 
 	static std::stack<std::unique_ptr<State>> _global_state_stack;

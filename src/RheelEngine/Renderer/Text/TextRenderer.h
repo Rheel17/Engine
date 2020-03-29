@@ -32,7 +32,7 @@ private:
 	static int _DrawChars(Font& font, const Color& color, const wchar_t *text, unsigned length,
 			int x, int y, unsigned size);
 	static void _DrawTriangles(const std::vector<Character::Triangle>& triangles,
-			const std::vector<Character::Triangle>& bezierCurves,
+			const std::vector<Character::Triangle>& bezierCurves, vec4 bounds,
 			vec2 multisampleOffset);
 
 	static GL::Buffer _triangle_buffer;

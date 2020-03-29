@@ -111,13 +111,13 @@ class SandboxGame : public Game {
 		ui.AddConstraint(crosshairElement, Constraint::TOP, nullptr, Constraint::TOP);
 		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM);
 
-		// auto fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
-		// ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
+		auto fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
+		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
 
 		Engine::GetUI().SetContainer(std::move(ui));
 		sceneElement->RequestFocus();
 
-		// Engine::GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
+		Engine::GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
 	}
 
 };

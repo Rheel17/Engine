@@ -21,7 +21,7 @@ add_custom_target(Resources
 
 # Create the library
 add_library(RheelEngine SHARED)
-target_compile_definitions(RheelEngine PRIVATE BUILDING_RHEELENGINE_DLL)
+target_compile_definitions(RheelEngine PRIVATE BUILDING_RHEELENGINE_DLL RE_DEBUG)
 
 # Copy shared libraries
 add_custom_command(

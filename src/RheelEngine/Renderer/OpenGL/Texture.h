@@ -41,17 +41,6 @@ public:
 		MIRRORED_CLAMP_TO_EDGE = GL_MIRROR_CLAMP_TO_EDGE
 	};
 
-	enum class CompareFunction {
-		LEQUAL   = GL_LEQUAL,
-		GEQUAL   = GL_GEQUAL,
-		LESS     = GL_LESS,
-		GREATER  = GL_GREATER,
-		EQUAL    = GL_EQUAL,
-		NOTEQUAL = GL_NOTEQUAL,
-		ALWAYS   = GL_ALWAYS,
-		NEVER    = GL_NEVER
-	};
-
 	enum class CompareMode {
 		COMPARE_REF_TO_TEXTURE = GL_COMPARE_REF_TO_TEXTURE, NONE = GL_NONE
 	};

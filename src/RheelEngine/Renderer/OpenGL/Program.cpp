@@ -72,12 +72,7 @@ void Program::Link() {
 }
 
 Uniform& Program::GetUniform(const std::string& name) const {
-	auto iter = _uniforms.find(name);
-	if (iter == _uniforms.end()) {
-		iter = _uniforms.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(GetHandle(), name)).first;
-	}
-
-	return iter->second;
+	return _GetUniform(name, true);
 }
 
 Uniform& Program::operator[](const std::string& name) const {
@@ -85,7 +80,7 @@ Uniform& Program::operator[](const std::string& name) const {
 }
 
 bool Program::HasUniform(const std::string& name) const {
-	return Uniform::GetUniformLocation(GetHandle(), name) >= 0;
+	return _GetUniform(name, false).IsValid();
 }
 
 void Program::_EnsureLinked() const {
@@ -100,6 +95,15 @@ void Program::_EnsureNotLinked() const {
 		Log::Error() << "Operation not allowed on a linked shader" << std::endl;
 		abort();
 	}
+}
+
+Uniform& Program::_GetUniform(const std::string& name, bool checkWarning) const {
+	auto iter = _uniforms.find(name);
+	if (iter == _uniforms.end()) {
+		iter = _uniforms.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(GetHandle(), name, checkWarning)).first;
+	}
+
+	return iter->second;
 }
 
 }
