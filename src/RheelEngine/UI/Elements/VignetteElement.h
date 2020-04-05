@@ -12,9 +12,24 @@ namespace rheel {
 class RE_API VignetteElement : public Element {
 
 public:
+	VignetteElement(Color color, float innerRadius, float outerRadius, float curvature = 1.0f);
+
+public:
 	bool IsOpaque() override;
 
 	void Draw(float time, float dt) const override;
+
+private:
+	Color _color;
+	float _inner_radius;
+	float _outer_radius;
+	float _curvature;
+
+	static std::unique_ptr<Shader> _shader;
+	static bool _initialized;
+
+private:
+	static void _Initialize();
 
 };
 

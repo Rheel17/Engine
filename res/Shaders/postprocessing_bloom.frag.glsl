@@ -26,9 +26,9 @@ void main(void) {
 	vec2 pixelSize = 1.0 / textureSize(inputTexture, 0);
 
 	if (vertical == 1) {
-		pixelSize.x = 0;
+		pixelSize.x = 0.0;
 	} else {
-		pixelSize.y = 0;
+		pixelSize.y = 0.0;
 	}
 
 	vec4 color = vec4(filtered_lookup(vf_Texture) * kernel[0], 1.0);

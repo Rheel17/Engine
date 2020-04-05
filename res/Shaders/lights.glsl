@@ -45,14 +45,14 @@ float calculateShadowFactor(vec3 P, vec3 N, vec3 L, sampler2DShadow shadowMap, m
 	Plight = (Plight + 1.0) / 2.0;
 	
 	// check for the bounds
-	if (Plight.x < 0 || Plight.y < 0 || Plight.z < 0 || Plight.x > 1 || Plight.y > 1 || Plight.z > 1) {
+	if (Plight.x < 0.0 || Plight.y < 0.0 || Plight.z < 0.0 || Plight.x > 1.0 || Plight.y > 1.0 || Plight.z > 1.0) {
 		return 2.0;
 	}
 
 	// set the bias
 	vec2 pixelSize = 1.0 / textureSize(shadowMap, 0);
 	float cosAngle = max(dot(N, -L), 0.0);
-	float bias = (_baseBias * biasFactor) * (1 - 0.99 * cosAngle);
+	float bias = (_baseBias * biasFactor) * (1.0 - 0.99 * cosAngle);
 
 	// calculating the PCF parameters
 	float pcfLevel = 2.0 * _shadowLevel - 1.0;
@@ -108,7 +108,7 @@ vec3 abstractLight(Material material, vec3 P, vec3 N, vec3 L, vec4 color) {
 
 	// specular component
 	float s = max(0.0, dot(R, -V));
-    if (s > 0) {
+    if (s > 0.0) {
         s = pow(s, material.specularExponent);
     }
 
@@ -125,7 +125,7 @@ vec3 pointLight(Material material, vec3 P, vec3 N, vec3 position, vec4 color, fl
     L /= dist;
 
 	// calculate light and apply attenuation factor
-	return abstractLight(material, P, N, L, color) / (1 + attenuation * dist * dist);
+	return abstractLight(material, P, N, L, color) / (1.0 + attenuation * dist * dist);
 }
 
 vec3 spotLight(Material material, vec3 P, vec3 N, vec3 position, vec3 direction, vec4 color, float attenuation, float spotAttenuation) {
@@ -139,7 +139,7 @@ vec3 spotLight(Material material, vec3 P, vec3 N, vec3 position, vec3 direction,
 
 	if (f <= 0.0) {
 		// if the cosine of spot angle is <= 0, no light falls on this point, so don't continue.
-		return vec3(1, 0, 1);
+		return vec3(1.0, 0.0, 1.0);
 	}
 
 	// apply spot attenuation
@@ -152,7 +152,7 @@ vec3 spotLight(Material material, vec3 P, vec3 N, vec3 position, vec3 direction,
 vec3 directionalLight(Material material, vec3 P, vec3 N, vec3 direction, vec4 color) {
 	vec3 light = abstractLight(material, P, N, -direction, color);
 
-	if (light.r <= 0 || light.g <= 0 || light.b <= 0) {
+	if (light.r <= 0.0 || light.g <= 0.0 || light.b <= 0.0) {
 		return light;
 	}
 

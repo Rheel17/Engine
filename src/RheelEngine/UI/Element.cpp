@@ -19,6 +19,8 @@ std::unique_ptr<GL::VertexArray> Element::_ui_vao(nullptr);
 std::unique_ptr<GL::Buffer> Element::_ui_vertex_data(nullptr);
 bool Element::_initialized = false;
 
+std::unordered_map<std::uintptr_t, GL::Program> Element::_custom_shaders;
+
 bool Element::Bounds::operator==(const Bounds& bounds) const {
 	return bounds.x == x && bounds.y == y && bounds.width == width && bounds.height == height;
 }
@@ -273,11 +275,51 @@ void Element::_DrawTexturedQuad(const Bounds& bounds, const Image& image, float 
 			image, alpha);
 }
 
+void Element::_DrawShaderedQuad(const Element::Bounds& bounds, const Shader& shader) {
+	_Initialize();
+
+	Vertex v1({ bounds.x, bounds.y });
+	Vertex v2({ bounds.x, bounds.y + bounds.height });
+	Vertex v3({ bounds.x + bounds.width, bounds.y + bounds.height });
+	Vertex v4({ bounds.x + bounds.width, bounds.y });
+
+	const GL::Program& program = _GetCustomShader(shader);
+	program.Use();
+
+	std::vector<Vertex> vertices = { v1, v2, v3, v3, v4, v1 };
+	_ui_vertex_data->SetData(vertices, GL::Buffer::Usage::STREAM_DRAW);
+	_ui_vao->DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, vertices.size());
+}
+
+const GL::Program& Element::_GetCustomShader(const Shader& shader) {
+	auto address = shader.GetAddress();
+	auto iter = _custom_shaders.find(address);
+
+	if (iter == _custom_shaders.end()) {
+		std::string shaderSource = EngineResources::PreprocessShader("Shaders_uishader_custom_header_frag_glsl");
+		shaderSource += "\n\n";
+		shaderSource += "#line 1\n";
+		shaderSource += shader.GetSource();
+
+		GL::Program shaderProgram;
+		shaderProgram.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
+		shaderProgram.AttachShader(GL::Shader::ShaderType::FRAGMENT, shaderSource);
+		shaderProgram.Link();
+
+		const DisplayConfiguration::Resolution& screenDimension = Engine::GetDisplayConfiguration().resolution;
+		shaderProgram["_screen_dimensions"] = vec2 { screenDimension.width, screenDimension.height };
+
+		iter = _custom_shaders.emplace(shader.GetAddress(), std::move(shaderProgram)).first;
+	}
+
+	return iter->second;
+}
+
 void Element::_Draw(const std::vector<Vertex>& vertices, int mode, float alpha) {
 	_Initialize();
 
-	_ui_shader->GetUniform("uiMode") = mode;
-	_ui_shader->GetUniform("alpha") = alpha;
+	_ui_shader->GetUniform("_ui_mode") = mode;
+	_ui_shader->GetUniform("_alpha") = alpha;
 	_ui_vertex_data->SetData(vertices, GL::Buffer::Usage::STREAM_DRAW);
 	_ui_vao->DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, vertices.size());
 }
@@ -293,7 +335,8 @@ void Element::_Initialize() {
 	_ui_shader->Link();
 
 	const DisplayConfiguration::Resolution& screenDimension = Engine::GetDisplayConfiguration().resolution;
-	_ui_shader->GetUniform("screenDimensions") = vec2 { screenDimension.width, screenDimension.height };
+	_ui_shader->GetUniform("_screen_dimensions") = vec2 { screenDimension.width, screenDimension.height };
+	_ui_shader->GetUniform("_texture_sampler") = 0;
 
 	_ui_vertex_data = std::make_unique<GL::Buffer>(GL::Buffer::Target::ARRAY);
 	_ui_vao = std::make_unique<GL::VertexArray>();

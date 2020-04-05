@@ -45,8 +45,6 @@ void CustomShaderModelRenderer::RenderToShadowMap() const {
 
 	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
 	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
-
-
 }
 
 void CustomShaderModelRenderer::RenderObjects() const {
@@ -55,9 +53,6 @@ void CustomShaderModelRenderer::RenderObjects() const {
 
 	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
 	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
-
-
-
 }
 
 GL::Program& CustomShaderModelRenderer::GetShaderProgram() {

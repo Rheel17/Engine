@@ -6,11 +6,11 @@
 out vec4 frag_Color;
 
 // model inputs
-in vec3 _vf_Position;
-in vec3 _vf_Normal;
-in vec2 _vf_Texture;
-in vec4 _vf_Material;
-in vec4 _vf_Color;
+in vec3 vf_Position;
+in vec3 vf_Normal;
+in vec2 vf_Texture;
+in vec4 vf_Material;
+in vec4 vf_Color;
 
 // material parameters
 uniform sampler2D ambientTexture;
@@ -24,21 +24,21 @@ vec3 calculateColor() {
 	vec3 diffuse;
 	vec3 specular;
 
-	if (_vf_Color.a < 0) {
-		ambient = _vf_Material.x * texture(ambientTexture, _vf_Texture).rgb;
-		diffuse = _vf_Material.y * texture(diffuseTexture, _vf_Texture).rgb;
-		specular = _vf_Material.z * texture(specularTexture, _vf_Texture).rgb;
+	if (vf_Color.a < 0.0) {
+		ambient = vf_Material.x * texture(ambientTexture, vf_Texture).rgb;
+		diffuse = vf_Material.y * texture(diffuseTexture, vf_Texture).rgb;
+		specular = vf_Material.z * texture(specularTexture, vf_Texture).rgb;
 	} else {
-		vec3 albedo = _vf_Color.rgb;
+		vec3 albedo = vf_Color.rgb;
 
-		ambient = _vf_Material.x * albedo;
-		diffuse = _vf_Material.y * albedo;
-		specular = _vf_Material.z * albedo;
+		ambient = vf_Material.x * albedo;
+		diffuse = vf_Material.y * albedo;
+		specular = vf_Material.z * albedo;
 	}
 
-	vec4 materialParameters = vec4(_vf_Material.w, 0.0, 0.0, 0.0);
-	vec3 position = _vf_Position;
-	vec3 normal = normalize(_vf_Normal);
+	vec4 materialParameters = vec4(vf_Material.w, 0.0, 0.0, 0.0);
+	vec3 position = vf_Position;
+	vec3 normal = normalize(vf_Normal);
 
 	return calculateLights(position, normal, ambient, diffuse, specular, materialParameters);
 }

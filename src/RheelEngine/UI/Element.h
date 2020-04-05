@@ -10,6 +10,7 @@
 #include "InputCallback.h"
 #include "../Color.h"
 #include "../Assets/Image.h"
+#include "../Assets/Shader.h"
 #include "../Renderer/OpenGL/Program.h"
 #include "../Renderer/OpenGL/VertexArray.h"
 #include "../Renderer/OpenGL/Texture2D.h"
@@ -250,6 +251,17 @@ protected:
 	 */
 	static void _DrawTexturedQuad(const Bounds& bounds, const Image& image, float alpha = 1.0f);
 
+	/**
+	 * Draws a rectangle using the shader.
+	 */
+	static void _DrawShaderedQuad(const Bounds& bounds, const Shader& shader);
+
+	/**
+	 * Returns the custom shader program from the given shader asset. This instance can
+	 * be used to set uniform variables.
+	 */
+	static const GL::Program& _GetCustomShader(const Shader& shader);
+
 private:
 	static void _Draw(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f);
 	static void _Initialize();
@@ -258,6 +270,8 @@ private:
 	static std::unique_ptr<GL::VertexArray> _ui_vao;
 	static std::unique_ptr<GL::Buffer> _ui_vertex_data;
 	static bool _initialized;
+
+	static std::unordered_map<std::uintptr_t, GL::Program> _custom_shaders;
 
 };
 
