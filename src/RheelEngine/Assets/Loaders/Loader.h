@@ -17,6 +17,7 @@ public:
 		auto iter = _cache.find(path);
 
 		if (iter == _cache.end()) {
+			Log::Info() << "Loading asset " << path << std::endl;
 			iter = _cache.emplace(path, _DoLoad(path)).first;
 		}
 

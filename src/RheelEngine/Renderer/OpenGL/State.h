@@ -35,11 +35,7 @@ public:
 	static void BindVertexArray(const VertexArray& vertexArray);
 	static void UseProgram(const Program& program);
 
-	static void ClearBuffer(Buffer::Target target);
-	static void ClearFramebuffer(Framebuffer::Target target);
-	static void ClearRenderbuffer();
 	static void ClearTexture(unsigned unit, Texture::Target target);
-	static void ClearVertexArray();
 	static void ClearProgram();
 
 	static void SetClearColor(float red, float green, float blue, float alpha);

@@ -114,7 +114,7 @@ void Window::Show() {
 		std::stringstream ss;
 		ss << "OpenGL " << id << " [" <<
 				"source=" << GL::Debug::GetString(source) << ", " <<
-				"type=" << GL::Debug::GetString(type) << "," <<
+				"type=" << GL::Debug::GetString(type) << ", " <<
 				"severity=" << GL::Debug::GetString(severity) << "]: " << message;
 
 		switch (severity) {

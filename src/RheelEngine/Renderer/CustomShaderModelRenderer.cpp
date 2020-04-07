@@ -74,6 +74,11 @@ GL::Program& CustomShaderModelRenderer::_GetCompiledShader(const Shader& shader)
 		shaderProgram.AttachShader(GL::Shader::ShaderType::FRAGMENT, shaderSource);
 		shaderProgram.Link();
 
+		if (shaderProgram.HasUniform("_shadowMap0")) shaderProgram["_shadowMap0"] = 3;
+		if (shaderProgram.HasUniform("_shadowMap1")) shaderProgram["_shadowMap1"] = 4;
+		if (shaderProgram.HasUniform("_shadowMap2")) shaderProgram["_shadowMap2"] = 5;
+		if (shaderProgram.HasUniform("_shadowMap3")) shaderProgram["_shadowMap3"] = 6;
+
 		iter = _shader_cache.emplace(shader.GetAddress(), std::move(shaderProgram)).first;
 	}
 

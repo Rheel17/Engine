@@ -107,8 +107,6 @@ ModelRenderer::ModelRenderer(const Model& model) :
 	_vao.SetVertexAttributes<vec3, vec3, vec2>(_vertex_buffer_object);
 	_vao.SetVertexIndices(_element_array_buffer, GL::VertexArray::IndexType::UNSIGNED_INT);
 	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ObjectData), true);
-
-
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddObject() {
@@ -153,8 +151,6 @@ void ModelRenderer::RenderObjects() const {
 		_object_data_buffer.SetData(objects, GL::Buffer::Usage::STREAM_DRAW);
 		_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
 	}
-
-
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::_Add(_ObjectDataVector& objects) {

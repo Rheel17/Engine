@@ -68,24 +68,8 @@ void State::UseProgram(const Program& program) {
 	_S()._bindings.UseProgram(program.GetHandle());
 }
 
-void State::ClearBuffer(Buffer::Target target) {
-	_S()._bindings.BindBuffer(target, 0);
-}
-
-void State::ClearFramebuffer(Framebuffer::Target target) {
-	_S()._bindings.BindFramebuffer(target, 0, 0, 0);
-}
-
-void State::ClearRenderbuffer() {
-	_S()._bindings.BindRenderbuffer(0);
-}
-
 void State::ClearTexture(unsigned unit, Texture::Target target) {
 	_S()._bindings.BindTexture(unit, target, 0);
-}
-
-void State::ClearVertexArray() {
-	_S()._bindings.BindVertexArray(0);
 }
 
 void State::ClearProgram() {
