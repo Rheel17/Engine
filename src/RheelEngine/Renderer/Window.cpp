@@ -32,9 +32,10 @@ Window::Window(DisplayConfiguration& configuration) :
 
 Window::~Window() {
 	if (_window_handle) {
+		Log::Info() << "Closing Window" << std::endl;
+
 		GLFWwindow *window = getWindow(_window_handle);
 		glfwDestroyWindow(window);
-		glfwTerminate();
 	}
 }
 

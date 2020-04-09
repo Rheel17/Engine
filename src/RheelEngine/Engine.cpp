@@ -13,6 +13,7 @@ Engine::EngineInstance Engine::_instance;
 Engine::EngineInstance::~EngineInstance() {
 	delete active_scene;
 	delete ui;
+	delete window;
 }
 
 void Engine::_Initialize() {
