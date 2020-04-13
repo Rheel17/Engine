@@ -52,6 +52,11 @@ private:
 
 	const StateBindings *_parent;
 
+private:
+	static void _SetActiveTextureUnit(unsigned unit);
+
+	static unsigned _active_texture_unit;
+
 };
 
 }

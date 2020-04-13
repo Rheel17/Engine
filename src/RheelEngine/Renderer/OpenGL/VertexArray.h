@@ -18,6 +18,8 @@ OPENGL_DELETE_FUNCTION(glDeleteVertexArrays, _DeleteVertexArrays);
 
 class RE_API VertexArray : public Object<_GenVertexArrays, _DeleteVertexArrays> {
 
+private:
+	class _ElementArrayBuffer : public Object<_GenBuffers, _DeleteVertexArrays> {};
 
 public:
 	class VertexAttribute {
@@ -65,12 +67,6 @@ public:
 		PATCHES = GL_PATCHES
 	};
 
-	enum class IndexType {
-		UNSIGNED_BYTE = GL_UNSIGNED_BYTE,
-		UNSIGNED_SHORT = GL_UNSIGNED_SHORT,
-		UNSIGNED_INT = GL_UNSIGNED_INT
-	};
-
 public:
 	void Bind() const;
 
@@ -107,10 +103,19 @@ public:
 	}
 
 	/**
-	 * Set the vertex indices of this VAO. The specified buffer must have an
-	 * ELEMENT_ARRAY target.
+	 * Set the vertex indices of this VAO.
 	 */
-	void SetVertexIndices(const Buffer& buffer, IndexType indexType);
+	void SetVertexIndices(const std::vector<GLubyte>& indices);
+
+	/**
+	 * Set the vertex indices of this VAO.
+	 */
+	void SetVertexIndices(const std::vector<GLushort>& indices);
+
+	/**
+	 * Set the vertex indices of this VAO.
+	 */
+	void SetVertexIndices(const std::vector<GLuint>& indices);
 
 	/**
 	 * Draws the contents of the VAO using glDrawArrays or glDrawArraysInstanced,
@@ -125,13 +130,33 @@ public:
 	 * depending on the number of indices. Make sure that the VAO is complete, i.e.
 	 * it has vertex data and indices.
 	 */
-	void DrawElements(Mode mode, unsigned count, unsigned offset = 0, unsigned instances = 1) const;
+	void DrawElements(Mode mode, unsigned count, unsigned offset, unsigned instances = 1) const;
+
+	/**
+	 * Draws the contents of the VAO using glDrawElements or glDrawElementsInstanced,
+	 * depending on the number of indices. Make sure that the VAO is complete, i.e.
+	 * it has vertex data and indices.
+	 */
+	void DrawElements(Mode mode, unsigned instances = 1) const;
 
 private:
+	template<typename T>
+	void _SetIndices(const std::vector<T>& indices, GLenum type) {
+		Bind();
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _index_buffer.GetName());
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(T), indices.data(), GL_STATIC_DRAW);
+
+		_index_type = type;
+		_index_count = indices.size();
+	}
+
 	void _SetVertexAttributes(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced);
 	GLuint _FirstUnusedIndex(GLuint consecutive = 1);
 
-	IndexType _index_type{};
+	_ElementArrayBuffer _index_buffer;
+	unsigned _index_count;
+	GLenum _index_type;
 
 	bool _has_initialized_unused_attribute_indices = false;
 	std::set<GLuint> _unused_attribute_indices;

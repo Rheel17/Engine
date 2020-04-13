@@ -96,16 +96,13 @@ bool ModelRenderer::_MaterialShaderCompare::operator()(const Material& mat1, con
 
 ModelRenderer::ModelRenderer(const Model& model) :
 		_vertex_buffer_object(GL::Buffer::Target::ARRAY),
-		_element_array_buffer(GL::Buffer::Target::ELEMENT_ARRAY),
-		_object_data_buffer(GL::Buffer::Target::ARRAY),
-		_index_count(model.GetIndices().size()) {
+		_object_data_buffer(GL::Buffer::Target::ARRAY) {
 
 	_vertex_buffer_object.SetData(model.GetVertices());
-	_element_array_buffer.SetData(model.GetIndices());
 	_object_data_buffer.SetData(std::vector<ObjectData>());
 
 	_vao.SetVertexAttributes<vec3, vec3, vec2>(_vertex_buffer_object);
-	_vao.SetVertexIndices(_element_array_buffer, GL::VertexArray::IndexType::UNSIGNED_INT);
+	_vao.SetVertexIndices(model.GetIndices());
 	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ObjectData), true);
 }
 
@@ -141,13 +138,13 @@ void ModelRenderer::RenderObjects() const {
 	GL::State::ClearTexture(2, GL::Texture::Target::TEXTURE_2D);
 
 	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
-	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
+	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _objects.size());
 
 	for (const auto& [material, objects] : _textured_objects) {
 		material.BindTextures();
 
 		_object_data_buffer.SetData(objects, GL::Buffer::Usage::STREAM_DRAW);
-		_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
+		_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _objects.size());
 	}
 }
 

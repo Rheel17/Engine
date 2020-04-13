@@ -98,15 +98,16 @@ void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<Ve
 	}
 }
 
-void VertexArray::SetVertexIndices(const Buffer& buffer, IndexType indexType) {
-	if (buffer.GetTarget() != Buffer::Target::ELEMENT_ARRAY) {
-		throw std::invalid_argument("buffer must have target ELEMENT_ARRAY");
-	}
+void VertexArray::SetVertexIndices(const std::vector<GLubyte>& indices) {
+	_SetIndices(indices, GL_UNSIGNED_BYTE);
+}
 
-	Bind();
-	buffer.Bind();
+void VertexArray::SetVertexIndices(const std::vector<GLushort>& indices) {
+	_SetIndices(indices, GL_UNSIGNED_SHORT);
+}
 
-	_index_type = indexType;
+void VertexArray::SetVertexIndices(const std::vector<GLuint>& indices) {
+	_SetIndices(indices, GL_UNSIGNED_INT);
 }
 
 void VertexArray::DrawArrays(Mode mode, int first, unsigned count, unsigned int instances) const {
@@ -128,14 +129,18 @@ void VertexArray::DrawElements(Mode mode, unsigned count, unsigned offset, unsig
 	Bind();
 
 	if (instances != 1) {
-		glDrawElementsInstanced(GLenum(mode), count, GLenum(_index_type), (const void *)(offset), instances);
+		glDrawElementsInstanced(GLenum(mode), count, _index_type, (const void *)(offset), instances);
 	} else {
-		glDrawElements(GLenum(mode), count, GLenum(_index_type), (const void *)(offset));
+		glDrawElements(GLenum(mode), count, _index_type, (const void *)(offset));
 	}
 }
 
 #pragma GCC diagnostic pop
 #pragma clang diagnostic pop
+
+void VertexArray::DrawElements(VertexArray::Mode mode, unsigned instances) const {
+	DrawElements(mode, _index_count, 0, instances);
+}
 
 void VertexArray::_SetVertexAttributes(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced) {
 	std::vector<VertexAttribute> attributes;

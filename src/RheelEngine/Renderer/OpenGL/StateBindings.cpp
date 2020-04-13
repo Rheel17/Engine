@@ -5,6 +5,8 @@
 
 namespace rheel::GL {
 
+unsigned StateBindings::_active_texture_unit{ 0 };
+
 StateBindings::StateBindings() :
 		_parent(nullptr) {}
 
@@ -96,7 +98,7 @@ void StateBindings::BindTexture(unsigned unit, Texture::Target target, GLuint na
 	}
 
 	// perform the state change
-	glActiveTexture(GL_TEXTURE0 + unit);
+	_SetActiveTextureUnit(unit);
 	glBindTexture(GLenum(target), name);
 
 	if (_parent == nullptr ? (name == 0) : name == _parent->_GetTexture(unit, target)) {
@@ -158,7 +160,7 @@ void StateBindings::ResetChanges() {
 
 	for (const auto& [pair, name] : _texture_changes) {
 		const auto& [unit, target] = pair;
-		glActiveTexture(GL_TEXTURE0 + unit);
+		_SetActiveTextureUnit(unit);
 		glBindTexture(GLenum(target), _parent == nullptr ? 0 : _parent->_GetTexture(unit, target));
 	}
 
@@ -298,6 +300,19 @@ uvec2 StateBindings::_GetViewport() const {
 
 	// default: no binding
 	return Framebuffer::DefaultViewport();
+}
+
+void StateBindings::_SetActiveTextureUnit(unsigned unit) {
+	// check if a state change is necessary
+	if (_active_texture_unit == unit) {
+		return;
+	}
+
+	// make the state change
+	glActiveTexture(GL_TEXTURE0 + unit);
+
+	// store the state change
+	_active_texture_unit = unit;
 }
 
 }

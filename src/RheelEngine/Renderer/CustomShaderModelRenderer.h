@@ -28,9 +28,7 @@ public:
 private:
 	GL::VertexArray _vao;
 	GL::Buffer _vertex_buffer_object;
-	GL::Buffer _element_array_buffer;
 	mutable GL::Buffer _object_data_buffer;
-	unsigned _index_count;
 
 	GL::Program _shader;
 

@@ -35,7 +35,6 @@ private:
 
 	GL::VertexArray _vao;
 	GL::Buffer _vertex_buffer_object;
-	GL::Buffer _element_array_buffer;
 
 	GL::Program _shader;
 

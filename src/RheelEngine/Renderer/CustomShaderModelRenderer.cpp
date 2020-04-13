@@ -12,17 +12,14 @@ std::unordered_map<std::uintptr_t, GL::Program> CustomShaderModelRenderer::_shad
 
 CustomShaderModelRenderer::CustomShaderModelRenderer(const Model& model, const Shader& shader) :
 		_vertex_buffer_object(GL::Buffer::Target::ARRAY),
-		_element_array_buffer(GL::Buffer::Target::ELEMENT_ARRAY),
 		_object_data_buffer(GL::Buffer::Target::ARRAY),
-		_index_count(model.GetIndices().size()),
 		_shader(std::move(_GetCompiledShader(shader))) {
 
 	_vertex_buffer_object.SetData(model.GetVertices());
-	_element_array_buffer.SetData(model.GetIndices());
 	_object_data_buffer.SetData(std::vector<ModelRenderer::ObjectData>());
 
 	_vao.SetVertexAttributes<vec3, vec3, vec2>(_vertex_buffer_object);
-	_vao.SetVertexIndices(_element_array_buffer, GL::VertexArray::IndexType::UNSIGNED_INT);
+	_vao.SetVertexIndices(model.GetIndices());
 	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ModelRenderer::ObjectData), true);
 }
 
@@ -44,7 +41,7 @@ void CustomShaderModelRenderer::RenderToShadowMap() const {
 	_vao.Bind();
 
 	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
-	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
+	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _objects.size());
 }
 
 void CustomShaderModelRenderer::RenderObjects() const {
@@ -52,7 +49,7 @@ void CustomShaderModelRenderer::RenderObjects() const {
 	_vao.Bind();
 
 	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
-	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _index_count, 0, _objects.size());
+	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _objects.size());
 }
 
 GL::Program& CustomShaderModelRenderer::GetShaderProgram() {

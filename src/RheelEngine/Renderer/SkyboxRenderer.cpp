@@ -21,7 +21,6 @@ namespace rheel {
 SkyboxRenderer::SkyboxRenderer(SceneRenderManager *manager) :
 		_manager(manager),
 		_vertex_buffer_object(GL::Buffer::Target::ARRAY),
-		_element_array_buffer(GL::Buffer::Target::ELEMENT_ARRAY),
 		_texture_parts({{ Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null() }}) {
 
 	// initialize the shader
@@ -32,9 +31,8 @@ SkyboxRenderer::SkyboxRenderer(SceneRenderManager *manager) :
 
 	// initialize the skybox model
 	_vertex_buffer_object.SetData(_CreateSkyboxVertices());
-	_element_array_buffer.SetData(_CreateSkyboxIndices());
 	_vao.SetVertexAttributes<vec3, vec3>(_vertex_buffer_object);
-	_vao.SetVertexIndices(_element_array_buffer, GL::VertexArray::IndexType::UNSIGNED_INT);
+	_vao.SetVertexIndices(_CreateSkyboxIndices());
 }
 
 void SkyboxRenderer::Render(Camera *camera, unsigned width, unsigned height) const {
