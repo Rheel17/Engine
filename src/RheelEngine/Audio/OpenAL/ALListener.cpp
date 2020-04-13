@@ -5,7 +5,8 @@
 
 namespace rheel {
 
-ALListener ALListener::INSTANCE;
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "MemberFunctionCanBeStatic"
 
 void ALListener::SetGain(float gain) {
 	alListenerf(AL_GAIN, gain);
@@ -28,5 +29,7 @@ void ALListener::SetOrientation(const quat& rotation) {
 	// TODO: look into this
 	SetOrientation(rotation * vec4(0, 0, -1, 0), rotation * vec4(0, 1, 0, 0));
 }
+
+#pragma clang diagnostic pop
 
 }

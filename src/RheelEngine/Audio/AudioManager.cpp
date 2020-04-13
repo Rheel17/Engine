@@ -36,9 +36,8 @@ AudioManager::~AudioManager() {
 	alcCloseDevice(_device);
 }
 
-AudioSource *AudioManager::Play(Sound sound) {
-	/*
-	const AudioClip& clip = sound.GetAudioClip();
+AudioSource *AudioManager::Play(const Sound& sound) {
+	const AudioClip& clip = _GetAudioClip(sound);
 
 	auto src = new AudioSource(this, clip);
 	auto source = std::unique_ptr<AudioSource>(src);
@@ -47,15 +46,10 @@ AudioSource *AudioManager::Play(Sound sound) {
 
 	_sources.push_back(std::move(source));
 	return src;
-	 */
-
-	// TODO: fix this with the new asset system
-	return nullptr;
 }
 
-AudioSource *AudioManager::Loop(Sound resource) {
-	/*
-	const AudioClip& clip = resource.GetAudioClip();
+AudioSource *AudioManager::Loop(const Sound& sound) {
+	const AudioClip& clip = _GetAudioClip(sound);
 
 	auto src = new AudioSource(this, clip);
 	auto source = std::unique_ptr<AudioSource>(src);
@@ -64,10 +58,6 @@ AudioSource *AudioManager::Loop(Sound resource) {
 
 	_sources.push_back(std::move(source));
 	return src;
-	*/
-
-	// TODO: fix this with the new asset system
-	return nullptr;
 }
 
 void AudioManager::Stop(AudioSource *source) {
@@ -78,8 +68,18 @@ void AudioManager::Stop(AudioSource *source) {
 	_sources.erase(iter);
 }
 
-ALListener& AudioManager::GlobalListener() {
-	return ALListener::INSTANCE;
+ALListener& AudioManager::GetListener() {
+	return _listener;
+}
+
+const AudioClip& AudioManager::_GetAudioClip(const Sound& sound) {
+	auto iter = _clip_cache.find(sound.GetAddress());
+
+	if (iter == _clip_cache.end()) {
+		iter = _clip_cache.emplace(sound.GetAddress(), sound).first;
+	}
+
+	return iter->second;
 }
 
 void AudioManager::_StopAll() {

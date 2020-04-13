@@ -46,9 +46,6 @@ public:
 private:
 	ALListener() = default;
 
-private:
-	static ALListener INSTANCE;
-
 };
 
 }

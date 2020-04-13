@@ -28,9 +28,9 @@
 //		vel = vec3(0, 0, 0);
 //	}
 //
-//	Engine::GetAudioManager().GlobalListener().SetPosition(pos);
-//	Engine::GetAudioManager().GlobalListener().SetVelocity(vel);
-//	Engine::GetAudioManager().GlobalListener().SetOrientation(camera->Rotation());
+//	Engine::GetAudioManager().GetListener().SetPosition(pos);
+//	Engine::GetAudioManager().GetListener().SetVelocity(vel);
+//	Engine::GetAudioManager().GetListener().SetOrientation(camera->Rotation());
 //
 //	_has_prev_position = true;
 //	_prev_position = pos;
