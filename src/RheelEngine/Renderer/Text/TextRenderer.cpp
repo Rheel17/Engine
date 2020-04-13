@@ -38,7 +38,7 @@ void TextRenderer::DrawText(Font& font, const Color& color, const std::wstring& 
 
 	// draw a maximum of Font::NUM_GLYPHS characters at a time.
 	while (length > 0) {
-		unsigned charsLength = std::min(length, (unsigned) Font::FONT_CACHE_SIZE);
+		unsigned charsLength = std::min(length, Font::FONT_CACHE_SIZE);
 
 		x = _DrawChars(font, color, chars, charsLength, x, y, size);
 

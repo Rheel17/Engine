@@ -43,7 +43,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Audio/OpenAL/ALListener.cpp RheelEngine/Audio/OpenAL/ALListener.h 
 		RheelEngine/Audio/OpenAL/ALSource.cpp RheelEngine/Audio/OpenAL/ALSource.h 
 		RheelEngine/Components/Camera.cpp RheelEngine/Components/Camera.h 
-		RheelEngine/Components/CollisionComponent.cpp RheelEngine/Components/CollisionComponent.h 
+		RheelEngine/Components/CollisionComponent.h 
 		RheelEngine/Components/DirectionalLight.cpp RheelEngine/Components/DirectionalLight.h 
 		RheelEngine/Components/EulerController.cpp RheelEngine/Components/EulerController.h 
 		RheelEngine/Components/Light.cpp RheelEngine/Components/Light.h 
@@ -77,8 +77,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/Enums.h 
 		RheelEngine/Renderer/OpenGL/Framebuffer.cpp RheelEngine/Renderer/OpenGL/Framebuffer.h 
 		RheelEngine/Renderer/OpenGL/Handle.h 
-		RheelEngine/Renderer/OpenGL/Object.cpp RheelEngine/Renderer/OpenGL/Object.h 
-		RheelEngine/Renderer/OpenGL/OpenGL.cpp RheelEngine/Renderer/OpenGL/OpenGL.h 
+		RheelEngine/Renderer/OpenGL/Object.h 
 		RheelEngine/Renderer/OpenGL/Program.cpp RheelEngine/Renderer/OpenGL/Program.h 
 		RheelEngine/Renderer/OpenGL/Renderbuffer.cpp RheelEngine/Renderer/OpenGL/Renderbuffer.h 
 		RheelEngine/Renderer/OpenGL/Shader.cpp RheelEngine/Renderer/OpenGL/Shader.h 

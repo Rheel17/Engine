@@ -5,7 +5,6 @@
 
 #include <utility>
 
-#include "EngineResources.h"
 #include "Renderer/ImageTexture.h"
 
 namespace rheel {

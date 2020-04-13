@@ -7,7 +7,6 @@
 
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
-#include "../Scene.h"
 #include "OpenGL/State.h"
 
 namespace rheel {

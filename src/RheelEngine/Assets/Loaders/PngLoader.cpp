@@ -80,11 +80,11 @@ Image PngLoader::_LoadPNG(std::istream& input) {
 	png_read_info(pngPtr, infoPtr);
 
 	// parse the png info
-	unsigned width = png_get_image_width(pngPtr, infoPtr);
-	unsigned height = png_get_image_height(pngPtr, infoPtr);
+	auto width = png_get_image_width(pngPtr, infoPtr);
+	auto height = png_get_image_height(pngPtr, infoPtr);
 
-	unsigned int bitDepth = png_get_bit_depth(pngPtr, infoPtr);
-	unsigned int colorType = png_get_color_type(pngPtr, infoPtr);
+	auto bitDepth = png_get_bit_depth(pngPtr, infoPtr);
+	auto colorType = png_get_color_type(pngPtr, infoPtr);
 
 	// set the conversion to rgba with 8 bits per channel
 	if (bitDepth == 16) {

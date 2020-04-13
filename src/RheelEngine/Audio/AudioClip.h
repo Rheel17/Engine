@@ -13,7 +13,7 @@ namespace rheel {
 class RE_API AudioClip {
 
 public:
-	explicit AudioClip(Sound sound);
+	explicit AudioClip(const Sound& sound);
 
 	const ALBuffer& Buffer() const;
 

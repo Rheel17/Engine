@@ -296,28 +296,28 @@ Uniform& Uniform::operator=(dmat4x3 value) {
 
 Uniform& Uniform::operator=(const std::vector<float>& values) {
 	if (_Init()) {
-		glUniform1fv(_location, values.size(), reinterpret_cast<const GLfloat *>(values.data()));
+		glUniform1fv(_location, values.size(), values.data());
 	}
 	return *this;
 }
 
 Uniform& Uniform::operator=(const std::vector<double>& values) {
 	if (_Init()) {
-		glUniform1dv(_location, values.size(), reinterpret_cast<const GLdouble *>(values.data()));
+		glUniform1dv(_location, values.size(), values.data());
 	}
 	return *this;
 }
 
 Uniform& Uniform::operator=(const std::vector<int>& values) {
 	if (_Init()) {
-		glUniform1iv(_location, values.size(), reinterpret_cast<const GLint *>(values.data()));
+		glUniform1iv(_location, values.size(), values.data());
 	}
 	return *this;
 }
 
 Uniform& Uniform::operator=(const std::vector<unsigned>& values) {
 	if (_Init()) {
-		glUniform1uiv(_location, values.size(), reinterpret_cast<const GLuint *>(values.data()));
+		glUniform1uiv(_location, values.size(), values.data());
 	}
 	return *this;
 }

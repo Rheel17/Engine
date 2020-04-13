@@ -213,7 +213,8 @@ void ColladaLoader::AddGeometry(const Geometry& geometry, const mat4& transform)
 
 	for (const ModelVertex& vertex : geometry._vertices) {
 		vec4 transformedPosition = transform * vec4(vertex.position, 1.0f);
-		ModelVertex transformed = { transformedPosition, vertex.normal, vertex.texture };
+		vec3 transformedPosition3(transformedPosition.x, transformedPosition.y, transformedPosition.z);
+		ModelVertex transformed = { transformedPosition3, vertex.normal, vertex.texture };
 
 		transformUp(transformed.position, _up);
 		transformUp(transformed.normal, _up);

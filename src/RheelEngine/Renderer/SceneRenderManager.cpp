@@ -7,7 +7,6 @@
 #include "ShadowMapDirectional.h"
 #include "SkyboxRenderer.h"
 #include "../Engine.h"
-#include "../EngineResources.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/SpotLight.h"

@@ -17,9 +17,9 @@ namespace rheel {
 class RE_API CollisionComponent : public ComponentBase {
 
 public:
-	CollisionComponent();
+	CollisionComponent() = default;
 
-	~CollisionComponent() = default;
+	~CollisionComponent() override = default;
 
 	virtual void OnCollisionStart(CollisionComponent& other) {}
 

@@ -67,7 +67,7 @@ void ModelRenderer::ObjectDataPtr::SetMaterialColor(vec4 materialColor) {
 }
 
 ModelRenderer::ObjectDataPtr::operator bool() const {
-	return _data;
+	return _data != nullptr;
 }
 
 ModelRenderer::ObjectDataPtr& ModelRenderer::ObjectDataPtr::operator=(ObjectDataPtr&& ptr) noexcept {
