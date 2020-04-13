@@ -136,8 +136,6 @@ GL::Program& ModelRenderer::GetOpaqueShader() {
 }
 
 void ModelRenderer::RenderObjects() const {
-	_vao.Bind();
-
 	GL::State::ClearTexture(0, GL::Texture::Target::TEXTURE_2D);
 	GL::State::ClearTexture(1, GL::Texture::Target::TEXTURE_2D);
 	GL::State::ClearTexture(2, GL::Texture::Target::TEXTURE_2D);

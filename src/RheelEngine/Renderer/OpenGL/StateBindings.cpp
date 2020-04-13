@@ -11,22 +11,26 @@ StateBindings::StateBindings() :
 StateBindings::StateBindings(const StateBindings *parent) :
 		_parent(parent) {}
 
-// TODO: correctly prevent useless state changes. Ideally also
-//  id -> 0 -> id
-//  replaced by
-//  id
-//  if no bindings of other objects happen in between. Idea: use
-//  some kind of 'flushing' system.
-
 void StateBindings::BindBuffer(Buffer::Target target, GLuint name) {
+	// check that a state change is necessary
+	if (_GetBuffer(target) == name) {
+		return;
+	}
+
 	// perform the state change
 	glBindBuffer(GLenum(target), name);
-	_buffer_changes[target] = name;
+
+	// store the state change
+	if (_parent == nullptr ? (name == 0) : (name == _parent->_GetBuffer(target))) {
+		_buffer_changes.erase(target);
+	} else {
+		_buffer_changes[target] = name;
+	}
 }
 
 void StateBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, unsigned width, unsigned height) {
 	// get targets
-	std::vector<Framebuffer::Target> targets;
+	std::vector<Framebuffer::Target> targets{};
 
 	if (target == Framebuffer::Target::BOTH) {
 		targets.push_back(Framebuffer::Target::DRAW);
@@ -46,6 +50,11 @@ void StateBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, uns
 
 	// recursive base case
 
+	// check if a state change is necessary
+	if (_GetFramebuffer(target) == name) {
+		return;
+	}
+
 	// perform the state change
 	glBindFramebuffer(GLenum(target), name);
 
@@ -53,32 +62,80 @@ void StateBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, uns
 		_SetViewport({ width, height });
 	}
 
-	_framebuffer_changes[target] = name;
+	// store the state change
+	if (_parent == nullptr ? (name == 0) : name == _parent->_GetFramebuffer(target)) {
+		_framebuffer_changes.erase(target);
+	} else {
+		_framebuffer_changes[target] = name;
+	}
 }
 
 void StateBindings::BindRenderbuffer(GLuint name) {
+	// check if a state change is necessary
+	if (_GetRenderbuffer() == name) {
+		return;
+	}
+
 	// perform the state change
 	glBindRenderbuffer(GL_RENDERBUFFER, name);
-	_renderbuffer_change = name;
+
+	// store the state change
+	if (_parent == nullptr ? (name == 0) : (name == _parent->_GetRenderbuffer())) {
+		_renderbuffer_change.reset();
+	} else {
+		_renderbuffer_change = name;
+	}
 }
 
 void StateBindings::BindTexture(unsigned unit, Texture::Target target, GLuint name) {
 	auto key = std::make_pair(unit, target);
 
+	// check if a state change is necessary
+	if (_GetTexture(unit, target) == name) {
+		return;
+	}
+
 	// perform the state change
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GLenum(target), name);
-	_texture_changes[key] = name;
+
+	if (_parent == nullptr ? (name == 0) : name == _parent->_GetTexture(unit, target)) {
+		_texture_changes.erase(key);
+	} else {
+		_texture_changes[key] = name;
+	}
 }
 
 void StateBindings::BindVertexArray(GLuint name) {
+	// check if a state change is necessary
+	if (_GetVertexArray() == name) {
+		return;
+	}
+
+	// perform the state change
 	glBindVertexArray(name);
-	_vertex_array_change = name;
+
+	if (_parent == nullptr ? name == 0 : name == _parent->_GetVertexArray()) {
+		_vertex_array_change.reset();
+	} else {
+		_vertex_array_change = name;
+	}
 }
 
 void StateBindings::UseProgram(GLuint handle) {
+	// check if a state change is necessary
+	if (_GetProgram() == handle) {
+		return;
+	}
+
+	// perform the state change
 	glUseProgram(handle);
-	_program_change = handle;
+
+	if (_parent == nullptr ? handle == 0 : handle == _parent->_GetProgram()) {
+		_program_change.reset();
+	} else {
+		_program_change = handle;
+	}
 }
 
 void StateBindings::ResetChanges() {
@@ -221,11 +278,9 @@ void StateBindings::_SetViewport(uvec2 dim) {
 	glViewport(0, 0, dim.x, dim.y);
 
 	// store the state change
-	if ((_parent == nullptr && dim == Framebuffer::DefaultViewport()) || (_parent != nullptr && _parent->_GetViewport() == dim)) {
-		// this was a reversal of the current change
+	if (_parent == nullptr ? dim == Framebuffer::DefaultViewport() : dim == _parent->_GetViewport()) {
 		_viewport_change.reset();
 	} else {
-		// this is a state change
 		_viewport_change = dim;
 	}
 }
