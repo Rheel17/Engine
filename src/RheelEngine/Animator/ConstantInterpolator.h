@@ -13,16 +13,8 @@ namespace rheel {
 template<typename T>
 class RE_API ConstantInterpolator : public Interpolator<T> {
 
-public:
-	T operator()(float t) const override {
-		if (this->_points.empty()) {
-			return T{};
-		}
-
-		if (t <= this->_t_min) {
-			return this->_points.begin()->second;
-		}
-
+protected:
+	T _GetValue(float t) const override {
 		return (--this->_points.end())->second;
 	}
 

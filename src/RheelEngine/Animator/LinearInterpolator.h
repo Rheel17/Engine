@@ -5,12 +5,16 @@
 #define RHEELENGINE_LINEARINTERPOLATOR_H
 #include "../_common.h"
 
-#include "Interpolator.h"
+#include "TransitionInterpolator.h"
 
 namespace rheel {
 
 template<typename T>
-class RE_API LinearInterpolator : public Interpolator<T> {
+class RE_API LinearInterpolator : public TransitionInterpolator<T> {
+
+public:
+	LinearInterpolator() :
+			TransitionInterpolator<T>(Transition::linear) {}
 
 };
 

@@ -19,6 +19,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Animator/LinearInterpolator.h 
 		RheelEngine/Animator/SplineInterpolator.h 
 		RheelEngine/Animator/Transition.cpp RheelEngine/Animator/Transition.h 
+		RheelEngine/Animator/TransitionInterpolator.h 
 		RheelEngine/Assets/Asset.h 
 		RheelEngine/Assets/AssetLoader.h 
 		RheelEngine/Assets/Image.cpp RheelEngine/Assets/Image.h 

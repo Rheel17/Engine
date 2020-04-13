@@ -5,12 +5,16 @@
 #define RHEELENGINE_COSINEINTERPOLATOR_H
 #include "../_common.h"
 
-#include "Interpolator.h"
+#include "TransitionInterpolator.h"
 
 namespace rheel {
 
 template<typename T>
-class RE_API CosineInterpolator : public Interpolator<T> {
+class RE_API CosineInterpolator : public TransitionInterpolator<T> {
+
+public:
+	CosineInterpolator() :
+			TransitionInterpolator<T>(Transition::cosine) {}
 
 };
 

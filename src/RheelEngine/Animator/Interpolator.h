@@ -13,7 +13,7 @@ template<typename T>
 class RE_API Interpolator {
 
 public:
-	~Interpolator() = default;
+	virtual ~Interpolator() = default;
 
 	void AddPoint(float t, const T& value) {
 		_points.insert(t, value);
@@ -39,12 +39,26 @@ public:
 		}
 	}
 
-	virtual T operator()(float t) const = 0;
+	T operator()(float t) const {
+		if (_points.empty()) {
+			return T{};
+		}
+
+		if (_points.size() == 1 || t <= this->_t_min) {
+			return _points.begin()->second;
+		}
+
+		if (t >= this->_t_max) {
+			return (--_points.end())->second;
+		}
+
+		return _GetValue(t);
+	}
 
 protected:
-	using PointIterator = typename std::unordered_map<float, T>::iterator;
-
 	Interpolator() = default;
+
+	virtual T _GetValue(float t) const = 0;
 
 	std::map<float, T> _points;
 	float _t_min = 0;
