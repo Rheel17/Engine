@@ -20,12 +20,4 @@ const Transition Transition::cosine(transitionCosine);
 Transition::Transition(Transition::_TransitionFunction function) :
 		_function(function) {}
 
-float Transition::operator()(float t) const {
-	return _function(t);
-}
-
-float Transition::operator()(float t, float tMin, float tMax, float vMin, float vMax) const {
-	return _function((t - tMin) / (tMax - tMin)) * (vMax - vMin) + vMin;
-}
-
 }

@@ -10,14 +10,21 @@
 
 namespace rheel {
 
-class RE_API ConstantInterpolator : public Interpolator {
+template<typename T>
+class RE_API ConstantInterpolator : public Interpolator<T> {
 
 public:
-	template<class InputIt>
-	ConstantInterpolator(InputIt pointsStart, InputIt pointsEnd) :
-		Interpolator(pointsStart, pointsEnd) {}
+	T operator()(float t) const override {
+		if (this->_points.empty()) {
+			return T{};
+		}
 
-	explicit ConstantInterpolator(std::vector<vec2> points);
+		if (t <= this->_t_min) {
+			return this->_points.begin()->second;
+		}
+
+		return (--this->_points.end())->second;
+	}
 
 };
 

@@ -19,8 +19,10 @@ private:
 	_TransitionFunction _function;
 
 public:
-	float operator()(float t) const;
-	float operator()(float t, float tMin, float tMax, float vMin, float vMax) const;
+	template<typename V>
+	V operator()(float t, float tMin, float tMax, V vMin, V vMax) const {
+		return _function((t - tMin) / (tMax - tMin)) * (vMax - vMin) + vMin;
+	}
 
 public:
 	static const Transition linear;

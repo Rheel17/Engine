@@ -9,14 +9,8 @@
 
 namespace rheel {
 
-class RE_API CosineInterpolator : public Interpolator {
-
-public:
-	template<class InputIt>
-	CosineInterpolator(InputIt pointsStart, InputIt pointsEnd) :
-			Interpolator(pointsStart, pointsEnd) {}
-
-	explicit CosineInterpolator(std::vector<vec2> points);
+template<typename T>
+class RE_API CosineInterpolator : public Interpolator<T> {
 
 };
 

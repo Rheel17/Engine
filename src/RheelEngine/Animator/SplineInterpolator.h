@@ -9,14 +9,8 @@
 
 namespace rheel {
 
-class RE_API SplineInterpolator : public Interpolator {
-
-public:
-	template<class InputIt>
-	SplineInterpolator(InputIt pointsStart, InputIt pointsEnd) :
-			Interpolator(pointsStart, pointsEnd) {}
-
-	explicit SplineInterpolator(std::vector<vec2> points);
+template<typename T>
+class RE_API SplineInterpolator : public Interpolator<T> {
 
 };
 
