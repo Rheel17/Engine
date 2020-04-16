@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_STATE_H
-#define RHEELENGINE_GL_STATE_H
+#ifndef RHEELENGINE_STATE_H
+#define RHEELENGINE_STATE_H
 #include "../../_common.h"
 
 #include <stack>
@@ -13,7 +13,7 @@
 #include "VertexArray.h"
 #include "Program.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 class RE_API State {
 	friend class Uniform;
@@ -50,26 +50,26 @@ public:
 	static void SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass);
 
 private:
-	State *_parent;
+	State* _parent;
 	StateBindings _bindings;
 	StateEnables _enables;
 	StateFunctions _functions;
 
 	State();
-	explicit State(State *parent);
+	explicit State(State* parent);
 
 	/**
 	 * Resets the OpenGL state back to its parent state
 	 */
-	void _ResetChanges();
+	void ResetChanges_();
 
 public:
 	static void Initialize();
 
 private:
-	static State& _S();
+	static State& S_();
 
-	static std::stack<std::unique_ptr<State>> _global_state_stack;
+	static std::stack<std::unique_ptr<State>> globalStateStack;
 
 };
 

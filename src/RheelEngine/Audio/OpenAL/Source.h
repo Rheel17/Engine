@@ -1,23 +1,23 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef ALSOURCE_H_
-#define ALSOURCE_H_
+#ifndef RHEELENGINE_AL_SOURCE_H
+#define RHEELENGINE_AL_SOURCE_H
 #include "../../_common.h"
 
-#include "ALBuffer.h"
+#include "Buffer.h"
 
-namespace rheel {
+namespace rheel::al {
 
-class RE_API ALSource {
+class RE_API Source {
 
 public:
-	ALSource();
+	Source();
 
 	/**
 	 * Sets the sound buffer for this source.
 	 */
-	void SetBuffer(const ALBuffer& buffer);
+	void SetBuffer(const Buffer& buffer);
 
 	/**
 	 * Sets the gain of the source.

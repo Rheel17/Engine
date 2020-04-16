@@ -16,37 +16,37 @@ Engine::EngineInstance::~EngineInstance() {
 	delete window;
 }
 
-void Engine::_Initialize() {
+void Engine::Initialize_() {
 	Window::InitializeDisplaySystems();
 	Font::Initialize();
 	_instance.audio_manager = std::make_unique<AudioManager>();
 }
 
-void Engine::_Run(Game *game) {
+void Engine::Run_(Game* game) {
 	game->Initialize();
 
-	_instance.display_configuration._CalculateActualResolution();
+	_instance.display_configuration.CalculateActualResolution_();
 
 	_instance.window = new Window(_instance.display_configuration);
 	_instance.window->Show();
 
-	_instance.display_configuration._ClampAnisotropicLevel();
+	_instance.display_configuration.ClampAnisotropicLevel_();
 
 	_instance.ui = new UI(
-				_instance.display_configuration.resolution.width,
-				_instance.display_configuration.resolution.height);
+			_instance.display_configuration.resolution.x,
+			_instance.display_configuration.resolution.y);
 
-	TextRenderer::_ResizeBuffer(
-			_instance.display_configuration.resolution.width,
-			_instance.display_configuration.resolution.height);
+	TextRenderer::ResizeBuffer_(
+			_instance.display_configuration.resolution.x,
+			_instance.display_configuration.resolution.y);
 
 	game->Start();
 
 	_instance.window->Loop();
 }
 
-void Engine::_Terminate() {
-	_instance.audio_manager->_StopAll();
+void Engine::Terminate_() {
+	_instance.audio_manager->StopAll_();
 	Window::DestroyDisplaySystems();
 }
 
@@ -74,16 +74,16 @@ AudioManager& Engine::GetAudioManager() {
 	return *_instance.audio_manager;
 }
 
-void Engine::SetActiveScene(Scene *scene) {
+void Engine::SetActiveScene(Scene* scene) {
 	delete _instance.active_scene;
 	_instance.active_scene = scene;
 }
 
-Scene *Engine::GetActiveScene() {
+Scene* Engine::GetActiveScene() {
 	return _instance.active_scene;
 }
 
-SceneRenderManager& Engine::GetSceneRenderManager(Scene *scene) {
+SceneRenderManager& Engine::GetSceneRenderManager(Scene* scene) {
 	auto iter = _instance.render_map_scene.find(scene);
 
 	if (iter == _instance.render_map_scene.end()) {

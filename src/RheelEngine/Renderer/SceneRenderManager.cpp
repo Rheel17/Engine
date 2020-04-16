@@ -13,14 +13,15 @@
 
 namespace rheel {
 
-std::unique_ptr<GL::VertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
-std::unique_ptr<GL::Buffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
+std::unique_ptr<gl::VertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
+std::unique_ptr<gl::Buffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
 bool SceneRenderManager::_lighting_quad_initialized = false;
 
-SceneRenderManager::SceneRenderManager(Scene *scene) :
-		_scene(scene), _skybox_renderer(std::make_shared<SkyboxRenderer>(this)) {
+SceneRenderManager::SceneRenderManager(Scene* scene) :
+		_scene(scene),
+		_skybox_renderer(std::make_shared<SkyboxRenderer>(this)) {
 
-	_Initialize();
+	Initialize_();
 }
 
 bool SceneRenderManager::ShouldDrawShadows() const {
@@ -35,22 +36,22 @@ void SceneRenderManager::Update() {
 	_lights_attenuation.clear();
 	_lights_spot_attenuation.clear();
 
-	for (Light *light : _scene->GetLights()) {
+	for (Light* light : _scene->GetLights()) {
 		_lights_color.push_back(light->GetColor());
 
-		if (auto pointLight = dynamic_cast<PointLight *>(light)) {
+		if (auto pointLight = dynamic_cast<PointLight*>(light)) {
 			_lights_type.push_back(0);
 			_lights_position.push_back(pointLight->Position());
 			_lights_direction.emplace_back();
 			_lights_attenuation.push_back(pointLight->Attenuation());
 			_lights_spot_attenuation.push_back(0.0f);
-		} else if (auto spotLight = dynamic_cast<SpotLight *>(light)) {
+		} else if (auto spotLight = dynamic_cast<SpotLight*>(light)) {
 			_lights_type.push_back(1);
 			_lights_position.push_back(spotLight->Position());
 			_lights_direction.push_back(spotLight->Direction());
 			_lights_attenuation.push_back(spotLight->Attenuation());
 			_lights_spot_attenuation.push_back(spotLight->SpotAttenuation());
-		} else if (auto directionalLight = dynamic_cast<DirectionalLight *>(light)) {
+		} else if (auto directionalLight = dynamic_cast<DirectionalLight*>(light)) {
 			_lights_type.push_back(2);
 			_lights_position.emplace_back();
 			_lights_direction.push_back(directionalLight->Direction());
@@ -59,7 +60,7 @@ void SceneRenderManager::Update() {
 		}
 	}
 
-	_shadow_level = _ShadowLevel();
+	_shadow_level = ShadowLevel_();
 }
 
 ModelRenderer& SceneRenderManager::GetModelRenderer(const Model& model) {
@@ -86,19 +87,19 @@ std::unique_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(std::stri
 	return std::unique_ptr<ForwardSceneRenderer>(new ForwardSceneRenderer(this, std::move(cameraName), width, height));
 }
 
-std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(Light *light) {
-	if (dynamic_cast<PointLight *>(light)) {
+std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(Light* light) {
+	if (dynamic_cast<PointLight*>(light)) {
 
-	} else if (dynamic_cast<SpotLight *>(light)) {
+	} else if (dynamic_cast<SpotLight*>(light)) {
 
-	} else if (dynamic_cast<DirectionalLight *>(light)) {
+	} else if (dynamic_cast<DirectionalLight*>(light)) {
 		return std::unique_ptr<ShadowMapDirectional>(new ShadowMapDirectional(this, light));
 	}
 
 	return nullptr;
 }
 
-Scene *SceneRenderManager::GetScene() {
+Scene* SceneRenderManager::GetScene() {
 	return _scene;
 }
 
@@ -114,29 +115,52 @@ const SkyboxRenderer& SceneRenderManager::GetSkyboxRenderer() const {
 	return *_skybox_renderer;
 }
 
-std::vector<std::reference_wrapper<GL::Program>> SceneRenderManager::CustomShaderPrograms() {
-	std::vector<std::reference_wrapper<GL::Program>> shaders;
+std::vector<std::reference_wrapper<gl::Program>> SceneRenderManager::CustomShaderPrograms() {
+	std::vector<std::reference_wrapper<gl::Program>> shaders;
 
-	for (auto& [key, value] : _custom_shader_render_map) {
+	for (auto&[key, value] : _custom_shader_render_map) {
 		shaders.emplace_back(value.GetShaderProgram());
 	}
 
 	return shaders;
 }
 
-void SceneRenderManager::InitializeShaderLights(GL::Program& shaderProgram) const {
-	if (shaderProgram.HasUniform("_lights_type")) shaderProgram["_lights_type"] = _lights_type;
-	if (shaderProgram.HasUniform("_lights_position")) shaderProgram["_lights_position"] = _lights_position;
-	if (shaderProgram.HasUniform("_lights_direction")) shaderProgram["_lights_direction"] = _lights_direction;
-	if (shaderProgram.HasUniform("_lights_color")) shaderProgram["_lights_color"] = _lights_color;
-	if (shaderProgram.HasUniform("_lights_attenuation")) shaderProgram["_lights_attenuation"] = _lights_attenuation;
-	if (shaderProgram.HasUniform("_lights_spot_attenuation")) shaderProgram["_lights_spot_attenuation"] = _lights_spot_attenuation;
-	if (shaderProgram.HasUniform("_lightCount")) shaderProgram["_lightCount"] = (GLint) _lights_type.size();
-	if (shaderProgram.HasUniform("_shadowLevel")) shaderProgram["_shadowLevel"] = (GLint) _shadow_level;
+void SceneRenderManager::InitializeShaderLights(gl::Program& shaderProgram) const {
+	if (shaderProgram.HasUniform("_lights_type")) {
+		shaderProgram["_lights_type"] = _lights_type;
+	}
+
+	if (shaderProgram.HasUniform("_lights_position")) {
+		shaderProgram["_lights_position"] = _lights_position;
+	}
+
+	if (shaderProgram.HasUniform("_lights_direction")) {
+		shaderProgram["_lights_direction"] = _lights_direction;
+	}
+
+	if (shaderProgram.HasUniform("_lights_color")) {
+		shaderProgram["_lights_color"] = _lights_color;
+	}
+
+	if (shaderProgram.HasUniform("_lights_attenuation")) {
+		shaderProgram["_lights_attenuation"] = _lights_attenuation;
+	}
+
+	if (shaderProgram.HasUniform("_lights_spot_attenuation")) {
+		shaderProgram["_lights_spot_attenuation"] = _lights_spot_attenuation;
+	}
+
+	if (shaderProgram.HasUniform("_lightCount")) {
+		shaderProgram["_lightCount"] = (GLint) _lights_type.size();
+	}
+
+	if (shaderProgram.HasUniform("_shadowLevel")) {
+		shaderProgram["_shadowLevel"] = (GLint) _shadow_level;
+	}
 }
 
-int SceneRenderManager::_ShadowLevel() {
-	for (Light *light : _scene->GetLights()) {
+int SceneRenderManager::ShadowLevel_() {
+	for (Light* light : _scene->GetLights()) {
 		if (light->CastsShadows()) {
 			return Engine::GetDisplayConfiguration().shadow_quality;
 		}
@@ -145,16 +169,16 @@ int SceneRenderManager::_ShadowLevel() {
 	return 0;
 }
 
-void SceneRenderManager::_Initialize() {
+void SceneRenderManager::Initialize_() {
 	if (_lighting_quad_initialized) {
 		return;
 	}
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
-	_lighting_quad_vbo = std::make_unique<GL::Buffer>(GL::Buffer::Target::ARRAY);
+	_lighting_quad_vbo = std::make_unique<gl::Buffer>(gl::Buffer::Target::ARRAY);
 	_lighting_quad_vbo->SetData(triangles, sizeof(triangles));
 
-	_lighting_quad_vao = std::make_unique<GL::VertexArray>();
+	_lighting_quad_vao = std::make_unique<gl::VertexArray>();
 	_lighting_quad_vao->SetVertexAttributes<vec2>(*_lighting_quad_vbo);
 
 	_lighting_quad_initialized = true;

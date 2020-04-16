@@ -7,16 +7,18 @@
 
 namespace rheel {
 
-Entity::Entity(std::string name, Scene *scene, RigidTransform transform) :
+Entity::Entity(std::string name, Scene* scene, RigidTransform transform) :
 		name(std::move(name)),
-		scene(scene), parent(nullptr) {
+		scene(scene),
+		parent(nullptr) {
 
 	this->transform = std::move(transform);
 }
 
-Entity::Entity(std::string name, Entity *parent, RigidTransform transform) :
+Entity::Entity(std::string name, Entity* parent, RigidTransform transform) :
 		name(std::move(name)),
-		scene(parent->scene), parent(parent) {
+		scene(parent->scene),
+		parent(parent) {
 
 	this->transform = std::move(transform);
 }
@@ -27,20 +29,20 @@ Entity::~Entity() {
 	}
 }
 
-Entity *Entity::AddChild(std::string name, RigidTransform transform) {
+Entity* Entity::AddChild(std::string name, RigidTransform transform) {
 	if (auto [it, inserted] = _child_names.insert(name); !inserted) {
 		Log::Error() << "A child with name already exists: " << name << std::endl;
 		return nullptr;
 	}
 
-	Entity *entity = new Entity(std::move(name), this, transform);
+	Entity* entity = new Entity(std::move(name), this, transform);
 	auto ptr = std::unique_ptr<Entity>(entity);
 
 	_children.push_back(std::move(ptr));
 	return entity;
 }
 
-static inline void printChars(char *str, unsigned i) {
+static inline void printChars(char* str, unsigned i) {
 	str[7] = '0' + (i % 10); i /= 10;
 	str[6] = '0' + (i % 10); i /= 10;
 	str[5] = '0' + (i % 10); i /= 10;
@@ -67,7 +69,7 @@ std::string Entity::UniqueChildName(const std::string& prefix) {
 	return prefix;
 }
 
-void Entity::RemoveChild(Entity *entity) {
+void Entity::RemoveChild(Entity* entity) {
 	if (entity == nullptr) {
 		Log::Warning() << "Cannot remove nullptr entity" << std::endl;
 		return;
@@ -88,9 +90,9 @@ void Entity::RemoveChild(Entity *entity) {
 	_children.erase(iter);
 }
 
-Entity *Entity::FindChild(const std::string& name, bool recursive) {
+Entity* Entity::FindChild(const std::string& name, bool recursive) {
 	auto iter = std::find_if(_children.begin(), _children.end(),
-			[&name](const auto& ptr){ return ptr->name == name; });
+			[&name](const auto& ptr) { return ptr->name == name; });
 
 	if (iter != _children.end()) {
 		return iter->get();
@@ -101,7 +103,7 @@ Entity *Entity::FindChild(const std::string& name, bool recursive) {
 	}
 
 	for (const auto& ptr : _children) {
-		if (Entity *child = ptr->FindChild(name, true); child) {
+		if (Entity* child = ptr->FindChild(name, true); child) {
 			return child;
 		}
 	}
@@ -109,7 +111,7 @@ Entity *Entity::FindChild(const std::string& name, bool recursive) {
 	return nullptr;
 }
 
-bool Entity::IsDescendantOf(Entity *base) {
+bool Entity::IsDescendantOf(Entity* base) {
 	if (parent == base) {
 		return true;
 	}
@@ -121,7 +123,7 @@ bool Entity::IsDescendantOf(Entity *base) {
 	return parent->IsDescendantOf(base);
 }
 
-void Entity::RemoveComponent(ComponentBase *component) {
+void Entity::RemoveComponent(ComponentBase* component) {
 	auto iter = std::find_if(_components.begin(), _components.end(),
 			[component](auto ptr) { return ptr == component; });
 
@@ -134,7 +136,7 @@ void Entity::RemoveComponent(ComponentBase *component) {
 
 mat4 Entity::CalculateAbsoluteTransformationMatrix() const {
 	mat4 matrix = glm::identity<mat4>();
-	const Entity *entity = this;
+	const Entity* entity = this;
 
 	while (entity != nullptr) {
 		matrix = entity->transform.AsMatrix() * matrix;
@@ -151,7 +153,7 @@ RigidTransform Entity::CalculateAbsoluteTransform() const {
 // This function calls the given method on all components and children
 template<typename Method>
 static void callAll(
-		const std::vector<ComponentBase *>& components,
+		const std::vector<ComponentBase*>& components,
 		const std::vector<std::unique_ptr<Entity>>& children,
 		Method m) {
 
@@ -176,7 +178,7 @@ void Entity::TransformChanged() {
 	callAll(_components, _children, [](const auto& c) { c->TransformChanged(); });
 }
 
-void Entity::_UpdateTime(float time, float dt) {
+void Entity::UpdateTime_(float time, float dt) {
 	_time = time;
 	_dt = dt;
 
@@ -186,7 +188,7 @@ void Entity::_UpdateTime(float time, float dt) {
 	}
 
 	for (const auto& child : _children) {
-		child->_UpdateTime(_time, _dt);
+		child->UpdateTime_(_time, _dt);
 	}
 }
 

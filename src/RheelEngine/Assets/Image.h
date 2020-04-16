@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef IMAGE_H_
-#define IMAGE_H_
+#ifndef RHEELENGINE_IMAGE_H
+#define RHEELENGINE_IMAGE_H
 #include "../_common.h"
 
 #include "Asset.h"
@@ -10,13 +10,13 @@
 
 namespace rheel {
 
-struct _ImageData {
+struct image_data {
 	unsigned width;
 	unsigned height;
 	std::vector<Color> pixels;
 };
 
-class RE_API Image : public Asset<_ImageData> {
+class RE_API Image : public Asset<image_data> {
 
 public:
 	/**
@@ -37,15 +37,15 @@ public:
 
 	Image SubImage(unsigned x, unsigned y, unsigned width, unsigned height) const;
 
-	const float *GetRawColorData() const;
+	const float* GetRawColorData() const;
 
 private:
 	Image() = default;
-	Image(std::nullptr_t null) : Asset(nullptr) {}
+	Image(std::nullptr_t null) :
+			Asset(nullptr) {}
 
 public:
 	static Image Null();
-
 
 };
 

@@ -11,31 +11,31 @@ namespace rheel {
 VoxelImage::VoxelImage(unsigned width, unsigned height, unsigned depth) :
 		Asset({ width, height, depth, {} }) {
 
-	_GetRaw()->voxels.resize(width * height * depth);
+	GetRaw()->voxels.resize(width * height * depth);
 }
 
 VoxelImage::VoxelImage(unsigned width, unsigned height, unsigned depth, std::vector<Color> voxels) :
 		Asset({ width, height, depth, std::move(voxels) }) {}
 
 unsigned VoxelImage::GetWidth() const {
-	return _GetRaw()->width;
+	return GetRaw()->width;
 }
 
 unsigned VoxelImage::GetHeight() const {
-	return _GetRaw()->height;
+	return GetRaw()->height;
 }
 
 unsigned VoxelImage::GetDepth() const {
-	return _GetRaw()->depth;
+	return GetRaw()->depth;
 }
 
-const Color &VoxelImage::At(unsigned x, unsigned y, unsigned z) const {
-	auto data = _GetRaw();
+const Color& VoxelImage::At(unsigned x, unsigned y, unsigned z) const {
+	auto data = GetRaw();
 	return data->voxels[x + y * data->width + z * data->width * data->height];
 }
 
 Color& VoxelImage::At(unsigned x, unsigned y, unsigned z) {
-	auto data = _GetRaw();
+	auto data = GetRaw();
 	return data->voxels[x + y * data->width + z * data->width * data->height];
 }
 

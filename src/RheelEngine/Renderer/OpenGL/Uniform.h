@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_UNIFORM_H
-#define RHEELENGINE_GL_UNIFORM_H
+#ifndef RHEELENGINE_UNIFORM_H
+#define RHEELENGINE_UNIFORM_H
 #include "../../_common.h"
 
 #include <gl/glew.h>
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 class RE_API Uniform {
 	friend class Program;
@@ -111,7 +111,7 @@ public:
 	Uniform& operator=(const std::vector<dmat4x3>& value);
 
 private:
-	bool _Init() const;
+	bool Init_() const;
 
 	GLuint _program_handle;
 	GLint _location;

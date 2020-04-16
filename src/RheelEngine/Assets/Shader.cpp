@@ -9,7 +9,7 @@ Shader::Shader(std::string source) :
 		Asset({ std::move(source) }) {}
 
 const std::string& Shader::GetSource() const {
-	return _GetRaw()->source;
+	return GetRaw()->source;
 }
 
 Shader Shader::Null() {

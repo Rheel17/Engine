@@ -14,7 +14,7 @@ class RE_API CubicInterpolator : public TransitionInterpolator<T> {
 
 public:
 	CubicInterpolator() :
-			TransitionInterpolator<T>(Transition::cubic) {}
+			TransitionInterpolator<T>(Transition::CUBIC) {}
 
 };
 

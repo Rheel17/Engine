@@ -2,8 +2,8 @@
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
 
-#ifndef SCENEOLDRENDERMANAGER_H_
-#define SCENEOLDRENDERMANAGER_H_
+#ifndef RHEELENGINE_SCENERENDERMANAGER_H
+#define RHEELENGINE_SCENERENDERMANAGER_H
 #include "../_common.h"
 
 #include "ModelRenderer.h"
@@ -16,12 +16,13 @@
 namespace rheel {
 
 class SceneRenderer;
+
 class ShadowMap;
 
 class RE_API SceneRenderManager {
 
 public:
-	explicit SceneRenderManager(Scene *scene);
+	explicit SceneRenderManager(Scene* scene);
 
 	/**
 	 * Returns true only if shadows are enabled and at least one light in the
@@ -55,12 +56,12 @@ public:
 	/**
 	 * Creates and returns a shadow map for the given light.
 	 */
-	std::unique_ptr<ShadowMap> CreateShadowMap(Light *light);
+	std::unique_ptr<ShadowMap> CreateShadowMap(Light* light);
 
 	/**
 	 * Returns the scene of this render manager.
 	 */
-	Scene *GetScene();
+	Scene* GetScene();
 
 	/**
 	 * Returns the render map containing all models and their renderers in the
@@ -83,17 +84,17 @@ public:
 	 * Returns references to all custom shader programs attached to custom shaded
 	 * models managed by this render manager.
 	 */
-	std::vector<std::reference_wrapper<GL::Program>> CustomShaderPrograms();
+	std::vector<std::reference_wrapper<gl::Program>> CustomShaderPrograms();
 
 	/**
 	 * Initializes all lights in the shader program.
 	 */
-	void InitializeShaderLights(GL::Program& shaderProgram) const;
+	void InitializeShaderLights(gl::Program& shaderProgram) const;
 
 private:
-	int _ShadowLevel();
+	int ShadowLevel_();
 
-	Scene *_scene;
+	Scene* _scene;
 
 	std::unordered_map<std::uintptr_t, ModelRenderer> _render_map;
 	std::unordered_map<std::pair<uintptr_t, uintptr_t>, CustomShaderModelRenderer> _custom_shader_render_map;
@@ -108,10 +109,10 @@ private:
 	int _shadow_level{};
 
 private:
-	static void _Initialize();
+	static void Initialize_();
 
-	static std::unique_ptr<GL::VertexArray> _lighting_quad_vao;
-	static std::unique_ptr<GL::Buffer> _lighting_quad_vbo;
+	static std::unique_ptr<gl::VertexArray> _lighting_quad_vao;
+	static std::unique_ptr<gl::Buffer> _lighting_quad_vbo;
 	static bool _lighting_quad_initialized;
 
 };

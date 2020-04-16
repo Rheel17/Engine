@@ -1,19 +1,18 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_BUFFER_H
-#define RHEELENGINE_GL_BUFFER_H
+#ifndef RHEELENGINE_BUFFER_H
+#define RHEELENGINE_BUFFER_H
 #include "../../_common.h"
 
 #include "Object.h"
 
+OPENGL_GEN_FUNCTION(glGenBuffers, gen_buffers_);
+OPENGL_DELETE_FUNCTION(glDeleteBuffers, delete_buffers_);
 
-OPENGL_GEN_FUNCTION(glGenBuffers, _GenBuffers);
-OPENGL_DELETE_FUNCTION(glDeleteBuffers, _DeleteBuffers);
+namespace rheel::gl {
 
-namespace rheel::GL {
-
-class RE_API Buffer : public Object<_GenBuffers, _DeleteBuffers> {
+class RE_API Buffer : public Object<gen_buffers_, delete_buffers_> {
 
 public:
 	enum class Target {
@@ -58,7 +57,7 @@ public:
 	/**
 	 * Resets the contents of the buffer.
 	 * Use the usage pramater to specify usage hits to OpenGL. Default is STATIC_DRAW.
-	 * See https://www.khronos.org/registry/_OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
 	void SetDataEmpty(Usage usage = Usage::STATIC_DRAW);
@@ -66,11 +65,11 @@ public:
 	/**
 	 * Set the contents of the buffer. Count elements will be read from the data pointer.
 	 * Use the usage parameter to specify usage hits to OpenGL. Default is STATIC_DRAW.
-	 * See https://www.khronos.org/registry/_OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
 	template<class T>
-	void SetData(const T *data, size_t count, Usage usage = Usage::STATIC_DRAW) {
+	void SetData(const T* data, size_t count, Usage usage = Usage::STATIC_DRAW) {
 		Bind();
 		glBufferData(GLenum(_target), count * sizeof(T), data, GLenum(usage));
 	}
@@ -78,7 +77,7 @@ public:
 	/**
 	 * Sets the contents of the buffer. All elements from the vector will be read.
 	 * Use the usage parameter to specify usage hits to OpenGL. Default is STATIC_DRAW.
-	 * See https://www.khronos.org/registry/_OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
 	template<typename T>

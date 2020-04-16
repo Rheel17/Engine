@@ -49,8 +49,8 @@ void EulerController::Deactivate() {
 
 void EulerController::Update() {
 	float dt = GetTimeDelta();
-	_Rotate(dt);
-	_Move(dt);
+	Rotate_(dt);
+	Move_(dt);
 }
 
 void EulerController::SetAngularVelocity(float velocity) {
@@ -71,7 +71,7 @@ void EulerController::SetVelocity(float forwardsBackwardsVelocity, float sideVel
 	_velocity_x = sideVelocity;
 }
 
-void EulerController::_Rotate(float dt) {
+void EulerController::Rotate_(float dt) {
 	vec2 mouse = GetMouseDelta();
 
 	float yaw = glm::radians(mouse.x * _velocity_yaw / 100.0f);
@@ -102,15 +102,30 @@ void EulerController::_Rotate(float dt) {
 	GetParent()->transform.SetRotation(angles);
 }
 
-void EulerController::_Move(float dt) {
+void EulerController::Move_(float dt) {
 	// get the movement
 	vec4 movement = vec4();
 	bool hasMovement = false;
 
-	if (IsKeyPressed(Input::Key::KEY_W)) { movement.z -= _velocity_z; hasMovement = true; }
-	if (IsKeyPressed(Input::Key::KEY_S)) { movement.z += _velocity_z; hasMovement = true; }
-	if (IsKeyPressed(Input::Key::KEY_A)) { movement.x -= _velocity_x; hasMovement = true; }
-	if (IsKeyPressed(Input::Key::KEY_D)) { movement.x += _velocity_x; hasMovement = true; }
+	if (IsKeyPressed(Input::Key::KEY_W)) {
+		movement.z -= _velocity_z;
+		hasMovement = true;
+	}
+
+	if (IsKeyPressed(Input::Key::KEY_S)) {
+		movement.z += _velocity_z;
+		hasMovement = true;
+	}
+
+	if (IsKeyPressed(Input::Key::KEY_A)) {
+		movement.x -= _velocity_x;
+		hasMovement = true;
+	}
+
+	if (IsKeyPressed(Input::Key::KEY_D)) {
+		movement.x += _velocity_x;
+		hasMovement = true;
+	}
 
 	if (hasMovement) {
 		// rotate the movement vector so that it is pointed in the direction

@@ -8,7 +8,7 @@
 
 namespace rheel {
 
-Shader rheel::GlslLoader::_DoLoad(const std::string& path) const {
+Shader rheel::GlslLoader::DoLoad(const std::string& path) const {
 	std::ifstream f(path);
 
 	if (!f) {

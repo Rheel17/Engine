@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef EULERCONTROLLER_H_
-#define EULERCONTROLLER_H_
+#ifndef RHEELENGINE_EULERCONTROLLER_H
+#define RHEELENGINE_EULERCONTROLLER_H
 #include "../_common.h"
 
 #include "../Component.h"
@@ -48,8 +48,8 @@ public:
 	void SetVelocity(float forwardsBackwardsVelocity, float sideVelocity);
 
 private:
-	void _Rotate(float dt);
-	void _Move(float dt);
+	void Rotate_(float dt);
+	void Move_(float dt);
 
 	float _velocity_yaw = 10.0f;
 	float _velocity_pitch = 10.0f;

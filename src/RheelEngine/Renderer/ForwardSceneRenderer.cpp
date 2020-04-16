@@ -11,13 +11,12 @@
 
 namespace rheel {
 
-ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height) :
-		SceneRenderer(manager, std::move(cameraName), width, height,
-		Engine::GetDisplayConfiguration().SampleCount(), true) {}
+ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height) :
+		SceneRenderer(manager, std::move(cameraName), width, height, Engine::GetDisplayConfiguration().SampleCount(), true) {}
 
 void ForwardSceneRenderer::Render(float dt) {
 	// get the camera
-	Camera *camera = GetCamera();
+	Camera* camera = GetCamera();
 
 	// if no camera with the given name was found: don't render anything
 	// new to the buffer.
@@ -25,16 +24,16 @@ void ForwardSceneRenderer::Render(float dt) {
 		return;
 	}
 
-	GL::State::Push();
+	gl::State::Push();
 
 	// render the shadows
-	_RenderShadowMaps();
+	RenderShadowMaps();
 
 	// bind and reset the result buffer to start writing there
-	ResultBuffer().Clear(GL::Framebuffer::BitField::COLOR_DEPTH);
+	ResultBuffer().Clear(gl::Framebuffer::BitField::COLOR_DEPTH);
 
 	// render the skybox
-	_RenderSkybox(Width(), Height());
+	RenderSkybox(Width(), Height());
 
 	// get the shaders for the custom shaded models, add the normal
 	// model shader
@@ -43,7 +42,7 @@ void ForwardSceneRenderer::Render(float dt) {
 
 	// initialize the model shaders
 	for (auto modelShaderRef : modelShaders) {
-		GL::Program& modelShader = modelShaderRef;
+		gl::Program& modelShader = modelShaderRef;
 
 		GetManager()->InitializeShaderLights(modelShader);
 		modelShader["_cameraMatrix"] = camera->CreateMatrix(Width(), Height());
@@ -61,18 +60,18 @@ void ForwardSceneRenderer::Render(float dt) {
 		const auto& shadowMaps = ShadowMaps();
 
 		auto iter = std::find_if(shadowMaps.begin(), shadowMaps.end(), [](const auto& entry) {
-			return (bool) dynamic_cast<ShadowMapDirectional *>(entry.second.get());
+			return (bool) dynamic_cast<ShadowMapDirectional*>(entry.second.get());
 		});
 
 		if (iter != shadowMaps.end()) {
-			auto sm = dynamic_cast<ShadowMapDirectional *>(iter->second.get());
+			auto sm = dynamic_cast<ShadowMapDirectional*>(iter->second.get());
 			shadowMapCount = sm->Textures().size();
 
 			for (int i = 0; i < shadowMapCount; i++) {
 				sm->Textures()[i].get().Bind(textureUnit++);
 
 				for (auto modelShaderRef : modelShaders) {
-					GL::Program& modelShader = modelShaderRef;
+					gl::Program& modelShader = modelShaderRef;
 					std::string uniformName = "_lightspaceMatrix" + std::to_string(i);
 
 					if (modelShader.HasUniform(uniformName)) {
@@ -82,16 +81,20 @@ void ForwardSceneRenderer::Render(float dt) {
 			}
 
 			for (auto modelShaderRef : modelShaders) {
-				GL::Program& modelShader = modelShaderRef;
+				gl::Program& modelShader = modelShaderRef;
 
-				if (modelShader.HasUniform("_shadowMapCount")) modelShader["_shadowMapCount"] = shadowMapCount;
-				if (modelShader.HasUniform("_baseBias")) modelShader["_baseBias"] = sm->Bias();
+				if (modelShader.HasUniform("_shadowMapCount")) {
+					modelShader["_shadowMapCount"] = shadowMapCount;
+				}
+				if (modelShader.HasUniform("_baseBias")) {
+					modelShader["_baseBias"] = sm->Bias();
+				}
 			}
 		}
 	}
 
 	// Bind empty shadow map textures to the remaining (if any) shadow map
-	// texture units, to make sure _OpenGL doesn't complain about non-depth
+	// texture units, to make sure OpenGL doesn't complain about non-depth
 	// textures bound to sampler2DShadow uniforms.
 	for (int i = shadowMapCount; i < 4; i++) {
 		ShadowMapDirectional::EmptyShadowMap().Bind(textureUnit++);
@@ -103,17 +106,17 @@ void ForwardSceneRenderer::Render(float dt) {
 	}
 
 	// render all the models
-	for (const auto& [_, renderer] : GetManager()->RenderMap()) {
+	for (const auto&[_, renderer] : GetManager()->RenderMap()) {
 		renderer.RenderObjects();
 	}
 
 	// render all models with custom shaders
-	for (const auto& [_, renderer] : GetManager()->CustomShaderRenderMap()) {
+	for (const auto&[_, renderer] : GetManager()->CustomShaderRenderMap()) {
 		renderer.RenderObjects();
 	}
 
 	// clear everything again to return to normal
-	GL::State::Pop();
+	gl::State::Pop();
 }
 
 void ForwardSceneRenderer::Resize(unsigned width, unsigned height) {}

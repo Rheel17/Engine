@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef INPUTCALLBACK_H_
-#define INPUTCALLBACK_H_
+#ifndef RHEELENGINE_INPUTCALLBACK_H
+#define RHEELENGINE_INPUTCALLBACK_H
 #include "../_common.h"
 
 #include "Input.h"

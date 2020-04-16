@@ -5,14 +5,14 @@
 
 namespace rheel {
 
-PhysicsShape::PhysicsShape(btCollisionShape *shape) :
+PhysicsShape::PhysicsShape(btCollisionShape* shape) :
 		_shape(shape) {}
 
 PhysicsShape::operator bool() const {
 	return (bool) _shape;
 }
 
-btCollisionShape *PhysicsShape::_Pointer() const {
+btCollisionShape* PhysicsShape::Pointer_() const {
 	return _shape.get();
 }
 

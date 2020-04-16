@@ -9,14 +9,18 @@
 namespace rheel {
 
 SceneElement::SceneElement(std::string cameraName) :
-		_use_active_scene(true), _scene(nullptr), _camera_name(cameraName),
+		_use_active_scene(true),
+		_scene(nullptr),
+		_camera_name(cameraName),
 		_post_processing_stack(std::make_shared<PostProcessingStack>()) {
 
 	SetFocusable(true);
 }
 
-SceneElement::SceneElement(Scene *scene, std::string cameraName) :
-		_use_active_scene(false), _scene(scene), _camera_name(cameraName),
+SceneElement::SceneElement(Scene* scene, std::string cameraName) :
+		_use_active_scene(false),
+		_scene(scene),
+		_camera_name(cameraName),
 		_post_processing_stack(std::make_shared<PostProcessingStack>()) {
 
 	SetFocusable(true);
@@ -36,7 +40,7 @@ PostProcessingStack& SceneElement::GetPostProcessingStack() {
 
 void SceneElement::Draw(float time, float dt) const {
 	const Bounds& bounds = GetBounds();
-	_InitializeRenderer(bounds);
+	InitializeRenderer_(bounds);
 
 	if (!_scene_renderer) {
 		return;
@@ -60,7 +64,7 @@ void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::M
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnKeyPress(key, scancode, mods);
+		inputComponent->OnKeyPress_(key, scancode, mods);
 	}
 }
 
@@ -71,7 +75,7 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnKeyRelease(key, scancode, mods);
+		inputComponent->OnKeyRelease_(key, scancode, mods);
 	}
 }
 
@@ -82,10 +86,9 @@ void SceneElement::OnCharacterInput(Input::Unicode character) {
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnCharacterInput(character);
+		inputComponent->OnCharacterInput_(character);
 	}
 }
-
 
 void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
 	if (!_scene) {
@@ -94,7 +97,7 @@ void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifier
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnMouseButtonPress(button, mods);
+		inputComponent->OnMouseButtonPress_(button, mods);
 	}
 }
 
@@ -105,7 +108,7 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnMouseButtonRelease(button, mods);
+		inputComponent->OnMouseButtonRelease_(button, mods);
 	}
 }
 
@@ -116,7 +119,7 @@ void SceneElement::OnMouseMove(const vec2& position) {
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnMouseMove(position);
+		inputComponent->OnMouseMove_(position);
 	}
 }
 
@@ -127,7 +130,7 @@ void SceneElement::OnMouseJump(const vec2& position) {
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnMouseJump(position);
+		inputComponent->OnMouseJump_(position);
 	}
 }
 
@@ -138,7 +141,7 @@ void SceneElement::OnMouseDrag(const vec2& origin, const vec2& position) {
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnMouseDrag(origin, position);
+		inputComponent->OnMouseDrag_(origin, position);
 	}
 }
 
@@ -149,11 +152,11 @@ void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
 
 	for (auto inputComponent : _scene->GetInputComponents()) {
 		inputComponent->_source = this;
-		inputComponent->_OnMouseScroll(scrollComponents);
+		inputComponent->OnMouseScroll_(scrollComponents);
 	}
 }
 
-void SceneElement::_InitializeRenderer(const Bounds& bounds) const {
+void SceneElement::InitializeRenderer_(const Bounds& bounds) const {
 	if (_scene_renderer && (!_use_active_scene || _scene == Engine::GetActiveScene())) {
 		_scene_renderer->SetSize(bounds.width, bounds.height);
 		return;
@@ -170,7 +173,7 @@ void SceneElement::_InitializeRenderer(const Bounds& bounds) const {
 	}
 
 	auto renderer = Engine::GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_name, bounds.width, bounds.height);
-	SceneRenderer *ptr = renderer.release();
+	SceneRenderer* ptr = renderer.release();
 	_scene_renderer = std::shared_ptr<SceneRenderer>(ptr);
 }
 

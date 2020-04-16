@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef SHADOWMAP_H_
-#define SHADOWMAP_H_
+#ifndef RHEELENGINE_SHADOWMAP_H
+#define RHEELENGINE_SHADOWMAP_H
 #include "../_common.h"
 
 #include "SceneRenderManager.h"
@@ -17,23 +17,23 @@ class RE_API ShadowMap {
 public:
 	virtual ~ShadowMap() = default;
 
-	virtual void Update(Camera *camera, unsigned width, unsigned height) = 0;
+	virtual void Update(Camera* camera, unsigned width, unsigned height) = 0;
 
 protected:
-	ShadowMap(SceneRenderManager *manager, Light *light);
+	ShadowMap(SceneRenderManager* manager, Light* light);
 
-	SceneRenderManager *GetManager() const;
+	SceneRenderManager* GetManager() const;
 
 	template<typename T>
-	T *GetLight() const {
-		return dynamic_cast<T *>(_light);
+	T* GetLight() const {
+		return dynamic_cast<T*>(_light);
 	}
 
-	Light *GetLight() const;
+	Light* GetLight() const;
 
 private:
-	SceneRenderManager *_manager;
-	Light *_light;
+	SceneRenderManager* _manager;
+	Light* _light;
 
 };
 

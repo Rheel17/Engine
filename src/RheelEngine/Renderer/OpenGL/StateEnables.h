@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_STATEENABLED_H
-#define RHEELENGINE_GL_STATEENABLED_H
+#ifndef RHEELENGINE_STATEENABLES_H
+#define RHEELENGINE_STATEENABLES_H
 #include "../../_common.h"
 
 #include <GL/glew.h>
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 enum class Capability {
 	BLEND = GL_BLEND,
@@ -22,7 +22,7 @@ public:
 
 public:
 	StateEnables();
-	explicit StateEnables(const StateEnables *parent);
+	explicit StateEnables(const StateEnables* parent);
 
 	void Enable(Capability cap);
 	void Disable(Capability cap);
@@ -33,7 +33,7 @@ public:
 
 private:
 	std::unordered_map<Capability, bool> _state_changes;
-	const StateEnables *_parent;
+	const StateEnables* _parent;
 
 private:
 	static std::unordered_map<Capability, bool> _defaults;

@@ -11,23 +11,26 @@ std::unique_ptr<Shader> VignetteElement::_shader;
 bool VignetteElement::_initialized;
 
 VignetteElement::VignetteElement(Color color, float innerRadius, float outerRadius, float curvature) :
-		_color(color), _inner_radius(innerRadius), _outer_radius(outerRadius), _curvature(curvature) {}
+		_color(color),
+		_inner_radius(innerRadius),
+		_outer_radius(outerRadius),
+		_curvature(curvature) {}
 
 bool VignetteElement::IsOpaque() {
 	return false;
 }
 
 void VignetteElement::Draw(float time, float dt) const {
-	_Initialize();
+	Initialize_();
 
-	const auto& shaderProgram = _GetCustomShader(*_shader);
+	const auto& shaderProgram = GetCustomShader(*_shader);
 	shaderProgram["parameters"] = vec3{ _inner_radius, _outer_radius, _curvature };
 	shaderProgram["color"] = _color;
 
-	_DrawShaderedQuad(GetBounds(), *_shader);
+	DrawShaderedQuad(GetBounds(), *_shader);
 }
 
-void VignetteElement::_Initialize() {
+void VignetteElement::Initialize_() {
 	if (_initialized) {
 		return;
 	}

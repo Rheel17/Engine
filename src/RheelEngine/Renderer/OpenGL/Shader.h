@@ -7,7 +7,7 @@
 
 #include <gl/glew.h>
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 class RE_API Shader {
 	RE_NO_COPY(Shader);

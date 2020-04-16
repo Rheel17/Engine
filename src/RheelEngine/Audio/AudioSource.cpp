@@ -7,7 +7,7 @@
 
 namespace rheel {
 
-AudioSource::AudioSource(AudioManager *manager, const AudioClip& clip) :
+AudioSource::AudioSource(AudioManager* manager, const AudioClip& clip) :
 		_manager(manager) {
 
 	_source.SetBuffer(clip.Buffer());
@@ -39,7 +39,7 @@ void AudioSource::SetVelocity(const vec3& velocity) {
 	_source.SetVelocity(velocity);
 }
 
-void AudioSource::_Stop() {
+void AudioSource::Stop_() {
 	_source.Stop();
 }
 

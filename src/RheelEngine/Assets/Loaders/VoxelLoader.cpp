@@ -32,7 +32,7 @@ using uint = uint32_t;
  * end of file before the bytes could be completely read, an error will be shown and
  * the program will abort.
  */
-static void checkRead(std::istream& input, char *data, size_t count) {
+static void checkRead(std::istream& input, char* data, size_t count) {
 	input.read(data, count);
 
 	if (!input.good() || input.gcount() != count) {
@@ -48,7 +48,7 @@ static uint readInt(std::istream& input) {
 	char bytes[4];
 	checkRead(input, bytes, 4);
 
-	auto *ubytes = reinterpret_cast<uint8_t *>(bytes);
+	auto ubytes = reinterpret_cast<uint8_t*>(bytes);
 	uint part0 = uint(ubytes[0]);
 	uint part1 = uint(ubytes[1]) << 8;
 	uint part2 = uint(ubytes[2]) << 16;
@@ -57,13 +57,13 @@ static uint readInt(std::istream& input) {
 	return part0 | part1 | part2 | part3;
 }
 
-class RIFF {
+class Riff {
 
 public:
 	using Byte = char;
 
 	class Chunk {
-		friend class RIFF;
+		friend class Riff;
 
 	public:
 		/*
@@ -96,7 +96,7 @@ public:
 			return VectorStream<Byte>(_data);
 		}
 
-		const std::vector<Chunk> & GetChildren() const {
+		const std::vector<Chunk>& GetChildren() const {
 			return _children;
 		}
 
@@ -116,7 +116,7 @@ public:
 	/*
 	 * Read a RIFF file.
 	 */
-	explicit RIFF(std::istream& input) {
+	explicit Riff(std::istream& input) {
 		checkRead(input, _id, 4);
 		_version = readInt(input);
 		_root = Chunk(input);
@@ -145,19 +145,19 @@ private:
 // ACTUAL .VOX READING //
 /////////////////////////
 
-VoxelImage VoxelLoader::_DoLoad(const std::string& path) const {
+VoxelImage VoxelLoader::DoLoad(const std::string& path) const {
 	std::ifstream f(path, std::ios::binary);
 
 	if (!f) {
 		throw std::runtime_error("Error while reading image file: " + path);
 	}
 
-	return _LoadVOX(f);
+	return LoadVox_(f);
 }
 
-VoxelImage VoxelLoader::_LoadVOX(std::istream& input) {
+VoxelImage VoxelLoader::LoadVox_(std::istream& input) {
 	// read the riff-formated file.
-	RIFF riff(input);
+	Riff riff(input);
 
 	// check the file header
 	if (riff.GetID() != "VOX " || riff.GetVersion() != 150) {
@@ -210,7 +210,7 @@ VoxelImage VoxelLoader::_LoadVOX(std::istream& input) {
 
 	// read the rest: ignore the materials for now, search for the palette.
 	// TODO: handle materials?
-	std::array<Color, 256> palette{{}};
+	std::array<Color, 256> palette{ {} };
 	palette[0] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	for (size_t i = 2; i < main.GetChildren().size(); i++) {

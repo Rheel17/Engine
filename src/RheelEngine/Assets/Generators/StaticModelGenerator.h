@@ -31,7 +31,7 @@ protected:
 	 */
 	virtual void DoGenerate() = 0;
 
-	std::vector<ModelVertex> vertices;
+	std::vector<model_vertex> vertices;
 	std::vector<unsigned> indices;
 
 };

@@ -9,21 +9,21 @@
 #include "../../EngineResources.h"
 #include "../OpenGL/State.h"
 
-#define STAGE_TRIANGLES		0
-#define STAGE_BEZIER		1
-#define STAGE_RESOLVE		2
+#define STAGE_TRIANGLES        0
+#define STAGE_BEZIER        1
+#define STAGE_RESOLVE        2
 #define STAGE_COPY          3
 
 namespace rheel {
 
-GL::Buffer TextRenderer::_triangle_buffer(GL::Buffer::Target::ARRAY);
-GL::VertexArray TextRenderer::_vao;
+gl::Buffer TextRenderer::_triangle_buffer(gl::Buffer::Target::ARRAY);
+gl::VertexArray TextRenderer::_vao;
 
-GL::Buffer TextRenderer::_resolve_vbo(GL::Buffer::Target::ARRAY);
-GL::VertexArray TextRenderer::_resolve_vao;
+gl::Buffer TextRenderer::_resolve_vbo(gl::Buffer::Target::ARRAY);
+gl::VertexArray TextRenderer::_resolve_vao;
 
-std::unique_ptr<GL::Framebuffer> TextRenderer::_text_buffer;
-GL::Program TextRenderer::_shader;
+std::unique_ptr<gl::Framebuffer> TextRenderer::_text_buffer;
+gl::Program TextRenderer::_shader;
 
 bool TextRenderer::_initialized(false);
 unsigned TextRenderer::_width(1);
@@ -33,14 +33,14 @@ unsigned TextRenderer::_height(1);
 // https://medium.com/@evanwallace/easy-scalable-text-rendering-on-the-gpu-c3f4d782c5ac
 
 void TextRenderer::DrawText(Font& font, const Color& color, const std::wstring& text, int x, int y, unsigned size) {
-	const wchar_t *chars = text.c_str();
+	const wchar_t* chars = text.c_str();
 	unsigned length = text.length();
 
 	// draw a maximum of Font::NUM_GLYPHS characters at a time.
 	while (length > 0) {
 		unsigned charsLength = std::min(length, Font::FONT_CACHE_SIZE);
 
-		x = _DrawChars(font, color, chars, charsLength, x, y, size);
+		x = DrawChars_(font, color, chars, charsLength, x, y, size);
 
 		length -= charsLength;
 		chars += charsLength;
@@ -54,13 +54,13 @@ void TextRenderer::DrawText(Font& font, const Color& color, const std::string& t
 	DrawText(font, color, wide, x, y, size);
 }
 
-void TextRenderer::_Initialize() {
+void TextRenderer::Initialize_() {
 	if (_initialized) {
 		return;
 	}
 
-	_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
-	_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
+	_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
+	_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
 	_shader.Link();
 	_shader["textBuffer"] = 0;
 
@@ -71,18 +71,18 @@ void TextRenderer::_Initialize() {
 	_resolve_vbo.SetData(triangles, sizeof(triangles));
 	_resolve_vao.SetVertexAttributes<vec2>(_resolve_vbo);
 
-	_text_buffer = std::make_unique<GL::Framebuffer>(_width, _height);
-	_text_buffer->AttachTexture(GL::InternalFormat::RGBA, GL::Format::RGBA, 0);
-	_text_buffer->AttachRenderbuffer(GL::InternalFormat::DEPTH24_STENCIL8, GL::Framebuffer::Attachment::DEPTH_STENCIL);
+	_text_buffer = std::make_unique<gl::Framebuffer>(_width, _height);
+	_text_buffer->AttachTexture(gl::InternalFormat::RGBA, gl::Format::RGBA, 0);
+	_text_buffer->AttachRenderbuffer(gl::InternalFormat::DEPTH24_STENCIL8, gl::Framebuffer::Attachment::DEPTH_STENCIL);
 	_text_buffer->SetDrawBuffers({ 0 });
 
 	_initialized = true;
 }
 
-void TextRenderer::_ResizeBuffer(unsigned width, unsigned height) {
+void TextRenderer::ResizeBuffer_(unsigned width, unsigned height) {
 	if (_text_buffer) {
 		if (_text_buffer->GetViewportWidth() != width || _text_buffer->GetViewportHeight() != height) {
-			*_text_buffer = GL::Framebuffer(*_text_buffer, width, height);
+			*_text_buffer = gl::Framebuffer(*_text_buffer, width, height);
 		}
 	} else {
 		_width = width;
@@ -90,17 +90,17 @@ void TextRenderer::_ResizeBuffer(unsigned width, unsigned height) {
 	}
 }
 
-int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text, unsigned length, int x, int y, unsigned size) {
+int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size) {
 	assert(length <= Font::FONT_CACHE_SIZE);
 
-	_Initialize();
+	Initialize_();
 
 	// get the screen metrics
 	auto screen = Engine::GetDisplayConfiguration().resolution;
-	float px = float(x) / screen.width * 2.0f - 1.0f;
-	float py = float(y) / screen.height * -2.0f + 1.0f;
-	float sx = float(size) / screen.width * 2.0f;
-	float sy = float(size) / screen.height * 2.0f;
+	float px = float(x) / screen.x * 2.0f - 1.0f;
+	float py = float(y) / screen.y * -2.0f + 1.0f;
+	float sx = float(size) / screen.x * 2.0f;
+	float sy = float(size) / screen.y * 2.0f;
 
 	const auto transform = [&px, &py, &sx, &sy](vec3& v) {
 		v.x = v.x * sx + px;
@@ -133,26 +133,26 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 	}
 
 	// set the text buffer as render target
-	GL::State::Push();
-	_text_buffer->Clear(GL::Framebuffer::BitField::COLOR);
+	gl::State::Push();
+	_text_buffer->Clear(gl::Framebuffer::BitField::COLOR);
 
 	// enable the stencil buffer, disable the depth buffer
-	GL::State::Enable(GL::Capability::STENCIL_TEST);
-	GL::State::Disable(GL::Capability::DEPTH_TEST);
+	gl::State::Enable(gl::Capability::STENCIL_TEST);
+	gl::State::Disable(gl::Capability::DEPTH_TEST);
 
 	// for anti-aliasing, enable GL_BLEND
-	GL::State::Enable(GL::Capability::BLEND);
-	GL::State::SetBlendFunction(GL::BlendFactor::ONE, GL::BlendFactor::ONE);
+	gl::State::Enable(gl::Capability::BLEND);
+	gl::State::SetBlendFunction(gl::BlendFactor::ONE, gl::BlendFactor::ONE);
 
-	float subpixelWidth = 2.0f / (screen.width * 8);
-	float subpixelHeight = 2.0f / (screen.height * 8);
+	float subpixelWidth = 2.0f / (screen.x * 8);
+	float subpixelHeight = 2.0f / (screen.y * 8);
 
-	_shader["color"] = vec4 { color.r, color.g, color.b, color.a / 4.0f };
+	_shader["color"] = vec4{ color.r, color.g, color.b, color.a / 4.0f };
 
 	// find the bounds of the final quad
 	constexpr float fmin = std::numeric_limits<float>::lowest();
 	constexpr float fmax = std::numeric_limits<float>::max();
-	vec4 bounds { fmax, fmax, fmin, fmin };
+	vec4 bounds{ fmax, fmax, fmin, fmin };
 
 	for (const auto& t : bezierCurves) {
 		for (int i = 0; i < 3; i++) {
@@ -163,44 +163,45 @@ int TextRenderer::_DrawChars(Font& font, const Color& color, const wchar_t *text
 		}
 	}
 
-	bounds[0] -= 4.0f / screen.width;
-	bounds[1] -= 4.0f / screen.width;
-	bounds[2] += 4.0f / screen.width;
-	bounds[3] += 4.0f / screen.width;
+	bounds[0] -= 4.0f / screen.x;
+	bounds[1] -= 4.0f / screen.y;
+	bounds[2] += 4.0f / screen.x;
+	bounds[3] += 4.0f / screen.y;
 
 	_shader["bounds"] = bounds;
 
-	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth * -1, subpixelHeight *  3 });
-	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth *  3, subpixelHeight *  1 });
-	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth * -3, subpixelHeight * -1 });
-	_DrawTriangles(triangles, bezierCurves, bounds, { subpixelWidth *  1, subpixelHeight * -3 });
+	DrawTriangles_(triangles, bezierCurves, bounds, { subpixelWidth * -1, subpixelHeight * 3 });
+	DrawTriangles_(triangles, bezierCurves, bounds, { subpixelWidth * 3, subpixelHeight * 1 });
+	DrawTriangles_(triangles, bezierCurves, bounds, { subpixelWidth * -3, subpixelHeight * -1 });
+	DrawTriangles_(triangles, bezierCurves, bounds, { subpixelWidth * 1, subpixelHeight * -3 });
 
 	// reset the gl state
-	GL::State::Pop();
+	gl::State::Pop();
 
 	// draw the text to the current framebuffer
 	_shader["stage"] = STAGE_COPY;
 	_text_buffer->GetTextureAttachment(0).Bind(0);
 
-	_resolve_vao.DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, 6);
+	_resolve_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
 
 	return x;
 }
 
-void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triangles,
-		const std::vector<Character::Triangle>& bezierCurves, vec4 bounds,
+void TextRenderer::DrawTriangles_(const std::vector<Character::Triangle>& triangles,
+		const std::vector<Character::Triangle>& bezierCurves,
+		vec4 bounds,
 		vec2 multisampleOffset) {
 
 	// only draw on the stencil buffer
-	GL::State::Push();
-	GL::State::SetColorMask(false, false, false, false);
-	GL::State::SetDepthMask(false);
+	gl::State::Push();
+	gl::State::SetColorMask(false, false, false, false);
+	gl::State::SetDepthMask(false);
 
 	// initialize the stencil buffer
-	_text_buffer->Clear(GL::Framebuffer::BitField::STENCIL);
-	GL::State::SetStencilFunc(GL::CompareFunction::NEVER, 0x01, 0xff);
-	GL::State::SetStencilMask(0x01);
-	GL::State::SetStencilOp(GL::StencilFunction::INVERT, GL::StencilFunction::INVERT, GL::StencilFunction::INVERT);
+	_text_buffer->Clear(gl::Framebuffer::BitField::STENCIL);
+	gl::State::SetStencilFunc(gl::CompareFunction::NEVER, 0x01, 0xff);
+	gl::State::SetStencilMask(0x01);
+	gl::State::SetStencilOp(gl::StencilFunction::INVERT, gl::StencilFunction::INVERT, gl::StencilFunction::INVERT);
 
 	// draw the simple triangles
 	_shader["stage"] = STAGE_TRIANGLES;
@@ -208,24 +209,24 @@ void TextRenderer::_DrawTriangles(const std::vector<Character::Triangle>& triang
 	_vao.Bind();
 	_triangle_buffer.SetData(triangles);
 
-	_vao.DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, 3 * triangles.size());
+	_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 3 * triangles.size());
 
 	// flip the bezier curves
 	_shader["stage"] = STAGE_BEZIER;
 	_triangle_buffer.SetData(bezierCurves);
 
-	_vao.DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, 3 * bezierCurves.size());
+	_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 3 * bezierCurves.size());
 
 	// restore color and depth mask
-	GL::State::Pop();
+	gl::State::Pop();
 
 	// setup the resolve stage
 	_shader["stage"] = STAGE_RESOLVE;
-	GL::State::SetStencilFunc(GL::CompareFunction::EQUAL, 0x01, 0xFF);
-	GL::State::SetStencilOp(GL::StencilFunction::KEEP, GL::StencilFunction::KEEP, GL::StencilFunction::KEEP);
+	gl::State::SetStencilFunc(gl::CompareFunction::EQUAL, 0x01, 0xFF);
+	gl::State::SetStencilOp(gl::StencilFunction::KEEP, gl::StencilFunction::KEEP, gl::StencilFunction::KEEP);
 
 	// resolve the stencil buffer
-	_resolve_vao.DrawArrays(GL::VertexArray::Mode::TRIANGLES, 0, 6);
+	_resolve_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
 }
 
 }

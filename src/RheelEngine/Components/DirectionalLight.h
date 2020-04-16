@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef DIRECTIONALLIGHT_H_
-#define DIRECTIONALLIGHT_H_
+#ifndef RHEELENGINE_DIRECTIONALLIGHT_H
+#define RHEELENGINE_DIRECTIONALLIGHT_H
 #include "../_common.h"
 
 #include "Light.h"
@@ -13,7 +13,6 @@ class RE_API DirectionalLight : public Light {
 
 public:
 	DirectionalLight(Color color, vec3 direction);
-
 	~DirectionalLight();
 
 	void SetDirection(const vec3& direction);

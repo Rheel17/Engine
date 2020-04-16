@@ -15,7 +15,7 @@ namespace rheel {
 static bool validatePNG(std::istream& input) {
 	// read the signature
 	png_byte signature[8];
-	input.read((char *) signature, 8);
+	input.read((char*) signature, 8);
 
 	// check if reading went well
 	if (!input.good()) {
@@ -26,17 +26,17 @@ static bool validatePNG(std::istream& input) {
 	return png_sig_cmp(signature, 0, 8) == 0;
 }
 
-Image PngLoader::_DoLoad(const std::string& path) const {
+Image PngLoader::DoLoad(const std::string& path) const {
 	std::ifstream f(path, std::ios::binary);
 
 	if (!f) {
 		throw std::runtime_error("Error while reading image file: " + path);
 	}
 
-	return _LoadPNG(f);
+	return LoadPng_(f);
 }
 
-Image PngLoader::_LoadPNG(std::istream& input) {
+Image PngLoader::LoadPng_(std::istream& input) {
 	if (!validatePNG(input)) {
 		throw std::runtime_error("An error occurred while reading PNG file: PNG signature not valid.");
 	}
@@ -54,8 +54,8 @@ Image PngLoader::_LoadPNG(std::istream& input) {
 	}
 
 	// declare the pointers for reading
-	png_bytep *rows = nullptr;
-	unsigned char *data = nullptr;
+	png_bytep* rows = nullptr;
+	unsigned char* data = nullptr;
 
 	// jump here if something goes wrong in the parsing.
 	if (setjmp(png_jmpbuf(pngPtr))) {
@@ -69,9 +69,9 @@ Image PngLoader::_LoadPNG(std::istream& input) {
 	png_set_read_fn(pngPtr, static_cast<png_voidp>(&input),
 			[](png_structp pngPtr, png_bytep data, png_size_t length) {
 
-		auto stream = static_cast<std::istream*>(png_get_io_ptr(pngPtr));
-		stream->read((char *) data, length);
-	});
+				auto stream = static_cast<std::istream*>(png_get_io_ptr(pngPtr));
+				stream->read((char*) data, length);
+			});
 
 	// we've already read the header, so skip the first 8 bytes
 	png_set_sig_bytes(pngPtr, 8);

@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef LOG_H_
-#define LOG_H_
+#ifndef RHEELENGINE_LOG_H
+#define RHEELENGINE_LOG_H
 
 #ifndef RE_API
 #error "Do not include Log.h directly, use _common.h"
@@ -18,12 +18,12 @@
 
 namespace rheel {
 
-using _SourceLoc = std::experimental::source_location;
+using SourceLoc = std::experimental::source_location;
 
 class RE_API Log {
 
 private:
-	enum class _Level {
+	enum class Level {
 		INFO, WARNING, ERROR
 	};
 
@@ -31,20 +31,20 @@ public:
 	/**
 	 * Returns the logging stream with the INFO level.
 	 */
-	static std::ostream& Info(const _SourceLoc& loc = _SourceLoc::current());
+	static std::ostream& Info(const SourceLoc& loc = SourceLoc::current());
 
 	/**
 	 * Returns the logging stream with the WARNING level.
 	 */
-	static std::ostream& Warning(const _SourceLoc& loc = _SourceLoc::current());
+	static std::ostream& Warning(const SourceLoc& loc = SourceLoc::current());
 
 	/**
 	 * Returns the logging stream with the ERROR level.
 	 */
-	static std::ostream& Error(const _SourceLoc& loc = _SourceLoc::current());
+	static std::ostream& Error(const SourceLoc& loc = SourceLoc::current());
 
 private:
-	static std::ostream& _Log(const _SourceLoc& loc, _Level level);
+	static std::ostream& Log_(const SourceLoc& loc, Level level);
 
 };
 

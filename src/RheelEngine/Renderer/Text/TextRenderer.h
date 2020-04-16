@@ -1,8 +1,9 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef TEXTRENDERER_H_
-#define TEXTRENDERER_H_
+#ifndef RHEELENGINE_TEXTRENDERER_H
+#define RHEELENGINE_TEXTRENDERER_H
+
 #include "../../_common.h"
 
 #include "Font.h"
@@ -19,30 +20,29 @@ class RE_API TextRenderer {
 	RE_NO_CONSTRUCT(TextRenderer)
 
 public:
-	static void DrawText(Font& font, const Color& color, const std::wstring& text,
-			int x, int y, unsigned size);
-
-	static void DrawText(Font& font, const Color& color, const std::string& text,
-			int x, int y, unsigned size);
+	static void DrawText(Font& font, const Color& color, const std::wstring& text, int x, int y, unsigned size);
+	static void DrawText(Font& font, const Color& color, const std::string& text, int x, int y, unsigned size);
 
 private:
-	static void _Initialize();
-	static void _ResizeBuffer(unsigned width, unsigned height);
+	static void Initialize_();
 
-	static int _DrawChars(Font& font, const Color& color, const wchar_t *text, unsigned length,
-			int x, int y, unsigned size);
-	static void _DrawTriangles(const std::vector<Character::Triangle>& triangles,
-			const std::vector<Character::Triangle>& bezierCurves, vec4 bounds,
+	static void ResizeBuffer_(unsigned width, unsigned height);
+
+	static int DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size);
+
+	static void DrawTriangles_(const std::vector<Character::Triangle>& triangles,
+			const std::vector<Character::Triangle>& bezierCurves,
+			vec4 bounds,
 			vec2 multisampleOffset);
 
-	static GL::Buffer _triangle_buffer;
-	static GL::VertexArray _vao;
+	static gl::Buffer _triangle_buffer;
+	static gl::VertexArray _vao;
 
-	static GL::Buffer _resolve_vbo;
-	static GL::VertexArray _resolve_vao;
+	static gl::Buffer _resolve_vbo;
+	static gl::VertexArray _resolve_vao;
 
-	static std::unique_ptr<GL::Framebuffer> _text_buffer;
-	static GL::Program _shader;
+	static std::unique_ptr<gl::Framebuffer> _text_buffer;
+	static gl::Program _shader;
 
 	static bool _initialized;
 	static unsigned _width;

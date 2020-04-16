@@ -7,37 +7,41 @@
 
 #include "State.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 std::unique_ptr<Framebuffer> Framebuffer::_default_framebuffer(nullptr);
 
 Framebuffer::Framebuffer(unsigned viewportWidth, unsigned viewportHeight) :
-		_viewport_width(viewportWidth), _viewport_height(viewportHeight) {}
+		_viewport_width(viewportWidth),
+		_viewport_height(viewportHeight) {}
 
 Framebuffer::Framebuffer(const Framebuffer& original, unsigned newWidth, unsigned newHeight) :
-		_viewport_width(newWidth), _viewport_height(newHeight) {
+		_viewport_width(newWidth),
+		_viewport_height(newHeight) {
 
 	for (const auto& [attachment, texture] : original._attached_textures) {
-		_AttachTexture(texture.internalFormat, texture.format, attachment);
+		AttachTexture_(texture.internalFormat, texture.format, attachment);
 	}
 
 	for (const auto& [attachment, texture] : original._attached_multisample_textures) {
-		_AttachTextureMultisample(texture.internalFormat, texture.samples, attachment);
+		AttachTextureMultisample_(texture.internal_format, texture.samples, attachment);
 	}
 
 	for (const auto& [attachment, buffer] : original._attached_renderbuffers) {
-		_AttachRenderbuffer(buffer.internalFormat, attachment);
+		AttachRenderbuffer_(buffer.internal_format, attachment);
 	}
 
 	for (const auto& [attachment, buffer] : original._attached_multisample_renderbuffers) {
-		_AttachRenderbufferMultisample(buffer.internalFormat, buffer.samples, attachment);
+		AttachRenderbufferMultisample_(buffer.internal_format, buffer.samples, attachment);
 	}
 
 	SetDrawBuffers(original._draw_buffers);
 }
 
 Framebuffer::Framebuffer(uvec2 defaultViewport) :
-		Object(0), _viewport_width(defaultViewport.x), _viewport_height(defaultViewport.y) {}
+		Object(0),
+		_viewport_width(defaultViewport.x),
+		_viewport_height(defaultViewport.y) {}
 
 void Framebuffer::BindForDrawing() const {
 	State::BindFramebuffer(Target::DRAW, *this);
@@ -70,99 +74,99 @@ unsigned Framebuffer::GetViewportHeight() const {
 }
 
 void Framebuffer::AttachTexture(InternalFormat internalFormat, Format format, unsigned colorAttachment) {
-	_AttachTexture(internalFormat, format, GL_COLOR_ATTACHMENT0 + colorAttachment);
+	AttachTexture_(internalFormat, format, GL_COLOR_ATTACHMENT0 + colorAttachment);
 }
 
 void Framebuffer::AttachTexture(InternalFormat internalFormat, Format format, Attachment attachment) {
-	_AttachTexture(internalFormat, format, GLenum(attachment));
+	AttachTexture_(internalFormat, format, GLenum(attachment));
 }
 
 void Framebuffer::AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, unsigned colorAttachment) {
-	_AttachTextureMultisample(internalFormat, samples, GL_COLOR_ATTACHMENT0 + colorAttachment);
+	AttachTextureMultisample_(internalFormat, samples, GL_COLOR_ATTACHMENT0 + colorAttachment);
 }
 
 void Framebuffer::AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, Attachment attachment) {
-	_AttachTextureMultisample(internalFormat, samples, GLenum(attachment));
+	AttachTextureMultisample_(internalFormat, samples, GLenum(attachment));
 }
 
 void Framebuffer::AttachRenderbuffer(InternalFormat format, unsigned colorAttachment) {
-	_AttachRenderbuffer(format, GL_COLOR_ATTACHMENT0 + colorAttachment);
+	AttachRenderbuffer_(format, GL_COLOR_ATTACHMENT0 + colorAttachment);
 }
 
 void Framebuffer::AttachRenderbuffer(InternalFormat format, Attachment attachment) {
-	_AttachRenderbuffer(format, GLenum(attachment));
+	AttachRenderbuffer_(format, GLenum(attachment));
 }
 
 void Framebuffer::AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, unsigned colorAttachment) {
-	_AttachRenderbufferMultisample(internalFormat, samples, GL_COLOR_ATTACHMENT0 + colorAttachment);
+	AttachRenderbufferMultisample_(internalFormat, samples, GL_COLOR_ATTACHMENT0 + colorAttachment);
 }
 
 void Framebuffer::AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, Attachment attachment) {
-	_AttachRenderbufferMultisample(internalFormat, samples, GLenum(attachment));
+	AttachRenderbufferMultisample_(internalFormat, samples, GLenum(attachment));
 }
 
 Texture2D& Framebuffer::GetTextureAttachment(unsigned colorAttachment) {
-	return _GetAttachment(_attached_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
+	return GetAttachment_(_attached_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
 }
 
 const Texture2D& Framebuffer::GetTextureAttachment(unsigned colorAttachment) const {
-	return _GetAttachment(_attached_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
+	return GetAttachment_(_attached_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
 }
 
 Texture2D& Framebuffer::GetTextureAttachment(Attachment attachment) {
-	return _GetAttachment(_attached_textures, GLenum(attachment)).texture;
+	return GetAttachment_(_attached_textures, GLenum(attachment)).texture;
 }
 
 const Texture2D& Framebuffer::GetTextureAttachment(Attachment attachment) const {
-	return _GetAttachment(_attached_textures, GLenum(attachment)).texture;
+	return GetAttachment_(_attached_textures, GLenum(attachment)).texture;
 }
 
 Texture2DMultisample& Framebuffer::GetTextureMultisampleAttachment(unsigned colorAttachment) {
-	return _GetAttachment(_attached_multisample_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
+	return GetAttachment_(_attached_multisample_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
 }
 
 const Texture2DMultisample& Framebuffer::GetTextureMultisampleAttachment(unsigned colorAttachment) const {
-	return _GetAttachment(_attached_multisample_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
+	return GetAttachment_(_attached_multisample_textures, GL_COLOR_ATTACHMENT0 + colorAttachment).texture;
 }
 
 Texture2DMultisample& Framebuffer::GetTextureMultisampleAttachment(Attachment attachment) {
-	return _GetAttachment(_attached_multisample_textures, GLenum(attachment)).texture;
+	return GetAttachment_(_attached_multisample_textures, GLenum(attachment)).texture;
 }
 
 const Texture2DMultisample& Framebuffer::GetTextureMultisampleAttachment(Attachment attachment) const {
-	return _GetAttachment(_attached_multisample_textures, GLenum(attachment)).texture;
+	return GetAttachment_(_attached_multisample_textures, GLenum(attachment)).texture;
 }
 
 Renderbuffer& Framebuffer::GetRenderbufferAttachment(unsigned colorAttachment) {
-	return _GetAttachment(_attached_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
+	return GetAttachment_(_attached_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
 }
 
 const Renderbuffer& Framebuffer::GetRenderbufferAttachment(unsigned colorAttachment) const {
-	return _GetAttachment(_attached_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
+	return GetAttachment_(_attached_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
 }
 
 Renderbuffer& Framebuffer::GetRenderbufferAttachment(Attachment attachment) {
-	return _GetAttachment(_attached_renderbuffers, GLenum(attachment)).buffer;
+	return GetAttachment_(_attached_renderbuffers, GLenum(attachment)).buffer;
 }
 
 const Renderbuffer& Framebuffer::GetRenderbufferAttachment(Attachment attachment) const {
-	return _GetAttachment(_attached_renderbuffers, GLenum(attachment)).buffer;
+	return GetAttachment_(_attached_renderbuffers, GLenum(attachment)).buffer;
 }
 
 Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(unsigned colorAttachment) {
-	return _GetAttachment(_attached_multisample_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
+	return GetAttachment_(_attached_multisample_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
 }
 
 const Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(unsigned colorAttachment) const {
-	return _GetAttachment(_attached_multisample_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
+	return GetAttachment_(_attached_multisample_renderbuffers, GL_COLOR_ATTACHMENT0 + colorAttachment).buffer;
 }
 
 Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(Attachment attachment) {
-	return _GetAttachment(_attached_multisample_renderbuffers, GLenum(attachment)).buffer;
+	return GetAttachment_(_attached_multisample_renderbuffers, GLenum(attachment)).buffer;
 }
 
 const Renderbuffer& Framebuffer::GetRenderbufferMultisampleAttachment(Attachment attachment) const {
-	return _GetAttachment(_attached_multisample_renderbuffers, GLenum(attachment)).buffer;
+	return GetAttachment_(_attached_multisample_renderbuffers, GLenum(attachment)).buffer;
 }
 
 Framebuffer::AttachmentType Framebuffer::GetAttachmentType(unsigned colorAttachment) const {
@@ -214,7 +218,7 @@ void Framebuffer::SetDrawBuffers(std::vector<unsigned> colorAttachments) {
 	}
 
 	glDrawBuffers(data.size(), data.data());
-	_CheckStatus();
+	CheckStatus_();
 
 	_draw_buffers = std::move(colorAttachments);
 }
@@ -231,8 +235,8 @@ uvec2 Framebuffer::DefaultViewport() {
 	return { _default_framebuffer->_viewport_width, _default_framebuffer->_viewport_height };
 }
 
-void Framebuffer::_AttachTexture(InternalFormat internalFormat, Format format, GLenum attachment) {
-	if (_HasAttachment(attachment)) {
+void Framebuffer::AttachTexture_(InternalFormat internalFormat, Format format, GLenum attachment) {
+	if (HasAttachment_(attachment)) {
 		Log::Error() << "Framebuffer already has attachment attached for 0x" << std::hex << attachment << std::endl;
 		abort();
 	}
@@ -252,8 +256,8 @@ void Framebuffer::_AttachTexture(InternalFormat internalFormat, Format format, G
 	glFramebufferTexture2D(GLenum(Target::DRAW), attachment, GLenum(Texture::Target::TEXTURE_2D), texture.GetName(), 0);
 }
 
-void Framebuffer::_AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, GLenum attachment) {
-	if (_HasAttachment(attachment)) {
+void Framebuffer::AttachTextureMultisample_(InternalFormat internalFormat, unsigned samples, GLenum attachment) {
+	if (HasAttachment_(attachment)) {
 		Log::Error() << "Framebuffer already has attachment attached for 0x" << std::hex << attachment << std::endl;
 		abort();
 	}
@@ -269,8 +273,8 @@ void Framebuffer::_AttachTextureMultisample(InternalFormat internalFormat, unsig
 	glFramebufferTexture2D(GLenum(Target::DRAW), attachment, GLenum(Texture::Target::TEXTURE_2D_MULTISAMPLE), texture.GetName(), 0);
 }
 
-void Framebuffer::_AttachRenderbuffer(InternalFormat internalFormat, GLenum attachment) {
-	if (_HasAttachment(attachment)) {
+void Framebuffer::AttachRenderbuffer_(InternalFormat internalFormat, GLenum attachment) {
+	if (HasAttachment_(attachment)) {
 		Log::Error() << "Framebuffer already has attachment attached for 0x" << std::hex << attachment << std::endl;
 		abort();
 	}
@@ -286,8 +290,8 @@ void Framebuffer::_AttachRenderbuffer(InternalFormat internalFormat, GLenum atta
 	glFramebufferRenderbuffer(GLenum(Target::DRAW), attachment, GL_RENDERBUFFER, buffer.GetName());
 }
 
-void Framebuffer::_AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, GLenum attachment) {
-	if (_HasAttachment(attachment)) {
+void Framebuffer::AttachRenderbufferMultisample_(InternalFormat internalFormat, unsigned samples, GLenum attachment) {
+	if (HasAttachment_(attachment)) {
 		Log::Error() << "Framebuffer already has attachment attached for 0x" << std::hex << attachment << std::endl;
 		abort();
 	}
@@ -303,7 +307,7 @@ void Framebuffer::_AttachRenderbufferMultisample(InternalFormat internalFormat, 
 	glFramebufferRenderbuffer(GLenum(Target::DRAW), attachment, GL_RENDERBUFFER, buffer.GetName());
 }
 
-void Framebuffer::_CheckStatus() const {
+void Framebuffer::CheckStatus_() const {
 	GLenum status = glCheckFramebufferStatus(GLenum(Target::DRAW));
 	if (status != GL_FRAMEBUFFER_COMPLETE) {
 		Log::Error() << "Framebuffer is not complete (0x" << std::hex << status << ")" << std::endl;
@@ -311,10 +315,10 @@ void Framebuffer::_CheckStatus() const {
 	}
 }
 
-bool Framebuffer::_HasAttachment(GLenum attachment) const {
+bool Framebuffer::HasAttachment_(GLenum attachment) const {
 	return !(_attached_textures.find(attachment) == _attached_textures.end() &&
-			 _attached_multisample_textures.find(attachment) == _attached_multisample_textures.end() &&
-			 _attached_renderbuffers.find(attachment) == _attached_renderbuffers.end());
+			_attached_multisample_textures.find(attachment) == _attached_multisample_textures.end() &&
+			_attached_renderbuffers.find(attachment) == _attached_renderbuffers.end());
 }
 
 }

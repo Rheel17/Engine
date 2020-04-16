@@ -9,43 +9,39 @@ static void transformUp(vec3& vector, char up) {
 	vec3 original = vector;
 
 	switch (up) {
-		case 'x':
-			vector.x = -original.y;
+		case 'x': vector.x = -original.y;
 			vector.y = original.x;
 			break;
-		case 'y':
-			break;
-		case 'z':
-			vector.y = original.z;
+		case 'y': break;
+		case 'z': vector.y = original.z;
 			vector.z = -original.y;
 			break;
-		default:
-			abort();
+		default: abort();
 	}
 }
 
-ColladaLoader::Geometry::Geometry(_XmlNode *geometry) {
-	_XmlNode *mesh = geometry->first_node("mesh");
+ColladaLoader::Geometry::Geometry(XmlNode* geometry) {
+	XmlNode* mesh = geometry->first_node("mesh");
 	assert(mesh);
 
 	// get the polygons of this mesh
-	_XmlNode *polylist = mesh->first_node("polylist");
+	XmlNode* polylist = mesh->first_node("polylist");
 	assert(polylist);
 	assert(!polylist->next_sibling("polylist"));
 
 	// assert that all the polygons are of size 3
-	_XmlNode *vcount = polylist->first_node("vcount");
+	XmlNode* vcount = polylist->first_node("vcount");
 	assert(vcount);
 
-	std::vector<unsigned> vcount_list = _CreateVectorUnsigned(vcount);
-	for (unsigned vcount_data : vcount_list) {
-		assert(vcount_data == 3);
+	std::vector<unsigned> vcountList = CreateVectorUnsigned_(vcount);
+	for (unsigned vcountData : vcountList) {
+		assert(vcountData == 3);
 	}
 
 	// create a map from source ids to sources
-	std::unordered_map<std::string, _XmlNode *> sources;
-	for (_XmlNode *source = mesh->first_node("source"); source; source = source->next_sibling("source")) {
-		_XmlAttribute *id = source->first_attribute("id");
+	std::unordered_map<std::string, XmlNode*> sources;
+	for (XmlNode* source = mesh->first_node("source"); source; source = source->next_sibling("source")) {
+		XmlAttribute* id = source->first_attribute("id");
 		assert(id);
 
 		std::string idstr = "#" + std::string(id->value());
@@ -56,14 +52,14 @@ ColladaLoader::Geometry::Geometry(_XmlNode *geometry) {
 	std::unordered_map<std::string, std::string> inputs;
 	std::unordered_map<std::string, unsigned> offsets;
 
-	for (_XmlNode *input = polylist->first_node("input"); input; input = input->next_sibling("input")) {
-		_XmlAttribute *semantic = input->first_attribute("semantic");
+	for (XmlNode* input = polylist->first_node("input"); input; input = input->next_sibling("input")) {
+		XmlAttribute* semantic = input->first_attribute("semantic");
 		assert(semantic);
 
-		_XmlAttribute *source = input->first_attribute("source");
+		XmlAttribute* source = input->first_attribute("source");
 		assert(source);
 
-		_XmlAttribute *offset = input->first_attribute("offset");
+		XmlAttribute* offset = input->first_attribute("offset");
 		assert(offset);
 
 		inputs[semantic->value()] = source->value();
@@ -73,56 +69,56 @@ ColladaLoader::Geometry::Geometry(_XmlNode *geometry) {
 	// read the vertices inputs
 	std::unordered_map<std::string, std::string> verticesInputs;
 
-	_XmlNode *vertices = mesh->first_node("vertices");
+	XmlNode* vertices = mesh->first_node("vertices");
 	assert(vertices);
 
-	_XmlAttribute *vertices_id = vertices->first_attribute("id");
-	assert(vertices_id);
+	XmlAttribute* verticesId = vertices->first_attribute("id");
+	assert(verticesId);
 
-	const std::string verticesID = "#" + std::string(vertices_id->value());
+	const std::string verticesIdString = "#" + std::string(verticesId->value());
 
-	for (_XmlNode *input = vertices->first_node("input"); input; input = input->next_sibling("input")) {
-		_XmlAttribute *semantic = input->first_attribute("semantic");
+	for (XmlNode* input = vertices->first_node("input"); input; input = input->next_sibling("input")) {
+		XmlAttribute* semantic = input->first_attribute("semantic");
 		assert(semantic);
 
-		_XmlAttribute *source = input->first_attribute("source");
+		XmlAttribute* source = input->first_attribute("source");
 		assert(source);
 
 		verticesInputs[semantic->value()] = source->value();
 	}
 
 	// get the attributes
-	assert(inputs["VERTEX"] == verticesID);
-	std::vector<float> positions = _ReadSource(sources[verticesInputs["POSITION"]]);
-	std::vector<float> normals = _ReadSource(sources[inputs["NORMAL"]]);
-	std::vector<float> texcoords = _ReadSource(sources[inputs["TEXCOORD"]]);
+	assert(inputs["VERTEX"] == verticesIdString);
+	std::vector<float> positions = ReadSource_(sources[verticesInputs["POSITION"]]);
+	std::vector<float> normals = ReadSource_(sources[inputs["NORMAL"]]);
+	std::vector<float> texcoords = ReadSource_(sources[inputs["TEXCOORD"]]);
 
-	vec3 *vPositions = reinterpret_cast<vec3 *>(positions.data());
-	vec3 *vNormals = reinterpret_cast<vec3 *>(normals.data());
-	vec2 *vTexcoords = reinterpret_cast<vec2 *>(texcoords.data());
+	auto vPositions = reinterpret_cast<vec3*>(positions.data());
+	auto vNormals = reinterpret_cast<vec3*>(normals.data());
+	auto vTexcoords = reinterpret_cast<vec2*>(texcoords.data());
 
 	unsigned positionOffset = offsets["VERTEX"];
 	unsigned normalOffset = offsets["NORMAL"];
 	unsigned texcoordOffset = offsets["TEXCOORD"];
 
 	// assemble the mesh
-	_XmlNode *p = polylist->first_node("p");
+	XmlNode* p = polylist->first_node("p");
 	assert(p);
-	std::vector<unsigned> p_list = _CreateVectorUnsigned(p);
+	auto pList = CreateVectorUnsigned_(p);
 
-	_XmlAttribute *polylist_count = polylist->first_attribute("count");
-	assert(polylist_count);
-	unsigned count = strtoul(polylist_count->value(), nullptr, 10);
+	auto polylistCount = polylist->first_attribute("count");
+	assert(polylistCount);
+	unsigned count = strtoul(polylistCount->value(), nullptr, 10);
 
-	unsigned stride = (p_list.size() / 3) / count;
-	assert(p_list.size() % stride == 0);
+	unsigned stride = (pList.size() / 3) / count;
+	assert(pList.size() % stride == 0);
 
-	for (unsigned i = 0; i < p_list.size(); i += stride) {
-		vec3 position = vPositions[p_list[i + positionOffset]];
-		vec3 normal   = vNormals  [p_list[i + normalOffset  ]];
-		vec2 texcoord = vTexcoords[p_list[i + texcoordOffset]];
+	for (unsigned i = 0; i < pList.size(); i += stride) {
+		vec3 position = vPositions[pList[i + positionOffset]];
+		vec3 normal = vNormals[pList[i + normalOffset]];
+		vec2 texcoord = vTexcoords[pList[i + texcoordOffset]];
 
-		ModelVertex vertex { position, normal, texcoord };
+		model_vertex vertex{ position, normal, texcoord };
 
 		auto iter = _vertex_indices.find(vertex);
 		unsigned index;
@@ -139,82 +135,86 @@ ColladaLoader::Geometry::Geometry(_XmlNode *geometry) {
 	}
 }
 
-std::vector<float> ColladaLoader::Geometry::_ReadSource(_XmlNode *source) {
-	_XmlNode *float_array = source->first_node("float_array");
-	assert(float_array);
+std::vector<float> ColladaLoader::Geometry::ReadSource_(XmlNode* source) {
+	XmlNode* floatArray = source->first_node("float_array");
+	assert(floatArray);
 
-	_XmlAttribute *count = float_array->first_attribute("count");
+	XmlAttribute* count = floatArray->first_attribute("count");
 	assert(count);
 
-	return _CreateVectorFloat(float_array, strtoul(count->value(), nullptr, 10));
+	return CreateVectorFloat_(floatArray, strtoul(count->value(), nullptr, 10));
 }
 
-void ColladaLoader::ParseCOLLADA() const {
+void ColladaLoader::ParseCollada_() const {
 	// get the up vector
-	_XmlNode *root = _xml_document->first_node();
+	XmlNode* root = _xml_document->first_node();
 	assert(root);
 
-	_XmlNode *asset = root->first_node("asset");
+	XmlNode* asset = root->first_node("asset");
 	assert(asset);
 
-	if (_XmlNode *up_axis = asset->first_node("up_axis")) {
-		_up = tolower(up_axis->value()[0]);
+	if (XmlNode* upAxis = asset->first_node("up_axis")) {
+		_up = tolower(upAxis->value()[0]);
 	}
 
 	// parse the geometries
-	_XmlNode *library_geometries = root->first_node("library_geometries");
-	assert(library_geometries);
+	XmlNode* libraryGeometries = root->first_node("library_geometries");
+	assert(libraryGeometries);
 
-	for (_XmlNode *geometry = library_geometries->first_node("geometry"); geometry; geometry = geometry->next_sibling("geometry")) {
-		ParseGeometry(geometry);
+	for (XmlNode* geometry = libraryGeometries->first_node("geometry"); geometry; geometry = geometry->next_sibling("geometry")) {
+		ParseGeometry_(geometry);
 	}
 
 	// parse the scenes
-	_XmlNode *library_visual_scenes = root->first_node("library_visual_scenes");
-	assert(library_visual_scenes);
+	XmlNode* libraryVisualScenes = root->first_node("library_visual_scenes");
+	assert(libraryVisualScenes);
 
-	for (_XmlNode *visual_scene = library_visual_scenes->first_node("visual_scene"); visual_scene; visual_scene = visual_scene->next_sibling("visual_scene")) {
-		ParseScene(visual_scene);
+	for (XmlNode* visualScene = libraryVisualScenes->first_node("visual_scene");
+		 visualScene;
+		 visualScene = visualScene->next_sibling("visual_scene")) {
+		ParseScene_(visualScene);
 	}
 }
 
-void ColladaLoader::ParseGeometry(_XmlNode *geometry) const {
-	_XmlAttribute *id = geometry->first_attribute("id");
+void ColladaLoader::ParseGeometry_(XmlNode* geometry) const {
+	XmlAttribute* id = geometry->first_attribute("id");
 	assert(id);
 
 	_geometries.insert({ "#" + std::string(id->value()), Geometry(geometry) });
 }
 
-void ColladaLoader::ParseScene(_XmlNode *scene) const {
-	for (_XmlNode *node = scene->first_node("node"); node; node = node->next_sibling("node")) {
+void ColladaLoader::ParseScene_(XmlNode* scene) const {
+	for (XmlNode* node = scene->first_node("node"); node; node = node->next_sibling("node")) {
 		mat4 transform = glm::identity<mat4>();
 
-		for (_XmlNode *matrix = node->first_node("matrix"); matrix; matrix = matrix->next_sibling("matrix")) {
-			_XmlAttribute *matrix_sid = matrix->first_attribute("sid");
-			assert(matrix_sid);
+		for (XmlNode* matrix = node->first_node("matrix"); matrix; matrix = matrix->next_sibling("matrix")) {
+			XmlAttribute* matrixSid = matrix->first_attribute("sid");
+			assert(matrixSid);
 
-			if (std::string(matrix_sid->value()) == "transform") {
-				transform = _CreateMatrix(matrix);
+			if (std::string(matrixSid->value()) == "transform") {
+				transform = CreateMatrix_(matrix);
 				break;
 			}
 		}
 
-		for (_XmlNode *instance_geometry = node->first_node("instance_geometry"); instance_geometry; instance_geometry = instance_geometry->next_sibling("instance_geometry")) {
-			_XmlAttribute *instance_geometry_url = instance_geometry->first_attribute("url");
-			assert(instance_geometry_url);
+		for (XmlNode* instanceGeometry = node->first_node("instance_geometry");
+			 instanceGeometry;
+			 instanceGeometry = instanceGeometry->next_sibling("instance_geometry")) {
+			XmlAttribute* instanceGeometryUrl = instanceGeometry->first_attribute("url");
+			assert(instanceGeometryUrl);
 
-			AddGeometry(_geometries[std::string(instance_geometry_url->value())], transform);
+			AddGeometry_(_geometries[std::string(instanceGeometryUrl->value())], transform);
 		}
 	}
 }
 
-void ColladaLoader::AddGeometry(const Geometry& geometry, const mat4& transform) const {
+void ColladaLoader::AddGeometry_(const Geometry& geometry, const mat4& transform) const {
 	unsigned indexOffset = _vertices.size();
 
-	for (const ModelVertex& vertex : geometry._vertices) {
+	for (const model_vertex& vertex : geometry._vertices) {
 		vec4 transformedPosition = transform * vec4(vertex.position, 1.0f);
 		vec3 transformedPosition3(transformedPosition.x, transformedPosition.y, transformedPosition.z);
-		ModelVertex transformed = { transformedPosition3, vertex.normal, vertex.texture };
+		model_vertex transformed = { transformedPosition3, vertex.normal, vertex.texture };
 
 		transformUp(transformed.position, _up);
 		transformUp(transformed.normal, _up);
@@ -227,12 +227,12 @@ void ColladaLoader::AddGeometry(const Geometry& geometry, const mat4& transform)
 	}
 }
 
-Model ColladaLoader::_DoLoad(const std::string& path) const {
-	_xml_file = std::make_unique<_XmlFile>(path.c_str());
-	_xml_document = std::make_unique<_XmlDocument>();
+Model ColladaLoader::DoLoad(const std::string& path) const {
+	_xml_file = std::make_unique<XmlFile>(path.c_str());
+	_xml_document = std::make_unique<XmlDocument>();
 	_xml_document->parse<0>(_xml_file->data());
 
-	ParseCOLLADA();
+	ParseCollada_();
 	Model model(std::move(_vertices), std::move(_indices));
 
 	_xml_file.reset();
@@ -245,21 +245,21 @@ Model ColladaLoader::_DoLoad(const std::string& path) const {
 	return model;
 }
 
-std::vector<unsigned> ColladaLoader::_CreateVectorUnsigned(_XmlNode *node, int size) {
+std::vector<unsigned> ColladaLoader::CreateVectorUnsigned_(XmlNode* node, int size) {
 	// create the vector
 	std::vector<unsigned> vec;
 
 	// parse the values
-	const char *values = node->value();
-	const char *tmp = values;
+	const char* values = node->value();
+	const char* tmp = values;
 	do {
-	    int l = strcspn(tmp, " ");
+		int l = strcspn(tmp, " ");
 
-	    if (l > 0) {
-	    	vec.push_back(strtoul(tmp, nullptr, 10));
-	    }
+		if (l > 0) {
+			vec.push_back(strtoul(tmp, nullptr, 10));
+		}
 
-	    tmp += l + 1;
+		tmp += l + 1;
 	} while (tmp[-1]);
 
 	// assert that we read everything correctly
@@ -271,21 +271,21 @@ std::vector<unsigned> ColladaLoader::_CreateVectorUnsigned(_XmlNode *node, int s
 	return vec;
 }
 
-std::vector<float> ColladaLoader::_CreateVectorFloat(_XmlNode *node, int size) {
+std::vector<float> ColladaLoader::CreateVectorFloat_(XmlNode* node, int size) {
 	// create the vector
 	std::vector<float> vec;
 
 	// parse the values
-	const char *values = node->value();
-	const char *tmp = values;
+	const char* values = node->value();
+	const char* tmp = values;
 	do {
-	    int l = strcspn(tmp, " ");
+		int l = strcspn(tmp, " ");
 
-	    if (l > 0) {
-	    	vec.push_back(strtof(tmp, nullptr));
-	    }
+		if (l > 0) {
+			vec.push_back(strtof(tmp, nullptr));
+		}
 
-	    tmp += l + 1;
+		tmp += l + 1;
 	} while (tmp[-1]);
 
 	// assert that we read everything correctly
@@ -297,12 +297,12 @@ std::vector<float> ColladaLoader::_CreateVectorFloat(_XmlNode *node, int size) {
 	return vec;
 }
 
-mat4 ColladaLoader::_CreateMatrix(_XmlNode *node) {
-	std::vector<float> floats = _CreateVectorFloat(node, 16);
+mat4 ColladaLoader::CreateMatrix_(XmlNode* node) {
+	std::vector<float> floats = CreateVectorFloat_(node, 16);
 
 	return mat4(
-			floats[0], floats[4],  floats[8], floats[12],
-			floats[1], floats[5],  floats[9], floats[13],
+			floats[0], floats[4], floats[8], floats[12],
+			floats[1], floats[5], floats[9], floats[13],
 			floats[2], floats[6], floats[10], floats[14],
 			floats[3], floats[7], floats[11], floats[15]);
 }

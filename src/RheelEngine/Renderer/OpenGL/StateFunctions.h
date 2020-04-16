@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_STATEFUNCTIONS_H
-#define RHEELENGINE_GL_STATEFUNCTIONS_H
+#ifndef RHEELENGINE_STATEFUNCTIONS_H
+#define RHEELENGINE_STATEFUNCTIONS_H
 #include "../../_common.h"
 
 #include "Enums.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 class RE_API StateFunctions {
 
 public:
 	StateFunctions();
-	explicit StateFunctions(StateFunctions *parent);
+	explicit StateFunctions(StateFunctions* parent);
 
 	// clear
 	void SetClearColor(float red, float green, float blue, float alpha);
@@ -40,15 +40,15 @@ public:
 	void ResetChanges();
 
 private:
-	std::tuple<float, float, float, float> _GetClearColor() const;
-	std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> _GetBlendFunction() const;
-	CompareFunction _GetDepthFunction() const;
-	CullFace _GetCullFace() const;
-	std::tuple<bool, bool, bool, bool> _GetColorMask() const;
-	bool _GetDepthMask() const;
-	std::tuple<CompareFunction, uint8_t, uint8_t> _GetStencilFunc() const;
-	uint8_t _GetStencilMask() const;
-	std::tuple<StencilFunction, StencilFunction, StencilFunction> _GetStencilOp() const;
+	std::tuple<float, float, float, float> GetClearColor_() const;
+	std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> GetBlendFunction_() const;
+	CompareFunction GetDepthFunction_() const;
+	CullFace GetCullFace_() const;
+	std::tuple<bool, bool, bool, bool> GetColorMask_() const;
+	bool GetDepthMask_() const;
+	std::tuple<CompareFunction, uint8_t, uint8_t> GetStencilFunc_() const;
+	uint8_t GetStencilMask_() const;
+	std::tuple<StencilFunction, StencilFunction, StencilFunction> GetStencilOp_() const;
 
 	std::optional<std::tuple<float, float, float, float>> _clear_color;
 	std::optional<std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor>> _blending_factors;
@@ -60,7 +60,7 @@ private:
 	std::optional<uint8_t> _stencil_mask;
 	std::optional<std::tuple<StencilFunction, StencilFunction, StencilFunction>> _stencil_op;
 
-	StateFunctions *_parent;
+	StateFunctions* _parent;
 
 private:
 	static constexpr std::tuple<float, float, float, float> _default_clear_color = { 0.0f, 0.0f, 0.0f, 0.0f };

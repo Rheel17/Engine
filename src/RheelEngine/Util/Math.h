@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef MATH_H_
-#define MATH_H_
+#ifndef RHEELENGINE_MATH_H
+#define RHEELENGINE_MATH_H
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>

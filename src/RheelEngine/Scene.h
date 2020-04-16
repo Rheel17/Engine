@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef SCENE_H_
-#define SCENE_H_
+#ifndef RHEELENGINE_SCENE_H
+#define RHEELENGINE_SCENE_H
 #include "_common.h"
 
 #include "Entity.h"
@@ -11,8 +11,11 @@
 namespace rheel {
 
 class Camera;
+
 class Light;
+
 class Skybox;
+
 class ComponentInputProxy;
 
 class RE_API Scene {
@@ -32,7 +35,7 @@ public:
 	 * Adds an empty entity to the scene. This function returns a pointer to the
 	 * created entity.
 	 */
-	Entity *AddEntity(std::string name, RigidTransform transform = RigidTransform());
+	Entity* AddEntity(std::string name, RigidTransform transform = RigidTransform());
 
 	/**
 	 * Creates a unique entity name with the given prefix
@@ -44,7 +47,7 @@ public:
 	 * killed first. If the entity is a child of another entity, the entity will
 	 * be removed from its parent.
 	 */
-	void RemoveEntity(Entity *entity);
+	void RemoveEntity(Entity* entity);
 
 	/**
 	 * Finds and returns the first found entity with the given name. The
@@ -55,27 +58,27 @@ public:
 	 *
 	 * If no entity with the name given can be found, nullptr is returned.
 	 */
-	Entity *FindEntity(const std::string& name, bool recursive = true);
+	Entity* FindEntity(const std::string& name, bool recursive = true);
 
 	/**
 	 * Returns a vector of all root-level entities in the scene. No child
 	 * entities are returned.
 	 */
-	const std::vector<Entity *>& GetEntities() const;
+	const std::vector<Entity*>& GetEntities() const;
 
 	/**
 	 * Adds a component to the scene root, instead of a specific object in the
 	 * scene. Use this only for scene-wide components.
 	 */
 	template<typename T, typename... Args>
-	T *AddRootComponent(Args&&... args) {
+	T* AddRootComponent(Args&& ... args) {
 		return _root_entity->AddComponent<T>(args...);
 	}
 
 	/**
 	 * Removes a component from the scene root.
 	 */
-	void RemoveRootComponent(ComponentBase *component);
+	void RemoveRootComponent(ComponentBase* component);
 
 	/**
 	 * Returns the root component of the given type, if this scene has one
@@ -84,7 +87,7 @@ public:
 	 * is returned.
 	 */
 	template<typename T>
-	T *GetRootComponent() {
+	T* GetRootComponent() {
 		return _root_entity->GetComponent<T>();
 	}
 
@@ -92,7 +95,7 @@ public:
 	 * Returns all root components of the given type.
 	 */
 	template<typename T>
-	std::vector<T *> GetAllRootComponentsOfType() {
+	std::vector<T*> GetAllRootComponentsOfType() {
 		return _root_entity->GetAllComponentsOfType<T>();
 	}
 
@@ -100,22 +103,22 @@ public:
 	 * Returns the camera of the given name. If no camera exists with that name,
 	 * nullptr is returned.
 	 */
-	Camera *GetCamera(const std::string& name);
+	Camera* GetCamera(const std::string& name);
 
 	/**
 	 * Returns a vector of all lights in the scene.
 	 */
-	const std::vector<Light *>& GetLights();
+	const std::vector<Light*>& GetLights();
 
 	/**
 	 * Returns the skybox for this scene.
 	 */
-	Skybox *GetSkybox();
+	Skybox* GetSkybox();
 
 	/**
 	 * Returns the components registered to receive input events
 	 */
-	const std::vector<ComponentInputProxy *>& GetInputComponents() const;
+	const std::vector<ComponentInputProxy*>& GetInputComponents() const;
 
 	/**
 	 * Updates the scene and all its entities.
@@ -123,14 +126,14 @@ public:
 	void Update(float time, float dt);
 
 private:
-	Entity *_root_entity;
+	Entity* _root_entity;
 
-	std::unordered_map<std::string, Camera *> _cameras;
-	std::vector<Light *> _lights;
-	Skybox *_skybox = nullptr;
+	std::unordered_map<std::string, Camera*> _cameras;
+	std::vector<Light*> _lights;
+	Skybox* _skybox = nullptr;
 
-	std::vector<Entity *> _entities;
-	std::vector<ComponentInputProxy *> _input_components;
+	std::vector<Entity*> _entities;
+	std::vector<ComponentInputProxy*> _input_components;
 
 };
 

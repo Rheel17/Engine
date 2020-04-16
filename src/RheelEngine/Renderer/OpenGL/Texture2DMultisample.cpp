@@ -3,7 +3,7 @@
  */
 #include "Texture2DMultisample.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 Texture2DMultisample::Texture2DMultisample() :
 		Texture(Target::TEXTURE_2D_MULTISAMPLE) {}

@@ -5,18 +5,17 @@
 
 #include "State.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 Texture::Texture(Texture::Target target) :
 		_target(target) {}
 
-Texture::Target rheel::GL::Texture::GetTarget() const {
+Texture::Target rheel::gl::Texture::GetTarget() const {
 	return _target;
 }
 
 void Texture::Bind(unsigned int textureUnit) const {
 	State::BindTexture(textureUnit, *this);
 }
-
 
 }

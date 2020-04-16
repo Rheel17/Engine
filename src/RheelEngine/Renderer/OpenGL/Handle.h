@@ -1,31 +1,31 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_HANDLE_H
-#define RHEELENGINE_GL_HANDLE_H
+#ifndef RHEELENGINE_HANDLE_H
+#define RHEELENGINE_HANDLE_H
 #include "../../_common.h"
 
 #include <GL/glew.h>
 
 #define OPENGL_GEN_FUNCTION(func, structName)    \
 struct RE_API structName {                       \
-	static constexpr auto glfn = #func;			 \
-	GLuint operator()() const {                  \
-		GLuint name;							 \
-		func(1, &name);                          \
-		return name;                             \
-	}                                            \
+    static constexpr auto glfn = #func;          \
+    GLuint operator()() const {                  \
+        GLuint name;                             \
+        func(1, &name);                          \
+        return name;                             \
+    }                                            \
 }
 
 #define OPENGL_DELETE_FUNCTION(func, structName) \
 struct RE_API structName {                       \
-	static constexpr auto glfn = #func;			 \
-	void operator()(GLuint name) const {         \
-		func(1, &name);                          \
-	}                                            \
+    static constexpr auto glfn = #func;          \
+    void operator()(GLuint name) const {         \
+        func(1, &name);                          \
+    }                                            \
 }
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 template<typename Generator, typename Deleter>
 class RE_API Handle {
@@ -41,7 +41,8 @@ public:
 	 * Uses the raw OpenGL handle as id.
 	 */
 	explicit Handle(GLuint raw) :
-			_name(raw), _generated(true) {}
+			_name(raw),
+			_generated(true) {}
 
 	/**
 	 * Deletes the handle using the deleter.
@@ -55,7 +56,7 @@ public:
 	/**
 	 * Moves the handle to a new object, and invalidates the original handle.
 	 */
-	Handle(Handle&& h) noexcept :
+	Handle(Handle&& h) noexcept:
 			_generator(std::move(h._generator)),
 			_deleter(std::move(h._deleter)),
 			_generated(h._generated),

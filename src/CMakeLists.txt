@@ -40,9 +40,9 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Audio/AudioClip.cpp RheelEngine/Audio/AudioClip.h 
 		RheelEngine/Audio/AudioManager.cpp RheelEngine/Audio/AudioManager.h 
 		RheelEngine/Audio/AudioSource.cpp RheelEngine/Audio/AudioSource.h 
-		RheelEngine/Audio/OpenAL/ALBuffer.cpp RheelEngine/Audio/OpenAL/ALBuffer.h 
-		RheelEngine/Audio/OpenAL/ALListener.cpp RheelEngine/Audio/OpenAL/ALListener.h 
-		RheelEngine/Audio/OpenAL/ALSource.cpp RheelEngine/Audio/OpenAL/ALSource.h 
+		RheelEngine/Audio/OpenAL/Buffer.cpp RheelEngine/Audio/OpenAL/Buffer.h 
+		RheelEngine/Audio/OpenAL/Listener.cpp RheelEngine/Audio/OpenAL/Listener.h 
+		RheelEngine/Audio/OpenAL/Source.cpp RheelEngine/Audio/OpenAL/Source.h 
 		RheelEngine/Components/Camera.cpp RheelEngine/Components/Camera.h 
 		RheelEngine/Components/CollisionComponent.h 
 		RheelEngine/Components/DirectionalLight.cpp RheelEngine/Components/DirectionalLight.h 

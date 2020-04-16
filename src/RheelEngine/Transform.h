@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef TRANSFORM_H_
-#define TRANSFORM_H_
+#ifndef RHEELENGINE_TRANSFORM_H
+#define RHEELENGINE_TRANSFORM_H
 #include "_common.h"
 
 #include "RigidTransform.h"
@@ -19,7 +19,7 @@ public:
 
 	explicit Transform(const mat4& matrix);
 
-	explicit Transform(TransformOwner *owner);
+	explicit Transform(TransformOwner* owner);
 
 	Transform(const Transform& t) = default;
 

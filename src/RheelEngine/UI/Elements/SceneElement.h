@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef SCENEELEMENT_H_
-#define SCENEELEMENT_H_
+#ifndef RHEELENGINE_SCENEELEMENT_H
+#define RHEELENGINE_SCENEELEMENT_H
 #include "../../_common.h"
 #include "../../Renderer/PostProcessingStack.h"
 #include "../../Scene.h"
@@ -33,7 +33,7 @@ public:
 	 * This does not automatically switch when the current active scene
 	 * switches.
 	 */
-	SceneElement(Scene *scene, std::string cameraName);
+	SceneElement(Scene* scene, std::string cameraName);
 
 	/**
 	 * Sets whether this element should grab the mouse on focus. Its default
@@ -67,10 +67,10 @@ public:
 	void OnMouseScroll(const vec2& scrollComponents) override;
 
 private:
-	void _InitializeRenderer(const Bounds& bounds) const;
+	void InitializeRenderer_(const Bounds& bounds) const;
 
 	bool _use_active_scene;
-	mutable Scene *_scene;
+	mutable Scene* _scene;
 	std::string _camera_name;
 
 	bool _grab_on_focus = true;

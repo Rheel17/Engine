@@ -7,12 +7,12 @@
 
 namespace rheel {
 
-Character::_ContourPoint::operator vec2() const {
+Character::contour_point::operator vec2() const {
 	return { x, y };
 }
 
 Character::Character(const FT_GlyphSlot& glyph, unsigned short em) {
-	_LoadTriangles(glyph->outline, float(em));
+    LoadTriangles_(glyph->outline, float(em));
 	_advance = glyph->advance.x / float(em);
 }
 
@@ -28,7 +28,7 @@ float Character::Advance() const {
 	return _advance;
 }
 
-void Character::_LoadTriangles(const FT_Outline& outline, float em) {
+void Character::LoadTriangles_(const FT_Outline& outline, float em) {
 	if (outline.n_contours == 0 || outline.n_points == 0) {
 		return;
 	}
@@ -50,11 +50,11 @@ void Character::_LoadTriangles(const FT_Outline& outline, float em) {
 
 	for (short i = 0; i < outline.n_contours; i++) {
 		contourEnd = outline.contours[i] + 1;
-		_Contour contour;
+		Contour contour;
 
 		// add contour points
 		for (unsigned j = contourStart; j < contourEnd; j++) {
-			_ContourPoint point{};
+			contour_point point{};
 			point.x = outline.points[j].x;
 			point.y = outline.points[j].y;
 
@@ -62,7 +62,7 @@ void Character::_LoadTriangles(const FT_Outline& outline, float em) {
 				case FT_CURVE_TAG_ON:		point.on = true; break;
 				case FT_CURVE_TAG_CONIC:	point.on = false; break;
 				case FT_CURVE_TAG_CUBIC:
-					throw std::runtime_error("Fonts containing cubic B�zier curves are not supported.");
+					throw std::runtime_error("Fonts containing cubic Bézier curves are not supported.");
 			}
 
 			// if the last point was an 'off' point and this is an 'off' point
@@ -98,12 +98,12 @@ void Character::_LoadTriangles(const FT_Outline& outline, float em) {
 		// add the first point to the back to close the contour
 		contour.push_back(contour.front());
 
-		_AddContour(contour, em);
+        AddContour_(contour, em);
 		contourStart = contourEnd;
 	}
 }
 
-void Character::_AddContour(const _Contour& contour, float em) {
+void Character::AddContour_(const Contour& contour, float em) {
 	// add the contour
 	unsigned startIndex = 0;
 
@@ -112,12 +112,12 @@ void Character::_AddContour(const _Contour& contour, float em) {
 			vec2 v1 = (vec2) contour[startIndex] / em;
 			vec2 v2 = (vec2) contour[i] / em;
 
-			_triangles.push_back(_CreateTriangle(_common, v1, v2));
+			_triangles.push_back(CreateTriangle_(_common, v1, v2));
 
 			// if the previous was more than 1 less than this, we had an 'off'
 			// point in between, so add the Bézier curve.
 			if (i - startIndex > 1) {
-				_bezier_curves.push_back(_CreateTriangle(v1, (vec2) contour[i - 1] / em, v2));
+				_bezier_curves.push_back(CreateTriangle_(v1, (vec2) contour[i - 1] / em, v2));
 			}
 
 			// start the new triangle/curve at the current 'on' point.
@@ -126,7 +126,7 @@ void Character::_AddContour(const _Contour& contour, float em) {
 	}
 }
 
-Character::Triangle Character::_CreateTriangle(const vec2& v1, const vec2& v2, const vec2& v3) {
+Character::Triangle Character::CreateTriangle_(const vec2& v1, const vec2& v2, const vec2& v3) {
 	vec2 u = v2 - v1;
 	vec2 v = v3 - v1;
 

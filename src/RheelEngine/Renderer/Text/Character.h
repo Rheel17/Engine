@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef CHARACTER_H_
-#define CHARACTER_H_
+#ifndef RHEELENGINE_CHARACTER_H
+#define RHEELENGINE_CHARACTER_H
 #include "../../_common.h"
 
 #include <ft2build.h>
@@ -16,7 +16,7 @@ class RE_API Character {
 	friend class Font;
 
 private:
-	struct _ContourPoint {
+	struct contour_point {
 		FT_Pos x;
 		FT_Pos y;
 		bool on;
@@ -24,7 +24,7 @@ private:
 		explicit operator vec2() const;
 	};
 
-	using _Contour = std::vector<_ContourPoint>;
+	using Contour = std::vector<contour_point>;
 
 public:
 	using Triangle = std::array<vec3, 3>;
@@ -37,9 +37,9 @@ public:
 private:
 	Character(const FT_GlyphSlot& glyph, unsigned short em);
 
-	void _LoadTriangles(const FT_Outline& outline, float em);
-	void _AddContour(const _Contour& contour, float em);
-	static Triangle _CreateTriangle(const vec2& v1, const vec2& v2, const vec2& v3);
+	void LoadTriangles_(const FT_Outline& outline, float em);
+	void AddContour_(const Contour& contour, float em);
+	static Triangle CreateTriangle_(const vec2& v1, const vec2& v2, const vec2& v3);
 
 	vec2 _common{};
 	std::vector<Triangle> _triangles;

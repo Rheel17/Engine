@@ -1,11 +1,11 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef INPUT_H_
-#define INPUT_H_
+#ifndef RHEELENGINE_INPUT_H
+#define RHEELENGINE_INPUT_H
 #include "../_common.h"
 
-// Include only GLFW, not _OpenGL. We're only using the constants.
+// Include only GLFW, not OpenGL. We're only using the constants.
 #ifdef GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #else

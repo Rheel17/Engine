@@ -1,31 +1,31 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_PROGRAM_H
-#define RHEELENGINE_GL_PROGRAM_H
+#ifndef RHEELENGINE_PROGRAM_H
+#define RHEELENGINE_PROGRAM_H
 #include "../../_common.h"
 
 #include "Object.h"
 #include "Shader.h"
 #include "Uniform.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
-struct RE_API _CreateProgram {
+struct RE_API create_program {
 	static constexpr auto glfn = "glCreateProgram";
 	GLuint operator()() const {
 		return glCreateProgram();
 	}
 };
 
-struct RE_API _DeleteProgram {
+struct RE_API delete_program_ {
 	static constexpr auto glfn = "glDeleteProgram";
 	void operator()(GLuint name) const {
 		glDeleteProgram(name);
 	}
 };
 
-class RE_API Program : Object<_CreateProgram, _DeleteProgram> {
+class RE_API Program : Object<create_program, delete_program_> {
 
 public:
 	Program() = default;
@@ -69,10 +69,10 @@ public:
 	bool HasUniform(const std::string& name) const;
 
 private:
-	void _EnsureLinked() const;
-	void _EnsureNotLinked() const;
+	void EnsureLinked_() const;
+	void EnsureNotLinked_() const;
 
-	Uniform& _GetUniform(const std::string& name, bool checkWarning) const;
+	Uniform& GetUniform_(const std::string& name, bool checkWarning) const;
 
 	bool _linked = false;
 

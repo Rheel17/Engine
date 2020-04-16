@@ -5,9 +5,9 @@
 
 #include "State.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
-Buffer::Buffer(GL::Buffer::Target target) :
+Buffer::Buffer(gl::Buffer::Target target) :
 		_target(target) {}
 
 void Buffer::Bind() const {

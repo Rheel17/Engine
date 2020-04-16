@@ -9,9 +9,9 @@
 
 namespace rheel {
 
-std::unique_ptr<GL::Texture2D> ShadowMapDirectional::_empty_shadow_map;
+std::unique_ptr<gl::Texture2D> ShadowMapDirectional::_empty_shadow_map;
 
-ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *light) :
+ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, Light* light) :
 		ShadowMap(manager, light) {
 
 	unsigned textureSize = 1024;
@@ -50,13 +50,13 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *l
 		accumulator += _csm_split[i];
 
 		// initialize the buffer
-		GL::Framebuffer buffer(textureSize, textureSize);
-		buffer.AttachTexture(GL::InternalFormat::DEPTH_COMPONENT_32F, GL::Format::DEPTH_COMPONENT, GL::Framebuffer::Attachment::DEPTH);
+		gl::Framebuffer buffer(textureSize, textureSize);
+		buffer.AttachTexture(gl::InternalFormat::DEPTH_COMPONENT_32F, gl::Format::DEPTH_COMPONENT, gl::Framebuffer::Attachment::DEPTH);
 
 		// set the texture paramters
-		GL::Texture2D& texture = buffer.GetTextureAttachment(GL::Framebuffer::Attachment::DEPTH);
-		texture.SetCompareMode(GL::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
-		texture.SetCompareFunction(GL::CompareFunction::LEQUAL);
+		gl::Texture2D& texture = buffer.GetTextureAttachment(gl::Framebuffer::Attachment::DEPTH);
+		texture.SetCompareMode(gl::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
+		texture.SetCompareFunction(gl::CompareFunction::LEQUAL);
 
 		_shadow_buffers.emplace_back(std::move(buffer));
 	}
@@ -68,38 +68,38 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager *manager, Light *l
 
 ShadowMapDirectional::~ShadowMapDirectional() = default;
 
-void ShadowMapDirectional::Update(Camera *camera, unsigned width, unsigned height) {
-	GL::State::Push();
+void ShadowMapDirectional::Update(Camera* camera, unsigned width, unsigned height) {
+	gl::State::Push();
 
 	// set the lightspace matrices
-	 _CalculateViewProjectionMatrices(camera, width, height);
+	CalculateViewProjectionMatrices_(camera, width, height);
 
-	GL::Program& modelShader = ModelRenderer::GetOpaqueShader();
+	gl::Program& modelShader = ModelRenderer::GetOpaqueShader();
 
 	for (unsigned i = 0; i < _csm_count; i++) {
 		modelShader["lightspaceMatrix"] = _light_matrices[i];
 
 		// write the scene to the framebuffer.
-		_shadow_buffers[i].Clear(GL::Framebuffer::BitField::DEPTH);
+		_shadow_buffers[i].Clear(gl::Framebuffer::BitField::DEPTH);
 
-		for (const auto& [model, renderer] : GetManager()->RenderMap()) {
+		for (const auto&[model, renderer] : GetManager()->RenderMap()) {
 			renderer.RenderObjects();
 		}
 
-		for (const auto& [model, renderer] : GetManager()->CustomShaderRenderMap()) {
+		for (const auto&[model, renderer] : GetManager()->CustomShaderRenderMap()) {
 			renderer.RenderToShadowMap();
 		}
 	}
 
-	GL::State::Pop();
+	gl::State::Pop();
 }
 
-std::vector<std::reference_wrapper<const GL::Texture2D>> ShadowMapDirectional::Textures() const {
-	std::vector<std::reference_wrapper<const GL::Texture2D>> textures;
+std::vector<std::reference_wrapper<const gl::Texture2D>> ShadowMapDirectional::Textures() const {
+	std::vector<std::reference_wrapper<const gl::Texture2D>> textures;
 	textures.reserve(_csm_count);
 
 	for (const auto& shadowBuffer : _shadow_buffers) {
-		textures.push_back(std::ref(shadowBuffer.GetTextureAttachment(GL::Framebuffer::Attachment::DEPTH)));
+		textures.push_back(std::ref(shadowBuffer.GetTextureAttachment(gl::Framebuffer::Attachment::DEPTH)));
 	}
 
 	return textures;
@@ -113,7 +113,7 @@ float ShadowMapDirectional::Bias() const {
 	return _bias;
 }
 
-void ShadowMapDirectional::_CalculateViewProjectionMatrices(Camera *camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::CalculateViewProjectionMatrices_(Camera* camera, unsigned width, unsigned height) {
 	// calculate the light coordinate system axis
 	vec3 zplus = -GetLight<DirectionalLight>()->Direction();
 	vec3 xplus;
@@ -133,7 +133,7 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(Camera *camera, unsi
 		// calculate the AABB of the camera frustum in light space
 		auto corners = camera->ViewspaceCorners(
 				width, height,
-				_csm_borders[i]     * GetLight()->ShadowDistance(),
+				_csm_borders[i] * GetLight()->ShadowDistance(),
 				_csm_borders[i + 1] * GetLight()->ShadowDistance());
 
 		float min = std::numeric_limits<float>::lowest();
@@ -172,12 +172,12 @@ void ShadowMapDirectional::_CalculateViewProjectionMatrices(Camera *camera, unsi
 	}
 }
 
-const GL::Texture2D& ShadowMapDirectional::EmptyShadowMap() {
+const gl::Texture2D& ShadowMapDirectional::EmptyShadowMap() {
 	if (!_empty_shadow_map) {
-		_empty_shadow_map = std::make_unique<GL::Texture2D>();
-		_empty_shadow_map->SetEmpty(GL::InternalFormat::DEPTH_COMPONENT_32F, 1, 1, GL::Format::DEPTH_COMPONENT);
-		_empty_shadow_map->SetCompareMode(GL::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
-		_empty_shadow_map->SetCompareFunction(GL::CompareFunction::LEQUAL);
+		_empty_shadow_map = std::make_unique<gl::Texture2D>();
+		_empty_shadow_map->SetEmpty(gl::InternalFormat::DEPTH_COMPONENT_32F, 1, 1, gl::Format::DEPTH_COMPONENT);
+		_empty_shadow_map->SetCompareMode(gl::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
+		_empty_shadow_map->SetCompareFunction(gl::CompareFunction::LEQUAL);
 	}
 
 	return *_empty_shadow_map;

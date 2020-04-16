@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef UI_H_
-#define UI_H_
+#ifndef RHEELENGINE_UI_H
+#define RHEELENGINE_UI_H
 #include "../_common.h"
 
 #include "Container.h"
@@ -42,17 +42,17 @@ public:
 	 * multiple elements share the position, the top one (last added) is
 	 * returned.
 	 */
-	Element *ElementAt(unsigned x, unsigned y);
+	Element* ElementAt(unsigned x, unsigned y);
 
 	/**
 	 * Requests that the given element be given focus in this UI.
 	 */
-	bool RequestFocus(Element *element);
+	bool RequestFocus(Element* element);
 
 	/**
 	 * Returns the element which is in focus (can be nullptr).
 	 */
-	Element *FocusElement() const;
+	Element* FocusElement() const;
 
 	/**
 	 * Grabs the mouse such that it is no longer capable of leaving the window.
@@ -62,7 +62,7 @@ public:
 	 * A grabbed mouse will be restricted the given element. On a focus change,
 	 * the mouse is automatically released.
 	 */
-	void GrabMouse(Element *element);
+	void GrabMouse(Element* element);
 
 	/**
 	 * Releases the mouse such that it is visible and capable of leaving the
@@ -90,9 +90,9 @@ public:
 private:
 	std::unique_ptr<Container> _ui_container = std::unique_ptr<Container>(new Container(this));
 
-	Element *_mouseover_element = nullptr;
-	Element *_focus_element = nullptr;
-	Element *_grabbed_element = nullptr;
+	Element* _mouseover_element = nullptr;
+	Element* _focus_element = nullptr;
+	Element* _grabbed_element = nullptr;
 
 	unsigned _width;
 	unsigned _height;

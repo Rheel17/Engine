@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef COLORELEMENT_H_
-#define COLORELEMENT_H_
+#ifndef RHEELENGINE_COLORELEMENT_H
+#define RHEELENGINE_COLORELEMENT_H
 #include "../../_common.h"
 
 #include "../Element.h"

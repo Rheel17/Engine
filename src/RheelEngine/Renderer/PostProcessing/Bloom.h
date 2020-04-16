@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef BLOOM_H_
-#define BLOOM_H_
+#ifndef RHEELENGINE_BLOOM_H
+#define RHEELENGINE_BLOOM_H
 #include "../../_common.h"
 
 #include "../PostProcessingEffect.h"
@@ -15,7 +15,7 @@ class RE_API Bloom : public PostProcessingEffect {
 public:
 	Bloom(float thresholdStart, float thresholdEnd, float multiplier, float sigma, unsigned samples);
 
-	const GL::Framebuffer& Render(const GL::Framebuffer& input) const override;
+	const gl::Framebuffer& Render(const gl::Framebuffer& input) const override;
 
 private:
 	float _threshold_start;
@@ -24,11 +24,11 @@ private:
 	std::vector<float> _kernel;
 
 private:
-	static GL::Program& _BloomShader();
-	static GL::Program& _CombineShader();
+	static gl::Program& BloomShader_();
+	static gl::Program& CombineShader_();
 
-	static std::unique_ptr<GL::Program> _bloom_shader;
-	static std::unique_ptr<GL::Program> _combine_shader;
+	static std::unique_ptr<gl::Program> _bloom_shader;
+	static std::unique_ptr<gl::Program> _combine_shader;
 
 };
 

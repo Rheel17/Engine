@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef MATERIAL_H_
-#define MATERIAL_H_
+#ifndef RHEELENGINE_MATERIAL_H
+#define RHEELENGINE_MATERIAL_H
 #include "_common.h"
 
 #include "Color.h"
@@ -15,7 +15,7 @@ class RE_API Material {
 
 public:
 	enum MaterialType {
-		Colored, Textured, CustomShader
+		COLORED, TEXTURED, CUSTOM_SHADER
 	};
 
 public:
@@ -45,16 +45,16 @@ public:
 	 * Creates a fully-textured material, with separate textures for the
 	 * ambient, diffuse, and specular components.
 	 */
-	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture,
+			float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
 	/**
 	 * Creates a fully-textured material, with separate textures for the
 	 * ambient, diffuse, and specular components. This constructor also allows
 	 * a factor to be set for each of these textures.
 	 */
-	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture,
-			float ambientFactor, float diffuseFactor, float specularFactor,
-			float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture, float ambientFactor,
+			float diffuseFactor, float specularFactor, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
 
 	/**
 	 * Creates a material with custom fragment shader. The shader type must be
@@ -95,7 +95,7 @@ public:
 	float SpecularFactor() const;
 
 	/**
-	 * Binds the texture images as _OpenGL textures.
+	 * Binds the texture images as OpenGL textures.
 	 *
 	 * 0: ambient
 	 * 1: diffuse

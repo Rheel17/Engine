@@ -3,7 +3,7 @@
  */
 #include "Texture2D.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 Texture2D::Texture2D() :
 		AbstractTexture(Target::TEXTURE_2D) {}
@@ -34,12 +34,12 @@ void Texture2D::SetEmpty(InternalFormat internalFormat, unsigned width, unsigned
 	SetData(internalFormat, width, height, format, zeros.data());
 }
 
-void Texture2D::SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, Type type, const void *data) {
+void Texture2D::SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, Type type, const void* data) {
 	Bind();
 	glTexImage2D(GL_TEXTURE_2D, 0, GLenum(internalFormat), width, height, 0, GLenum(format), GLenum(type), data);
 }
 
-void Texture2D::SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, const float *data) {
+void Texture2D::SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, const float* data) {
 	SetData(internalFormat, width, height, format, Type::FLOAT, data);
 }
 

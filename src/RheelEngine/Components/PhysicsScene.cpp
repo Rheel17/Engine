@@ -7,32 +7,30 @@
 
 namespace rheel {
 
-bool PhysicsScene::_CollisionData::operator==(const _CollisionData& other) const {
-	return other.cc0 == cc0 && other.cc1 == cc1;
+bool PhysicsScene::collision_data::operator==(const collision_data& other) const {
+	return other.cc_0 == cc_0 && other.cc_1 == cc_1;
 }
 
-constexpr std::size_t PhysicsScene::_CollisionDataHash::operator()(const _CollisionData& data) const {
-	return std::size_t(data.cc0) * std::size_t(data.cc1) * 0x4e911fa1;
+constexpr std::size_t PhysicsScene::collision_data_hash::operator()(const collision_data& data) const {
+	return std::size_t(data.cc_0) * std::size_t(data.cc_1) * 0x4e911fa1;
 }
 
 PhysicsScene::PhysicsScene(const PhysicsScene& script) :
 		_gravity(script._gravity) {}
 
 void PhysicsScene::Activate() {
-	_collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
-	_dispatcher = std::make_unique<btCollisionDispatcher>(_collisionConfiguration.get());
+	_collision_configuration = std::make_unique<btDefaultCollisionConfiguration>();
+	_dispatcher = std::make_unique<btCollisionDispatcher>(_collision_configuration.get());
 	_broadphase = std::make_unique<btDbvtBroadphase>();
 	_solver = std::make_unique<btSequentialImpulseConstraintSolver>();
-	_world = std::make_unique<btDiscreteDynamicsWorld>(
-				_dispatcher.get(), _broadphase.get(),
-				_solver.get(), _collisionConfiguration.get());
+	_world = std::make_unique<btDiscreteDynamicsWorld>(_dispatcher.get(), _broadphase.get(), _solver.get(), _collision_configuration.get());
 
 	_world->setGravity({ _gravity.x, _gravity.y, _gravity.z });
 }
 
 void PhysicsScene::Update() {
 	_world->stepSimulation(GetTimeDelta());
-	_HandleCollisions();
+	HandleCollisions_();
 }
 
 void PhysicsScene::SetGravity(vec3 gravity) {
@@ -43,7 +41,7 @@ void PhysicsScene::SetGravity(vec3 gravity) {
 	}
 }
 
-RigidBody *PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT) {
+RigidBody* PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT) {
 	// calculate the from and to positions
 	vec3 dir = glm::normalize(direction);
 
@@ -66,24 +64,24 @@ RigidBody *PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, flo
 		return nullptr;
 	}
 
-	return static_cast<RigidBody *>(callback.m_collisionObject->getUserPointer());
+	return static_cast<RigidBody*>(callback.m_collisionObject->getUserPointer());
 }
 
-void PhysicsScene::_AddBody(btRigidBody *body) {
+void PhysicsScene::AddBody_(btRigidBody* body) {
 	_world->addRigidBody(body);
 }
 
-void PhysicsScene::_RemoveBody(btRigidBody *body, CollisionComponent *cc) {
+void PhysicsScene::RemoveBody_(btRigidBody* body, CollisionComponent* cc) {
 	// handle current collisions
-	std::vector<_CollisionData> toRemove;
+	std::vector<collision_data> toRemove;
 
 	for (const auto& collision : _collisions) {
 		bool remove = true;
 
-		if (collision.cc0 == cc) {
-			collision.cc1->OnCollisionEnd(*cc);
-		} else if (collision.cc1 == cc) {
-			collision.cc0->OnCollisionEnd(*cc);
+		if (collision.cc_0 == cc) {
+			collision.cc_1->OnCollisionEnd(*cc);
+		} else if (collision.cc_1 == cc) {
+			collision.cc_0->OnCollisionEnd(*cc);
 		} else {
 			remove = false;
 		}
@@ -93,7 +91,7 @@ void PhysicsScene::_RemoveBody(btRigidBody *body, CollisionComponent *cc) {
 		}
 	}
 
-	for (const _CollisionData& data : toRemove) {
+	for (const collision_data& data : toRemove) {
 		_collisions.erase(data);
 	}
 
@@ -101,7 +99,7 @@ void PhysicsScene::_RemoveBody(btRigidBody *body, CollisionComponent *cc) {
 	_world->removeRigidBody(body);
 }
 
-void PhysicsScene::_HandleCollisions() {
+void PhysicsScene::HandleCollisions_() {
 	for (int i = 0; i < _world->getDispatcher()->getNumManifolds(); i++) {
 		auto manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);
 
@@ -109,8 +107,8 @@ void PhysicsScene::_HandleCollisions() {
 			continue;
 		}
 
-		auto body0 = static_cast<RigidBody *>(manifold->getBody0()->getUserPointer());
-		auto body1 = static_cast<RigidBody *>(manifold->getBody1()->getUserPointer());
+		auto body0 = static_cast<RigidBody*>(manifold->getBody0()->getUserPointer());
+		auto body1 = static_cast<RigidBody*>(manifold->getBody1()->getUserPointer());
 
 		// TODO: notify all CollisionComponents?
 		auto cc0 = body0->GetParent()->GetComponent<CollisionComponent>();
@@ -132,19 +130,19 @@ void PhysicsScene::_HandleCollisions() {
 		}
 	}
 
-	std::vector<_CollisionData> toRemove;
+	std::vector<collision_data> toRemove;
 
-	for (const _CollisionData& data : _collisions) {
+	for (const collision_data& data : _collisions) {
 		if (!data.has_collision) {
 			toRemove.push_back(data);
-			data.cc0->OnCollisionEnd(*data.cc1);
-			data.cc1->OnCollisionEnd(*data.cc0);
+			data.cc_0->OnCollisionEnd(*data.cc_1);
+			data.cc_1->OnCollisionEnd(*data.cc_0);
 		} else {
 			data.has_collision = false;
 		}
 	}
 
-	for (const _CollisionData& data : toRemove) {
+	for (const collision_data& data : toRemove) {
 		_collisions.erase(data);
 	}
 }

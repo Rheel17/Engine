@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef FORWARDSCENERENDERER_H_
-#define FORWARDSCENERENDERER_H_
+#ifndef RHEELENGINE_FORWARDSCENERENDERER_H
+#define RHEELENGINE_FORWARDSCENERENDERER_H
 #include "../_common.h"
 
 #include "SceneRenderer.h"
@@ -19,7 +19,7 @@ protected:
 	void Resize(unsigned width, unsigned height) override;
 
 private:
-	ForwardSceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height);
+	ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height);
 
 };
 

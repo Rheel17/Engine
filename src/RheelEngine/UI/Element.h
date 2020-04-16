@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef ELEMENT_H_
-#define ELEMENT_H_
+#ifndef RHEELENGINE_ELEMENT_H
+#define RHEELENGINE_ELEMENT_H
 #include "../_common.h"
 
 #include <type_traits>
@@ -18,22 +18,27 @@
 namespace rheel {
 
 class UI;
+
 class Container;
 
 class RE_API Element : public InputCallback {
 	friend class UI;
+
 	friend class Container;
 
 private:
-	using _CBPtr = std::shared_ptr<InputCallback>;
+	using CbPtr = std::shared_ptr<InputCallback>;
 
 public:
-	struct Bounds {
+	class Bounds {
+
+	public:
 		unsigned x, y;
 		unsigned width, height;
 
 		bool operator==(const Bounds& bounds) const;
 		bool operator!=(const Bounds& bounds) const;
+
 	};
 
 protected:
@@ -137,12 +142,12 @@ public:
 	/**
 	 * Returns the root container of this element.
 	 */
-	const Container *RootContainer() const;
+	const Container* RootContainer() const;
 
 	/**
 	 * Returns the root container of this element.
 	 */
-	Container *RootContainer();
+	Container* RootContainer();
 
 	/**
 	 * Adds an input callback. When an input event occurs, this callback object
@@ -168,31 +173,31 @@ protected:
 	/**
 	 * Moves the fields of this Element superclass when moving derived objects.
 	 */
-	void _MoveSuperFields(Element&& element);
+	void MoveSuperFields(Element&& element);
 
 private:
-	void _Callback(const std::function<void(const _CBPtr&)>& callback);
+	void Callback_(const std::function<void(const CbPtr&)>& callback);
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-virtual-near-miss"
-	void _OnResize();
-	void _OnFocusGained();
-	void _OnFocusLost();
-	void _OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void _OnKeyRepeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void _OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void _OnCharacterInput(Input::Unicode character);
-	void _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
-	void _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
-	void _OnMouseEnter(const vec2& position);
-	void _OnMouseExit(const vec2& position);
-	void _OnMouseMove(const vec2& position);
-	void _OnMouseJump(const vec2& position);
-	void _OnMouseDrag(const vec2& origin, const vec2& position);
-	void _OnMouseScroll(const vec2& scrollComponents);
+	void OnResize_();
+	void OnFocusGained_();
+	void OnFocusLost_();
+	void OnKeyPress_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void OnKeyRepeat_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void OnKeyRelease_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void OnCharacterInput_(Input::Unicode character);
+	void OnMouseButtonPress_(Input::MouseButton button, Input::Modifiers mods);
+	void OnMouseButtonRelease_(Input::MouseButton button, Input::Modifiers mods);
+	void OnMouseEnter_(const vec2& position);
+	void OnMouseExit_(const vec2& position);
+	void OnMouseMove_(const vec2& position);
+	void OnMouseJump_(const vec2& position);
+	void OnMouseDrag_(const vec2& origin, const vec2& position);
+	void OnMouseScroll_(const vec2& scrollComponents);
 #pragma clang diagnostic pop
 
-	Container *_parent_container;
+	Container* _parent_container;
 	Bounds _bounds{};
 	bool _has_initialized_bounds = false;
 
@@ -201,77 +206,80 @@ private:
 	bool _focusable = false;
 	bool _drag_enabled = false;
 
-	std::vector<_CBPtr> _callback_list;
+	std::vector<CbPtr> _callback_list;
 
 protected:
 	/**
-	 * Draws a colored triangle. Vertices are specified in pixel-space. Counter-clockwise
-	 * ordering is recommended.
+	 * Draws a colored triangle. Vertices are specified in pixel-space.
+	 * Counter-clockwise ordering is recommended.
 	 */
-	static void _DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3);
+	static void DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3);
 
 	/**
-	 * Draws a colored quad. Vertices are specified in pixel-space. Counter-clockwise
-	 * ordering is required.
+	 * Draws a colored quad. Vertices are specified in pixel-space.
+	 * Counter-clockwise ordering is required.
 	 */
-	static void _DrawColoredQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4);
+	static void DrawColoredQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4);
 
 	/**
 	 * Draws a rectangle with a single color.
 	 */
-	static void _DrawColoredQuad(const Bounds& bounds, const Color& color);
+	static void DrawColoredQuad(const Bounds& bounds, const Color& color);
 
 	/**
-	 * Draws a textured quad. Vertices are specified in pixel-space. Counter-clockwise
-	 * ordering is recommended.
+	 * Draws a textured quad. Vertices are specified in pixel-space.
+	 * Counter-clockwise ordering is recommended.
 	 */
-	static void _DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const GL::Texture2D& texture);
+	static void DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3,
+			const gl::Texture2D& texture);
 
 	/**
-	 * Draws a textured quad. Vertices are specified in pixel-space. Coutner-clockwise
-	 * ordering is required.
+	 * Draws a textured quad. Vertices are specified in pixel-space.
+	 * Counter-clockwise ordering is required.
 	 */
-	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const GL::Texture2D& texture);
+	static void DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4,
+			const gl::Texture2D& texture);
 
 	/**
-	 * Draws the texture at the specified rectangle. The entire texture will be scaled to
-	 * fit the rectangle.
+	 * Draws the texture at the specified rectangle. The entire texture will be
+	 * scaled to fit the rectangle.
 	 */
-	static void _DrawTexturedQuad(const Bounds& bounds, const GL::Texture2D& texture);
+	static void DrawTexturedQuad(const Bounds& bounds, const gl::Texture2D& texture);
 
 	/**
-	 * Draws a textured quad. Vertices are specified in pixel-space. Coutner-clockwise
-	 * ordering is required.
+	 * Draws a textured quad. Vertices are specified in pixel-space.
+	 * Counter-clockwise ordering is required.
 	 */
-	static void _DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const Image& image, float alpha = 1.0f);
+	static void DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4,
+			const Image& image,	float alpha = 1.0f);
 
 	/**
-	 * Draws the texture at the specified rectangle. The entire texture will be scaled to
-	 * fit the rectangle.
+	 * Draws the texture at the specified rectangle. The entire texture will be
+	 * scaled to fit the rectangle.
 	 */
-	static void _DrawTexturedQuad(const Bounds& bounds, const Image& image, float alpha = 1.0f);
+	static void DrawTexturedQuad(const Bounds& bounds, const Image& image, float alpha = 1.0f);
 
 	/**
 	 * Draws a rectangle using the shader.
 	 */
-	static void _DrawShaderedQuad(const Bounds& bounds, const Shader& shader);
+	static void DrawShaderedQuad(const Bounds& bounds, const Shader& shader);
 
 	/**
-	 * Returns the custom shader program from the given shader asset. This instance can
-	 * be used to set uniform variables.
+	 * Returns the custom shader program from the given shader asset. This
+	 * instance can be used to set uniform variables.
 	 */
-	static const GL::Program& _GetCustomShader(const Shader& shader);
+	static const gl::Program& GetCustomShader(const Shader& shader);
 
 private:
-	static void _Draw(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f);
-	static void _Initialize();
+	static void Draw_(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f);
+	static void Initialize_();
 
-	static std::unique_ptr<GL::Program> _ui_shader;
-	static std::unique_ptr<GL::VertexArray> _ui_vao;
-	static std::unique_ptr<GL::Buffer> _ui_vertex_data;
+	static std::unique_ptr<gl::Program> _ui_shader;
+	static std::unique_ptr<gl::VertexArray> _ui_vao;
+	static std::unique_ptr<gl::Buffer> _ui_vertex_data;
 	static bool _initialized;
 
-	static std::unordered_map<std::uintptr_t, GL::Program> _custom_shaders;
+	static std::unordered_map<std::uintptr_t, gl::Program> _custom_shaders;
 
 };
 

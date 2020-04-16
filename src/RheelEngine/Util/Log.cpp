@@ -7,19 +7,19 @@
 
 namespace rheel {
 
-std::ostream& Log::Info(const _SourceLoc& loc) {
-	return _Log(loc, _Level::INFO);
+std::ostream& Log::Info(const SourceLoc& loc) {
+	return Log_(loc, Level::INFO);
 }
 
-std::ostream& Log::Warning(const _SourceLoc& loc) {
-	return _Log(loc, _Level::WARNING);
+std::ostream& Log::Warning(const SourceLoc& loc) {
+	return Log_(loc, Level::WARNING);
 }
 
-std::ostream& Log::Error(const _SourceLoc& loc) {
-	return _Log(loc, _Level::ERROR);
+std::ostream& Log::Error(const SourceLoc& loc) {
+	return Log_(loc, Level::ERROR);
 }
 
-std::ostream& Log::_Log(const _SourceLoc& loc, _Level level) {
+std::ostream& Log::Log_(const SourceLoc& loc, Level level) {
 	auto now = std::chrono::system_clock::now();
 	auto millis = int(std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000);
 	std::time_t tm = std::chrono::system_clock::to_time_t(now);
@@ -40,13 +40,13 @@ std::ostream& Log::_Log(const _SourceLoc& loc, _Level level) {
 	}
 
 	switch (level) {
-		case _Level::INFO:
+		case Level::INFO:
 			ss << " [INFO]    ";
 			break;
-		case _Level::WARNING:
+		case Level::WARNING:
 			ss << " [WARNING] ";
 			break;
-		case _Level::ERROR:
+		case Level::ERROR:
 			ss << " [ERROR]   ";
 			break;
 	}

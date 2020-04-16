@@ -7,8 +7,9 @@ namespace rheel {
 
 PerspectiveCamera::PerspectiveCamera(std::string name, float fov, float near, float far) :
 		Camera(std::move(name)),
-		_fov(glm::radians(fov)), _near(near), _far(far) {}
-
+		_fov(glm::radians(fov)),
+		_near(near),
+		_far(far) {}
 
 float PerspectiveCamera::GetSkyboxDistance() const {
 	return _far / sqrt(3);
@@ -39,22 +40,22 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	const auto position = [absoluteTransform, forward, up, right, tanfov, aspectRatio](const vec2& ndc, float t) {
 		vec3 direction = glm::normalize(
 				ndc.x * right * tanfov * aspectRatio +
-				ndc.y * up * tanfov +
-				forward);
+						ndc.y * up * tanfov +
+						forward);
 
 		return absoluteTransform.GetTranslation() + t * direction;
 	};
 
-	return std::array<vec3, 8> {{
-		position({ -1, -1 }, near),
-		position({ -1,  1 }, near),
-		position({  1, -1 }, near),
-		position({  1,  1 }, near),
-		position({ -1, -1 }, far),
-		position({ -1,  1 }, far),
-		position({  1, -1 }, far),
-		position({  1,  1 }, far),
-	}};
+	return std::array<vec3, 8>{ {
+			position({ -1.0f, -1.0f }, near),
+			position({ -1.0f,  1.0f }, near),
+			position({  1.0f, -1.0f }, near),
+			position({  1.0f,  1.0f }, near),
+			position({ -1.0f, -1.0f }, far),
+			position({ -1.0f,  1.0f }, far),
+			position({  1.0f, -1.0f }, far),
+			position({  1.0f,  1.0f }, far),
+	} };
 }
 
 vec3 PerspectiveCamera::RayDirection(const vec2& ndc, float aspectRatio) const {
@@ -65,10 +66,7 @@ vec3 PerspectiveCamera::RayDirection(const vec2& ndc, float aspectRatio) const {
 	vec3 right = glm::cross(forward, up);
 	float tanfov = std::tan(_fov * 0.5f);
 
-	return glm::normalize(
-			ndc.x * right * tanfov * aspectRatio +
-			ndc.y * up * tanfov +
-			forward);
+	return glm::normalize(ndc.x * right * tanfov * aspectRatio + ndc.y * up * tanfov + forward);
 }
 
 }

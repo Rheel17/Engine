@@ -6,10 +6,12 @@
 namespace rheel {
 
 Light::Light(const Color& color) :
-		_color(color), _shadow_distance(0.0f) {}
+		_color(color),
+		_shadow_distance(0.0f) {}
 
 Light::Light(const Color& color, float shadowDistance) :
-		_color(color), _shadow_distance(shadowDistance) {}
+		_color(color),
+		_shadow_distance(shadowDistance) {}
 
 Light::~Light() {}
 

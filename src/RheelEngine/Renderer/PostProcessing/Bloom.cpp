@@ -7,11 +7,13 @@
 
 namespace rheel {
 
-std::unique_ptr<GL::Program> Bloom::_bloom_shader;
-std::unique_ptr<GL::Program> Bloom::_combine_shader;
+std::unique_ptr<gl::Program> Bloom::_bloom_shader;
+std::unique_ptr<gl::Program> Bloom::_combine_shader;
 
 Bloom::Bloom(float thresholdStart, float thresholdEnd, float multiplier, float sigma, unsigned samples) :
-		_threshold_start(thresholdStart), _threshold_end(thresholdEnd), _multiplier(multiplier) {
+		_threshold_start(thresholdStart),
+		_threshold_end(thresholdEnd),
+		_multiplier(multiplier) {
 
 	static const float sqrt2pi = sqrt(2.0f * M_PI);
 	static const auto gaussian = [](float sigma, float x) {
@@ -33,20 +35,20 @@ Bloom::Bloom(float thresholdStart, float thresholdEnd, float multiplier, float s
 	}
 }
 
-const GL::Framebuffer& Bloom::Render(const GL::Framebuffer& input) const {
+const gl::Framebuffer& Bloom::Render(const gl::Framebuffer& input) const {
 	// setup the shader
-	GL::Program& bloomShader = _BloomShader();
+	gl::Program& bloomShader = BloomShader_();
 	bloomShader["kernel"] = _kernel;
 	bloomShader["kernelSize"] = (GLint) (_kernel.size() - 1);
 
 	// setup the framebuffers
-	unsigned idx1 = _UnusedFramebufferIndex();
-	GL::Framebuffer& buf1 = _Framebuffer(idx1);
-	_MarkFramebufferUse(idx1, true);
+	unsigned idx1 = UnusedFramebufferIndex();
+	gl::Framebuffer& buf1 = Framebuffer(idx1);
+	MarkFramebufferUse(idx1, true);
 
-	unsigned idx2 = _UnusedFramebufferIndex();
-	GL::Framebuffer& buf2 = _Framebuffer(idx2);
-	_MarkFramebufferUse(idx2, true);
+	unsigned idx2 = UnusedFramebufferIndex();
+	gl::Framebuffer& buf2 = Framebuffer(idx2);
+	MarkFramebufferUse(idx2, true);
 
 	// draw the horizontal blur
 	input.GetTextureAttachment(0).Bind(0);
@@ -55,7 +57,7 @@ const GL::Framebuffer& Bloom::Render(const GL::Framebuffer& input) const {
 	bloomShader["filterEnd"] = _threshold_end;
 
 	buf1.BindForDrawing();
-	_DrawScreenQuad();
+	DrawScreenQuad();
 
 	// draw the vertical blur
 	buf1.GetTextureAttachment(0).Bind(0);
@@ -64,38 +66,38 @@ const GL::Framebuffer& Bloom::Render(const GL::Framebuffer& input) const {
 	bloomShader["filterEnd"] = 0.0f;
 
 	buf2.BindForDrawing();
-	_DrawScreenQuad();
+	DrawScreenQuad();
 
 	// combine the blurred image with the original to achieve bloom
 	input.GetTextureAttachment(0).Bind(0);
 	buf2.GetTextureAttachment(0).Bind(1);
-	GL::Program& combineShader = _CombineShader();
+	gl::Program& combineShader = CombineShader_();
 	combineShader["factor0"] = 1.0f;
 	combineShader["factor1"] = _multiplier;
 
 	buf1.BindForDrawing();
-	_DrawScreenQuad();
+	DrawScreenQuad();
 
-	_MarkFramebufferUse(idx2, false);
+	MarkFramebufferUse(idx2, false);
 	return buf1;
 }
 
-GL::Program& Bloom::_BloomShader() {
+gl::Program& Bloom::BloomShader_() {
 	if (!_bloom_shader) {
-		_bloom_shader = std::make_unique<GL::Program>();
-		_bloom_shader->AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_postprocessing_vert_glsl"));
-		_bloom_shader->AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_postprocessing_bloom_frag_glsl"));
+		_bloom_shader = std::make_unique<gl::Program>();
+		_bloom_shader->AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_postprocessing_vert_glsl"));
+		_bloom_shader->AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_postprocessing_bloom_frag_glsl"));
 		_bloom_shader->Link();
 	}
 
 	return *_bloom_shader;
 }
 
-GL::Program& Bloom::_CombineShader() {
+gl::Program& Bloom::CombineShader_() {
 	if (!_combine_shader) {
-		_combine_shader = std::make_unique<GL::Program>();
-		_combine_shader->AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_postprocessing_vert_glsl"));
-		_combine_shader->AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_postprocessing_combine_frag_glsl"));
+		_combine_shader = std::make_unique<gl::Program>();
+		_combine_shader->AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_postprocessing_vert_glsl"));
+		_combine_shader->AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_postprocessing_combine_frag_glsl"));
 		_combine_shader->Link();
 		_combine_shader->GetUniform("inputTexture0") = 0;
 		_combine_shader->GetUniform("inputTexture1") = 1;

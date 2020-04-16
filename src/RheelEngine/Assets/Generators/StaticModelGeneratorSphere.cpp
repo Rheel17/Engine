@@ -6,7 +6,8 @@
 namespace rheel {
 
 StaticModelGeneratorSphere::StaticModelGeneratorSphere(float radius, unsigned int subdivisions) :
-		_radius(radius), _subdivisions(subdivisions) {}
+		_radius(radius),
+		_subdivisions(subdivisions) {}
 
 void StaticModelGeneratorSphere::DoGenerate() {
 	// add the vertices and indices

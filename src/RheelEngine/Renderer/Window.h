@@ -30,7 +30,7 @@ public:
 private:
 	DisplayConfiguration& _configuration;
 
-	void *_window_handle = nullptr;
+	void* _window_handle = nullptr;
 
 public:
 	static void InitializeDisplaySystems();

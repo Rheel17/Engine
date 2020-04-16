@@ -6,18 +6,22 @@
 namespace rheel {
 
 RigidTransform::RigidTransform(vec3 translation, quat rotation) :
-		_translation(translation), _rotation(rotation),
+		_translation(translation),
+		_rotation(rotation),
 		_matrix_dirty(true) {}
 
-RigidTransform::RigidTransform(TransformOwner *owner) :
-		_translation(0.0f, 0.0f, 0.0f), _rotation(1.0f, 0.0f, 0.0f, 0.0f),
-		_matrix_dirty(true), _owner(owner) {}
+RigidTransform::RigidTransform(TransformOwner* owner) :
+		_translation(0.0f, 0.0f, 0.0f),
+		_rotation(1.0f, 0.0f, 0.0f, 0.0f),
+		_matrix_dirty(true),
+		_owner(owner) {}
 
 RigidTransform::RigidTransform(const RigidTransform& t) :
-		_translation(t._translation), _rotation(t._rotation),
+		_translation(t._translation),
+		_rotation(t._rotation),
 		_matrix_dirty(true) {}
 
-RigidTransform::RigidTransform(RigidTransform&& t) noexcept :
+RigidTransform::RigidTransform(RigidTransform&& t) noexcept:
 		_translation(t._translation),
 		_rotation(t._rotation),
 		_matrix_dirty(true) {}

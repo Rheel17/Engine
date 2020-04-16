@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_TEXTURE_H
-#define RHEELENGINE_GL_TEXTURE_H
+#ifndef RHEELENGINE_TEXTURE_H
+#define RHEELENGINE_TEXTURE_H
 #include "../../_common.h"
 
 #include "Object.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
-OPENGL_GEN_FUNCTION(glGenTextures, _GenTextures);
-OPENGL_DELETE_FUNCTION(glDeleteTextures, _DeleteTexture);
+OPENGL_GEN_FUNCTION(glGenTextures, gen_textures_);
+OPENGL_DELETE_FUNCTION(glDeleteTextures, delete_textures_);
 
-class RE_API Texture : public Object<_GenTextures, _DeleteTexture> {
+class RE_API Texture : public Object<gen_textures_, delete_textures_> {
 
 public:
 	enum class Target {

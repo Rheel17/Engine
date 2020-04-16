@@ -1,14 +1,15 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef RIGIDTRANSFORM_H_
-#define RIGIDTRANSFORM_H_
+#ifndef RHEELENGINE_RIGIDTRANSFORM_H
+#define RHEELENGINE_RIGIDTRANSFORM_H
 #include "_common.h"
 
 namespace rheel {
 
-struct RE_API TransformOwner {
+class RE_API TransformOwner {
 
+public:
 	virtual ~TransformOwner() = default;
 	virtual void TransformChanged() {}
 
@@ -21,7 +22,7 @@ public:
 			vec3 translation = { 0.0f, 0.0f, 0.0f },
 			quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f });
 
-	explicit RigidTransform(TransformOwner *owner);
+	explicit RigidTransform(TransformOwner* owner);
 
 	virtual ~RigidTransform() = default;
 
@@ -110,7 +111,7 @@ private:
 	mutable mat4 _matrix{};
 	mutable bool _matrix_dirty;
 
-	TransformOwner *_owner = nullptr;
+	TransformOwner* _owner = nullptr;
 
 };
 

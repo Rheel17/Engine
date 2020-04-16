@@ -18,15 +18,15 @@
 #include <unordered_set>
 #include <vector>
 
-#define RE_NO_CONSTRUCT(X)				\
-	X() = delete;
+#define RE_NO_CONSTRUCT(X)                \
+    X() = delete;
 
-#define RE_NO_COPY(X) 					\
-	X(const X&) = delete;				\
-	X& operator=(const X&) = delete;
+#define RE_NO_COPY(X)                     \
+    X(const X&) = delete;                 \
+    X& operator=(const X&) = delete;
 
-#define RE_NO_MOVE(X)					\
-	X(X&&) = delete;					\
-	X& operator=(X&&) = delete;
+#define RE_NO_MOVE(X)                     \
+    X(X&&) = delete;                      \
+    X& operator=(X&&) = delete;
 
 #endif

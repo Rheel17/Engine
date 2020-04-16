@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef SPOTLIGHT_H_
-#define SPOTLIGHT_H_
+#ifndef RHEELENGINE_SPOTLIGHT_H
+#define RHEELENGINE_SPOTLIGHT_H
 #include "../_common.h"
 
 #include "Light.h"
@@ -13,7 +13,6 @@ class RE_API SpotLight : public Light {
 
 public:
 	SpotLight(Color color, vec3 position, vec3 direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
-
 	~SpotLight();
 
 	void SetPosition(const vec3& position);

@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_OBJECT_H
-#define RHEELENGINE_GL_OBJECT_H
+#ifndef RHEELENGINE_OBJECT_H
+#define RHEELENGINE_OBJECT_H
 #include "../../_common.h"
 
 #include "Handle.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 template<typename Generator, typename Deleter>
 class RE_API Object {

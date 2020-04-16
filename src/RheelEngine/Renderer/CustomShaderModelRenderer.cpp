@@ -8,12 +8,12 @@
 
 namespace rheel {
 
-std::unordered_map<std::uintptr_t, GL::Program> CustomShaderModelRenderer::_shader_cache;
+std::unordered_map<std::uintptr_t, gl::Program> CustomShaderModelRenderer::_shader_cache;
 
 CustomShaderModelRenderer::CustomShaderModelRenderer(const Model& model, const Shader& shader) :
-		_vertex_buffer_object(GL::Buffer::Target::ARRAY),
-		_object_data_buffer(GL::Buffer::Target::ARRAY),
-		_shader(std::move(_GetCompiledShader(shader))) {
+		_vertex_buffer_object(gl::Buffer::Target::ARRAY),
+		_object_data_buffer(gl::Buffer::Target::ARRAY),
+		_shader(std::move(GetCompiledShader_(shader))) {
 
 	_vertex_buffer_object.SetData(model.GetVertices());
 	_object_data_buffer.SetData(std::vector<ModelRenderer::ObjectData>());
@@ -40,23 +40,23 @@ void CustomShaderModelRenderer::RemoveObject(ModelRenderer::ObjectDataPtr&& obje
 void CustomShaderModelRenderer::RenderToShadowMap() const {
 	_vao.Bind();
 
-	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
-	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _objects.size());
+	_object_data_buffer.SetData(_objects, gl::Buffer::Usage::STREAM_DRAW);
+	_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, _objects.size());
 }
 
 void CustomShaderModelRenderer::RenderObjects() const {
 	_shader.Use();
 	_vao.Bind();
 
-	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
-	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _objects.size());
+	_object_data_buffer.SetData(_objects, gl::Buffer::Usage::STREAM_DRAW);
+	_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, _objects.size());
 }
 
-GL::Program& CustomShaderModelRenderer::GetShaderProgram() {
+gl::Program& CustomShaderModelRenderer::GetShaderProgram() {
 	return _shader;
 }
 
-GL::Program& CustomShaderModelRenderer::_GetCompiledShader(const Shader& shader) {
+gl::Program& CustomShaderModelRenderer::GetCompiledShader_(const Shader& shader) {
 	auto address = shader.GetAddress();
 	auto iter = _shader_cache.find(address);
 
@@ -66,15 +66,26 @@ GL::Program& CustomShaderModelRenderer::_GetCompiledShader(const Shader& shader)
 		shaderSource += "#line 1\n";
 		shaderSource += shader.GetSource();
 
-		GL::Program shaderProgram;
-		shaderProgram.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
-		shaderProgram.AttachShader(GL::Shader::ShaderType::FRAGMENT, shaderSource);
+		gl::Program shaderProgram;
+		shaderProgram.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
+		shaderProgram.AttachShader(gl::Shader::ShaderType::FRAGMENT, shaderSource);
 		shaderProgram.Link();
 
-		if (shaderProgram.HasUniform("_shadowMap0")) shaderProgram["_shadowMap0"] = 3;
-		if (shaderProgram.HasUniform("_shadowMap1")) shaderProgram["_shadowMap1"] = 4;
-		if (shaderProgram.HasUniform("_shadowMap2")) shaderProgram["_shadowMap2"] = 5;
-		if (shaderProgram.HasUniform("_shadowMap3")) shaderProgram["_shadowMap3"] = 6;
+		if (shaderProgram.HasUniform("_shadowMap0")) {
+			shaderProgram["_shadowMap0"] = 3;
+		}
+
+		if (shaderProgram.HasUniform("_shadowMap1")) {
+			shaderProgram["_shadowMap1"] = 4;
+		}
+
+		if (shaderProgram.HasUniform("_shadowMap2")) {
+			shaderProgram["_shadowMap2"] = 5;
+		}
+
+		if (shaderProgram.HasUniform("_shadowMap3")) {
+			shaderProgram["_shadowMap3"] = 6;
+		}
 
 		iter = _shader_cache.emplace(shader.GetAddress(), std::move(shaderProgram)).first;
 	}

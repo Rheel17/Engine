@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef COMPONENT_H_
-#define COMPONENT_H_
+#ifndef RHEELENGINE_COMPONENT_H
+#define RHEELENGINE_COMPONENT_H
 #include "_common.h"
 
 #include "Scene.h"
@@ -28,23 +28,23 @@ public:
 	void ResetDeltas();
 
 private:
-	ComponentInputProxy(ComponentBase *component);
+	ComponentInputProxy(ComponentBase* component);
 
-	void _OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void _OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void _OnCharacterInput(Input::Unicode character);
-	void _OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods);
-	void _OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods);
-	void _OnMouseMove(const vec2& position);
-	void _OnMouseJump(const vec2& position);
-	void _OnMouseDrag(const vec2& origin, const vec2& position);
-	void _OnMouseScroll(const vec2& scrollComponents);
+	void OnKeyPress_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void OnKeyRelease_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void OnCharacterInput_(Input::Unicode character);
+	void OnMouseButtonPress_(Input::MouseButton button, Input::Modifiers mods);
+	void OnMouseButtonRelease_(Input::MouseButton button, Input::Modifiers mods);
+	void OnMouseMove_(const vec2& position);
+	void OnMouseJump_(const vec2& position);
+	void OnMouseDrag_(const vec2& origin, const vec2& position);
+	void OnMouseScroll_(const vec2& scrollComponents);
 
-	void _Register();
-	void _Unregister();
+	void Register_();
+	void Unregister_();
 
-	ComponentBase *_component;
-	SceneElement *_source;
+	ComponentBase* _component;
+	SceneElement* _source;
 
 	std::unordered_set<Input::Key> _pressed_keys;
 	std::unordered_set<Input::Scancode> _pressed_scancodes;
@@ -64,7 +64,7 @@ class RE_API ComponentBase : public TransformOwner {
 	RE_NO_COPY(ComponentBase);
 
 	template<typename _Transform>
-	friend class _Component;
+	friend class TransformedComponent;
 	friend class Entity;
 
 public:
@@ -104,12 +104,12 @@ public:
 	/**
 	 * Returns the parent entity of this component
 	 */
-	Entity *GetParent();
+	Entity* GetParent();
 
 	/**
 	 * Returns the parent entity of this component
 	 */
-	const Entity *GetParent() const;
+	const Entity* GetParent() const;
 
 	/**
 	 * Sets the receive input flag for this component. When this flag is set to
@@ -216,7 +216,7 @@ protected:
 	const vec2& GetMouseScroll() const;
 
 private:
-	Entity *_entity = nullptr;
+	Entity* _entity = nullptr;
 	bool _receive_input = false;
 	std::unique_ptr<ComponentInputProxy> _input_proxy;
 
@@ -224,7 +224,7 @@ private:
 	float _dt = 1.0f / 60.0f;
 
 private:
-	static const vec2 ZERO_VEC2;
+	static const vec2 _zero_vec_2;
 
 };
 
@@ -232,12 +232,12 @@ private:
  * General base class for components. Most commonly, you want to use Component
  * or RigidComponent as actual base classes for custom components.
  */
-template<typename _Transform>
-class RE_API _Component : public ComponentBase {
-	static_assert(std::is_base_of_v<RigidTransform, _Transform>, "Component transform must extend RigidTransform");
+template<typename T>
+class RE_API TransformedComponent : public ComponentBase {
+	static_assert(std::is_base_of_v<RigidTransform, T>, "Component transform must extend RigidTransform");
 
 public:
-	virtual ~_Component() = default;
+	virtual ~TransformedComponent() = default;
 
 	mat4 CalculateAbsoluteTransformationMatrix() const {
 		mat4 parentTransform = GetParent()->CalculateAbsoluteTransformationMatrix();
@@ -249,12 +249,12 @@ public:
 		return Transform(CalculateAbsoluteTransformationMatrix());
 	}
 
-	_Transform transform = _Transform(this);
+	T transform = T(this);
 
 };
 
-using Component = _Component<Transform>;
-using RigidComponent = _Component<RigidTransform>;
+using Component = TransformedComponent<Transform>;
+using RigidComponent = TransformedComponent<RigidTransform>;
 
 }
 

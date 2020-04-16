@@ -3,7 +3,7 @@
  */
 #include "Shader.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 Shader::Shader(ShaderType type, const std::string& source) :
 		_type(type) {
@@ -11,7 +11,7 @@ Shader::Shader(ShaderType type, const std::string& source) :
 	_handle = glCreateShader(GLenum(type));
 
 	// add the shader source and compile
-	const GLchar *str = source.c_str();
+	const GLchar* str = source.c_str();
 	const GLint len = source.size();
 
 	glShaderSource(_handle, 1, &str, &len);
@@ -41,7 +41,8 @@ Shader::~Shader() {
 }
 
 Shader::Shader(Shader&& s) noexcept :
-		_type(s._type), _handle(s._handle) {
+		_type(s._type),
+		_handle(s._handle) {
 
 	s._handle = 0;
 }
@@ -69,6 +70,5 @@ GLuint Shader::GetHandle() const {
 Shader::ShaderType Shader::GetType() const {
 	return _type;
 }
-
 
 }

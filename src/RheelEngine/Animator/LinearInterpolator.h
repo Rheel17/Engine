@@ -14,7 +14,7 @@ class RE_API LinearInterpolator : public TransitionInterpolator<T> {
 
 public:
 	LinearInterpolator() :
-			TransitionInterpolator<T>(Transition::linear) {}
+			TransitionInterpolator<T>(Transition::LINEAR) {}
 
 };
 

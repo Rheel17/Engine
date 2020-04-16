@@ -10,11 +10,12 @@
 namespace rheel {
 
 ModelRenderComponent::ModelRenderComponent(Model model, Material material) :
-		_model(std::move(model)), _material(material) {}
+		_model(std::move(model)),
+		_material(material) {}
 
 void ModelRenderComponent::SetMaterial(Material material) {
-	bool wasTextured = _material.Type() == Material::Textured;
-	bool isTextured = material.Type() == Material::Textured;
+	bool wasTextured = _material.Type() == Material::TEXTURED;
+	bool isTextured = material.Type() == Material::TEXTURED;
 
 	_material = std::move(material);
 
@@ -35,18 +36,19 @@ const Material& ModelRenderComponent::GetMaterial() const {
 
 void ModelRenderComponent::Activate() {
 	switch (_material.Type()) {
-		case Material::Colored:
-			_object_data = Engine::GetSceneRenderManager(GetParent()->scene).GetModelRenderer(_model).AddObject();
+		case Material::COLORED: _object_data = Engine::GetSceneRenderManager(GetParent()->scene).GetModelRenderer(_model).AddObject();
 			_object_data.SetMaterialVector(_material.MaterialVector());
 			_object_data.SetMaterialColor(_material.GetColor());
 			break;
-		case Material::Textured:
-			_object_data = Engine::GetSceneRenderManager(GetParent()->scene).GetModelRenderer(_model).AddTexturedObject(_material);
+		case Material::TEXTURED:
+			_object_data = Engine::GetSceneRenderManager(GetParent()->scene).GetModelRenderer(_model)
+					.AddTexturedObject(_material);
 			_object_data.SetMaterialVector(_material.MaterialVector());
 			_object_data.SetMaterialColor(_material.GetColor());
 			break;
-		case Material::CustomShader:
-			_object_data = Engine::GetSceneRenderManager(GetParent()->scene).GetModelRendererForCustomShader(_model, _material.GetCustomShader()).AddObject();
+		case Material::CUSTOM_SHADER:
+			_object_data = Engine::GetSceneRenderManager(GetParent()->scene)
+					.GetModelRendererForCustomShader(_model, _material.GetCustomShader()).AddObject();
 			break;
 	}
 }
@@ -57,14 +59,20 @@ void ModelRenderComponent::Render() {
 
 void ModelRenderComponent::Deactivate() {
 	switch (_material.Type()) {
-		case Material::Colored:
-			Engine::GetSceneRenderManager(GetParent()->scene).GetModelRenderer(_model).RemoveObject(std::move(_object_data));
+		case Material::COLORED:
+			Engine::GetSceneRenderManager(GetParent()->scene)
+					.GetModelRenderer(_model)
+					.RemoveObject(std::move(_object_data));
 			break;
-		case Material::Textured:
-			Engine::GetSceneRenderManager(GetParent()->scene).GetModelRenderer(_model).RemoveTexturedObject(_material, std::move(_object_data));
+		case Material::TEXTURED:
+			Engine::GetSceneRenderManager(GetParent()->scene)
+					.GetModelRenderer(_model)
+					.RemoveTexturedObject(_material, std::move(_object_data));
 			break;
-		case Material::CustomShader:
-			Engine::GetSceneRenderManager(GetParent()->scene).GetModelRendererForCustomShader(_model, _material.GetCustomShader()).RemoveObject(std::move(_object_data));
+		case Material::CUSTOM_SHADER:
+			Engine::GetSceneRenderManager(GetParent()->scene)
+					.GetModelRendererForCustomShader(_model, _material.GetCustomShader())
+					.RemoveObject(std::move(_object_data));
 			break;
 	}
 }

@@ -8,7 +8,7 @@
 #include "Texture.h"
 #include "Enums.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 class RE_API Texture2DMultisample : public Texture {
 

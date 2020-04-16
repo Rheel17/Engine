@@ -18,24 +18,24 @@
 
 namespace rheel {
 
-SkyboxRenderer::SkyboxRenderer(SceneRenderManager *manager) :
+SkyboxRenderer::SkyboxRenderer(SceneRenderManager* manager) :
 		_manager(manager),
-		_vertex_buffer_object(GL::Buffer::Target::ARRAY),
-		_texture_parts({{ Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null() }}) {
+		_vertex_buffer_object(gl::Buffer::Target::ARRAY),
+		_texture_parts({ { Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null(), Image::Null() } }) {
 
 	// initialize the shader
-	_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_skybox_vert_glsl"));
-	_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_skybox_frag_glsl"));
+	_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_skybox_vert_glsl"));
+	_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_skybox_frag_glsl"));
 	_shader.Link();
 	_shader["textures"] = std::vector<GLint>{ 0, 1, 2, 3, 4, 5 };
 
 	// initialize the skybox model
-	_vertex_buffer_object.SetData(_CreateSkyboxVertices());
+	_vertex_buffer_object.SetData(CreateSkyboxVertices_());
 	_vao.SetVertexAttributes<vec3, vec3>(_vertex_buffer_object);
-	_vao.SetVertexIndices(_CreateSkyboxIndices());
+	_vao.SetVertexIndices(CreateSkyboxIndices_());
 }
 
-void SkyboxRenderer::Render(Camera *camera, unsigned width, unsigned height) const {
+void SkyboxRenderer::Render(Camera* camera, unsigned width, unsigned height) const {
 	auto skybox = _manager->GetScene()->GetSkybox();
 	if (skybox == nullptr) {
 		return;
@@ -46,7 +46,7 @@ void SkyboxRenderer::Render(Camera *camera, unsigned width, unsigned height) con
 
 	if (skyboxAddress != _current_image) {
 		if (skyboxAddress != 0) {
-			_LoadSkybox();
+			LoadSkybox_();
 		}
 
 		_current_image = skyboxAddress;
@@ -65,35 +65,53 @@ void SkyboxRenderer::Render(Camera *camera, unsigned width, unsigned height) con
 			ImageTexture::Get(_texture_parts[i]).Bind(i);
 		}
 
-		_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, 36);
+		_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, 36);
 
 		for (int i = 0; i < 6; i++) {
-			GL::State::ClearTexture(i, GL::Texture::Target::TEXTURE_2D);
+			gl::State::ClearTexture(i, gl::Texture::Target::TEXTURE_2D);
 		}
 	}
 }
 
-void SkyboxRenderer::_LoadSkybox() const {
+void SkyboxRenderer::LoadSkybox_() const {
 	Image skybox = _manager->GetScene()->GetSkybox()->GetImage();
 
 	for (int i = 0; i < 6; i++) {
-		_LoadSkybox(skybox, i);
+		LoadSkybox_(skybox, i);
 	}
 }
 
-void SkyboxRenderer::_LoadSkybox(const Image& skybox, int part) const {
+void SkyboxRenderer::LoadSkybox_(const Image& skybox, int part) const {
 	// get the coordinates of the texture in the skybox
 	unsigned size = skybox.GetWidth() / 4;
 	unsigned x = 0;
 	unsigned y = 0;
 
 	switch (part) {
-		case PART_NORTH: x =     size; y =     size; break;
-		case PART_EAST:  x = 2 * size; y =     size; break;
-		case PART_SOUTH: x = 3 * size; y =     size; break;
-		case PART_WEST:  x =        0; y =     size; break;
-		case PART_UP:    x =     size; y =        0; break;
-		case PART_DOWN:  x =     size; y = 2 * size; break;
+		case PART_NORTH:
+			x = size;
+			y = size;
+			break;
+		case PART_EAST:
+			x = 2 * size;
+			y = size;
+			break;
+		case PART_SOUTH:
+			x = 3 * size;
+			y = size;
+			break;
+		case PART_WEST:
+			x = 0;
+			y = size;
+			break;
+		case PART_UP:
+			x = size;
+			y = 0;
+			break;
+		case PART_DOWN:
+			x = size;
+			y = 2 * size;
+			break;
 		default:
 			abort();
 	}
@@ -102,7 +120,7 @@ void SkyboxRenderer::_LoadSkybox(const Image& skybox, int part) const {
 	_texture_parts[part] = skybox.SubImage(x, y, size, size);
 }
 
-std::vector<SkyboxRenderer::Vertex> SkyboxRenderer::_CreateSkyboxVertices() {
+std::vector<SkyboxRenderer::vertex> SkyboxRenderer::CreateSkyboxVertices_() {
 	vec3 position_0 = { -1.0f, -1.0f, -1.0f };
 	vec3 position_1 = { -1.0f, -1.0f,  1.0f };
 	vec3 position_2 = { -1.0f,  1.0f, -1.0f };
@@ -145,10 +163,10 @@ std::vector<SkyboxRenderer::Vertex> SkyboxRenderer::_CreateSkyboxVertices() {
 	};
 }
 
-std::vector<unsigned> SkyboxRenderer::_CreateSkyboxIndices() {
-	return std::vector<GLuint> {
-			2,  3,  1,  2,  1,  0,
-			7,  6,  4,  5,  7,  4,
+std::vector<unsigned> SkyboxRenderer::CreateSkyboxIndices_() {
+	return std::vector<GLuint>{
+			 2,  3,  1,  2,  1,  0,
+			 7,  6,  4,  5,  7,  4,
 			11, 10,  9, 11,  9,  8,
 			12, 14, 15, 15, 13, 12,
 			18, 17, 19, 19, 17, 16,

@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef SOUND_H_
-#define SOUND_H_
+#ifndef RHEELENGINE_SOUND_H
+#define RHEELENGINE_SOUND_H
 #include "../_common.h"
 
 #include <al/al.h>
@@ -16,18 +16,18 @@ enum class InternalSoundFormat {
 	STEREO8 = AL_FORMAT_STEREO8, STEREO16 = AL_FORMAT_STEREO16
 };
 
-struct RE_API _SoundData {
+struct RE_API sound_data {
 	std::vector<char> data;
 	InternalSoundFormat format;
 	int sample_frequency;
 };
 
-class Sound : public Asset<_SoundData> {
+class Sound : public Asset<sound_data> {
 
 public:
 	Sound(std::vector<char> data, InternalSoundFormat format, int sampleFrequency);
 
-	const char *GetRawSampleData() const;
+	const char* GetRawSampleData() const;
 
 	unsigned GetRawSampleSize() const;
 

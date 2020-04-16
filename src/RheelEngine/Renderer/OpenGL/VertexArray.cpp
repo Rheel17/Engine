@@ -6,28 +6,35 @@
 #include "State.h"
 #include "Capabilities.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 VertexArray::VertexAttribute::VertexAttribute(GLuint index, GLint size, Type type, GLsizei stride, GLsizeiptr offset, bool normalize) :
-		_index(index), _size(size), _type(type), _stride(stride), _offset(offset), _normalize(normalize) {
+		_index(index),
+		_size(size),
+		_type(type),
+		_stride(stride),
+		_offset(offset),
+		_normalize(normalize) {
 
 	if ((size < 1 || size > 4) && size != GL_RGBA) {
 		throw std::invalid_argument("size argument in VertexAttribute must be 1, 2, 3, 4, or GL_RGBA.");
 	}
 
 	if (type != Type::BYTE && type != Type::UNSIGNED_BYTE && type != Type::SHORT && type != Type::UNSIGNED_SHORT &&
-		type != Type::INT && type != Type::UNSIGNED_INT && type != Type::HALF_FLOAT && type != Type::FLOAT &&
-		type != Type::DOUBLE && type != Type::FIXED && type != Type::INT_2_10_10_10_REV &&
-		type != Type::UNSIGNED_INT_2_10_10_10_REV && type != Type::UNSIGNED_INT_10F_11F_11F_REV) {
+			type != Type::INT && type != Type::UNSIGNED_INT && type != Type::HALF_FLOAT && type != Type::FLOAT &&
+			type != Type::DOUBLE && type != Type::FIXED && type != Type::INT_2_10_10_10_REV &&
+			type != Type::UNSIGNED_INT_2_10_10_10_REV && type != Type::UNSIGNED_INT_10F_11F_11F_REV) {
 		throw std::invalid_argument("type argument in VertexAttribute is invalid.");
 	}
 
 	if (size == GL_RGBA && type != Type::UNSIGNED_BYTE && type != Type::INT_2_10_10_10_REV && type != Type::UNSIGNED_INT_2_10_10_10_REV) {
-		throw std::invalid_argument("size GL_RGBA must be paired with Type::UNSIGNED_BYTE, Type::INT_2_10_10_10_REV, or Type::UNSIGNED_INT_2_10_10_10_REV.");
+		throw std::invalid_argument(
+				"size GL_RGBA must be paired with Type::UNSIGNED_BYTE, Type::INT_2_10_10_10_REV, or Type::UNSIGNED_INT_2_10_10_10_REV.");
 	}
 
 	if ((type == Type::INT_2_10_10_10_REV || type == Type::UNSIGNED_INT_2_10_10_10_REV) && size != 4 && size != GL_RGBA) {
-		throw std::invalid_argument("type Type::INT_2_10_10_10_REV or Type::UNSIGNED_INT_2_10_10_10_REV must be paired with size 4 or GL_RGBA.");
+		throw std::invalid_argument(
+				"type Type::INT_2_10_10_10_REV or Type::UNSIGNED_INT_2_10_10_10_REV must be paired with size 4 or GL_RGBA.");
 	}
 
 	if (type == Type::UNSIGNED_INT_10F_11F_11F_REV && size != 3) {
@@ -40,27 +47,32 @@ VertexArray::VertexAttribute::VertexAttribute(GLuint index, GLint size, Type typ
 }
 
 VertexArray::VertexAttribute::VertexAttribute() :
-		_index(0), _size(0), _type(), _stride(0), _offset(0), _normalize(false) {}
+		_index(0),
+		_size(0),
+		_type(),
+		_stride(0),
+		_offset(0),
+		_normalize(false) {}
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-branch-clone"
-GLsizei VertexArray::VertexAttribute::_ByteSize() const {
+GLsizei VertexArray::VertexAttribute::ByteSize_() const {
 	switch (_type) {
-		case Type::BYTE: 							return _size;
-		case Type::UNSIGNED_BYTE: 					return _size == GL_RGBA ? 4 : _size;
-		case Type::SHORT: 							return _size * 2;
-		case Type::UNSIGNED_SHORT: 					return _size * 2;
-		case Type::INT: 							return _size * 4;
-		case Type::UNSIGNED_INT: 					return _size * 4;
-		case Type::HALF_FLOAT: 						return _size * 2;
-		case Type::FLOAT: 							return _size * 4;
-		case Type::DOUBLE: 							return _size * 8;
-		case Type::FIXED: 							return _size * 4;
-		case Type::INT_2_10_10_10_REV: 				return 4;
-		case Type::UNSIGNED_INT_2_10_10_10_REV:		return 4;
-		case Type::UNSIGNED_INT_10F_11F_11F_REV:	return 4;
+		case Type::BYTE:                         return _size;
+		case Type::UNSIGNED_BYTE:                return _size == GL_RGBA ? 4 : _size;
+		case Type::SHORT:                        return _size * 2;
+		case Type::UNSIGNED_SHORT:               return _size * 2;
+		case Type::INT:                          return _size * 4;
+		case Type::UNSIGNED_INT:                 return _size * 4;
+		case Type::HALF_FLOAT:                   return _size * 2;
+		case Type::FLOAT:                        return _size * 4;
+		case Type::DOUBLE:                       return _size * 8;
+		case Type::FIXED:                        return _size * 4;
+		case Type::INT_2_10_10_10_REV:           return 4;
+		case Type::UNSIGNED_INT_2_10_10_10_REV:  return 4;
+		case Type::UNSIGNED_INT_10F_11F_11F_REV: return 4;
 		default:
-			assert(false);
+			abort();
 			return 0;
 	}
 }
@@ -90,7 +102,7 @@ void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<Ve
 				GLenum(attribute._type),
 				attribute._normalize,
 				attribute._stride,
-				(GLvoid *) attribute._offset);
+				(GLvoid*) attribute._offset);
 
 		if (instanced) {
 			glVertexAttribDivisor(attribute._index, 1);
@@ -99,15 +111,15 @@ void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<Ve
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLubyte>& indices) {
-	_SetIndices(indices, GL_UNSIGNED_BYTE);
+	SetIndices_(indices, GL_UNSIGNED_BYTE);
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLushort>& indices) {
-	_SetIndices(indices, GL_UNSIGNED_SHORT);
+	SetIndices_(indices, GL_UNSIGNED_SHORT);
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLuint>& indices) {
-	_SetIndices(indices, GL_UNSIGNED_INT);
+	SetIndices_(indices, GL_UNSIGNED_INT);
 }
 
 void VertexArray::DrawArrays(Mode mode, int first, unsigned count, unsigned int instances) const {
@@ -129,9 +141,9 @@ void VertexArray::DrawElements(Mode mode, unsigned count, unsigned offset, unsig
 	Bind();
 
 	if (instances != 1) {
-		glDrawElementsInstanced(GLenum(mode), count, _index_type, (const void *)(offset), instances);
+		glDrawElementsInstanced(GLenum(mode), count, _index_type, (const void*) (offset), instances);
 	} else {
-		glDrawElements(GLenum(mode), count, _index_type, (const void *)(offset));
+		glDrawElements(GLenum(mode), count, _index_type, (const void*) (offset));
 	}
 }
 
@@ -142,14 +154,15 @@ void VertexArray::DrawElements(VertexArray::Mode mode, unsigned instances) const
 	DrawElements(mode, _index_count, 0, instances);
 }
 
-void VertexArray::_SetVertexAttributes(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced) {
+void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride,
+		bool instanced) {
 	std::vector<VertexAttribute> attributes;
 
 	GLsizeiptr offset = 0;
 
 	for (auto t : attributeTypes) {
 		VertexAttribute attribute;
-		GLuint index = _FirstUnusedIndex();
+		GLuint index = FirstUnusedIndex_();
 
 		if (t == typeid(float) || t == typeid(vec1)) {
 			attribute = VertexAttribute(index, 1, Type::FLOAT, 0, offset);
@@ -160,19 +173,19 @@ void VertexArray::_SetVertexAttributes(const Buffer& buffer, const std::vector<s
 		} else if (t == typeid(vec4) || t == typeid(quat)) {
 			attribute = VertexAttribute(index, 4, Type::FLOAT, 0, offset);
 		} else if (t == typeid(mat4)) {
-			index = _FirstUnusedIndex(4);
+			index = FirstUnusedIndex_(4);
 
 			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset);
 			_unused_attribute_indices.erase(attribute._index);
 
-			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset + attribute._ByteSize());
+			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset + attribute.ByteSize_());
 			_unused_attribute_indices.erase(attribute._index);
 
-			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset + attribute._ByteSize() * 2);
+			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset + attribute.ByteSize_() * 2);
 			_unused_attribute_indices.erase(attribute._index);
 
-			attribute = VertexAttribute(index, 4, Type::FLOAT, 0, offset + attribute._ByteSize() * 3);
-			offset += attribute._ByteSize() * 3;
+			attribute = VertexAttribute(index, 4, Type::FLOAT, 0, offset + attribute.ByteSize_() * 3);
+			offset += attribute.ByteSize_() * 3;
 		} else if (t == typeid(int) || t == typeid(ivec1)) {
 			attribute = VertexAttribute(index, 1, Type::INT, 0, offset);
 		} else if (t == typeid(ivec2)) {
@@ -186,7 +199,7 @@ void VertexArray::_SetVertexAttributes(const Buffer& buffer, const std::vector<s
 		}
 
 		attributes.push_back(attribute);
-		offset += attribute._ByteSize();
+		offset += attribute.ByteSize_();
 		_unused_attribute_indices.erase(attribute._index);
 	}
 
@@ -199,7 +212,7 @@ void VertexArray::_SetVertexAttributes(const Buffer& buffer, const std::vector<s
 	SetVertexAttributes(buffer, attributes, instanced);
 }
 
-GLuint VertexArray::_FirstUnusedIndex(GLuint consecutive) {
+GLuint VertexArray::FirstUnusedIndex_(GLuint consecutive) {
 	if (!_has_initialized_unused_attribute_indices) {
 		int maxVertexAttribs = Capabilities::GetMaxVertexAttribs();
 

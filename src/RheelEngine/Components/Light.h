@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef LIGHT_H_
-#define LIGHT_H_
+#ifndef RHEELENGINE_LIGHT_H
+#define RHEELENGINE_LIGHT_H
 #include "../_common.h"
 
 #include "../Color.h"
@@ -23,7 +23,6 @@ public:
 	void SetShadowDistance(float shadowDistance);
 	float ShadowDistance() const;
 	bool CastsShadows() const;
-
 
 protected:
 	Light(const Color& color);

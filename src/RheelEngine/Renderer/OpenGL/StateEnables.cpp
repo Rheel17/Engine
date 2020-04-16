@@ -3,14 +3,14 @@
  */
 #include "StateEnables.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 std::unordered_map<Capability, bool> StateEnables::_defaults;
 
 StateEnables::StateEnables() :
 		_parent(nullptr) {}
 
-StateEnables::StateEnables(const StateEnables *parent) :
+StateEnables::StateEnables(const StateEnables* parent) :
 		_parent(parent) {}
 
 void StateEnables::Enable(Capability cap) {

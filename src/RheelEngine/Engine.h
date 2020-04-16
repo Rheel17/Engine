@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef ENGINE_H_
-#define ENGINE_H_
+#ifndef RHEELENGINE_ENGINE_H
+#define RHEELENGINE_ENGINE_H
 #include "_common.h"
 
 #include "Game.h"
@@ -25,17 +25,17 @@ class RE_API Engine {
 
 		// display
 		DisplayConfiguration display_configuration;
-		Window *window = nullptr;
-		UI *ui = nullptr;
+		Window* window = nullptr;
+		UI* ui = nullptr;
 
 		// renderer
-		std::unordered_map<Scene *, SceneRenderManager> render_map_scene;
+		std::unordered_map<Scene*, SceneRenderManager> render_map_scene;
 
 		// audio
 		std::unique_ptr<AudioManager> audio_manager;
 
 		// game state
-		Scene *active_scene = nullptr;
+		Scene* active_scene = nullptr;
 
 		~EngineInstance();
 	};
@@ -66,7 +66,7 @@ public:
 	/**
 	 * Returns the global asset loader
 	 */
-	 static AssetLoader& GetAssetLoader();
+	static AssetLoader& GetAssetLoader();
 
 	/**
 	 * Returns the audio manager in use.
@@ -79,31 +79,31 @@ public:
 	 * scene will be deleted. Use SetActiveScreen(nullptr) to remove the current
 	 * scene.
 	 */
-	static void SetActiveScene(Scene *scene);
+	static void SetActiveScene(Scene* scene);
 
 	/**
 	 * Returns the current active scene.
 	 */
-	static Scene *GetActiveScene();
+	static Scene* GetActiveScene();
 
 	/**
 	 * Returns a SceneRenderManager instance to render the specified scene.
 	 * Multiple calls with the same scene will result in the same render
 	 * manager.
 	 */
-	static SceneRenderManager& GetSceneRenderManager(Scene *scene);
+	static SceneRenderManager& GetSceneRenderManager(Scene* scene);
 
 private:
 	// Engine and Game life-cycle functions
 
-	static void _Initialize();
-	static void _Run(Game *game);
-	static void _Terminate();
+	static void Initialize_();
+	static void Run_(Game* game);
+	static void Terminate_();
 
 	static EngineInstance _instance;
 
 	template<typename T>
-	friend void __Entry__();
+	friend void entry();
 
 };
 

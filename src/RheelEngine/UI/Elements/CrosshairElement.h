@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef CROSSHAIRELEMENT_H_
-#define CROSSHAIRELEMENT_H_
+#ifndef RHEELENGINE_CROSSHAIRELEMENT_H
+#define RHEELENGINE_CROSSHAIRELEMENT_H
 #include "../../_common.h"
 
 #include "../Element.h"

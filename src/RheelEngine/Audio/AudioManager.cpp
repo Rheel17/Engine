@@ -8,7 +8,7 @@
 namespace rheel {
 
 AudioManager::AudioManager() {
-	const ALCchar *defaultDevice = alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER);
+	const ALCchar* defaultDevice = alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER);
 	Log::Info() << "Audio device: " << defaultDevice << std::endl;
 
 	// TODO: handle errors
@@ -36,8 +36,8 @@ AudioManager::~AudioManager() {
 	alcCloseDevice(_device);
 }
 
-AudioSource *AudioManager::Play(const Sound& sound) {
-	const AudioClip& clip = _GetAudioClip(sound);
+AudioSource* AudioManager::Play(const Sound& sound) {
+	const AudioClip& clip = GetAudioClip_(sound);
 
 	auto src = new AudioSource(this, clip);
 	auto source = std::unique_ptr<AudioSource>(src);
@@ -48,8 +48,8 @@ AudioSource *AudioManager::Play(const Sound& sound) {
 	return src;
 }
 
-AudioSource *AudioManager::Loop(const Sound& sound) {
-	const AudioClip& clip = _GetAudioClip(sound);
+AudioSource* AudioManager::Loop(const Sound& sound) {
+	const AudioClip& clip = GetAudioClip_(sound);
 
 	auto src = new AudioSource(this, clip);
 	auto source = std::unique_ptr<AudioSource>(src);
@@ -60,19 +60,19 @@ AudioSource *AudioManager::Loop(const Sound& sound) {
 	return src;
 }
 
-void AudioManager::Stop(AudioSource *source) {
-	source->_Stop();
+void AudioManager::Stop(AudioSource* source) {
+	source->Stop_();
 
 	auto iter = std::find_if(_sources.begin(), _sources.end(),
 			[source](const auto& ptr) { return ptr.get() == source; });
 	_sources.erase(iter);
 }
 
-ALListener& AudioManager::GetListener() {
+al::Listener& AudioManager::GetListener() {
 	return _listener;
 }
 
-const AudioClip& AudioManager::_GetAudioClip(const Sound& sound) {
+const AudioClip& AudioManager::GetAudioClip_(const Sound& sound) {
 	auto iter = _clip_cache.find(sound.GetAddress());
 
 	if (iter == _clip_cache.end()) {
@@ -82,9 +82,9 @@ const AudioClip& AudioManager::_GetAudioClip(const Sound& sound) {
 	return iter->second;
 }
 
-void AudioManager::_StopAll() {
+void AudioManager::StopAll_() {
 	for (const auto& source : _sources) {
-		source->_Stop();
+		source->Stop_();
 	}
 
 	_sources.clear();

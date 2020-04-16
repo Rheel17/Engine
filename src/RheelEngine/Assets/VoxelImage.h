@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef VOXELIMAGE_H_
-#define VOXELIMAGE_H_
+#ifndef RHEELENGINE_VOXELIMAGE_H
+#define RHEELENGINE_VOXELIMAGE_H
 #include "../_common.h"
 
 #include "Asset.h"
@@ -10,21 +10,20 @@
 
 namespace rheel {
 
-struct RE_API _VoxelImageData {
+struct RE_API voxel_image_data {
 	unsigned width;
 	unsigned height;
 	unsigned depth;
 	std::vector<Color> voxels;
 };
 
-class RE_API VoxelImage : public Asset<_VoxelImageData> {
+class RE_API VoxelImage : public Asset<voxel_image_data> {
 
 public:
 	/**
 	 * Creates an empty 3d image with the given dimensions
 	 */
 	VoxelImage(unsigned width, unsigned height, unsigned depth);
-
 	VoxelImage(unsigned width, unsigned height, unsigned depth, std::vector<Color> voxels);
 
 	unsigned GetWidth() const;

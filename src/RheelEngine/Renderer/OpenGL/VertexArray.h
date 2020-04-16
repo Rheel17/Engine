@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_VERTEXARRAY_H
-#define RHEELENGINE_GL_VERTEXARRAY_H
+#ifndef RHEELENGINE_VERTEXARRAY_H
+#define RHEELENGINE_VERTEXARRAY_H
 #include "../../_common.h"
 
 #include <typeindex>
@@ -11,15 +11,15 @@
 #include "Buffer.h"
 #include "Enums.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
-OPENGL_GEN_FUNCTION(glGenVertexArrays, _GenVertexArrays);
-OPENGL_DELETE_FUNCTION(glDeleteVertexArrays, _DeleteVertexArrays);
+OPENGL_GEN_FUNCTION(glGenVertexArrays, gen_vertex_arrays_);
+OPENGL_DELETE_FUNCTION(glDeleteVertexArrays, delete_vertex_arrays_);
 
-class RE_API VertexArray : public Object<_GenVertexArrays, _DeleteVertexArrays> {
+class RE_API VertexArray : public Object<gen_vertex_arrays_, delete_vertex_arrays_> {
 
 private:
-	class _ElementArrayBuffer : public Object<_GenBuffers, _DeleteVertexArrays> {};
+	class ElementArrayBuffer : public Object<gen_buffers_, delete_buffers_> {};
 
 public:
 	class VertexAttribute {
@@ -30,12 +30,14 @@ public:
 		 * Specifies a vertex attribute in a Vertex Array Object.
 		 *
 		 * index:     the shader index of the attribute
-		 * size:      the number of components per attribute. Must be 1, 2, 3, 4, or GL_RGBA.
+		 * size:      the number of components per attribute. Must be 1, 2, 3,
+		 *            4, or GL_RGBA.
 		 * type:      the data type of each component. See
-		 *            https://www.khronos.org/registry/_OpenGL-Refpages/gl4/html/glVertexAttribPointer.xhtml
+		 *            https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glVertexAttribPointer.xhtml
 		 *            for a list of accepted types.
 		 * offset:    the offset in the buffer.
-		 * normalize: when true, _OpenGL will normalize the data before they are accessed. (default: false)
+		 * normalize: when true, OpenGL will normalize the data before they are
+		 *            accessed. (default: false)
 		 */
 		VertexAttribute(GLuint index, GLint size, Type type, GLsizei stride, GLsizeiptr offset, bool normalize = false);
 
@@ -48,7 +50,7 @@ public:
 		bool _normalize;
 
 		VertexAttribute();
-		GLsizei _ByteSize() const;
+		GLsizei ByteSize_() const;
 
 	};
 
@@ -71,15 +73,16 @@ public:
 	void Bind() const;
 
 	/**
-	 * Set the vertex attributes of this VAO. The specified buffer must have
-	 * an ARRAY target. Use the attributes vector the specify actual vertex
+	 * Set the vertex attributes of this VAO. The specified buffer must have an
+	 * ARRAY target. Use the attributes vector the specify actual vertex
 	 * attributes.
 	 */
-	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, bool instanced = false);
+	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes,
+			bool instanced = false);
 
 	/**
-	 * Set the vertex attributes of this VAO. The specified buffer must have
-	 * an ARRAY target. Use template arguments to automatically create
+	 * Set the vertex attributes of this VAO. The specified buffer must have an
+	 * ARRAY target. Use template arguments to automatically create
 	 * VertexAttribute values.
 	 *
 	 * Example:
@@ -99,7 +102,7 @@ public:
 	 */
 	template<typename... Types>
 	void SetVertexAttributes(const Buffer& buffer, GLsizei stride = 0, bool instanced = false) {
-		_SetVertexAttributes(buffer, { typeid(Types)... }, stride, instanced);
+		SetVertexAttributes_(buffer, { typeid(Types)... }, stride, instanced);
 	}
 
 	/**
@@ -118,30 +121,30 @@ public:
 	void SetVertexIndices(const std::vector<GLuint>& indices);
 
 	/**
-	 * Draws the contents of the VAO using glDrawArrays or glDrawArraysInstanced,
-	 * depending on the number of indices. Make sure that the VAO is complete, i.e.
-	 * it has vertex data. The index buffer will not be used for this draw call, use
-	 * DrawElements(...) for that.
+	 * Draws the contents of the VAO using glDrawArrays or
+	 * glDrawArraysInstanced, depending on the number of indices. Make sure that
+	 * the VAO is complete, i.e. it has vertex data. The index buffer will not
+	 * be used for this draw call, use DrawElements(...) for that.
 	 */
 	void DrawArrays(Mode mode, int first, unsigned count, unsigned instances = 1) const;
 
 	/**
-	 * Draws the contents of the VAO using glDrawElements or glDrawElementsInstanced,
-	 * depending on the number of indices. Make sure that the VAO is complete, i.e.
-	 * it has vertex data and indices.
+	 * Draws the contents of the VAO using glDrawElements or
+	 * glDrawElementsInstanced, depending on the number of indices. Make sure
+	 * that the VAO is complete, i.e. it has vertex data and indices.
 	 */
 	void DrawElements(Mode mode, unsigned count, unsigned offset, unsigned instances = 1) const;
 
 	/**
-	 * Draws the contents of the VAO using glDrawElements or glDrawElementsInstanced,
-	 * depending on the number of indices. Make sure that the VAO is complete, i.e.
-	 * it has vertex data and indices.
+	 * Draws the contents of the VAO using glDrawElements or
+	 * glDrawElementsInstanced, depending on the number of indices. Make sure
+	 * that the VAO is complete, i.e. it has vertex data and indices.
 	 */
 	void DrawElements(Mode mode, unsigned instances = 1) const;
 
 private:
 	template<typename T>
-	void _SetIndices(const std::vector<T>& indices, GLenum type) {
+	void SetIndices_(const std::vector<T>& indices, GLenum type) {
 		Bind();
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _index_buffer.GetName());
@@ -151,10 +154,10 @@ private:
 		_index_count = indices.size();
 	}
 
-	void _SetVertexAttributes(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced);
-	GLuint _FirstUnusedIndex(GLuint consecutive = 1);
+	void SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced);
+	GLuint FirstUnusedIndex_(GLuint consecutive = 1);
 
-	_ElementArrayBuffer _index_buffer;
+	ElementArrayBuffer _index_buffer;
 	unsigned _index_count;
 	GLenum _index_type;
 

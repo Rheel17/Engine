@@ -8,7 +8,8 @@
 namespace rheel {
 
 Skybox::Skybox(Image image, float scale) :
-		_image(std::move(image)), _scale(scale) {}
+		_image(std::move(image)),
+		_scale(scale) {}
 
 void Skybox::Activate() {
 	if (GetParent()->scene->_skybox != nullptr) {

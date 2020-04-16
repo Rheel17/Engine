@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef RHEELENGINE_RHEELENGINE_H_
-#define RHEELENGINE_RHEELENGINE_H_
+#ifndef RHEELENGINE_RHEELENGINE_H
+#define RHEELENGINE_RHEELENGINE_H
 
 // includes for all required header files
 // TODO: do this automatically?
@@ -50,14 +50,14 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 namespace rheel {
 
 template<typename GameClass>
-void __Entry__() {
+void entry() {
 	static_assert(std::is_default_constructible<GameClass>::value, "Game Class must be default-constructible");
 	static_assert(std::is_base_of<rheel::Game, GameClass>::value, "Game Class must derive from re::Base");
-	Engine::_Initialize();
+	Engine::Initialize_();
 	Game* game = new GameClass;
-	Engine::_Run(game);
+	Engine::Run_(game);
 	delete game;
-	Engine::_Terminate();
+	Engine::Terminate_();
 }
 
 }
@@ -65,7 +65,7 @@ void __Entry__() {
 // macro for entry point
 #define RHEEL_ENGINE_ENTRY(GameClass)       \
 	int main(int argc, char* argv[]) {      \
-		rheel::__Entry__<GameClass>();		\
+		rheel::entry<GameClass>();			\
 	}
 
 #endif

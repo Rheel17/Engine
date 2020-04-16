@@ -12,11 +12,11 @@ class RE_API Transition {
 	RE_NO_MOVE(Transition)
 
 private:
-	typedef float (*_TransitionFunction)(float t);
+	typedef float (* TransitionFunction)(float t);
 
-	explicit Transition(_TransitionFunction function);
+	explicit Transition(TransitionFunction function);
 
-	_TransitionFunction _function;
+	TransitionFunction _function;
 
 public:
 	template<typename V>
@@ -25,11 +25,11 @@ public:
 	}
 
 public:
-	static const Transition linear;
-	static const Transition quadratic_in;
-	static const Transition quadratic_out;
-	static const Transition cubic;
-	static const Transition cosine;
+	static const Transition LINEAR;
+	static const Transition QUADRATIC_IN;
+	static const Transition QUADRATIC_OUT;
+	static const Transition CUBIC;
+	static const Transition COSINE;
 
 };
 

@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef ENTITY_H_
-#define ENTITY_H_
+#ifndef RHEELENGINE_ENTITY_H
+#define RHEELENGINE_ENTITY_H
 #include "_common.h"
 
 #include "RigidTransform.h"
@@ -10,6 +10,7 @@
 namespace rheel {
 
 class ComponentBase;
+
 class Scene;
 
 class RE_API Entity : public TransformOwner {
@@ -25,7 +26,7 @@ public:
 	 * Adds an empty child entity. If this entity already has a direct child
 	 * with the given name, nothing is done, and nullptr is returned.
 	 */
-	Entity *AddChild(std::string name, RigidTransform transform = RigidTransform());
+	Entity* AddChild(std::string name, RigidTransform transform = RigidTransform());
 
 	/**
 	 * Creates a unique child name starting with the given prefix.
@@ -37,7 +38,7 @@ public:
 	 * this entity, but is a descendant, it is removed from its direct parent.
 	 * If the entity is not a descendant of this entity, nothing is done.
 	 */
-	void RemoveChild(Entity *entity);
+	void RemoveChild(Entity* entity);
 
 	/**
 	 * Finds and returns the first found child with the given name. The
@@ -48,12 +49,12 @@ public:
 	 *
 	 * If no entity with the name given can be found, nullptr is returned.
 	 */
-	Entity *FindChild(const std::string& name, bool recursive = true);
+	Entity* FindChild(const std::string& name, bool recursive = true);
 
 	/**
 	 * Returns true of the base entity is in the parent chain of this entity.
 	 */
-	bool IsDescendantOf(Entity *base);
+	bool IsDescendantOf(Entity* base);
 
 	/**
 	 * Adds a component to this entity. The entity will take ownership of the
@@ -64,10 +65,10 @@ public:
 	 * immediately.
 	 */
 	template<typename T, typename... Args>
-	T *AddComponent(Args&&... args) {
+	T* AddComponent(Args&& ... args) {
 		static_assert(std::is_base_of_v<ComponentBase, T>, "Type must extend ComponentBase");
 
-		T *c = new T(std::forward<Args>(args)...);
+		T* c = new T(std::forward<Args>(args)...);
 
 		_components.push_back(c);
 		c->_entity = this;
@@ -82,7 +83,7 @@ public:
 	 *
 	 * Calling this method deactivates the component.
 	 */
-	void RemoveComponent(ComponentBase *component);
+	void RemoveComponent(ComponentBase* component);
 
 	/**
 	 * Returns the component of the given type, if this entity has one attached.
@@ -91,11 +92,11 @@ public:
 	 * returned.
 	 */
 	template<typename T>
-	T *GetComponent() {
+	T* GetComponent() {
 		static_assert(std::is_base_of_v<ComponentBase, T>, "Type must be a component");
 
 		for (auto component : _components) {
-			if (auto ptr = dynamic_cast<T *>(component)) {
+			if (auto ptr = dynamic_cast<T*>(component)) {
 				return ptr;
 			}
 		}
@@ -107,12 +108,12 @@ public:
 	 * Returns all components of the given type.
 	 */
 	template<typename T>
-	std::vector<T *> GetAllComponentsOfType() {
+	std::vector<T*> GetAllComponentsOfType() {
 		static_assert(std::is_base_of_v<ComponentBase, T>, "Type must be a component");
-		std::vector<T *> vec;
+		std::vector<T*> vec;
 
 		for (auto component : _components) {
-			if (auto ptr = dynamic_cast<T *>(component)) {
+			if (auto ptr = dynamic_cast<T*>(component)) {
 				vec.push_back(ptr);
 			}
 		}
@@ -156,16 +157,16 @@ public:
 	RigidTransform transform = RigidTransform(this);
 
 	// The parent scene of this entity.
-	Scene * const scene;
+	Scene* const scene;
 
 	// The parent entity, or nullptr if the entity is a root entity.
-	Entity * const parent;
+	Entity* const parent;
 
 private:
-	Entity(std::string name, Scene *scene, RigidTransform transform = RigidTransform());
-	Entity(std::string name, Entity *parent, RigidTransform transform = RigidTransform());
+	Entity(std::string name, Scene* scene, RigidTransform transform = RigidTransform());
+	Entity(std::string name, Entity* parent, RigidTransform transform = RigidTransform());
 
-	void _UpdateTime(float time, float dt);
+	void UpdateTime_(float time, float dt);
 
 	bool _alive = true;
 	float _time = 0.0f;
@@ -173,7 +174,7 @@ private:
 
 	std::unordered_set<std::string> _child_names;
 	std::vector<std::unique_ptr<Entity>> _children;
-	std::vector<ComponentBase *> _components;
+	std::vector<ComponentBase*> _components;
 
 };
 

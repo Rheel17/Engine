@@ -5,22 +5,24 @@
 
 namespace rheel {
 
-SceneRenderer::SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount, bool depthComponent) :
-		_manager(manager), _camera_name(std::move(cameraName)),
-		_width(width), _height(height),
+SceneRenderer::SceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount, bool depthComponent) :
+		_manager(manager),
+		_camera_name(std::move(cameraName)),
+		_width(width),
+		_height(height),
 		_result_buffer(width, height) {
 
 	if (sampleCount > 1) {
-		_result_buffer.AttachTextureMultisample(GL::InternalFormat::RGB8, sampleCount, 0);
+		_result_buffer.AttachTextureMultisample(gl::InternalFormat::RGB8, sampleCount, 0);
 
 		if (depthComponent) {
-			_result_buffer.AttachRenderbufferMultisample(GL::InternalFormat::DEPTH_COMPONENT_32F, sampleCount, GL::Framebuffer::Attachment::DEPTH);
+			_result_buffer.AttachRenderbufferMultisample(gl::InternalFormat::DEPTH_COMPONENT_32F, sampleCount, gl::Framebuffer::Attachment::DEPTH);
 		}
 	} else {
-		_result_buffer.AttachTexture(GL::InternalFormat::RGB8, GL::Format::RGB, 0);
+		_result_buffer.AttachTexture(gl::InternalFormat::RGB8, gl::Format::RGB, 0);
 
 		if (depthComponent) {
-			_result_buffer.AttachRenderbuffer(GL::InternalFormat::DEPTH_COMPONENT_32F, GL::Framebuffer::Attachment::DEPTH);
+			_result_buffer.AttachRenderbuffer(gl::InternalFormat::DEPTH_COMPONENT_32F, gl::Framebuffer::Attachment::DEPTH);
 		}
 	}
 
@@ -35,37 +37,37 @@ void SceneRenderer::SetSize(unsigned width, unsigned height) {
 	_width = width;
 	_height = height;
 
-	_result_buffer = GL::Framebuffer(_result_buffer, width, height);
+	_result_buffer = gl::Framebuffer(_result_buffer, width, height);
 	Resize(width, height);
 }
 
-const GL::Framebuffer& SceneRenderer::ResultBuffer() const {
+const gl::Framebuffer& SceneRenderer::ResultBuffer() const {
 	return _result_buffer;
 }
 
-void SceneRenderer::_RenderShadowMaps() {
-	Camera *camera = GetCamera();
+void SceneRenderer::RenderShadowMaps() {
+	Camera* camera = GetCamera();
 	if (!camera || !_manager->ShouldDrawShadows()) {
 		return;
 	}
 
-	_CorrectShadowMapList();
+	CorrectShadowMapList_();
 
 	for (auto& iter : _shadow_maps) {
 		iter.second->Update(camera, _width, _height);
 	}
 }
 
-void SceneRenderer::_RenderSkybox(unsigned width, unsigned height) {
+void SceneRenderer::RenderSkybox(unsigned width, unsigned height) {
 	_manager->GetSkyboxRenderer().Render(GetCamera(), width, height);
 }
 
-SceneRenderManager *SceneRenderer::GetManager() const {
+SceneRenderManager* SceneRenderer::GetManager() const {
 	return _manager;
 }
 
-Camera *SceneRenderer::GetCamera() const {
-	Camera *camera = _manager->GetScene()->GetCamera(_camera_name);
+Camera* SceneRenderer::GetCamera() const {
+	Camera* camera = _manager->GetScene()->GetCamera(_camera_name);
 
 	if (camera == nullptr) {
 		Log::Error() << "Camera '" << _camera_name << "' not found" << std::endl;
@@ -82,12 +84,12 @@ unsigned SceneRenderer::Height() const {
 	return _height;
 }
 
-const std::unordered_map<Light *, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
+const std::unordered_map<Light*, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
 	return _shadow_maps;
 }
 
-void SceneRenderer::_CorrectShadowMapList() {
-	std::unordered_set<Light *> lights;
+void SceneRenderer::CorrectShadowMapList_() {
+	std::unordered_set<Light*> lights;
 	for (const auto& pair : _shadow_maps) {
 		lights.insert(pair.first);
 	}
@@ -104,7 +106,7 @@ void SceneRenderer::_CorrectShadowMapList() {
 		}
 	}
 
-	for (Light *light : lights) {
+	for (Light* light : lights) {
 		_shadow_maps.erase(light);
 	}
 }

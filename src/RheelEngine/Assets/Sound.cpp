@@ -10,20 +10,20 @@ namespace rheel {
 Sound::Sound(std::vector<char> data, InternalSoundFormat format, int sampleFrequency) :
 		Asset({ std::move(data), format, sampleFrequency }) {}
 
-const char *Sound::GetRawSampleData() const {
-	return _GetRaw()->data.data();
+const char* Sound::GetRawSampleData() const {
+	return GetRaw()->data.data();
 }
 
 unsigned Sound::GetRawSampleSize() const {
-	return _GetRaw()->data.size();
+	return GetRaw()->data.size();
 }
 
 InternalSoundFormat Sound::GetFormat() const {
-	return _GetRaw()->format;
+	return GetRaw()->format;
 }
 
 int Sound::GetSampleFrequency() const {
-	return _GetRaw()->sample_frequency;
+	return GetRaw()->sample_frequency;
 }
 
 }

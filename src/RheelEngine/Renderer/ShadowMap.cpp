@@ -5,14 +5,15 @@
 
 namespace rheel {
 
-ShadowMap::ShadowMap(SceneRenderManager *manager, Light *light) :
-		_manager(manager), _light(light) {}
+ShadowMap::ShadowMap(SceneRenderManager* manager, Light* light) :
+		_manager(manager),
+		_light(light) {}
 
-SceneRenderManager *ShadowMap::GetManager() const {
+SceneRenderManager* ShadowMap::GetManager() const {
 	return _manager;
 }
 
-Light *ShadowMap::GetLight() const {
+Light* ShadowMap::GetLight() const {
 	return _light;
 }
 

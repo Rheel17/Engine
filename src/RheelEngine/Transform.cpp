@@ -30,11 +30,13 @@ Transform::Transform(const mat4& matrix) {
 	SetRotation(rotationMatrix);
 }
 
-Transform::Transform(TransformOwner *owner) :
-		RigidTransform(owner), _scale(1.0f) {}
+Transform::Transform(TransformOwner* owner) :
+		RigidTransform(owner),
+		_scale(1.0f) {}
 
 Transform::Transform(const RigidTransform& t) :
-		RigidTransform(t), _scale(1.0f, 1.0f, 1.0f) {}
+		RigidTransform(t),
+		_scale(1.0f, 1.0f, 1.0f) {}
 
 Transform::Transform(RigidTransform&& t) :
 		RigidTransform(std::forward<RigidTransform>(t)) {}

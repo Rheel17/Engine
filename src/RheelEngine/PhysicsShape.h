@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef PHYSICSSHAPE_H_
-#define PHYSICSSHAPE_H_
+#ifndef RHEELENGINE_PHYSICSSHAPE_H
+#define RHEELENGINE_PHYSICSSHAPE_H
 #include "_common.h"
 
 #include <btBulletDynamicsCommon.h>
@@ -17,8 +17,8 @@ public:
 
 private:
 	PhysicsShape() = default;
-	PhysicsShape(btCollisionShape *shape);
-	btCollisionShape *_Pointer() const;
+	PhysicsShape(btCollisionShape* shape);
+	btCollisionShape* Pointer_() const;
 
 	std::shared_ptr<btCollisionShape> _shape;
 

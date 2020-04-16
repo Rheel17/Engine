@@ -10,8 +10,8 @@
 
 namespace rheel {
 
-GL::Program ModelRenderer::_forward_model_shader;
-GL::Program ModelRenderer::_opaque_shader;
+gl::Program ModelRenderer::_forward_model_shader;
+gl::Program ModelRenderer::_opaque_shader;
 bool ModelRenderer::_are_shaders_initialized = false;
 
 ModelRenderer::ObjectData::ObjectData() :
@@ -47,7 +47,7 @@ ModelRenderer::ObjectData& ModelRenderer::ObjectData::operator=(ObjectData&& dat
 	return *this;
 }
 
-ModelRenderer::ObjectDataPtr::ObjectDataPtr(ObjectData *data) :
+ModelRenderer::ObjectDataPtr::ObjectDataPtr(ObjectData* data) :
 		_data(data) {
 
 	_data->_ptr = this;
@@ -76,27 +76,27 @@ ModelRenderer::ObjectDataPtr& ModelRenderer::ObjectDataPtr::operator=(ObjectData
 	return *this;
 }
 
-bool ModelRenderer::_MaterialTextureCompare::operator()(const Material& mat1, const Material& mat2) const {
-	std::array<std::uintptr_t, 3> mat1Addresses = {{
-			mat1.GetAmbientTexture().GetAddress(),
-			mat1.GetDiffuseTexture().GetAddress(),
-			mat1.GetSpecularTexture().GetAddress() }};
-	std::array<std::uintptr_t, 3> mat2Addresses = {{
-			mat2.GetAmbientTexture().GetAddress(),
-			mat2.GetDiffuseTexture().GetAddress(),
-			mat2.GetSpecularTexture().GetAddress() }};
-
-	return std::tie(mat1Addresses[0], mat1Addresses[1], mat1Addresses[2]) <
-			std::tie(mat2Addresses[0], mat2Addresses[1], mat2Addresses[2]);
-}
-
-bool ModelRenderer::_MaterialShaderCompare::operator()(const Material& mat1, const Material& mat2) const {
-	return mat1.GetCustomShader().GetAddress() < mat2.GetCustomShader().GetAddress();
+bool ModelRenderer::material_texture_compare::operator()(const Material& mat1, const Material& mat2) const {
+	std::array<std::uintptr_t, 3> mat1Addresses = {
+			{
+					mat1.GetAmbientTexture().GetAddress(),
+					mat1.GetDiffuseTexture().GetAddress(),
+					mat1.GetSpecularTexture().GetAddress()
+			}
+	};
+	std::array<std::uintptr_t, 3> mat2Addresses = {
+			{
+					mat2.GetAmbientTexture().GetAddress(),
+					mat2.GetDiffuseTexture().GetAddress(),
+					mat2.GetSpecularTexture().GetAddress()
+			}
+	};
+	return std::tie(mat1Addresses[0], mat1Addresses[1], mat1Addresses[2]) < std::tie(mat2Addresses[0], mat2Addresses[1], mat2Addresses[2]);
 }
 
 ModelRenderer::ModelRenderer(const Model& model) :
-		_vertex_buffer_object(GL::Buffer::Target::ARRAY),
-		_object_data_buffer(GL::Buffer::Target::ARRAY) {
+		_vertex_buffer_object(gl::Buffer::Target::ARRAY),
+		_object_data_buffer(gl::Buffer::Target::ARRAY) {
 
 	_vertex_buffer_object.SetData(model.GetVertices());
 	_object_data_buffer.SetData(std::vector<ObjectData>());
@@ -107,52 +107,52 @@ ModelRenderer::ModelRenderer(const Model& model) :
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddObject() {
-	return _Add(_objects);
+	return Add_(_objects);
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddTexturedObject(const Material& material) {
-	return _Add(_textured_objects[material]);
+	return Add_(_textured_objects[material]);
 }
 
 void ModelRenderer::RemoveObject(ObjectDataPtr&& object) {
-	_Remove(_objects, std::forward<ObjectDataPtr>(object));
+	Remove_(_objects, std::forward<ObjectDataPtr>(object));
 }
 
 void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectDataPtr&& object) {
-	_Remove(_textured_objects[material], std::forward<ObjectDataPtr>(object));
+	Remove_(_textured_objects[material], std::forward<ObjectDataPtr>(object));
 }
 
-GL::Program& ModelRenderer::GetForwardModelShader() {
-	_InitializeShaders();
+gl::Program& ModelRenderer::GetForwardModelShader() {
+	InitializeShaders_();
 	return _forward_model_shader;
 }
 
-GL::Program& ModelRenderer::GetOpaqueShader() {
-	_InitializeShaders();
+gl::Program& ModelRenderer::GetOpaqueShader() {
+	InitializeShaders_();
 	return _opaque_shader;
 }
 
 void ModelRenderer::RenderObjects() const {
-	GL::State::ClearTexture(0, GL::Texture::Target::TEXTURE_2D);
-	GL::State::ClearTexture(1, GL::Texture::Target::TEXTURE_2D);
-	GL::State::ClearTexture(2, GL::Texture::Target::TEXTURE_2D);
+	gl::State::ClearTexture(0, gl::Texture::Target::TEXTURE_2D);
+	gl::State::ClearTexture(1, gl::Texture::Target::TEXTURE_2D);
+	gl::State::ClearTexture(2, gl::Texture::Target::TEXTURE_2D);
 
-	_object_data_buffer.SetData(_objects, GL::Buffer::Usage::STREAM_DRAW);
-	_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _objects.size());
+	_object_data_buffer.SetData(_objects, gl::Buffer::Usage::STREAM_DRAW);
+	_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, _objects.size());
 
-	for (const auto& [material, objects] : _textured_objects) {
+	for (const auto&[material, objects] : _textured_objects) {
 		material.BindTextures();
 
-		_object_data_buffer.SetData(objects, GL::Buffer::Usage::STREAM_DRAW);
-		_vao.DrawElements(GL::VertexArray::Mode::TRIANGLES, _objects.size());
+		_object_data_buffer.SetData(objects, gl::Buffer::Usage::STREAM_DRAW);
+		_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, _objects.size());
 	}
 }
 
-ModelRenderer::ObjectDataPtr ModelRenderer::_Add(_ObjectDataVector& objects) {
+ModelRenderer::ObjectDataPtr ModelRenderer::Add_(ObjectDataVector& objects) {
 	return ObjectDataPtr(&objects.emplace_back());
 }
 
-void ModelRenderer::_Remove(_ObjectDataVector& objects, ObjectDataPtr&& data) {
+void ModelRenderer::Remove_(ObjectDataVector& objects, ObjectDataPtr&& data) {
 	size_t index = (((size_t) data._data) - ((size_t) &objects.front())) / sizeof(ObjectData);
 
 	if (index >= objects.size()) {
@@ -162,13 +162,13 @@ void ModelRenderer::_Remove(_ObjectDataVector& objects, ObjectDataPtr&& data) {
 	objects.erase(objects.begin() + index);
 }
 
-void ModelRenderer::_InitializeShaders() {
+void ModelRenderer::InitializeShaders_() {
 	if (_are_shaders_initialized) {
 		return;
 	}
 
-	_forward_model_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
-	_forward_model_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
+	_forward_model_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
+	_forward_model_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
 	_forward_model_shader.Link();
 	_forward_model_shader["ambientTexture"] = 0;
 	_forward_model_shader["diffuseTexture"] = 1;
@@ -178,8 +178,8 @@ void ModelRenderer::_InitializeShaders() {
 	_forward_model_shader["_shadowMap2"] = 5;
 	_forward_model_shader["_shadowMap3"] = 6;
 
-	_opaque_shader.AttachShader(GL::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
-	_opaque_shader.AttachShader(GL::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
+	_opaque_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
+	_opaque_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
 	_opaque_shader.Link();
 
 	_are_shaders_initialized = true;

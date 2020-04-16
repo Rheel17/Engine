@@ -14,7 +14,8 @@ TextElement::TextElement(std::wstring text, unsigned size) :
 		TextElement(text, Font::GetDefaultFont(), size) {}
 
 TextElement::TextElement(std::string text, Font& font, unsigned size) :
-		_font(font), _size(size) {
+		_font(font),
+		_size(size) {
 
 	_text = std::move(text);
 	_wide = false;
@@ -30,7 +31,8 @@ TextElement::TextElement(std::string text, Font& font, unsigned size) :
 }
 
 TextElement::TextElement(std::wstring text, Font& font, unsigned size) :
-		_font(font), _size(size) {
+		_font(font),
+		_size(size) {
 
 	_w_text = std::move(text);
 	_wide = true;
@@ -66,9 +68,9 @@ void TextElement::Draw(float time, float dt) const {
 	unsigned y = bounds.y + (bounds.height - textBounds) / 2 + _font_ascend;
 
 	if (_wide) {
-		TextRenderer::DrawText(_font, Color { 1.0f, 1.0f, 1.0f, 1.0f }, _w_text, bounds.x, y, _size);
+		TextRenderer::DrawText(_font, Color{ 1.0f, 1.0f, 1.0f, 1.0f }, _w_text, bounds.x, y, _size);
 	} else {
-		TextRenderer::DrawText(_font, Color { 1.0f, 1.0f, 1.0f, 1.0f }, _text, bounds.x, y, _size);
+		TextRenderer::DrawText(_font, Color{ 1.0f, 1.0f, 1.0f, 1.0f }, _text, bounds.x, y, _size);
 	}
 }
 

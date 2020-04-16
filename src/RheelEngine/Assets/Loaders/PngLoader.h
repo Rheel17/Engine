@@ -14,14 +14,12 @@ class RE_API PngLoader : public Loader<Image> {
 	friend class AssetLoader;
 
 protected:
-	Image _DoLoad(const std::string& path) const override;
+	Image DoLoad(const std::string& path) const override;
 
 private:
 	PngLoader() = default;
 
-	static Image _LoadPNG(std::istream& input);
-
-
+	static Image LoadPng_(std::istream& input);
 
 };
 

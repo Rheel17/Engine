@@ -17,8 +17,9 @@ namespace rheel {
 //}
 
 RigidBody::RigidBody(PhysicsShape shape, float mass, float bounciness) :
-		_shape(std::move(shape)), _mass(mass), _bounciness(bounciness) {}
-
+		_shape(std::move(shape)),
+		_mass(mass),
+		_bounciness(bounciness) {}
 
 void RigidBody::TransformChanged() {
 	if (!_transform_event_from_update) {
@@ -35,7 +36,7 @@ void RigidBody::Activate() {
 		throw std::runtime_error("no model set");
 	}
 
-	PhysicsScene *physicsScene = GetParent()->scene->GetRootComponent<PhysicsScene>();
+	PhysicsScene* physicsScene = GetParent()->scene->GetRootComponent<PhysicsScene>();
 	if (!physicsScene) {
 		return;
 	}
@@ -43,12 +44,12 @@ void RigidBody::Activate() {
 	btVector3 inertia(0, 0, 0);
 
 	if (_mass > 0) {
-		_shape._Pointer()->calculateLocalInertia(_mass, inertia);
+		_shape.Pointer_()->calculateLocalInertia(_mass, inertia);
 	}
 
 	_motion_state = std::make_unique<btDefaultMotionState>();
 
-	btRigidBody::btRigidBodyConstructionInfo cinfo(_mass, _motion_state.get(), _shape._Pointer(), inertia);
+	btRigidBody::btRigidBodyConstructionInfo cinfo(_mass, _motion_state.get(), _shape.Pointer_(), inertia);
 	cinfo.m_restitution = _bounciness;
 
 	auto matrix = CalculateAbsoluteTransformationMatrix();
@@ -60,7 +61,7 @@ void RigidBody::Activate() {
 	_body->setWorldTransform(_last_transform_update);
 	_body->setFriction(0.5f);
 
-	physicsScene->_AddBody(_body.get());
+	physicsScene->AddBody_(_body.get());
 }
 
 void RigidBody::Update() {
@@ -88,12 +89,12 @@ void RigidBody::Update() {
 }
 
 void RigidBody::Deactivate() {
-	PhysicsScene *physicsScene = GetParent()->scene->GetRootComponent<PhysicsScene>();
+	PhysicsScene* physicsScene = GetParent()->scene->GetRootComponent<PhysicsScene>();
 	if (!physicsScene) {
 		return;
 	}
 
-	physicsScene->_RemoveBody(_body.get(), GetParent()->GetComponent<CollisionComponent>());
+	physicsScene->RemoveBody_(_body.get(), GetParent()->GetComponent<CollisionComponent>());
 }
 
 void RigidBody::ApplyForce(const vec3& force) {

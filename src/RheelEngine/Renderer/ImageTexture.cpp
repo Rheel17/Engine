@@ -16,29 +16,27 @@ void ImageTexture::Bind(unsigned textureUnit) const {
 ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
 	if (linear) {
 		if (Engine::GetDisplayConfiguration().enable_mipmaps) {
-			_texture.SetMinifyingFilter(GL::Texture::FilterFunction::LINEAR_MIPMAP_LINEAR);
+			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::LINEAR_MIPMAP_LINEAR);
 		} else {
-			_texture.SetMinifyingFilter(GL::Texture::FilterFunction::LINEAR);
+			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::LINEAR);
 		}
 
-		_texture.SetMagnificationFilter(GL::Texture::FilterFunction::LINEAR);
+		_texture.SetMagnificationFilter(gl::Texture::FilterFunction::LINEAR);
 	} else {
 		if (Engine::GetDisplayConfiguration().enable_mipmaps) {
-			_texture.SetMinifyingFilter(GL::Texture::FilterFunction::NEAREST_MIPMAP_NEAREST);
+			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::NEAREST_MIPMAP_NEAREST);
 		} else {
-			_texture.SetMinifyingFilter(GL::Texture::FilterFunction::NEAREST);
+			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::NEAREST);
 		}
-		_texture.SetMagnificationFilter(GL::Texture::FilterFunction::NEAREST);
+		_texture.SetMagnificationFilter(gl::Texture::FilterFunction::NEAREST);
 	}
 
 	switch (type) {
-		case WrapType::WRAP:
-			_texture.SetWrapParameterS(GL::Texture::WrapParameter::REPEAT);
-			_texture.SetWrapParameterT(GL::Texture::WrapParameter::REPEAT);
+		case WrapType::WRAP: _texture.SetWrapParameterS(gl::Texture::WrapParameter::REPEAT);
+			_texture.SetWrapParameterT(gl::Texture::WrapParameter::REPEAT);
 			break;
-		case WrapType::CLAMP:
-			_texture.SetWrapParameterS(GL::Texture::WrapParameter::CLAMP_TO_EDGE);
-			_texture.SetWrapParameterT(GL::Texture::WrapParameter::CLAMP_TO_EDGE);
+		case WrapType::CLAMP: _texture.SetWrapParameterS(gl::Texture::WrapParameter::CLAMP_TO_EDGE);
+			_texture.SetWrapParameterT(gl::Texture::WrapParameter::CLAMP_TO_EDGE);
 			break;
 
 	}
@@ -46,15 +44,15 @@ ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
 	_texture.SetAnisotropyParameter(Engine::GetDisplayConfiguration().anisotropic_level);
 
 	unsigned w = image.GetWidth(), h = image.GetHeight();
-	const float *data = image.GetRawColorData();
+	const float* data = image.GetRawColorData();
 	auto glData = new float[w * h * 4];
 
-	// reverse the y-coordinate of the image for _OpenGL.
+	// reverse the y-coordinate of the image for OpenGL.
 	for (unsigned y = 0; y < h; y++) {
 		memcpy(glData + y * w * 4, data + (h - y - 1) * w * 4, w * 4 * sizeof(float));
 	}
 
-	_texture.SetData(GL::InternalFormat::RGBA, image.GetWidth(), image.GetHeight(), GL::Format::RGBA, data);
+	_texture.SetData(gl::InternalFormat::RGBA, image.GetWidth(), image.GetHeight(), gl::Format::RGBA, data);
 
 	if (Engine::GetDisplayConfiguration().enable_mipmaps) {
 		_texture.GenerateMipmap();

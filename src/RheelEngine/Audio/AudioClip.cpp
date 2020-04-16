@@ -9,7 +9,7 @@ AudioClip::AudioClip(const Sound& sound) {
 	_buffer.SetData(ALenum(sound.GetFormat()), sound.GetRawSampleData(), sound.GetRawSampleSize(), sound.GetSampleFrequency());
 }
 
-const ALBuffer& AudioClip::Buffer() const {
+const al::Buffer& AudioClip::Buffer() const {
 	return _buffer;
 }
 

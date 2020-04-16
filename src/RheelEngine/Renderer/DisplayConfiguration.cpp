@@ -8,7 +8,7 @@
 
 namespace rheel {
 
-const DisplayConfiguration::Resolution DisplayConfiguration::RESOLUTION_NATIVE { -1, -1 };
+const ivec2 DisplayConfiguration::RESOLUTION_NATIVE{ -1, -1 };
 
 unsigned DisplayConfiguration::SampleCount() const {
 	switch (aa_mode) {
@@ -19,38 +19,35 @@ unsigned DisplayConfiguration::SampleCount() const {
 	}
 }
 
-void DisplayConfiguration::_CalculateActualResolution() {
+void DisplayConfiguration::CalculateActualResolution_() {
 	// get the monitor on which to show the window
-	GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
+	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
 
 	// get the correct resolution.
-	int resolutionWidth = resolution.width;
-	int resolutionHeight = resolution.height;
+	int resolutionWidth = resolution.x;
+	int resolutionHeight = resolution.y;
 
 	if (resolutionWidth <= 0 || resolutionHeight <= 0) {
-		const GLFWvidmode *vidmode = glfwGetVideoMode(primaryMonitor);
+		const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
 
 		resolutionWidth = vidmode->width;
 		resolutionHeight = vidmode->height;
 	}
 
-	resolution.width = resolutionWidth;
-	resolution.height = resolutionHeight;
+	resolution.x = resolutionWidth;
+	resolution.y = resolutionHeight;
 }
 
-void DisplayConfiguration::_ClampAnisotropicLevel() {
+void DisplayConfiguration::ClampAnisotropicLevel_() {
 	if (anisotropic_level < 1.0f) {
-		Log::Warning() << "Anisotropic level too low: " << anisotropic_level <<
-				" (min: 1.0). Automatically set to min." << std::endl;
-
+		Log::Warning() << "Anisotropic level too low: " << anisotropic_level << " (min: 1.0). Automatically set to min." << std::endl;
 		anisotropic_level = 1.0f;
 	} else if (anisotropic_level > 0.0f) {
-		float max = GL::Capabilities::GetMaxTextureMaxAnisotropy();
+		float max = gl::Capabilities::GetMaxTextureMaxAnisotropy();
 
 		if (anisotropic_level > max) {
 			if (anisotropic_level != ANISOTROPIC_LEVEL_MAX) {
-				Log::Warning() << "Anisotropic level too high: " << anisotropic_level << " (max: " << max <<
-						"). Automatically set to max." << std::endl;
+				Log::Warning() << "Anisotropic level too high: " << anisotropic_level << " (max: " << max << "). Automatically set to max." << std::endl;
 			}
 
 			anisotropic_level = max;

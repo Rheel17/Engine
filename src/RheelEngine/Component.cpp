@@ -5,41 +5,42 @@
 
 namespace rheel {
 
-const vec2 ComponentBase::ZERO_VEC2(0.0f, 0.0f);
+const vec2 ComponentBase::_zero_vec_2(0.0f, 0.0f);
 
-ComponentInputProxy::ComponentInputProxy(ComponentBase *component) :
-		_component(component), _source(nullptr) {}
+ComponentInputProxy::ComponentInputProxy(ComponentBase* component) :
+		_component(component),
+		_source(nullptr) {}
 
 void ComponentInputProxy::ResetDeltas() {
 	_mouse_delta = { 0.0f, 0.0f };
 	_mouse_scroll = { 0.0f, 0.0f };
 }
 
-void ComponentInputProxy::_OnKeyPress(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+void ComponentInputProxy::OnKeyPress_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
 	_pressed_keys.insert(key);
 	_pressed_scancodes.insert(scancode);
 	_component->OnKeyPress(key, scancode, mods);
 }
 
-void ComponentInputProxy::_OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+void ComponentInputProxy::OnKeyRelease_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
 	_pressed_keys.erase(key);
 	_pressed_scancodes.erase(scancode);
 	_component->OnKeyRelease(key, scancode, mods);
 }
 
-void ComponentInputProxy::_OnCharacterInput(Input::Unicode character) {
+void ComponentInputProxy::OnCharacterInput_(Input::Unicode character) {
 	_component->OnCharacterInput(character);
 }
 
-void ComponentInputProxy::_OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
+void ComponentInputProxy::OnMouseButtonPress_(Input::MouseButton button, Input::Modifiers mods) {
 	_component->OnMouseButtonPress(button, mods);
 }
 
-void ComponentInputProxy::_OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
+void ComponentInputProxy::OnMouseButtonRelease_(Input::MouseButton button, Input::Modifiers mods) {
 	_component->OnMouseButtonRelease(button, mods);
 }
 
-void ComponentInputProxy::_OnMouseMove(const vec2& position) {
+void ComponentInputProxy::OnMouseMove_(const vec2& position) {
 	if (_got_mouse) {
 		_mouse_delta = position - _mouse_position;
 	}
@@ -50,14 +51,14 @@ void ComponentInputProxy::_OnMouseMove(const vec2& position) {
 	_component->OnMouseMove(position);
 }
 
-void ComponentInputProxy::_OnMouseJump(const vec2& position) {
+void ComponentInputProxy::OnMouseJump_(const vec2& position) {
 	_mouse_position = position;
 	_got_mouse = true;
 
 	_component->OnMouseJump(position);
 }
 
-void ComponentInputProxy::_OnMouseDrag(const vec2& origin, const vec2& position) {
+void ComponentInputProxy::OnMouseDrag_(const vec2& origin, const vec2& position) {
 	if (_got_mouse) {
 		_mouse_delta = position - _mouse_position;
 	}
@@ -68,25 +69,25 @@ void ComponentInputProxy::_OnMouseDrag(const vec2& origin, const vec2& position)
 	_component->OnMouseDrag(origin, position);
 }
 
-void ComponentInputProxy::_OnMouseScroll(const vec2& scrollComponents) {
+void ComponentInputProxy::OnMouseScroll_(const vec2& scrollComponents) {
 	_mouse_scroll = scrollComponents;
 	_component->OnMouseScroll(scrollComponents);
 }
 
-void ComponentInputProxy::_Register() {
+void ComponentInputProxy::Register_() {
 	_component->GetParent()->scene->_input_components.push_back(this);
 }
 
-void ComponentInputProxy::_Unregister() {
+void ComponentInputProxy::Unregister_() {
 	auto& vec = _component->GetParent()->scene->_input_components;
 	vec.erase(std::find(vec.begin(), vec.end(), this));
 }
 
-Entity *ComponentBase::GetParent() {
+Entity* ComponentBase::GetParent() {
 	return _entity;
 }
 
-const Entity *ComponentBase::GetParent() const {
+const Entity* ComponentBase::GetParent() const {
 	return _entity;
 }
 
@@ -96,13 +97,13 @@ void ComponentBase::SetReceiveInput(bool flag) {
 	}
 
 	if (!flag) {
-		_input_proxy->_Unregister();
+		_input_proxy->Unregister_();
 	} else {
 		if (!_input_proxy) {
 			_input_proxy = std::unique_ptr<ComponentInputProxy>(new ComponentInputProxy(this));
 		}
 
-		_input_proxy->_Register();
+		_input_proxy->Register_();
 	}
 
 	_receive_input = flag;
@@ -111,7 +112,6 @@ void ComponentBase::SetReceiveInput(bool flag) {
 bool ComponentBase::ReceivesInput() const {
 	return _receive_input;
 }
-
 
 float ComponentBase::GetTime() const {
 	return _time;
@@ -145,7 +145,7 @@ const vec2& ComponentBase::GetMousePosition() const {
 	}
 
 	Log::Error() << "Component not registered to receive input events" << std::endl;
-	return ZERO_VEC2;
+	return _zero_vec_2;
 }
 
 const vec2& ComponentBase::GetMouseDelta() const {
@@ -154,7 +154,7 @@ const vec2& ComponentBase::GetMouseDelta() const {
 	}
 
 	Log::Error() << "Component not registered to receive input events" << std::endl;
-	return ZERO_VEC2;
+	return _zero_vec_2;
 }
 
 const vec2& ComponentBase::GetMouseScroll() const {
@@ -163,7 +163,7 @@ const vec2& ComponentBase::GetMouseScroll() const {
 	}
 
 	Log::Error() << "Component not registered to receive input events" << std::endl;
-	return ZERO_VEC2;
+	return _zero_vec_2;
 }
 
 }

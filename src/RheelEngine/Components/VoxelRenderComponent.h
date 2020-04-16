@@ -20,7 +20,7 @@ public:
 	void Deactivate() override;
 
 private:
-	 VoxelImage _model;
+	VoxelImage _model;
 
 };
 

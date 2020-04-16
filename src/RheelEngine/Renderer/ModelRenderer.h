@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef MODELRENDERER_H_
-#define MODELRENDERER_H_
+#ifndef RHEELENGINE_MODELRENDERER_H
+#define RHEELENGINE_MODELRENDERER_H
 #include "../_common.h"
 
 #include <map>
@@ -36,7 +36,7 @@ public:
 		vec4 _material_vector;
 		vec4 _material_color;
 
-		ObjectDataPtr *_ptr;
+		ObjectDataPtr* _ptr;
 
 	};
 
@@ -49,7 +49,7 @@ public:
 
 	public:
 		ObjectDataPtr() = default;
-		explicit ObjectDataPtr(ObjectData *data);
+		explicit ObjectDataPtr(ObjectData* data);
 
 		void SetMatrix(mat4 matrix);
 		void SetMaterialVector(vec4 materialVector);
@@ -59,18 +59,14 @@ public:
 		ObjectDataPtr& operator=(ObjectDataPtr&& ptr) noexcept;
 
 	private:
-		ObjectData *_data = nullptr;
+		ObjectData* _data = nullptr;
 
 	};
 
 private:
-	using _ObjectDataVector = std::vector<ObjectData>;
+	using ObjectDataVector = std::vector<ObjectData>;
 
-	struct _MaterialTextureCompare {
-		bool operator()(const Material& mat1, const Material& mat2) const;
-	};
-
-	struct _MaterialShaderCompare {
+	struct material_texture_compare {
 		bool operator()(const Material& mat1, const Material& mat2) const;
 	};
 
@@ -86,25 +82,25 @@ public:
 	void RenderObjects() const;
 
 private:
-	static ObjectDataPtr _Add(_ObjectDataVector& objects);
-	static void _Remove(_ObjectDataVector& objects, ObjectDataPtr&& data);
+	static ObjectDataPtr Add_(ObjectDataVector& objects);
+	static void Remove_(ObjectDataVector& objects, ObjectDataPtr&& data);
 
-	GL::VertexArray _vao;
-	GL::Buffer _vertex_buffer_object;
-	mutable GL::Buffer _object_data_buffer;
+	gl::VertexArray _vao;
+	gl::Buffer _vertex_buffer_object;
+	mutable gl::Buffer _object_data_buffer;
 
-	_ObjectDataVector _objects;
-	std::map<Material, _ObjectDataVector, _MaterialTextureCompare> _textured_objects;
+	ObjectDataVector _objects;
+	std::map<Material, ObjectDataVector, material_texture_compare> _textured_objects;
 
 public:
-	static GL::Program& GetForwardModelShader();
-	static GL::Program& GetOpaqueShader();
+	static gl::Program& GetForwardModelShader();
+	static gl::Program& GetOpaqueShader();
 
 private:
-	static void _InitializeShaders();
+	static void InitializeShaders_();
 
-	static GL::Program _forward_model_shader;
-	static GL::Program _opaque_shader;
+	static gl::Program _forward_model_shader;
+	static gl::Program _opaque_shader;
 	static bool _are_shaders_initialized;
 
 };

@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef POSTPROCESSINGSTACK_H_
-#define POSTPROCESSINGSTACK_H_
+#ifndef RHEELENGINE_POSTPROCESSINGSTACK_H
+#define RHEELENGINE_POSTPROCESSINGSTACK_H
 #include "../_common.h"
 
 #include <array>
@@ -26,7 +26,7 @@ public:
 	 * as outputted by a SceneRenderer. The final scene will be drawn to the
 	 * quad at pos with dimensions size.
 	 */
-	void Render(const GL::Framebuffer& input, const ivec2& pos, const ivec2& size) const;
+	void Render(const gl::Framebuffer& input, const ivec2& pos, const ivec2& size) const;
 
 	/**
 	 * Enables the bloom effect.
@@ -39,18 +39,18 @@ public:
 	void ClearBloom();
 
 private:
-	const GL::Framebuffer& _ResolveInput(const GL::Framebuffer& input) const;
+	const gl::Framebuffer& ResolveInput_(const gl::Framebuffer& input) const;
 
-	unsigned _UnusedFramebufferIndex() const;
-	unsigned _GetFramebufferIndex(const GL::Framebuffer& buffer) const;
-	GL::Framebuffer& _Framebuffer(unsigned index) const;
-	void _MarkFramebufferUse(unsigned index, bool flag) const;
+	unsigned UnusedFramebufferIndex_() const;
+	unsigned GetFramebufferIndex_(const gl::Framebuffer& buffer) const;
+	gl::Framebuffer& Framebuffer_(unsigned index) const;
+	void MarkFramebufferUse_(unsigned index, bool flag) const;
 
 	std::optional<Bloom> _bloom;
 
 	mutable unsigned _width = 0;
 	mutable unsigned _height = 0;
-	mutable std::array<std::pair<GL::Framebuffer, bool>, 3> _temp_buffers;
+	mutable std::array<std::pair<gl::Framebuffer, bool>, 3> _temp_buffers;
 
 };
 

@@ -18,7 +18,7 @@ public:
 
 		if (iter == _cache.end()) {
 			Log::Info() << "Loading asset " << path << std::endl;
-			iter = _cache.emplace(path, _DoLoad(path)).first;
+			iter = _cache.emplace(path, DoLoad(path)).first;
 		}
 
 		return iter->second;
@@ -27,7 +27,7 @@ public:
 protected:
 	Loader() = default;
 
-	virtual T _DoLoad(const std::string& path) const = 0;
+	virtual T DoLoad(const std::string& path) const = 0;
 
 private:
 	mutable std::unordered_map<std::string, T> _cache;

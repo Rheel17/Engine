@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef RIGIDBODY_H_
-#define RIGIDBODY_H_
+#ifndef RHEELENGINE_RIGIDBODY_H
+#define RHEELENGINE_RIGIDBODY_H
 #include "../_common.h"
 
 #include "../Component.h"

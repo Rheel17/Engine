@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef CAMERA_H_
-#define CAMERA_H_
+#ifndef RHEELENGINE_CAMERA_H
+#define RHEELENGINE_CAMERA_H
 #include "../_common.h"
 
 #include "../Component.h"

@@ -15,10 +15,10 @@ std::string EngineResources::AsString(const std::string& resourceName) {
 
 std::string EngineResources::PreprocessShader(const std::string& resourceName) {
 	std::unordered_set<std::string> includedShaders;
-	return _PreprocessShader(resourceName, includedShaders);
+	return PreprocessShader_(resourceName, includedShaders);
 }
 
-std::string EngineResources::_PreprocessShader(const std::string& resourceName, std::unordered_set<std::string>& includedResources) {
+std::string EngineResources::PreprocessShader_(const std::string& resourceName, std::unordered_set<std::string>& includedResources) {
 	includedResources.insert(resourceName);
 
 	std::stringstream reader(AsString(resourceName));
@@ -27,9 +27,9 @@ std::string EngineResources::_PreprocessShader(const std::string& resourceName, 
 	std::string includeResource;
 
 	while (std::getline(reader, line, '\n')) {
-		if (_IsShaderIncludeLine(line, includeResource)) {
+		if (IsShaderIncludeLine_(line, includeResource)) {
 			if (includedResources.find(includeResource) == includedResources.end()) {
-				builder << _PreprocessShader(includeResource, includedResources);
+				builder << PreprocessShader_(includeResource, includedResources);
 			}
 		} else {
 			builder << line << '\n';
@@ -39,7 +39,7 @@ std::string EngineResources::_PreprocessShader(const std::string& resourceName, 
 	return builder.str();
 }
 
-bool EngineResources::_IsShaderIncludeLine(const std::string& line, std::string& resource) {
+bool EngineResources::IsShaderIncludeLine_(const std::string& line, std::string& resource) {
 	std::stringstream lineInput(line);
 	std::string word;
 	int state = 0;

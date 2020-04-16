@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef CONSTRAINT_H_
-#define CONSTRAINT_H_
+#ifndef RHEELENGINE_CONSTRAINT_H
+#define RHEELENGINE_CONSTRAINT_H
 #include "../_common.h"
 
 #include "Element.h"
@@ -41,17 +41,17 @@ public:
 	 * - SOUTH_EAST: bottom right
 	 */
 	enum ConstraintLocation {
-		 NORTH_WEST ,    NORTH   , NORTH_EAST ,
-		    WEST    ,                 EAST    ,
-		 SOUTH_WEST ,    SOUTH   , SOUTH_EAST ,
+		NORTH_WEST, NORTH, NORTH_EAST,
+		      WEST,              EAST,
+		SOUTH_WEST, SOUTH, SOUTH_EAST,
 
-		    TOP_LEFT = NORTH_WEST ,    TOP = NORTH ,    TOP_RIGHT = NORTH_EAST ,
-		        LEFT = WEST       ,                         RIGHT = EAST       ,
-		 BOTTOM_LEFT = SOUTH_WEST , BOTTOM = SOUTH , BOTTOM_RIGHT = SOUTH_EAST ,
+		   TOP_LEFT = NORTH_WEST,    TOP = NORTH,    TOP_RIGHT = NORTH_EAST,
+		       LEFT =       WEST,                        RIGHT =       EAST,
+		BOTTOM_LEFT = SOUTH_WEST, BOTTOM = SOUTH, BOTTOM_RIGHT = SOUTH_EAST,
 	};
 
-	struct WidthRelative  { float value; };
-	struct HeightRelative { float value; };
+	struct width_relative { float value; };
+	struct height_relative { float value; };
 
 	/**
 	 * An Anchor represents a location on a certain element.
@@ -60,12 +60,12 @@ public:
 
 	public:
 		Anchor();
-		Anchor(rheel::Element *element, ConstraintLocation location);
+		Anchor(rheel::Element* element, ConstraintLocation location);
 
 		/**
 		 * Returns the element of this anchor
 		 */
-		rheel::Element *Element() const;
+		rheel::Element* Element() const;
 
 		/**
 		 * Returns the location on the element.
@@ -88,25 +88,25 @@ public:
 		bool operator==(const Anchor& other) const;
 
 	private:
-		rheel::Element *_element;
+		rheel::Element* _element;
 		ConstraintLocation _location = ConstraintLocation::NORTH_WEST;
 
 	};
 
 private:
-	union _DistanceUnion {
-		int distance;
-		float distance_relative;
+	union distance_union {
+		int _distance;
+		float _distance_relative;
 	};
 
-	enum _DistanceType {
+	enum DistanceType {
 		ABSOLUTE, RELATIVE_TO_WIDTH, RELATIVE_TO_HEIGHT
 	};
 
 public:
-	Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, int distance = 0);
-	Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, WidthRelative distance);
-	Constraint(Element *movingElement, ConstraintLocation movingLocation, Element *fixedElement, ConstraintLocation fixedLocation, HeightRelative distance);
+	Constraint(Element* movingElement, ConstraintLocation movingLocation, Element* fixedElement, ConstraintLocation fixedLocation, int distance = 0);
+	Constraint(Element* movingElement, ConstraintLocation movingLocation, Element* fixedElement, ConstraintLocation fixedLocation, width_relative distance);
+	Constraint(Element* movingElement, ConstraintLocation movingLocation, Element* fixedElement, ConstraintLocation fixedLocation, height_relative distance);
 
 	/**
 	 * Copies this constraint, but replaces the anchors. The distance remains
@@ -159,12 +159,12 @@ public:
 	bool operator==(const Constraint& other) const;
 
 private:
-	Constraint(const Anchor& moving, const Anchor& fixed, _DistanceUnion distance, _DistanceType distanceType);
+	Constraint(const Anchor& moving, const Anchor& fixed, distance_union distance, DistanceType distanceType);
 
 	Anchor _moving;
 	Anchor _fixed;
-	_DistanceUnion _distance{};
-	_DistanceType _distance_type;
+	distance_union _distance{};
+	DistanceType _distance_type;
 
 public:
 	static constexpr ConstraintLocation LOCATION_ITERATOR_BEGIN = NORTH_WEST;
@@ -178,8 +178,9 @@ public:
 class RE_API ConstraintException : public std::exception {
 
 public:
-	explicit ConstraintException(std::string what) : _what(std::move(what)) {}
-	const char *what() const noexcept override { return _what.c_str(); }
+	explicit ConstraintException(std::string what) :
+			_what(std::move(what)) {}
+	const char* what() const noexcept override { return _what.c_str(); }
 
 private:
 	std::string _what;

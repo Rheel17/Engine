@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef RHEELENGINE_GAME_H
+#define RHEELENGINE_GAME_H
 #include "_common.h"
 
 namespace rheel {
@@ -13,14 +13,14 @@ public:
 	virtual ~Game() = default;
 
 	/**
-	 * Initializes the game. This is before a window with _OpenGL context is
+	 * Initializes the game. This is before a window with OpenGL context is
 	 * created. Any render initialization cannot be done in this method, use
 	 * Game::Start() for that.
 	 */
 	virtual void Initialize() {}
 
 	/**
-	 * Called when the game is started. At this point, a window and _OpenGL
+	 * Called when the game is started. At this point, a window and OpenGL
 	 * context are present. This is the final method called before the main game
 	 * loop.
 	 */

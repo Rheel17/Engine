@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef POINTLIGHT_H_
-#define POINTLIGHT_H_
+#ifndef RHEELENGINE_POINTLIGHT_H
+#define RHEELENGINE_POINTLIGHT_H
 #include "../_common.h"
 
 #include "Light.h"

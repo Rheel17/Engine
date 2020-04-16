@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef GLM_DEBUG_H_
-#define GLM_DEBUG_H_
+#ifndef RHEELENGINE_GLM_DEBUG_H
+#define RHEELENGINE_GLM_DEBUG_H
 #include "../_common.h"
 
 #include <iostream>

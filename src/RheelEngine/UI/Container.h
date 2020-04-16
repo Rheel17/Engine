@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef CONTAINER_H_
-#define CONTAINER_H_
+#ifndef RHEELENGINE_CONTAINER_H
+#define RHEELENGINE_CONTAINER_H
 #include "../_common.h"
 
 #include <map>
@@ -23,19 +23,19 @@ private:
 	class ConstraintTreeNode {
 
 	public:
-		std::optional<const ConstraintTreeNode *> GetNodeForAnchor(const Constraint::Anchor& anchor) const;
-		std::optional<ConstraintTreeNode *> GetNodeForAnchor(const Constraint::Anchor& anchor);
+		std::optional<const ConstraintTreeNode*> GetNodeForAnchor(const Constraint::Anchor& anchor) const;
+		std::optional<ConstraintTreeNode*> GetNodeForAnchor(const Constraint::Anchor& anchor);
 
 		Constraint::Anchor anchor;
-		ConstraintTreeNode *parent;
-		std::map<ConstraintTreeNode *, Constraint> children;
+		ConstraintTreeNode* parent;
+		std::map<ConstraintTreeNode*, Constraint> children;
 
 	public:
-		static ConstraintTreeNode *NewRoot();
+		static ConstraintTreeNode* NewRoot();
 
 	};
 
-	struct TemporaryBounds {
+	struct temporary_bounds {
 		int left, right;
 		int top, bottom;
 		bool fixed_left, fixed_right;
@@ -65,7 +65,7 @@ public:
 	/**
 	 * Returns the parent UI of this container.
 	 */
-	UI *ParentUI() const;
+	UI* ParentUI() const;
 
 	/**
 	 * Adds an element to this container. The element is copied into a pointer,
@@ -73,11 +73,12 @@ public:
 	 * element.
 	 */
 	template<typename T>
-	T *AddElement(const T& element) {
+	T* AddElement(const T& element) {
 		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class");
-		static_assert(std::is_copy_constructible<T>::value, "Element must be copy-constructible; try InsertElement with std::move()");
+		static_assert(std::is_copy_constructible<T>::value,
+				"Element must be copy-constructible; try InsertElement with std::move()");
 
-		T *ptr = new T(element);
+		T* ptr = new T(element);
 		ptr->_parent_container = this;
 		_elements.push_back(ptr);
 
@@ -91,11 +92,12 @@ public:
 	 * be valid after this method returns.
 	 */
 	template<typename T>
-	T *InsertElement(T&& element) {
-		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class, did you std::move()?");
+	T* InsertElement(T&& element) {
+		static_assert(std::is_base_of<Element, T>::value,
+				"Element must derive from the Element class, did you std::move()?");
 		static_assert(std::is_move_constructible<T>::value, "Element must be move-constructible");
 
-		T *ptr = new T(std::forward<T>(element));
+		T* ptr = new T(std::forward<T>(element));
 		ptr->_parent_container = this;
 		_elements.push_back(ptr);
 
@@ -106,21 +108,21 @@ public:
 	 * Removes an element from this container. Removing an element not in this
 	 * container has no effect.
 	 */
-	void RemoveElement(Element *element);
+	void RemoveElement(Element* element);
 
 	/**
 	 * Returns the element at the specified position. When no element has been
 	 * added at the given position, this container is returned. If multiple
 	 * elements share the position, the top one (last added) is returned.
 	 */
-	Element *ElementAt(unsigned x, unsigned y);
+	Element* ElementAt(unsigned x, unsigned y);
 
 	/**
 	 * Returns the element at the specified position. When no element has been
 	 * added at the given position, this container is returned. If multiple
 	 * elements share the position, the top opaque one (last added) is returned.
 	 */
-	Element *OpaqueElementAt(unsigned x, unsigned y);
+	Element* OpaqueElementAt(unsigned x, unsigned y);
 
 	/**
 	 * Adds a constraint between elements in this container. For more details
@@ -130,8 +132,11 @@ public:
 	 * destination anchor is already constraint, the constraint is a self-loop,
 	 * or if the elements are not in this container.
 	 */
-	void AddConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
-			Element *fixedElement, Constraint::ConstraintLocation fixedLocation, int distance = 0);
+	void AddConstraint(Element* movingElement,
+			Constraint::ConstraintLocation movingLocation,
+			Element* fixedElement,
+			Constraint::ConstraintLocation fixedLocation,
+			int distance = 0);
 
 	/**
 	 * Adds a constraint between elements in this container. For more details
@@ -144,8 +149,11 @@ public:
 	 * destination anchor is already constraint, the constraint is a self-loop,
 	 * or if the elements are not in this container.
 	 */
-	void AddWidthRelativeConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
-			Element *fixedElement, Constraint::ConstraintLocation fixedLocation, float distance = 0);
+	void AddWidthRelativeConstraint(Element* movingElement,
+			Constraint::ConstraintLocation movingLocation,
+			Element* fixedElement,
+			Constraint::ConstraintLocation fixedLocation,
+			float distance = 0);
 
 	/**
 	 * Adds a constraint between elements in this container. For more details
@@ -158,8 +166,11 @@ public:
 	 * destination anchor is already constraint, the constraint is a self-loop,
 	 * or if the elements are not in this container.
 	 */
-	void AddHeightRelativeConstraint(Element *movingElement, Constraint::ConstraintLocation movingLocation,
-			Element *fixedElement, Constraint::ConstraintLocation fixedLocation, float distance = 0);
+	void AddHeightRelativeConstraint(Element* movingElement,
+			Constraint::ConstraintLocation movingLocation,
+			Element* fixedElement,
+			Constraint::ConstraintLocation fixedLocation,
+			float distance = 0);
 
 	/**
 	 * Adds a constraint between elements in this container. For more details
@@ -193,19 +204,19 @@ public:
 	void OnResize() override;
 
 private:
-	using TempBoundsMap = std::map<Element *, TemporaryBounds>;
+	using TempBoundsMap = std::map<Element*, temporary_bounds>;
 
-	explicit Container(UI *ui);
+	explicit Container(UI* ui);
 
-	void _CheckElement(Element *element, std::string sourceOrDestination) const;
-	void _DeleteConstraintTree(ConstraintTreeNode *node);
+	void CheckElement_(Element* element, std::string sourceOrDestination) const;
+	void DeleteConstraintTree_(ConstraintTreeNode* node);
 
-	void _LayoutNode(TempBoundsMap& boundsMap, ConstraintTreeNode *node);
-	void _LayoutNode(TempBoundsMap& boundsMap, const Constraint& constraint);
+	void LayoutNode_(TempBoundsMap& boundsMap, ConstraintTreeNode* node);
+	void LayoutNode_(TempBoundsMap& boundsMap, const Constraint& constraint);
 
-	std::vector<Element *> _elements;
-	ConstraintTreeNode *_constraint_tree;
-	UI *_parent_ui;
+	std::vector<Element*> _elements;
+	ConstraintTreeNode* _constraint_tree;
+	UI* _parent_ui;
 
 };
 

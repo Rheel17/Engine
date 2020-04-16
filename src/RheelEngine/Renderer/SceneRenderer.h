@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef SCENERENDERER_H_
-#define SCENERENDERER_H_
+#ifndef RHEELENGINE_SCENERENDERER_H
+#define RHEELENGINE_SCENERENDERER_H
 #include "../_common.h"
 
 #include "SceneRenderManager.h"
@@ -19,40 +19,40 @@ public:
 
 	void SetSize(unsigned width, unsigned height);
 
-	const GL::Framebuffer& ResultBuffer() const;
+	const gl::Framebuffer& ResultBuffer() const;
 
 	virtual void Render(float dt) = 0;
 
 protected:
-	SceneRenderer(SceneRenderManager *manager, std::string cameraName, unsigned width, unsigned height, unsigned samples, bool depthComponent);
+	SceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned samples, bool depthComponent);
 
-	void _RenderShadowMaps();
+	void RenderShadowMaps();
 
-	void _RenderSkybox(unsigned width, unsigned height);
+	void RenderSkybox(unsigned width, unsigned height);
 
-	SceneRenderManager *GetManager() const;
+	SceneRenderManager* GetManager() const;
 
-	Camera *GetCamera() const;
+	Camera* GetCamera() const;
 
 	unsigned Width() const;
 
 	unsigned Height() const;
 
-	const std::unordered_map<Light *, std::unique_ptr<ShadowMap>>& ShadowMaps() const;
+	const std::unordered_map<Light*, std::unique_ptr<ShadowMap>>& ShadowMaps() const;
 
 	virtual void Resize(unsigned width, unsigned height) = 0;
 
 private:
-	void _CorrectShadowMapList();
+	void CorrectShadowMapList_();
 
-	SceneRenderManager *_manager;
+	SceneRenderManager* _manager;
 	std::string _camera_name;
 	unsigned _width;
 	unsigned _height;
 
-	GL::Framebuffer _result_buffer;
+	gl::Framebuffer _result_buffer;
 
-	std::unordered_map<Light *, std::unique_ptr<ShadowMap>> _shadow_maps;
+	std::unordered_map<Light*, std::unique_ptr<ShadowMap>> _shadow_maps;
 
 };
 

@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef TEXTELEMENT_H_
-#define TEXTELEMENT_H_
+#ifndef RHEELENGINE_TEXTELEMENT_H
+#define RHEELENGINE_TEXTELEMENT_H
 #include "../../_common.h"
 
 #include "../Element.h"

@@ -5,7 +5,7 @@
 
 #include "Capabilities.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 AbstractTexture::AbstractTexture(Texture::Target target) :
 		Texture(target) {}

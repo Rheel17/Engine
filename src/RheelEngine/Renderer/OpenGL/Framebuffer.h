@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_FRAMEBUFFER_H
-#define RHEELENGINE_GL_FRAMEBUFFER_H
+#ifndef RHEELENGINE_FRAMEBUFFER_H
+#define RHEELENGINE_FRAMEBUFFER_H
 #include "../../_common.h"
 
 #include "Texture2D.h"
 #include "Texture2DMultisample.h"
 #include "Renderbuffer.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
-OPENGL_GEN_FUNCTION(glGenFramebuffers, _GenFramebuffers);
-OPENGL_DELETE_FUNCTION(glDeleteFramebuffers, _DeleteFramebuffers);
+OPENGL_GEN_FUNCTION(glGenFramebuffers, gen_framebuffers_);
+OPENGL_DELETE_FUNCTION(glDeleteFramebuffers, delete_framebuffers_);
 
-class RE_API Framebuffer : public Object<_GenFramebuffers, _DeleteFramebuffers> {
+class RE_API Framebuffer : public Object<gen_framebuffers_, delete_framebuffers_> {
 	friend class Window;
 
 public:
@@ -47,26 +47,26 @@ public:
 	};
 
 private:
-	struct _TextureAttachment {
+	struct texture_attachment {
 		Texture2D texture;
 		InternalFormat internalFormat;
 		Format format;
 	};
 
-	struct _TextureMultisampleAttachment {
+	struct texture_multisample_attachment {
 		Texture2DMultisample texture;
-		InternalFormat internalFormat;
+		InternalFormat internal_format;
 		unsigned samples;
 	};
 
-	struct _RenderbufferAttachment {
+	struct renderbuffer_attachment {
 		Renderbuffer buffer;
-		InternalFormat internalFormat;
+		InternalFormat internal_format;
 	};
 
-	struct _RenderbufferMultisampleAttachment {
+	struct renderbuffer_multisample_attachment {
 		Renderbuffer buffer;
-		InternalFormat internalFormat;
+		InternalFormat internal_format;
 		unsigned samples;
 	};
 
@@ -249,13 +249,13 @@ private:
 	// constructor for the default framebuffer
 	Framebuffer(uvec2 defaultViewport);
 
-	void _AttachTexture(InternalFormat internalFormat, Format format, GLenum attachment);
-	void _AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, GLenum attachment);
-	void _AttachRenderbuffer(InternalFormat internalFormat, GLenum attachment);
-	void _AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, GLenum attachment);
+	void AttachTexture_(InternalFormat internalFormat, Format format, GLenum attachment);
+	void AttachTextureMultisample_(InternalFormat internalFormat, unsigned samples, GLenum attachment);
+	void AttachRenderbuffer_(InternalFormat internalFormat, GLenum attachment);
+	void AttachRenderbufferMultisample_(InternalFormat internalFormat, unsigned samples, GLenum attachment);
 
 	template<typename T>
-	const T& _GetAttachment(const std::unordered_map<GLenum, T>& attachments, GLenum attachment) const {
+	const T& GetAttachment_(const std::unordered_map<GLenum, T>& attachments, GLenum attachment) const {
 		auto iter = attachments.find(attachment);
 		if (iter == attachments.end()) {
 			Log::Error() << "Nothing attached to attachment or getting the wrong type" << std::endl;
@@ -266,7 +266,7 @@ private:
 	}
 
 	template<typename T>
-	T& _GetAttachment(std::unordered_map<GLenum, T>& attachments, GLenum attachment) {
+	T& GetAttachment_(std::unordered_map<GLenum, T>& attachments, GLenum attachment) {
 		auto iter = attachments.find(attachment);
 		if (iter == attachments.end()) {
 			Log::Error() << "Nothing attached to attachment or getting the wrong type" << std::endl;
@@ -276,17 +276,17 @@ private:
 		return iter->second;
 	}
 
-	void _CheckStatus() const;
-	bool _HasAttachment(GLenum attachment) const;
+	void CheckStatus_() const;
+	bool HasAttachment_(GLenum attachment) const;
 
 	unsigned _viewport_width;
 	unsigned _viewport_height;
 	std::vector<unsigned> _draw_buffers;
 
-	std::unordered_map<GLenum, _TextureAttachment> _attached_textures;
-	std::unordered_map<GLenum, _TextureMultisampleAttachment> _attached_multisample_textures;
-	std::unordered_map<GLenum, _RenderbufferAttachment> _attached_renderbuffers;
-	std::unordered_map<GLenum, _RenderbufferMultisampleAttachment> _attached_multisample_renderbuffers;
+	std::unordered_map<GLenum, texture_attachment> _attached_textures;
+	std::unordered_map<GLenum, texture_multisample_attachment> _attached_multisample_textures;
+	std::unordered_map<GLenum, renderbuffer_attachment> _attached_renderbuffers;
+	std::unordered_map<GLenum, renderbuffer_multisample_attachment> _attached_multisample_renderbuffers;
 
 public:
 	static void InitializeDefaultFramebuffer(uvec2 screenSize);

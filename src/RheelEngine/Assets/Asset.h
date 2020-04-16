@@ -42,7 +42,8 @@ public:
 	}
 
 protected:
-	Asset() : _data(std::make_shared<T>()) {}
+	Asset() :
+			_data(std::make_shared<T>()) {}
 
 	explicit Asset(T&& t) :
 			_data(std::make_shared<T>(std::forward<T>(t))) {}
@@ -53,14 +54,14 @@ protected:
 	/*
 	 * Use with caution! The data could be null.
 	 */
-	const T* _GetRaw() const {
+	const T* GetRaw() const {
 		return _data.get();
 	}
 
 	/*
 	 * Use with caution! The data could be null.
 	 */
-	T* _GetRaw() {
+	T* GetRaw() {
 		return _data.get();
 	}
 

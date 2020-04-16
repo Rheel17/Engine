@@ -17,7 +17,7 @@ void VoxelRenderComponent::Render() {
 }
 
 void VoxelRenderComponent::Deactivate() {
-	 
+
 }
 
 }

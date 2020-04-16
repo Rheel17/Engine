@@ -1,12 +1,12 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef AUDIOSOURCE_H_
-#define AUDIOSOURCE_H_
+#ifndef RHEELENGINE_AUDIOSOURCE_H
+#define RHEELENGINE_AUDIOSOURCE_H
 #include "../_common.h"
 
 #include "AudioClip.h"
-#include "OpenAL/ALSource.h"
+#include "OpenAL/Source.h"
 
 namespace rheel {
 
@@ -40,12 +40,12 @@ public:
 	void SetVelocity(const vec3& velocity);
 
 private:
-	AudioSource(AudioManager *manager, const AudioClip& clip);
+	AudioSource(AudioManager* manager, const AudioClip& clip);
 
-	void _Stop();
+	void Stop_();
 
-	AudioManager *_manager;
-	ALSource _source;
+	AudioManager* _manager;
+	al::Source _source;
 
 };
 

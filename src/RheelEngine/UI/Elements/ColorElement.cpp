@@ -15,7 +15,7 @@ ColorElement::ColorElement(unsigned width, unsigned height, Color color) :
 }
 
 void ColorElement::Draw(float time, float dt) const {
-	_DrawColoredQuad(GetBounds(), _color);
+	DrawColoredQuad(GetBounds(), _color);
 }
 
 }

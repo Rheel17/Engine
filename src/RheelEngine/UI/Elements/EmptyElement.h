@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef EMPTYELEMENT_H_
-#define EMPTYELEMENT_H_
+#ifndef RHEELENGINE_EMPTYELEMENT_H
+#define RHEELENGINE_EMPTYELEMENT_H
 #include "../../_common.h"
 
 #include "../Element.h"

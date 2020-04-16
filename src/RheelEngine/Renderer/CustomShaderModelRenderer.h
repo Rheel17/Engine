@@ -23,21 +23,21 @@ public:
 
 	void RenderObjects() const;
 
-	GL::Program& GetShaderProgram();
+	gl::Program& GetShaderProgram();
 
 private:
-	GL::VertexArray _vao;
-	GL::Buffer _vertex_buffer_object;
-	mutable GL::Buffer _object_data_buffer;
+	gl::VertexArray _vao;
+	gl::Buffer _vertex_buffer_object;
+	mutable gl::Buffer _object_data_buffer;
 
-	GL::Program _shader;
+	gl::Program _shader;
 
-	ModelRenderer::_ObjectDataVector _objects;
+	ModelRenderer::ObjectDataVector _objects;
 
 private:
-	static std::unordered_map<std::uintptr_t, GL::Program> _shader_cache;
+	static std::unordered_map<std::uintptr_t, gl::Program> _shader_cache;
 
-	static GL::Program& _GetCompiledShader(const Shader& shader);
+	static gl::Program& GetCompiledShader_(const Shader& shader);
 
 };
 

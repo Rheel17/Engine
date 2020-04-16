@@ -5,8 +5,10 @@
 
 namespace rheel {
 
-StaticModelGeneratorCapsule::StaticModelGeneratorCapsule(float radius, float straightHeight, unsigned int subdivisions) :
-		_radius(radius), _straight_height(straightHeight), _subdivisions(subdivisions) {}
+StaticModelGeneratorCapsule::StaticModelGeneratorCapsule(float radius, float straightHeight, unsigned subdivisions) :
+		_radius(radius),
+		_straight_height(straightHeight),
+		_subdivisions(subdivisions) {}
 
 void StaticModelGeneratorCapsule::DoGenerate() {
 	// add the vertices and indices
@@ -53,6 +55,5 @@ void StaticModelGeneratorCapsule::DoGenerate() {
 		}
 	}
 }
-
 
 }

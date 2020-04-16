@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_GL_ENUMS_H
-#define RHEELENGINE_GL_ENUMS_H
+#ifndef RHEELENGINE_ENUMS_H
+#define RHEELENGINE_ENUMS_H
 #include "../../_common.h"
 
 #include <gl/glew.h>
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 enum class Type {
 	UNSIGNED_BYTE = GL_UNSIGNED_BYTE, BYTE = GL_BYTE, UNSIGNED_SHORT = GL_UNSIGNED_SHORT, SHORT = GL_SHORT,

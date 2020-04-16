@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef DISPLAYCONFIGURATION_H_
-#define DISPLAYCONFIGURATION_H_
+#ifndef RHEELENGINE_DISPLAYCONFIGURATION_H
+#define RHEELENGINE_DISPLAYCONFIGURATION_H
 #include "../_common.h"
 
 namespace rheel {
@@ -10,7 +10,7 @@ namespace rheel {
 /**
  * A structure holding the display configuration for the window
  */
-struct RE_API DisplayConfiguration {
+class RE_API DisplayConfiguration {
 	friend class Engine;
 
 public:
@@ -18,18 +18,13 @@ public:
 	enum AntiAliasing { AA_OFF, MSAA_4, MSAA_8, MSAA_16 };
 	enum ShadowQuality { SHADOW_OFF, SHADOW_LOW, SHADOW_MEDIUM, SHADOW_HIGH };
 
-	struct Resolution {
-		int width;
-		int height;
-	};
-
-	static constexpr float ANISOTROPIC_LEVEL_MAX = std::numeric_limits<float>::infinity();
+	static constexpr auto ANISOTROPIC_LEVEL_MAX = std::numeric_limits<float>::infinity();
 
 public:
 	unsigned SampleCount() const;
 
 	WindowMode window_mode = FULLSCREEN;
-	Resolution resolution = RESOLUTION_NATIVE;
+	ivec2 resolution = RESOLUTION_NATIVE;
 	std::string title = "Rheel Game Engine";
 	bool vsync = true;
 	AntiAliasing aa_mode = AA_OFF;
@@ -38,11 +33,11 @@ public:
 	float anisotropic_level = 1.0f;
 
 private:
-	void _CalculateActualResolution();
-	void _ClampAnisotropicLevel();
+	void CalculateActualResolution_();
+	void ClampAnisotropicLevel_();
 
 public:
-	static const Resolution RESOLUTION_NATIVE;
+	static const ivec2 RESOLUTION_NATIVE;
 
 };
 

@@ -5,7 +5,7 @@
 
 #include "State.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 void Renderbuffer::Bind() const {
 	State::BindRenderbuffer(*this);

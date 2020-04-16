@@ -1,31 +1,31 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef MODEL_H_
-#define MODEL_H_
+#ifndef RHEELENGINE_MODEL_H
+#define RHEELENGINE_MODEL_H
 #include "../_common.h"
 
 #include "Asset.h"
 
 namespace rheel {
 
-struct RE_API ModelVertex {
+struct RE_API model_vertex {
 	vec3 position;
 	vec3 normal;
 	vec2 texture;
 };
 
-struct RE_API _ModelData {
-	std::vector<ModelVertex> vertices;
+struct RE_API model_data {
+	std::vector<model_vertex> vertices;
 	std::vector<unsigned> indices;
 };
 
-class RE_API Model : public Asset<_ModelData> {
+class RE_API Model : public Asset<model_data> {
 
 public:
-	Model(std::vector<ModelVertex> vertices, std::vector<unsigned> indices);
+	Model(std::vector<model_vertex> vertices, std::vector<unsigned> indices);
 
-	const std::vector<ModelVertex>& GetVertices() const;
+	const std::vector<model_vertex>& GetVertices() const;
 	const std::vector<unsigned>& GetIndices() const;
 
 };

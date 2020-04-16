@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef ENGINERESOURCES_H_
-#define ENGINERESOURCES_H_
+#ifndef RHEELENGINE_ENGINERESOURCES_H
+#define RHEELENGINE_ENGINERESOURCES_H
 #include "_common.h"
 
 namespace rheel {
@@ -15,12 +15,11 @@ public:
 	static std::string PreprocessShader(const std::string& resourceName);
 
 private:
-	static std::string _PreprocessShader(const std::string& resourceName, std::unordered_set<std::string>& includedResources);
-	static bool _IsShaderIncludeLine(const std::string& line, std::string& resource);
+	static std::string PreprocessShader_(const std::string& resourceName, std::unordered_set<std::string>& includedResources);
+	static bool IsShaderIncludeLine_(const std::string& line, std::string& resource);
 
 };
 
 }
-
 
 #endif

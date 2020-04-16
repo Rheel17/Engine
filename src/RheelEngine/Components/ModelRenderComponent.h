@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef MODELRENDERCOMPONENT_H_
-#define MODELRENDERCOMPONENT_H_
+#ifndef RHEELENGINE_MODELRENDERCOMPONENT_H
+#define RHEELENGINE_MODELRENDERCOMPONENT_H
 #include "../_common.h"
 
 #include "../Component.h"

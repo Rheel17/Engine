@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef COLLISIONCOMPONENT_H_
-#define COLLISIONCOMPONENT_H_
+#ifndef RHEELENGINE_COLLISIONCOMPONENT_H
+#define RHEELENGINE_COLLISIONCOMPONENT_H
 #include "../_common.h"
 
 #include "../Component.h"
@@ -18,11 +18,9 @@ class RE_API CollisionComponent : public ComponentBase {
 
 public:
 	CollisionComponent() = default;
-
 	~CollisionComponent() override = default;
 
 	virtual void OnCollisionStart(CollisionComponent& other) {}
-
 	virtual void OnCollisionEnd(CollisionComponent& other) {}
 
 };

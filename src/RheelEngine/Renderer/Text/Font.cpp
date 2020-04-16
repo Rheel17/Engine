@@ -7,7 +7,7 @@
 
 namespace rheel {
 
-std::unique_ptr<FT_Library, Font::_DeleteFreeTypeLibrary> Font::_ft;
+std::unique_ptr<FT_Library, Font::delete_free_type_library> Font::_ft;
 std::unordered_map<std::string, Font> Font::_registered_fonts;
 
 Font::Font(FT_Face face) :
@@ -26,12 +26,12 @@ const Character& Font::LoadCharacter(wchar_t c) {
 		if (_character_cache.size() == FONT_CACHE_SIZE) {
 			// character cache is full
 
-			_CharacterCacheItem back = _character_cache.back();
+			character_cache_item back = _character_cache.back();
 			_character_cache.pop_back();
 			_character_cache_reference.erase(back.character);
 		}
 
-		Character data = _LoadCharacter(c);
+		Character data = LoadCharacter_(c);
 		_character_cache.push_front({ c, data });
 		_character_cache_reference[c] = _character_cache.begin();
 	} else {
@@ -106,7 +106,7 @@ unsigned Font::StringWidth(const std::wstring& str, unsigned size) const {
 	return StringWidth(str.c_str(), size);
 }
 
-Character Font::_LoadCharacter(wchar_t c) {
+Character Font::LoadCharacter_(wchar_t c) {
 	// load the character
 	if (FT_Load_Char(_face, c, FT_LOAD_NO_SCALE)) {
 		throw std::runtime_error("Could not load character '" + std::to_string(c) + "'.");
@@ -131,7 +131,7 @@ void Font::Initialize() {
 }
 
 void Font::RegisterFont(const std::string& filename, const std::string& name) {
-	_InitializeFreeType();
+    InitializeFreeType_();
 
 	if (_registered_fonts.find(name) != _registered_fonts.end()) {
 		throw std::runtime_error("Font '" + name + "' already registered");
@@ -158,10 +158,10 @@ Font& Font::GetDefaultFont() {
 	return GetFont(DEFAULT_FONT);
 }
 
-void Font::_InitializeFreeType() {
+void Font::InitializeFreeType_() {
 	if (!_ft) {
 		FT_Library *library = new FT_Library;
-		_ft = std::unique_ptr<FT_Library, _DeleteFreeTypeLibrary>(library);
+		_ft = std::unique_ptr<FT_Library, delete_free_type_library>(library);
 
 		if (FT_Init_FreeType(_ft.get())) {
 			throw std::runtime_error("FreeType initialization failed.");

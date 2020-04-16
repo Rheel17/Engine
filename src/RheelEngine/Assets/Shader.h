@@ -9,11 +9,11 @@
 
 namespace rheel {
 
-struct _ShaderData {
+struct shader_data {
 	std::string source;
 };
 
-class RE_API Shader : public Asset<_ShaderData> {
+class RE_API Shader : public Asset<shader_data> {
 
 public:
 	explicit Shader(std::string source);
@@ -22,7 +22,8 @@ public:
 
 private:
 	Shader() = default;
-	Shader(std::nullptr_t null) : Asset(nullptr) {}
+	Shader(std::nullptr_t null) :
+			Asset(nullptr) {}
 
 public:
 	static Shader Null();

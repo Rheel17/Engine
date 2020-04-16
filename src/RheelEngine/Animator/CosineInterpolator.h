@@ -14,7 +14,7 @@ class RE_API CosineInterpolator : public TransitionInterpolator<T> {
 
 public:
 	CosineInterpolator() :
-			TransitionInterpolator<T>(Transition::cosine) {}
+			TransitionInterpolator<T>(Transition::COSINE) {}
 
 };
 

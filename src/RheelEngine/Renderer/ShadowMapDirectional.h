@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef SHADOWMAPDIRECTIONAL_H_
-#define SHADOWMAPDIRECTIONAL_H_
+#ifndef RHEELENGINE_SHADOWMAPDIRECTIONAL_H
+#define RHEELENGINE_SHADOWMAPDIRECTIONAL_H
 #include "../_common.h"
 
 #include "ShadowMap.h"
@@ -15,32 +15,32 @@ class RE_API ShadowMapDirectional : public ShadowMap {
 public:
 	~ShadowMapDirectional() override;
 
-	void Update(Camera *camera, unsigned width, unsigned height) override;
+	void Update(Camera* camera, unsigned width, unsigned height) override;
 
-	std::vector<std::reference_wrapper<const GL::Texture2D>> Textures() const;
+	std::vector<std::reference_wrapper<const gl::Texture2D>> Textures() const;
 
 	const std::vector<mat4>& LightMatrices() const;
 
 	float Bias() const;
 
 private:
-	ShadowMapDirectional(SceneRenderManager *manager, Light *light);
+	ShadowMapDirectional(SceneRenderManager* manager, Light* light);
 
-	void _CalculateViewProjectionMatrices(Camera *camera, unsigned width, unsigned height);
+	void CalculateViewProjectionMatrices_(Camera* camera, unsigned width, unsigned height);
 
 	std::vector<unsigned> _csm_split;
 	std::vector<float> _csm_borders;
 	unsigned _csm_count;
 	float _bias;
 
-	std::vector<GL::Framebuffer> _shadow_buffers;
+	std::vector<gl::Framebuffer> _shadow_buffers;
 	std::vector<mat4> _light_matrices;
 
 public:
-	static const GL::Texture2D& EmptyShadowMap();
+	static const gl::Texture2D& EmptyShadowMap();
 
 private:
-	static std::unique_ptr<GL::Texture2D> _empty_shadow_map;
+	static std::unique_ptr<gl::Texture2D> _empty_shadow_map;
 
 };
 

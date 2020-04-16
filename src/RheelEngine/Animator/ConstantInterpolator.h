@@ -15,7 +15,7 @@ class RE_API ConstantInterpolator : public Interpolator<T> {
 
 protected:
 	T _GetValue(float t) const override {
-		return (--this->_points.end())->second;
+		return (--this->points.end())->second;
 	}
 
 };

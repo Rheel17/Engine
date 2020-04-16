@@ -5,7 +5,7 @@
 
 #include "State.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 Program::Program(Program&& p) noexcept :
 		Object(std::forward<Object&&>(p)),
@@ -23,7 +23,7 @@ Program& Program::operator=(Program&& p) noexcept {
 }
 
 void Program::Use() const {
-	_EnsureLinked();
+	EnsureLinked_();
 	State::UseProgram(*this);
 }
 
@@ -36,13 +36,13 @@ void Program::AttachShader(Shader::ShaderType type, const std::string& source) {
 }
 
 void Program::AttachShader(const Shader& shader) {
-	_EnsureNotLinked();
+	EnsureNotLinked_();
 	glAttachShader(GetHandle(), shader.GetHandle());
 	_attached_shaders.push_back(shader.GetHandle());
 }
 
 void Program::Link() {
-	_EnsureNotLinked();
+	EnsureNotLinked_();
 
 	glLinkProgram(GetHandle());
 
@@ -72,7 +72,7 @@ void Program::Link() {
 }
 
 Uniform& Program::GetUniform(const std::string& name) const {
-	return _GetUniform(name, true);
+	return GetUniform_(name, true);
 }
 
 Uniform& Program::operator[](const std::string& name) const {
@@ -80,27 +80,30 @@ Uniform& Program::operator[](const std::string& name) const {
 }
 
 bool Program::HasUniform(const std::string& name) const {
-	return _GetUniform(name, false).IsValid();
+	return GetUniform_(name, false).IsValid();
 }
 
-void Program::_EnsureLinked() const {
+void Program::EnsureLinked_() const {
 	if (!_linked) {
 		Log::Error() << "Shader not linked" << std::endl;
 		abort();
 	}
 }
 
-void Program::_EnsureNotLinked() const {
+void Program::EnsureNotLinked_() const {
 	if (_linked) {
 		Log::Error() << "Operation not allowed on a linked shader" << std::endl;
 		abort();
 	}
 }
 
-Uniform& Program::_GetUniform(const std::string& name, bool checkWarning) const {
+Uniform& Program::GetUniform_(const std::string& name, bool checkWarning) const {
 	auto iter = _uniforms.find(name);
 	if (iter == _uniforms.end()) {
-		iter = _uniforms.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(GetHandle(), name, checkWarning)).first;
+		iter = _uniforms.emplace(
+				std::piecewise_construct,
+				std::forward_as_tuple(name),
+				std::forward_as_tuple(GetHandle(), name, checkWarning)).first;
 	}
 
 	return iter->second;

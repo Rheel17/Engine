@@ -21,8 +21,8 @@ protected:
 			_transition(transition) {}
 
 	T _GetValue(float t) const override {
-		auto before = --this->_points.upper_bound(t);
-		auto after = this->_points.upper_bound(t);
+		auto before = --this->points.upper_bound(t);
+		auto after = this->points.upper_bound(t);
 
 		return _transition(t, before->first, after->first, before->second, after->second);
 	}

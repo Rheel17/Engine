@@ -29,7 +29,7 @@ private:
 	static bool _initialized;
 
 private:
-	static void _Initialize();
+	static void Initialize_();
 
 };
 

@@ -1,19 +1,23 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef ALLISTENER_H_
-#define ALLISTENER_H_
+#ifndef RHEELENGINE_AL_LISTENER_H
+#define RHEELENGINE_AL_LISTENER_H
 #include "../../_common.h"
 
 #include <AL/al.h>
 
 namespace rheel {
+class AudioManager;
+}
 
-class RE_API ALListener {
-	RE_NO_COPY(ALListener);
-	RE_NO_MOVE(ALListener);
+namespace rheel::al {
 
-	friend class AudioManager;
+class RE_API Listener {
+	RE_NO_COPY(Listener);
+	RE_NO_MOVE(Listener);
+
+	friend class rheel::AudioManager;
 
 public:
 	/**
@@ -44,7 +48,7 @@ public:
 	void SetOrientation(const quat& rotation);
 
 private:
-	ALListener() = default;
+	Listener() = default;
 
 };
 

@@ -5,14 +5,14 @@
 
 #include <regex>
 
-namespace rheel::GL {
+namespace rheel::gl {
 
-void callbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
+void callbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
 	std::string msg(message, length);
 	Debug::_callback(id, Debug::Source(source), Debug::Type(type), Debug::Severity(severity), msg);
 }
 
-Debug::Callback Debug::_callback = [](unsigned, Source, Type, Severity, const std::string&){};
+Debug::Callback Debug::_callback = [](unsigned, Source, Type, Severity, const std::string&) {};
 bool Debug::_initialized_opengl_callback = false;
 
 std::string Debug::GetString(Source source) {
@@ -71,7 +71,7 @@ void Debug::SetDebugCallback(Callback callback) {
 }
 
 void Debug::ClearDebugCallback() {
-	_callback = [](unsigned, Source, Type, Severity, const std::string&){};
+	_callback = [](unsigned, Source, Type, Severity, const std::string&) {};
 }
 
 }

@@ -16,16 +16,16 @@ namespace rheel {
 
 bool Window::_is_glfw_initialized = false;
 
-inline static GLFWwindow *getWindow(void *handle) {
-	return static_cast<GLFWwindow *>(handle);
+inline static GLFWwindow* getWindow(void* handle) {
+	return static_cast<GLFWwindow*>(handle);
 }
 
-static void glfw_KeyCallback(GLFWwindow *glfw_window, int key, int scancode, int action, int mods);
-static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned int codepoint);
-static void glfw_MouseMoveCallback(GLFWwindow *glfw_window, double xpos, double ypos);
-static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int action, int mods);
-static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y);
-static void glfw_WindowFocusCallback(GLFWwindow *glfw_window, int focus);
+static void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods);
+static void glfwCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint);
+static void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos);
+static void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods);
+static void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y);
+static void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus);
 
 Window::Window(DisplayConfiguration& configuration) :
 		_configuration(configuration) {}
@@ -34,7 +34,7 @@ Window::~Window() {
 	if (_window_handle) {
 		Log::Info() << "Closing Window" << std::endl;
 
-		GLFWwindow *window = getWindow(_window_handle);
+		GLFWwindow* window = getWindow(_window_handle);
 		glfwDestroyWindow(window);
 	}
 }
@@ -42,7 +42,7 @@ Window::~Window() {
 void Window::Show() {
 	// apply the window parameters
 	glfwDefaultWindowHints();
-	GLFWmonitor *monitor = nullptr;
+	GLFWmonitor* monitor = nullptr;
 
 	switch (_configuration.window_mode) {
 		case DisplayConfiguration::WindowMode::FULLSCREEN:
@@ -65,9 +65,9 @@ void Window::Show() {
 #endif
 
 	// create the window and set the window handle for later user
-	GLFWwindow *window = glfwCreateWindow(
-			_configuration.resolution.width,
-			_configuration.resolution.height,
+	GLFWwindow* window = glfwCreateWindow(
+			_configuration.resolution.x,
+			_configuration.resolution.y,
 			_configuration.title.c_str(),
 			monitor, nullptr);
 
@@ -77,26 +77,26 @@ void Window::Show() {
 	int realWidth, realHeight;
 	glfwGetWindowSize(window, &realWidth, &realHeight);
 
-	_configuration.resolution.width = realWidth;
-	_configuration.resolution.height = realHeight;
+	_configuration.resolution.x = realWidth;
+	_configuration.resolution.y = realHeight;
 
 	// initialize callbacks
-	glfwSetKeyCallback(window, glfw_KeyCallback);
-	glfwSetCharCallback(window, glfw_CharCallback);
-	glfwSetCursorPosCallback(window, glfw_MouseMoveCallback);
-	glfwSetMouseButtonCallback(window, glfw_MouseButtonCallback);
-	glfwSetScrollCallback(window, glfw_ScrollCallback);
-	glfwSetWindowFocusCallback(window, glfw_WindowFocusCallback);
+	glfwSetKeyCallback(window, glfwKeyCallback);
+	glfwSetCharCallback(window, glfwCharCallback);
+	glfwSetCursorPosCallback(window, glfwMouseMoveCallback);
+	glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
+	glfwSetScrollCallback(window, glfwScrollCallback);
+	glfwSetWindowFocusCallback(window, glfwWindowFocusCallback);
 
-	// initialize _OpenGL
+	// initialize OpenGL
 	glfwMakeContextCurrent(window);
 	if (glewInit() != GLEW_OK) {
 		throw std::runtime_error("Failed to initialize GLEW.");
 	}
 
 	// FROM THIS POINT WE HAVE AN OPENGL CONTEXT!
-	GL::Framebuffer::InitializeDefaultFramebuffer(uvec2{ unsigned(realWidth), unsigned(realHeight) });
-	GL::State::Initialize();
+	gl::Framebuffer::InitializeDefaultFramebuffer(uvec2{ unsigned(realWidth), unsigned(realHeight) });
+	gl::State::Initialize();
 
 	// enable or disable vsync
 	if (!_configuration.vsync) {
@@ -105,42 +105,46 @@ void Window::Show() {
 
 #ifdef RE_DEBUG
 	// initialize OpenGL debugging
-	GL::Debug::SetDebugCallback([](unsigned id, GL::Debug::Source source, GL::Debug::Type type,
-			GL::Debug::Severity severity, const std::string& message) {
-
-		if (id == 131169 || id == 131204 || id == 131218 || severity == GL::Debug::Severity::NOTIFICATION) {
+	gl::Debug::SetDebugCallback([](unsigned id, gl::Debug::Source source, gl::Debug::Type type, gl::Debug::Severity severity, const std::string& message) {
+		if (id == 131169 || id == 131204 || id == 131218 || severity == gl::Debug::Severity::NOTIFICATION) {
 			return;
 		}
 
 		std::stringstream ss;
 		ss << "OpenGL " << id << " [" <<
-				"source=" << GL::Debug::GetString(source) << ", " <<
-				"type=" << GL::Debug::GetString(type) << ", " <<
-				"severity=" << GL::Debug::GetString(severity) << "]: " << message;
+				"source=" << gl::Debug::GetString(source) << ", " <<
+				"type=" << gl::Debug::GetString(type) << ", " <<
+				"severity=" << gl::Debug::GetString(severity) << "]: " << message;
 
 		switch (severity) {
-			case GL::Debug::Severity::HIGH:         Log::Error() << ss.str() << std::endl; break;
-			case GL::Debug::Severity::MEDIUM:       Log::Warning() << ss.str() << std::endl; break;
-			case GL::Debug::Severity::LOW:
-			case GL::Debug::Severity::NOTIFICATION: Log::Info() << ss.str() << std::endl; break;
+			case gl::Debug::Severity::HIGH:
+				Log::Error() << ss.str() << std::endl;
+				break;
+			case gl::Debug::Severity::MEDIUM:
+				Log::Warning() << ss.str() << std::endl;
+				break;
+			case gl::Debug::Severity::LOW:
+			case gl::Debug::Severity::NOTIFICATION:
+				Log::Info() << ss.str() << std::endl;
+				break;
 		}
 	});
 #endif
 
-	GL::State::SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	gl::State::SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	GL::State::Enable(GL::Capability::DEPTH_TEST);
-	GL::State::SetDepthFunction(GL::CompareFunction::LEQUAL);
+	gl::State::Enable(gl::Capability::DEPTH_TEST);
+	gl::State::SetDepthFunction(gl::CompareFunction::LEQUAL);
 
-	GL::State::Enable(GL::Capability::CULL_FACE);
-	GL::State::SetCullFace(GL::CullFace::BACK);
+	gl::State::Enable(gl::Capability::CULL_FACE);
+	gl::State::SetCullFace(gl::CullFace::BACK);
 
-	GL::State::Enable(GL::Capability::BLEND);
-	GL::State::SetBlendFunction(GL::BlendFactor::SRC_ALPHA, GL::BlendFactor::ONE_MINUS_SRC_ALPHA);
+	gl::State::Enable(gl::Capability::BLEND);
+	gl::State::SetBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 }
 
 void Window::Loop() {
-	GLFWwindow *window = getWindow(_window_handle);
+	GLFWwindow* window = getWindow(_window_handle);
 
 	double time = 0.0;
 
@@ -167,8 +171,8 @@ void Window::Loop() {
 		}
 
 		// initialize OpenGL state
-		GL::State::ClearProgram();
-		GL::Framebuffer::DefaultFramebuffer().Clear(GL::Framebuffer::BitField::COLOR_DEPTH);
+		gl::State::ClearProgram();
+		gl::Framebuffer::DefaultFramebuffer().Clear(gl::Framebuffer::BitField::COLOR_DEPTH);
 
 		// draw the game
 		Engine::GetUI().Draw(time, dt);
@@ -187,7 +191,7 @@ vec2 Window::GetMousePosition() const {
 	double x, y;
 	glfwGetCursorPos(getWindow(_window_handle), &x, &y);
 
-	return vec2 { x, y };
+	return vec2{ x, y };
 }
 
 void Window::InitializeDisplaySystems() {
@@ -208,27 +212,27 @@ void Window::DestroyDisplaySystems() {
 	}
 }
 
-static void glfw_KeyCallback(GLFWwindow *glfw_window, int key, int scancode, int action, int mods) {
+static void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods) {
 	Engine::GetUI().OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
 }
 
-static void glfw_CharCallback(GLFWwindow *glfw_window, unsigned codepoint) {
+static void glfwCharCallback(GLFWwindow* glfwWindow, unsigned codepoint) {
 	Engine::GetUI().OnCharacter(codepoint);
 }
 
-static void glfw_MouseMoveCallback(GLFWwindow *glfw_window, double xpos, double ypos) {
+static void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos) {
 	Engine::GetUI().OnMouseMove(xpos, ypos);
 }
 
-static void glfw_MouseButtonCallback(GLFWwindow *glfw_window, int button, int action, int mods) {
+static void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods) {
 	Engine::GetUI().OnMouseButton(static_cast<Input::MouseButton>(button), static_cast<Input::Action>(action), mods);
 }
 
-static void glfw_ScrollCallback(GLFWwindow *glfw_window, double x, double y) {
+static void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y) {
 	Engine::GetUI().OnScroll(x, y);
 }
 
-static void glfw_WindowFocusCallback(GLFWwindow *glfw_window, int focus) {
+static void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus) {
 	Engine::GetUI().OnFocusChanged(focus);
 }
 

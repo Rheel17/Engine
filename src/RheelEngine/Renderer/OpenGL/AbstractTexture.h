@@ -7,7 +7,7 @@
 
 #include "Texture.h"
 
-namespace rheel::GL {
+namespace rheel::gl {
 
 class RE_API AbstractTexture : public Texture {
 
