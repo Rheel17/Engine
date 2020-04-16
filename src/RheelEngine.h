@@ -42,8 +42,8 @@
 // force dedicated gpu usage
 extern "C"
 {
-__declspec(dllexport) unsigned long NvOptimusEnablement = 1;
-__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+__declspec(dllexport) inline unsigned long NvOptimusEnablement = 1;
+__declspec(dllexport) inline int AmdPowerXpressRequestHighPerformance = 1;
 }
 
 // entry point
