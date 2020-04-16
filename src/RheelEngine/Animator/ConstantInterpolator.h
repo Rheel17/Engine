@@ -11,7 +11,7 @@
 namespace rheel {
 
 template<typename V>
-class RE_API ConstantInterpolator : public Interpolator<V> {
+class ConstantInterpolator : public Interpolator<V> {
 
 protected:
 	V _GetValue(float t) const override {

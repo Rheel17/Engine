@@ -11,7 +11,7 @@
 namespace rheel {
 
 template<typename V>
-class RE_API TransitionInterpolator : public Interpolator<V> {
+class TransitionInterpolator : public Interpolator<V> {
 
 public:
 	virtual ~TransitionInterpolator() = default;
@@ -20,11 +20,12 @@ protected:
 	explicit TransitionInterpolator(const Transition& transition) :
 			_transition(transition) {}
 
-	V _GetValue(float t) const override {
-		auto before = --this->points.upper_bound(t);
-		auto after = this->points.upper_bound(t);
-
-		return _transition(t, before->first, after->first, before->second, after->second);
+	V GetValue(float t) const override {
+		// auto before = --this->points.upper_bound(t);
+		// auto after = this->points.upper_bound(t);
+		//
+		// return _transition(t, before->first, after->first, before->second, after->second);
+		return V{};
 	}
 
 private:

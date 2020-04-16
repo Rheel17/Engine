@@ -10,7 +10,7 @@
 namespace rheel {
 
 template<typename V>
-class RE_API CubicInterpolator : public TransitionInterpolator<V> {
+class CubicInterpolator : public TransitionInterpolator<V> {
 
 public:
 	CubicInterpolator() :

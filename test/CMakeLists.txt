@@ -39,7 +39,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Create the executable
-add_executable(Test test/test.cpp test/test_Transform.cpp)
+add_executable(Test test/test.cpp test/test_SplineInterpolator.cpp test/test_Transform.cpp)
 
 # Add googletest
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

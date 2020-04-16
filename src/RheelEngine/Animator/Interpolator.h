@@ -10,19 +10,19 @@
 namespace rheel {
 
 template<typename V>
-class RE_API Interpolator {
+class Interpolator {
 
 public:
 	virtual ~Interpolator() = default;
 
 	virtual void AddPoint(float t, const V& value) {
-		points.insert(t, value);
+		points[t] = value;
 		t_min = std::min(t_min, t);
 		t_max = std::max(t_max, t);
 	}
 
 	virtual void AddPoint(float t, V&& value) {
-		points.insert(t, std::forward<V>(value));
+		points[t] = std::forward<V>(value);
 		t_min = std::min(t_min, t);
 		t_max = std::max(t_max, t);
 	}
