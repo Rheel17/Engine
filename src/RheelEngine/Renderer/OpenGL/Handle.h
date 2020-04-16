@@ -56,9 +56,7 @@ public:
 	/**
 	 * Moves the handle to a new object, and invalidates the original handle.
 	 */
-	Handle(Handle&& h) noexcept:
-			_generator(std::move(h._generator)),
-			_deleter(std::move(h._deleter)),
+	Handle(Handle&& h) noexcept :
 			_generated(h._generated),
 			_name(h._name) {
 
@@ -72,8 +70,6 @@ public:
 			_deleter(_name);
 		}
 
-		_generator = std::move(h._generator);
-		_deleter = std::move(h._deleter);
 		_generated = h._generated;
 		_name = h._name;
 
@@ -97,8 +93,8 @@ public:
 	}
 
 private:
-	Generator _generator;
-	Deleter _deleter;
+	static inline Generator _generator;
+	static inline Deleter _deleter;
 
 	mutable bool _generated = false;
 	mutable GLuint _name = 0;
