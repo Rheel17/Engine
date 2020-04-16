@@ -9,12 +9,12 @@
 
 namespace rheel {
 
-template<typename T>
-class RE_API CubicInterpolator : public TransitionInterpolator<T> {
+template<typename V>
+class RE_API CubicInterpolator : public TransitionInterpolator<V> {
 
 public:
 	CubicInterpolator() :
-			TransitionInterpolator<T>(Transition::CUBIC) {}
+			TransitionInterpolator<V>(Transition::CUBIC) {}
 
 };
 

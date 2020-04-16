@@ -10,11 +10,11 @@
 
 namespace rheel {
 
-template<typename T>
-class RE_API ConstantInterpolator : public Interpolator<T> {
+template<typename V>
+class RE_API ConstantInterpolator : public Interpolator<V> {
 
 protected:
-	T _GetValue(float t) const override {
+	V _GetValue(float t) const override {
 		return (--this->points.end())->second;
 	}
 

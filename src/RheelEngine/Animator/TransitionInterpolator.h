@@ -10,8 +10,8 @@
 
 namespace rheel {
 
-template<typename T>
-class RE_API TransitionInterpolator : public Interpolator<T> {
+template<typename V>
+class RE_API TransitionInterpolator : public Interpolator<V> {
 
 public:
 	virtual ~TransitionInterpolator() = default;
@@ -20,7 +20,7 @@ protected:
 	explicit TransitionInterpolator(const Transition& transition) :
 			_transition(transition) {}
 
-	T _GetValue(float t) const override {
+	V _GetValue(float t) const override {
 		auto before = --this->points.upper_bound(t);
 		auto after = this->points.upper_bound(t);
 

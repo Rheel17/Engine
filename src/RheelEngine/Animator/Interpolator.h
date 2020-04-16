@@ -9,25 +9,25 @@
 
 namespace rheel {
 
-template<typename T>
+template<typename V>
 class RE_API Interpolator {
 
 public:
 	virtual ~Interpolator() = default;
 
-	void AddPoint(float t, const T& value) {
+	virtual void AddPoint(float t, const V& value) {
 		points.insert(t, value);
 		t_min = std::min(t_min, t);
 		t_max = std::max(t_max, t);
 	}
 
-	void AddPoint(float t, T&& value) {
-		points.insert(t, std::forward<T>(value));
+	virtual void AddPoint(float t, V&& value) {
+		points.insert(t, std::forward<V>(value));
 		t_min = std::min(t_min, t);
 		t_max = std::max(t_max, t);
 	}
 
-	void RemovePoint(float t) {
+	virtual void RemovePoint(float t) {
 		points.erase(t);
 
 		if (points.empty()) {
@@ -39,9 +39,9 @@ public:
 		}
 	}
 
-	T operator()(float t) const {
+	V operator()(float t) const {
 		if (points.empty()) {
-			return T{};
+			return V{};
 		}
 
 		if (points.size() == 1 || t <= this->t_min) {
@@ -58,9 +58,9 @@ public:
 protected:
 	Interpolator() = default;
 
-	virtual T GetValue(float t) const = 0;
+	virtual V GetValue(float t) const = 0;
 
-	std::map<float, T> points;
+	std::map<float, V> points;
 	float t_min = 0;
 	float t_max = 0;
 

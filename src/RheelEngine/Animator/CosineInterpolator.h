@@ -9,12 +9,12 @@
 
 namespace rheel {
 
-template<typename T>
-class RE_API CosineInterpolator : public TransitionInterpolator<T> {
+template<typename V>
+class RE_API CosineInterpolator : public TransitionInterpolator<V> {
 
 public:
 	CosineInterpolator() :
-			TransitionInterpolator<T>(Transition::COSINE) {}
+			TransitionInterpolator<V>(Transition::COSINE) {}
 
 };
 

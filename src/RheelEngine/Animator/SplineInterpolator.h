@@ -9,8 +9,8 @@
 
 namespace rheel {
 
-template<typename T>
-class RE_API SplineInterpolator : public Interpolator<T> {
+template<typename V>
+class RE_API SplineInterpolator : public Interpolator<V> {
 
 };
 
