@@ -5,7 +5,7 @@ using namespace rheel;
 class FpsUpdater : public ComponentBase {
 
 public:
-	void SetElement(TextElement *element) {
+	void SetElement(TextElement* element) {
 		_element = element;
 	}
 
@@ -16,11 +16,11 @@ public:
 	}
 
 private:
-	TextElement *_element = nullptr;
+	TextElement* _element = nullptr;
 
 };
 
-static void createCube(Entity *cube) {
+static void createCube(Entity* cube) {
 	static auto boxModel = StaticModelGeneratorBox({ 1.0f, 1.0f, 1.0f })();
 	static auto boxShader = Engine::GetAssetLoader().glsl.Load("Resources/test_shader.glsl");
 
@@ -30,21 +30,21 @@ static void createCube(Entity *cube) {
 	cube->AddComponent<ModelRenderComponent>(boxModel, Material(boxShader));
 }
 
-static void createRamp(Entity *ramp) {
+static void createRamp(Entity* ramp) {
 	static auto rampModel = StaticModelGeneratorBox({ 8.0f, 1.0f, 10.0f })();
 
 	ramp->AddComponent<ModelRenderComponent>(rampModel, Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f));
 	ramp->AddComponent<RigidBody>(PhysicsShape::Box({ 4.0f, 0.5f, 5.0f }));
 }
 
-static void createFloor(Entity *floor) {
+static void createFloor(Entity* floor) {
 	static auto floorModel = StaticModelGeneratorBox({ 40.0f, 1.0f, 40.0f })();
 
 	floor->AddComponent<ModelRenderComponent>(floorModel, Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f));
 	floor->AddComponent<RigidBody>(PhysicsShape::Box({ 20.0f, 0.5f, 20.0f }));
 }
 
-static Scene *createScene() {
+static Scene* createScene() {
 	auto scene = new Scene();
 	scene->AddRootComponent<FpsUpdater>();
 
@@ -53,9 +53,9 @@ static Scene *createScene() {
 
 	for (int i = -2; i <= 2; i++) {
 		for (int j = 0; j < 5; j++) {
-			Entity *cube = scene->AddEntity(
-			scene->UniqueEntityName("cube"),
-			RigidTransform({ 1.1f * i, 1.1f * j + 0.5f, 1.1f * i }));
+			Entity* cube = scene->AddEntity(
+					scene->UniqueEntityName("cube"),
+					RigidTransform({ 1.1f * i, 1.1f * j + 0.5f, 1.1f * i }));
 			createCube(cube);
 		}
 	}
