@@ -12,11 +12,13 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Scene.cpp RheelEngine/Scene.h 
 		RheelEngine/Transform.cpp RheelEngine/Transform.h 
 		RheelEngine/_common.h 
+		RheelEngine/Animator/Clip.cpp RheelEngine/Animator/Clip.h 
 		RheelEngine/Animator/ConstantInterpolator.h 
 		RheelEngine/Animator/CosineInterpolator.h 
 		RheelEngine/Animator/CubicInterpolator.h 
 		RheelEngine/Animator/Interpolator.h 
 		RheelEngine/Animator/LinearInterpolator.h 
+		RheelEngine/Animator/Sequence.h 
 		RheelEngine/Animator/SplineInterpolator.h 
 		RheelEngine/Animator/Transition.cpp RheelEngine/Animator/Transition.h 
 		RheelEngine/Animator/TransitionInterpolator.h 
