@@ -12,6 +12,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Scene.cpp RheelEngine/Scene.h 
 		RheelEngine/Transform.cpp RheelEngine/Transform.h 
 		RheelEngine/_common.h 
+		RheelEngine/Animator/Animator.cpp RheelEngine/Animator/Animator.h 
 		RheelEngine/Animator/Clip.cpp RheelEngine/Animator/Clip.h 
 		RheelEngine/Animator/ConstantInterpolator.h 
 		RheelEngine/Animator/CosineInterpolator.h 
