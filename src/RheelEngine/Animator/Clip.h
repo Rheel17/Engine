@@ -50,6 +50,11 @@ public:
 	 */
 	void Clear();
 
+	/**
+	 * Updates all the sequences with the specified time.
+	 */
+	void Update(float t);
+
 private:
 	std::vector<std::unique_ptr<SequenceBase>> _sequences;
 

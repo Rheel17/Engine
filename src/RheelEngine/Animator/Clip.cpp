@@ -9,4 +9,10 @@ void Clip::Clear() {
 	_sequences.clear();
 }
 
+void Clip::Update(float t) {
+	for (const auto& sequence : _sequences) {
+		sequence->Update(t);
+	}
+}
+
 }

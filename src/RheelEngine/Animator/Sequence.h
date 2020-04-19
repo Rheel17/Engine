@@ -29,7 +29,14 @@ private:
 
 };
 
-class SequenceBase {};
+class SequenceBase {
+
+public:
+	virtual ~SequenceBase() = default;
+
+	virtual void Update(float t) = 0;
+
+};
 
 template<typename V, typename Setter>
 class Sequence : public SequenceBase {
@@ -56,7 +63,7 @@ public:
 		_interpolator.RemovePoint(t);
 	}
 
-	void Update(float t) {
+	void Update(float t) override {
 		_setter(_interpolator(t));
 	}
 
