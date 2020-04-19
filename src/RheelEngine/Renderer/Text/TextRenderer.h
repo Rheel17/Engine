@@ -31,9 +31,7 @@ private:
 	static int DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size);
 
 	static void DrawTriangles_(const std::vector<Character::Triangle>& triangles,
-			const std::vector<Character::Triangle>& bezierCurves,
-			vec4 bounds,
-			vec2 multisampleOffset);
+			const std::vector<Character::Triangle>& bezierCurves, vec2 multisampleOffset);
 
 	static gl::Buffer _triangle_buffer;
 	static gl::VertexArray _vao;

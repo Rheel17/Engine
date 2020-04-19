@@ -163,6 +163,15 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text
 		}
 	}
 
+	for (const auto& t : triangles) {
+		for (int i = 1; i < 3; i++) {
+			bounds[0] = std::min(bounds[0], t[i].x);
+			bounds[1] = std::min(bounds[1], t[i].y);
+			bounds[2] = std::max(bounds[2], t[i].x);
+			bounds[3] = std::max(bounds[3], t[i].y);
+		}
+	}
+
 	bounds[0] -= 4.0f / screen.x;
 	bounds[1] -= 4.0f / screen.y;
 	bounds[2] += 4.0f / screen.x;
@@ -170,10 +179,10 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text
 
 	_shader["bounds"] = bounds;
 
-	DrawTriangles_(triangles, bezierCurves, bounds, { subpixelWidth * -1, subpixelHeight * 3 });
-	DrawTriangles_(triangles, bezierCurves, bounds, { subpixelWidth * 3, subpixelHeight * 1 });
-	DrawTriangles_(triangles, bezierCurves, bounds, { subpixelWidth * -3, subpixelHeight * -1 });
-	DrawTriangles_(triangles, bezierCurves, bounds, { subpixelWidth * 1, subpixelHeight * -3 });
+	DrawTriangles_(triangles, bezierCurves, { subpixelWidth * -1.0f, subpixelHeight *  3.0f });
+	DrawTriangles_(triangles, bezierCurves, { subpixelWidth *  3.0f, subpixelHeight *  1.0f });
+	DrawTriangles_(triangles, bezierCurves, { subpixelWidth * -3.0f, subpixelHeight * -1.0f });
+	DrawTriangles_(triangles, bezierCurves, { subpixelWidth *  1.0f, subpixelHeight * -3.0f });
 
 	// reset the gl state
 	gl::State::Pop();
@@ -188,9 +197,7 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text
 }
 
 void TextRenderer::DrawTriangles_(const std::vector<Character::Triangle>& triangles,
-		const std::vector<Character::Triangle>& bezierCurves,
-		vec4 bounds,
-		vec2 multisampleOffset) {
+		const std::vector<Character::Triangle>& bezierCurves, vec2 multisampleOffset) {
 
 	// only draw on the stencil buffer
 	gl::State::Push();
