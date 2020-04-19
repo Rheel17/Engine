@@ -5,7 +5,7 @@
 
 namespace rheel::gl {
 
-std::stack<std::unique_ptr<State>> State::globalStateStack;
+std::stack<std::unique_ptr<State>> State::_global_state_stack;
 
 State::State() :
 		_parent(nullptr),
@@ -20,20 +20,20 @@ State::State(State* parent) :
 		_functions(&parent->_functions) {}
 
 void State::Push() {
-	auto& cur = globalStateStack.top();
-	globalStateStack.emplace(new State(cur.get()));
+	auto& cur = _global_state_stack.top();
+	_global_state_stack.emplace(new State(cur.get()));
 }
 
 void State::Pop() {
-	if (globalStateStack.size() == 1) {
+	if (_global_state_stack.size() == 1) {
 		Log::Error() << "OpenGL stack underflow" << std::endl;
 		abort();
 	}
 
-	auto& cur = globalStateStack.top();
+	auto& cur = _global_state_stack.top();
 	cur->ResetChanges_();
 
-	globalStateStack.pop();
+	_global_state_stack.pop();
 }
 
 void State::Enable(Capability cap) {
@@ -123,11 +123,11 @@ void State::ResetChanges_() {
 }
 
 void State::Initialize() {
-	globalStateStack.push(std::unique_ptr<State>(new State));
+	_global_state_stack.push(std::unique_ptr<State>(new State));
 }
 
 State& State::S_() {
-	return *globalStateStack.top();
+	return *_global_state_stack.top();
 }
 
 }

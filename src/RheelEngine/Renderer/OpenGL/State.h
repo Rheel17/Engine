@@ -69,7 +69,7 @@ public:
 private:
 	static State& S_();
 
-	static std::stack<std::unique_ptr<State>> globalStateStack;
+	static std::stack<std::unique_ptr<State>> _global_state_stack;
 
 };
 
