@@ -47,11 +47,11 @@ class Sequence : public SequenceBase {
 	using IImpl = std::remove_reference_t<InterpolatorImpl>;
 
 private:
-	Sequence(Setter setter, const std::remove_reference_t<IImpl>& interpolator) :
+	Sequence(Setter setter, IImpl& interpolator) :
 			_setter(std::move(setter)),
 			_interpolator(interpolator) {}
 
-	Sequence(Setter setter, std::remove_reference_t<IImpl>&& interpolator) :
+	Sequence(Setter setter, IImpl&& interpolator) :
 			_setter(std::move(setter)),
 			_interpolator(std::forward<IImpl>(interpolator)) {}
 
