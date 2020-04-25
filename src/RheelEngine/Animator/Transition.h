@@ -29,6 +29,8 @@ public:
 	static const Transition QUADRATIC_IN;
 	static const Transition QUADRATIC_OUT;
 	static const Transition CUBIC;
+	static const Transition CUBIC_IN;
+	static const Transition CUBIC_OUT;
 	static const Transition COSINE;
 
 };
