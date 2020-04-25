@@ -40,11 +40,11 @@ public:
 
 };
 
-template<typename V, typename Setter, typename InterpolatorImpl, typename IImpl = std::remove_reference_t<InterpolatorImpl>>
+template<typename V, typename Setter, typename InterpolatorImpl>
 class Sequence : public SequenceBase {
 	friend class Clip;
 
-	// using IImpl = std::remove_reference_t<InterpolatorImpl>;
+	using IImpl = std::remove_reference_t<InterpolatorImpl>;
 
 private:
 	Sequence(Setter setter, const std::remove_reference_t<IImpl>& interpolator) :
