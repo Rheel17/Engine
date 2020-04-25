@@ -28,18 +28,12 @@ public:
 	void Render(Camera* camera, unsigned width, unsigned height) const;
 
 private:
-	void LoadSkybox_() const;
-	void LoadSkybox_(const Image& skybox, int part) const;
-
 	SceneRenderManager* _manager;
 
 	gl::VertexArray _vao;
 	gl::Buffer _vertex_buffer_object;
 
 	gl::Program _shader;
-
-	mutable std::uintptr_t _current_image{};
-	mutable std::array<Image, 6> _texture_parts;
 
 private:
 	static std::vector<vertex> CreateSkyboxVertices_();
