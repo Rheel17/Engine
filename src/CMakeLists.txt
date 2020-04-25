@@ -46,6 +46,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Audio/OpenAL/Buffer.cpp RheelEngine/Audio/OpenAL/Buffer.h 
 		RheelEngine/Audio/OpenAL/Listener.cpp RheelEngine/Audio/OpenAL/Listener.h 
 		RheelEngine/Audio/OpenAL/Source.cpp RheelEngine/Audio/OpenAL/Source.h 
+		RheelEngine/Components/AnimatorComponent.cpp RheelEngine/Components/AnimatorComponent.h 
 		RheelEngine/Components/Camera.cpp RheelEngine/Components/Camera.h 
 		RheelEngine/Components/CollisionComponent.h 
 		RheelEngine/Components/DirectionalLight.cpp RheelEngine/Components/DirectionalLight.h 

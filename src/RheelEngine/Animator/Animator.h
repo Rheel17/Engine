@@ -77,6 +77,11 @@ public:
 	 */
 	PlayState GetCurrentPlayState();
 
+	/**
+	 * Updates this animator; animates the next frame
+	 */
+	void Update(float dt);
+
 private:
 	std::unordered_map<std::string, std::unique_ptr<Clip>> _clips;
 

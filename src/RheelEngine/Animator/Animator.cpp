@@ -75,4 +75,23 @@ Animator::PlayState Animator::GetCurrentPlayState() {
 	return _play_state;
 }
 
+void Animator::Update(float dt) {
+	if (_play_state == PlayState::STOPPED) {
+		return;
+	}
+
+	Clip& clip = GetClip(_current_clip);
+	clip.Update(_time);
+
+	if (_time >= clip.GetMaxTime()) {
+		if (_play_state == PlayState::LOOPING) {
+			_time = 0.0f;
+		} else {
+			Stop();
+		}
+	} else {
+		_time += dt;
+	}
+}
+
 }

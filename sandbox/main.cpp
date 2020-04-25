@@ -24,10 +24,33 @@ static void createCube(Entity* cube) {
 	static auto boxModel = StaticModelGeneratorBox({ 1.0f, 1.0f, 1.0f })();
 	static auto boxShader = Engine::GetAssetLoader().glsl.Load("Resources/test_shader.glsl");
 
-	//cube->AddComponent<ModelRenderComponent>(boxModel, Material({ 0.9f, 0.6f, 0.2f, 1.0f }, 0.7f, 0.5f));
-	cube->AddComponent<RigidBody>(PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }), 5.0f, 0.05f);
+	cube->AddComponent<ModelRenderComponent>(boxModel, Material({ 0.0f, 0.2f, 0.2f, 1.0f }, 0.7f, 0.5f));
 
-	cube->AddComponent<ModelRenderComponent>(boxModel, Material(boxShader));
+	CosineInterpolator<float> interpolator1;
+	interpolator1.AddPoint(0.0f, 0.2f);
+	interpolator1.AddPoint(1.0f, 1.0f);
+	interpolator1.AddPoint(2.0f, 0.2f);
+
+	LinearInterpolator<float> interpolator2;
+	interpolator2.AddPoint(0.0f, 0.0f);
+	interpolator2.AddPoint(2.0f, M_PI * 2.0f);
+
+	auto animator = cube->AddComponent<AnimatorComponent>();
+	Clip clip;
+
+	clip.AddSequence<float>([cube](float f) {
+		auto modelRenderer = cube->GetComponent<ModelRenderComponent>();
+		modelRenderer->SetMaterial(Material({ f, 0.2f, 0.2f, 1.0f }, 0.7f, 0.5f));
+
+		cube->transform.SetTranslation({ 0.0f, f + 0.5f, 0.0f });
+	}, std::move(interpolator1));
+
+	clip.AddSequence<float>([cube](float f) {
+		cube->transform.SetRotation(vec3{ 0.0f, f, 0.0f });
+	}, std::move(interpolator2));
+
+	animator->AddClip("Animation", std::move(clip));
+	animator->Loop("Animation");
 }
 
 static void createRamp(Entity* ramp) {
@@ -51,14 +74,10 @@ static Scene* createScene() {
 	auto physicsScene = scene->AddRootComponent<PhysicsScene>();
 	physicsScene->SetGravity({ 0.0f, -9.81f, 0.0f });
 
-	for (int i = -2; i <= 2; i++) {
-		for (int j = 0; j < 5; j++) {
-			Entity* cube = scene->AddEntity(
-					scene->UniqueEntityName("cube"),
-					RigidTransform({ 1.1f * i, 1.1f * j + 0.5f, 1.1f * i }));
-			createCube(cube);
-		}
-	}
+	auto cube = scene->AddEntity(
+			scene->UniqueEntityName("cube"),
+			RigidTransform({ 0.0f, 0.5f, 0.0f }));
+	createCube(cube);
 
 	auto ramp1 = scene->AddEntity("ramp1", RigidTransform({ -8, 3, 0 }, quat(vec3{ 0, 0, -0.6f })));
 	createRamp(ramp1);

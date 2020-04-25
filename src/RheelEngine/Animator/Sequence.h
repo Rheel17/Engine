@@ -36,18 +36,27 @@ public:
 
 	virtual void Update(float t) = 0;
 
+	virtual float GetMaxTime() const = 0;
+
 };
 
-template<typename V, typename Setter>
+template<typename V, typename Setter, typename InterpolatorImpl, typename IImpl = std::remove_reference_t<InterpolatorImpl>>
 class Sequence : public SequenceBase {
+	friend class Clip;
+
+	// using IImpl = std::remove_reference_t<InterpolatorImpl>;
 
 private:
-	Sequence(Setter setter, Interpolator<V> interpolator) :
+	Sequence(Setter setter, const std::remove_reference_t<IImpl>& interpolator) :
 			_setter(std::move(setter)),
-			_interpolator(std::move(interpolator)) {}
+			_interpolator(interpolator) {}
+
+	Sequence(Setter setter, std::remove_reference_t<IImpl>&& interpolator) :
+			_setter(std::move(setter)),
+			_interpolator(std::forward<IImpl>(interpolator)) {}
 
 public:
-	Interpolator<V>& GetInterpolator() {
+	IImpl& GetInterpolator() {
 		return _interpolator;
 	}
 
@@ -67,9 +76,13 @@ public:
 		_setter(_interpolator(t));
 	}
 
+	float GetMaxTime() const override {
+		return _interpolator.GetMaxTime();
+	}
+
 private:
 	Setter _setter;
-	Interpolator<V> _interpolator;
+	IImpl _interpolator;
 
 };
 

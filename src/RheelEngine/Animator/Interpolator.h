@@ -15,6 +15,14 @@ class Interpolator {
 public:
 	virtual ~Interpolator() = default;
 
+	float GetMinTime() const {
+		return t_min;
+	}
+
+	float GetMaxTime() const {
+		return t_max;
+	}
+
 	virtual void AddPoint(float t, const V& value) {
 		points[t] = value;
 		t_min = std::min(t_min, t);

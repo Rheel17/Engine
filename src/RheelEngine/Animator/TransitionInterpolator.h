@@ -21,11 +21,10 @@ protected:
 			_transition(transition) {}
 
 	V GetValue(float t) const override {
-		// auto before = --this->points.upper_bound(t);
-		// auto after = this->points.upper_bound(t);
-		//
-		// return _transition(t, before->first, after->first, before->second, after->second);
-		return V{};
+		auto before = --this->points.upper_bound(t);
+		auto after = this->points.upper_bound(t);
+
+		return _transition(t, before->first, after->first, before->second, after->second);
 	}
 
 private:

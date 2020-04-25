@@ -9,10 +9,17 @@
 
 #include "RheelEngine/Engine.h"
 
+#include "RheelEngine/Animator/ConstantInterpolator.h"
+#include "RheelEngine/Animator/CosineInterpolator.h"
+#include "RheelEngine/Animator/CubicInterpolator.h"
+#include "RheelEngine/Animator/LinearInterpolator.h"
+#include "RheelEngine/Animator/SplineInterpolator.h"
+
 #include "RheelEngine/Assets/Generators/StaticModelGeneratorBox.h"
 #include "RheelEngine/Assets/Generators/StaticModelGeneratorCapsule.h"
 #include "RheelEngine/Assets/Generators/StaticModelGeneratorSphere.h"
 
+#include "RheelEngine/Components/AnimatorComponent.h"
 #include "RheelEngine/Components/CollisionComponent.h"
 #include "RheelEngine/Components/DirectionalLight.h"
 #include "RheelEngine/Components/EulerController.h"
