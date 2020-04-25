@@ -8,29 +8,40 @@
 namespace rheel {
 
 template<typename T>
-class RE_API Loader {
+class AbstractLoader {
 
 public:
-	virtual ~Loader() = default;
+	using Type = T;
 
-	T Load(const std::string& path) const {
+	virtual ~AbstractLoader() = default;
+	virtual T Load(const std::string& path) const = 0;
+
+};
+
+template<typename T, typename LoaderImpl, std::enable_if_t<std::is_base_of_v<AbstractLoader<T>, LoaderImpl>, int> = 0>
+class RE_API Loader {
+	RE_NO_MOVE(Loader);
+	RE_NO_COPY(Loader);
+
+private:
+	friend class AssetLoader;
+
+	Loader() = default;
+
+public:
+	T Load(const std::string& path) {
 		auto iter = _cache.find(path);
 
 		if (iter == _cache.end()) {
 			Log::Info() << "Loading asset " << path << std::endl;
-			iter = _cache.emplace(path, DoLoad(path)).first;
+			iter = _cache.emplace(path, LoaderImpl().Load(path)).first;
 		}
 
 		return iter->second;
 	}
 
-protected:
-	Loader() = default;
-
-	virtual T DoLoad(const std::string& path) const = 0;
-
 private:
-	mutable std::unordered_map<std::string, T> _cache;
+	std::unordered_map<std::string, T> _cache;
 
 };
 

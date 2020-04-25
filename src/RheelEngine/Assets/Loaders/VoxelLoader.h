@@ -10,15 +10,13 @@
 
 namespace rheel {
 
-class RE_API VoxelLoader : public Loader<VoxelImage> {
+class RE_API VoxelLoader : public AbstractLoader<VoxelImage> {
 	friend class AssetLoader;
 
-protected:
-	VoxelImage DoLoad(const std::string& path) const override;
+public:
+	VoxelImage Load(const std::string& path) const override;
 
 private:
-	VoxelLoader() = default;
-
 	static VoxelImage LoadVox_(std::istream& input);
 
 };

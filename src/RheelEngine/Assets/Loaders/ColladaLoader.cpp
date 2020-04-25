@@ -227,7 +227,7 @@ void ColladaLoader::AddGeometry_(const Geometry& geometry, const mat4& transform
 	}
 }
 
-Model ColladaLoader::DoLoad(const std::string& path) const {
+Model ColladaLoader::Load(const std::string& path) const {
 	_xml_file = std::make_unique<XmlFile>(path.c_str());
 	_xml_document = std::make_unique<XmlDocument>();
 	_xml_document->parse<0>(_xml_file->data());

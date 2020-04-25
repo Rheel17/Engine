@@ -10,15 +10,13 @@
 
 namespace rheel {
 
-class RE_API PngLoader : public Loader<Image> {
+class RE_API PngLoader : public AbstractLoader<Image> {
 	friend class AssetLoader;
 
-protected:
-	Image DoLoad(const std::string& path) const override;
+public:
+	Image Load(const std::string& path) const override;
 
 private:
-	PngLoader() = default;
-
 	static Image LoadPng_(std::istream& input);
 
 };

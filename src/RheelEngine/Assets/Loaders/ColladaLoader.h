@@ -13,7 +13,7 @@
 
 namespace rheel {
 
-class RE_API ColladaLoader : public Loader<Model> {
+class RE_API ColladaLoader : public AbstractLoader<Model> {
 	friend class AssetLoader;
 
 	using XmlFile = rapidxml::file<>;
@@ -51,12 +51,10 @@ private:
 
 	};
 
-protected:
-	Model DoLoad(const std::string& path) const override;
+public:
+	Model Load(const std::string& path) const override;
 
 private:
-	ColladaLoader() = default;
-
 	void ParseCollada_() const;
 	void ParseGeometry_(XmlNode* geometry) const;
 	void ParseScene_(XmlNode* scene) const;

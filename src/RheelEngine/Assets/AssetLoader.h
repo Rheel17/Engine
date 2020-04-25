@@ -19,22 +19,22 @@ public:
 	/**
 	 * Loader for collada (.dae) model files
 	 */
-	const ColladaLoader collada = ColladaLoader();
+	Loader<Model, ColladaLoader> collada = Loader<Model, ColladaLoader>();
 
 	/**
 	 * Loader for PNG (.png) image files
 	 */
-	const PngLoader png = PngLoader();
+	Loader<Image, PngLoader> png = Loader<Image, PngLoader>();
 
 	/**
 	 * Loader for voxel (.vox) voxel image files
 	 */
-	const VoxelLoader voxel = VoxelLoader();
+	Loader<VoxelImage, VoxelLoader> voxel = Loader<VoxelImage, VoxelLoader>();
 
 	/**
 	 * Loader for glsl (.glsl) shader source files
 	 */
-	const GlslLoader glsl = GlslLoader();
+	Loader<Shader, GlslLoader> glsl = Loader<Shader, GlslLoader>();
 
 private:
 	AssetLoader() = default;

@@ -10,14 +10,10 @@
 
 namespace rheel {
 
-class RE_API GlslLoader : public Loader<Shader> {
-	friend class AssetLoader;
+class RE_API GlslLoader : public AbstractLoader<Shader> {
 
-protected:
-	Shader DoLoad(const std::string& path) const override;
-
-private:
-	GlslLoader() = default;
+public:
+	Shader Load(const std::string& path) const override;
 
 };
 

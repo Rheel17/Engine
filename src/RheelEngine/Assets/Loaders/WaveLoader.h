@@ -10,14 +10,11 @@
 
 namespace rheel {
 
-class RE_API WaveLoader : public Loader<Sound> {
+class RE_API WaveLoader : public AbstractLoader<Sound> {
 	friend class AssetLoader;
 
-protected:
-	Sound DoLoad(const std::string& path) const override;
-
-private:
-	WaveLoader() = default;
+public:
+	Sound Load(const std::string& path) const override;
 
 };
 
