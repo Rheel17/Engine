@@ -6,12 +6,13 @@
 #include "_common.h"
 
 #include "Game.h"
+#include "UI/UI.h"
+#include "ThreadPool.h"
 #include "Assets/AssetLoader.h"
 #include "Audio/AudioManager.h"
 #include "Renderer/ImageTexture.h"
 #include "Renderer/SceneRenderManager.h"
 #include "Renderer/Window.h"
-#include "UI/UI.h"
 
 namespace rheel {
 
@@ -37,6 +38,9 @@ class RE_API Engine {
 
 		// game state
 		Scene* active_scene = nullptr;
+
+		// thread pool
+		std::unique_ptr<ThreadPool> thread_pool;
 
 		~EngineInstance();
 	};

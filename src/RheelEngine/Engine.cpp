@@ -39,6 +39,8 @@ void Engine::Run_(Game* game) {
 			_instance.display_configuration.resolution.x,
 			_instance.display_configuration.resolution.y);
 
+	_instance.thread_pool = std::make_unique<ThreadPool>();
+
 	game->Start();
 
 	_instance.window->Loop();
