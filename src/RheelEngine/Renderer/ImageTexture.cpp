@@ -14,6 +14,7 @@ void ImageTexture::Bind(unsigned textureUnit) const {
 }
 
 ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
+	// Set correct texture parameters
 	if (linear) {
 		if (Engine::GetDisplayConfiguration().enable_mipmaps) {
 			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::LINEAR_MIPMAP_LINEAR);
@@ -43,22 +44,13 @@ ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
 
 	_texture.SetAnisotropyParameter(Engine::GetDisplayConfiguration().anisotropic_level);
 
-	unsigned w = image.GetWidth(), h = image.GetHeight();
-	const float* data = image.GetRawColorData();
-	auto glData = new float[w * h * 4];
+	// upload texure data to the GPU
+	_texture.SetData(gl::InternalFormat::RGBA, image.GetWidth(), image.GetHeight(), gl::Format::RGBA, image.GetRawColorData());
 
-	// reverse the y-coordinate of the image for OpenGL.
-	for (unsigned y = 0; y < h; y++) {
-		memcpy(glData + y * w * 4, data + (h - y - 1) * w * 4, w * 4 * sizeof(float));
-	}
-
-	_texture.SetData(gl::InternalFormat::RGBA, image.GetWidth(), image.GetHeight(), gl::Format::RGBA, data);
-
+	// generate mipmaps
 	if (Engine::GetDisplayConfiguration().enable_mipmaps) {
 		_texture.GenerateMipmap();
 	}
-
-	delete[] glData;
 }
 
 const ImageTexture& ImageTexture::Get(const Image& image, WrapType type, bool linear) {
