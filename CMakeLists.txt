@@ -20,6 +20,13 @@ add_custom_target(Resources
         WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
         COMMENT "Building Resources")
 
+# Generate RheelEngine.h header
+set(RHEELENGINE_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/RheelEngine.h")
+add_custom_target(Header
+        COMMAND python include_headers_gen.py
+        WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
+        COMMENT "Generating RheelEngine.h")
+
 # Create the library
 add_library(RheelEngine SHARED)
 target_compile_definitions(RheelEngine PRIVATE BUILDING_RHEELENGINE_DLL RE_DEBUG)
@@ -34,6 +41,9 @@ add_dependencies(RheelEngine Resources)
 set_source_files_properties(${RESOURCE_OUTPUT} PROPERTIES GENERATED 1)
 target_sources(RheelEngine PRIVATE ${RESOURCE_OUTPUT})
 target_include_directories(RheelEngine PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+# Add dependency to the header generator
+add_dependencies(RheelEngine Header)
 
 # Add sources to the library
 target_sources(RheelEngine PUBLIC src/RheelEngine.h PRIVATE src/RheelEngine/_common.h)

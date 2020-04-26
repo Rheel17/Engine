@@ -1,0 +1,5 @@
+Engine\.h
+Animator/.+Interpolator\.h
+Assets/Generators/.+(?<!StaticModelGenerator)\.h
+Components/.+(?<!\bCamera)(?<!\bLight)\.h
+UI/Elements/.*\.h

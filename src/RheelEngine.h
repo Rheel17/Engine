@@ -7,17 +7,15 @@
 // includes for all required header files
 // BEGIN GENERATED INCLUDES
 #include "RheelEngine/Engine.h"
-
 #include "RheelEngine/Animator/ConstantInterpolator.h"
 #include "RheelEngine/Animator/CosineInterpolator.h"
 #include "RheelEngine/Animator/CubicInterpolator.h"
 #include "RheelEngine/Animator/LinearInterpolator.h"
 #include "RheelEngine/Animator/SplineInterpolator.h"
-
+#include "RheelEngine/Animator/TransitionInterpolator.h"
 #include "RheelEngine/Assets/Generators/StaticModelGeneratorBox.h"
 #include "RheelEngine/Assets/Generators/StaticModelGeneratorCapsule.h"
 #include "RheelEngine/Assets/Generators/StaticModelGeneratorSphere.h"
-
 #include "RheelEngine/Components/AnimatorComponent.h"
 #include "RheelEngine/Components/CollisionComponent.h"
 #include "RheelEngine/Components/DirectionalLight.h"
@@ -30,15 +28,13 @@
 #include "RheelEngine/Components/Rigidbody.h"
 #include "RheelEngine/Components/Skybox.h"
 #include "RheelEngine/Components/SpotLight.h"
-
+#include "RheelEngine/Components/VoxelRenderComponent.h"
 #include "RheelEngine/UI/Elements/ColorElement.h"
 #include "RheelEngine/UI/Elements/CrosshairElement.h"
 #include "RheelEngine/UI/Elements/EmptyElement.h"
 #include "RheelEngine/UI/Elements/SceneElement.h"
 #include "RheelEngine/UI/Elements/TextElement.h"
 #include "RheelEngine/UI/Elements/VignetteElement.h"
-
-#include "RheelEngine/Renderer/ImageTexture.h"
 // END GENERATED INCLUDES
 
 // includes for entry point
