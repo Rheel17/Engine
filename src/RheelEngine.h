@@ -55,7 +55,7 @@ namespace rheel {
 template<typename GameClass>
 void entry() {
 	static_assert(std::is_default_constructible<GameClass>::value, "Game Class must be default-constructible");
-	static_assert(std::is_base_of<rheel::Game, GameClass>::value, "Game Class must derive from re::Base");
+	static_assert(std::is_base_of<rheel::Game, GameClass>::value, "Game Class must derive from rheel::Game");
 	Engine::Initialize_();
 	Game* game = new GameClass;
 	Engine::Run_(game);
