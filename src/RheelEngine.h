@@ -5,8 +5,7 @@
 #define RHEELENGINE_RHEELENGINE_H
 
 // includes for all required header files
-// TODO: do this automatically?
-
+// BEGIN GENERATED INCLUDES
 #include "RheelEngine/Engine.h"
 
 #include "RheelEngine/Animator/ConstantInterpolator.h"
@@ -40,6 +39,7 @@
 #include "RheelEngine/UI/Elements/VignetteElement.h"
 
 #include "RheelEngine/Renderer/ImageTexture.h"
+// END GENERATED INCLUDES
 
 // includes for entry point
 #include <type_traits>
