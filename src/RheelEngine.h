@@ -40,13 +40,6 @@
 // includes for entry point
 #include <type_traits>
 
-// force dedicated gpu usage
-extern "C"
-{
-__declspec(dllexport) inline unsigned long NvOptimusEnablement = 1;
-__declspec(dllexport) inline int AmdPowerXpressRequestHighPerformance = 1;
-}
-
 // entry point
 namespace rheel {
 
@@ -64,9 +57,15 @@ void entry() {
 }
 
 // macro for entry point
-#define RHEEL_ENGINE_ENTRY(GameClass)       \
-	int main(int argc, char* argv[]) {      \
-		rheel::entry<GameClass>();			\
+#define RHEEL_ENGINE_ENTRY(GameClass)	      									\
+	/* Force dedicated GPU usage */												\
+	extern "C" {																\
+		__declspec(dllexport) unsigned long NvOptimusEnablement = 1;			\
+		__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;		\
+	}																			\
+																				\
+	int main(int argc, char* argv[]) {      									\
+		rheel::entry<GameClass>();												\
 	}
 
 #endif
