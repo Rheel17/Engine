@@ -179,7 +179,7 @@ void Window::Loop() {
 
 		// finish the update/render cycle
 		glfwSwapBuffers(window);
-		// TODO: GL state push/pop check for consistency
+		gl::State::CheckStackConsistency();
 	}
 }
 

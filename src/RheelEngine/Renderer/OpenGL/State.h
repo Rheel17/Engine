@@ -65,6 +65,7 @@ private:
 
 public:
 	static void Initialize();
+	static void CheckStackConsistency();
 
 private:
 	static State& S_();

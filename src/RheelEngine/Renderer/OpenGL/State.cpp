@@ -126,6 +126,13 @@ void State::Initialize() {
 	_global_state_stack.push(std::unique_ptr<State>(new State));
 }
 
+void State::CheckStackConsistency() {
+	if (_global_state_stack.size() != 1) {
+		Log::Error() << "OpenGL Stack inconsistent state: make sure there are an equal number of push and pop operations" << std::endl;
+		abort();
+	}
+}
+
 State& State::S_() {
 	return *_global_state_stack.top();
 }

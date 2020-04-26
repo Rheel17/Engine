@@ -4,7 +4,6 @@
 #include "Engine.h"
 
 #include "Renderer/Text/TextRenderer.h"
-#include "Renderer/OpenGL/State.h"
 
 namespace rheel {
 
@@ -91,6 +90,14 @@ SceneRenderManager& Engine::GetSceneRenderManager(Scene* scene) {
 	}
 
 	return iter->second;
+}
+
+void Engine::PreloadTexture(const std::string& path, ImageTexture::WrapType type, bool linear) {
+	PreloadTexture(GetAssetLoader().png.Load(path), type, linear);
+}
+
+void Engine::PreloadTexture(const Image& image, ImageTexture::WrapType type, bool linear) {
+	ImageTexture::Get(image, type, linear);
 }
 
 }

@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "Assets/AssetLoader.h"
 #include "Audio/AudioManager.h"
+#include "Renderer/ImageTexture.h"
 #include "Renderer/SceneRenderManager.h"
 #include "Renderer/Window.h"
 #include "UI/UI.h"
@@ -92,6 +93,18 @@ public:
 	 * manager.
 	 */
 	static SceneRenderManager& GetSceneRenderManager(Scene* scene);
+
+	/**
+	 * Preloads the image asset for the given path, and afterwards loads
+	 * the texture in the graphics card, so it can be used at render-time.
+	 */
+	static void PreloadTexture(const std::string& path, ImageTexture::WrapType type = ImageTexture::WrapType::WRAP, bool linear = true);
+
+	/**
+	 * Preloads an image to the graphics card, so it can be used at
+	 * render-time.
+	 */
+	static void PreloadTexture(const Image& image, ImageTexture::WrapType type = ImageTexture::WrapType::WRAP, bool linear = true);
 
 private:
 	// Engine and Game life-cycle functions
