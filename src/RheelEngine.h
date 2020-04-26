@@ -40,8 +40,6 @@
 // includes for entry point
 #include <type_traits>
 
-#include <AL/al.h>
-
 // force dedicated gpu usage
 extern "C"
 {
