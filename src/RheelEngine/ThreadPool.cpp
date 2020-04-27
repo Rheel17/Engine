@@ -3,14 +3,20 @@
  */
 #include "ThreadPool.h"
 
+#include "Engine.h"
+
 namespace rheel {
 
 ThreadPool::ThreadPool() {
+	// get the parent window handle
+	auto mainWindow = static_cast<GLFWwindow*>(Engine::GetWindow().GetWindowHandle());
+
+	// create the threads
 	unsigned numThreads = std::thread::hardware_concurrency();
 	_threads.reserve(numThreads);
 
 	for (unsigned i = 0; i < numThreads; i++) {
-		_threads.emplace_back(ThreadMain_, this);
+		_threads.emplace_back(ThreadMain_, this, CreateWindowHandle_(mainWindow));
 	}
 
 	Log::Info() << "Thread pool: " << numThreads << " threads" << std::endl;
@@ -49,7 +55,11 @@ std::unique_ptr<ThreadPool::TaskBase> ThreadPool::GetNextTask_() {
 	return task;
 }
 
-void ThreadPool::ThreadMain_(ThreadPool* pool) {
+void ThreadPool::ThreadMain_(ThreadPool* pool, void* contextWindow) {
+	// ensure we have an OpenGL context
+	auto window = static_cast<GLFWwindow*>(contextWindow);
+	glfwMakeContextCurrent(window);
+
 	while (true) {
 		// fetch a task
 		auto task = pool->GetNextTask_();
@@ -62,6 +72,22 @@ void ThreadPool::ThreadMain_(ThreadPool* pool) {
 		// execute the task
 		task->operator()();
 	}
+
+	// destroy the OpenGL context
+	glfwMakeContextCurrent(nullptr);
+	glfwDestroyWindow(window);
+}
+
+void* ThreadPool::CreateWindowHandle_(void* mainWindow) {
+	glfwWindowHint(GLFW_VISIBLE, false);
+	GLFWwindow* dummyWindow = glfwCreateWindow(1, 1, "", nullptr, static_cast<GLFWwindow*>(mainWindow));
+
+	if (dummyWindow == nullptr) {
+		Log::Error() << "Failed to create dummy window for thread pool" << std::endl;
+		abort();
+	}
+
+	return dummyWindow;
 }
 
 }

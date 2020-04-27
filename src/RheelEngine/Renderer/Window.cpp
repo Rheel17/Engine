@@ -194,6 +194,10 @@ vec2 Window::GetMousePosition() const {
 	return vec2{ x, y };
 }
 
+void* Window::GetWindowHandle() {
+	return _window_handle;
+}
+
 void Window::InitializeDisplaySystems() {
 	// initialize GLFW
 	if (!_is_glfw_initialized) {

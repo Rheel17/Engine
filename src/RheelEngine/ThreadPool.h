@@ -79,10 +79,11 @@ private:
 	std::queue<std::unique_ptr<TaskBase>> _execution_queue;
 	std::mutex _queue_mutex;
 	std::condition_variable _queue_wait;
-	volatile bool _stop_requested = false;
+	bool _stop_requested = false;
 
 private:
-	static void ThreadMain_(ThreadPool* pool);
+	static void ThreadMain_(ThreadPool* pool, void* contextWindow);
+	static void* CreateWindowHandle_(void* mainWindow);
 
 };
 

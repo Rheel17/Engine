@@ -27,6 +27,8 @@ public:
 	void SetInputMode(int mode, int value) const;
 	vec2 GetMousePosition() const;
 
+	void* GetWindowHandle();
+
 private:
 	DisplayConfiguration& _configuration;
 
