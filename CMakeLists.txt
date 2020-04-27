@@ -6,6 +6,16 @@ option(BUILD_TEST "Build the googletest unit test" ON)
 set(EXTERNAL_INCLUDE_DIRECTORY "" CACHE STRING "Include directory for external libraries")
 set(EXTERNAL_LIBRARY_DIRECTORY "" CACHE STRING "Library directory for external libraries")
 
+# Build the sandbox, if required.
+if (BUILD_SANDBOX)
+	include(sandbox/CMakeLists.txt)
+endif()
+
+# Add the test, if required
+if (BUILD_TEST)
+	include(test/CMakeLists.txt)
+endif()
+
 # Set project name
 project(Engine)
 
@@ -65,13 +75,3 @@ target_link_libraries(RheelEngine PUBLIC BulletDynamics)
 target_link_libraries(RheelEngine PUBLIC BulletCollision)
 target_link_libraries(RheelEngine PUBLIC LinearMath)
 target_link_libraries(RheelEngine PRIVATE libOpenAL32.dll.a)
-
-# Build the sandbox, if required.
-if (BUILD_SANDBOX)
-    include(sandbox/CMakeLists.txt)
-endif()
-
-# Add the test, if required
-if (BUILD_TEST)
-    include(test/CMakeLists.txt)
-endif()
