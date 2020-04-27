@@ -39,7 +39,7 @@ void Engine::Run_(Game* game) {
 			_instance.display_configuration.resolution.x,
 			_instance.display_configuration.resolution.y);
 
-	_instance.thread_pool = std::make_unique<ThreadPool>();
+	_instance.thread_pool = new ThreadPool;
 
 	game->Start();
 
@@ -47,6 +47,7 @@ void Engine::Run_(Game* game) {
 }
 
 void Engine::Terminate_() {
+	delete _instance.thread_pool;
 	_instance.audio_manager->StopAll_();
 	Window::DestroyDisplaySystems();
 }

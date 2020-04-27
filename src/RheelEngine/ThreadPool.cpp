@@ -17,10 +17,15 @@ ThreadPool::ThreadPool() {
 }
 
 ThreadPool::~ThreadPool() {
-	// clear the execution queue
-	while (!_execution_queue.empty()) {
-		_execution_queue.pop();
+	// send the stop signal to the threads
+	{
+		std::lock_guard lock(_queue_mutex);
+		Log::Info() << "Stopping thread pool" << std::endl;
+
+		_stop_requested = true;
 	}
+
+	_queue_wait.notify_all();
 
 	// wait for the threads to finish
 	for (std::thread& t : _threads) {
@@ -28,8 +33,35 @@ ThreadPool::~ThreadPool() {
 	}
 }
 
-void ThreadPool::ThreadMain_(ThreadPool* pool) {
+std::unique_ptr<ThreadPool::TaskBase> ThreadPool::GetNextTask_() {
+	// wait for a task to become available
+	std::unique_lock lock(_queue_mutex);
+	_queue_wait.wait(lock, [this]() { return _stop_requested || !_execution_queue.empty(); });
 
+	// check if a stop was requested
+	if (_stop_requested) {
+		return nullptr;
+	}
+
+	// retrieve and remove the next task
+	auto task = std::move(_execution_queue.front());
+	_execution_queue.pop();
+	return task;
+}
+
+void ThreadPool::ThreadMain_(ThreadPool* pool) {
+	while (true) {
+		// fetch a task
+		auto task = pool->GetNextTask_();
+
+		// exit condition: GetNextTask_() didn't return a task
+		if (!task) {
+			break;
+		}
+
+		// execute the task
+		task->operator()();
+	}
 }
 
 }

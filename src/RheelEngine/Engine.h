@@ -40,7 +40,7 @@ class RE_API Engine {
 		Scene* active_scene = nullptr;
 
 		// thread pool
-		std::unique_ptr<ThreadPool> thread_pool;
+		ThreadPool* thread_pool;
 
 		~EngineInstance();
 	};
