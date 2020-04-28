@@ -95,12 +95,20 @@ SceneRenderManager& Engine::GetSceneRenderManager(Scene* scene) {
 	return iter->second;
 }
 
-void Engine::PreloadTexture(const std::string& path, ImageTexture::WrapType type, bool linear) {
-	PreloadTexture(GetAssetLoader().png.Load(path), type, linear);
+ThreadPool& Engine::GetThreadPool() {
+	return *_instance.thread_pool;
 }
 
-void Engine::PreloadTexture(const Image& image, ImageTexture::WrapType type, bool linear) {
-	ImageTexture::Get(image, type, linear);
+std::future<void> Engine::PreloadTexture(const std::string& path, ImageTexture::WrapType type, bool linear) {
+	return GetThreadPool().AddTask<void>([=](){
+		ImageTexture::Get(GetAssetLoader().png.Load(path), type, linear);
+	});
+}
+
+std::future<void> Engine::PreloadTexture(const Image& image, ImageTexture::WrapType type, bool linear) {
+	return GetThreadPool().AddTask<void>([=](){
+		ImageTexture::Get(image, type, linear);
+	});
 }
 
 }

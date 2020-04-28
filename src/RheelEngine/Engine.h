@@ -99,16 +99,24 @@ public:
 	static SceneRenderManager& GetSceneRenderManager(Scene* scene);
 
 	/**
-	 * Preloads the image asset for the given path, and afterwards loads
-	 * the texture in the graphics card, so it can be used at render-time.
+	 * Returns the global thread pool, used for background tasks.
 	 */
-	static void PreloadTexture(const std::string& path, ImageTexture::WrapType type = ImageTexture::WrapType::WRAP, bool linear = true);
+	static ThreadPool& GetThreadPool();
 
 	/**
-	 * Preloads an image to the graphics card, so it can be used at
-	 * render-time.
+	 * Preloads the image asset for the given path, and afterwards loads the
+	 * texture in the graphics card, so it can be used at render-time. This
+	 * method will immediately return and run the initializization in the
+	 * background.
 	 */
-	static void PreloadTexture(const Image& image, ImageTexture::WrapType type = ImageTexture::WrapType::WRAP, bool linear = true);
+	static std::future<void> PreloadTexture(const std::string& path, ImageTexture::WrapType type = ImageTexture::WrapType::WRAP, bool linear = true);
+
+	/**
+	 * Preloads an image to the graphics card, so it can be used at render-time.
+	 * This method will immediately return and run the initializization in the
+	 * background.
+	 */
+	static std::future<void> PreloadTexture(const Image& image, ImageTexture::WrapType type = ImageTexture::WrapType::WRAP, bool linear = true);
 
 private:
 	// Engine and Game life-cycle functions

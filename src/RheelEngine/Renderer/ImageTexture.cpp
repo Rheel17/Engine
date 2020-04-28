@@ -7,7 +7,7 @@
 
 namespace rheel {
 
-std::unordered_map<std::tuple<std::uintptr_t, ImageTexture::WrapType, bool>, ImageTexture> ImageTexture::_texture_cache;
+Cache<ImageTexture::CacheTuple, ImageTexture> ImageTexture::_texture_cache;
 
 void ImageTexture::Bind(unsigned textureUnit) const {
 	_texture.Bind(textureUnit);
@@ -55,13 +55,10 @@ ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
 
 const ImageTexture& ImageTexture::Get(const Image& image, WrapType type, bool linear) {
 	auto tuple = std::make_tuple(image.GetAddress(), type, linear);
-	auto iter = _texture_cache.find(tuple);
-
-	if (iter == _texture_cache.end()) {
-		iter = _texture_cache.emplace(tuple, ImageTexture(image, type, linear)).first;
-	}
-
-	return iter->second;
+	return _texture_cache.Get(tuple, [image](const CacheTuple& tuple) {
+		const auto& [im, tp, ln] = tuple;
+		return ImageTexture(image, tp, ln);
+	});
 }
 
 }

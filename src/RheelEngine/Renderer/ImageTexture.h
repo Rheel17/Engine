@@ -6,6 +6,7 @@
 #include "../_common.h"
 
 #include "../Assets/Image.h"
+#include "../Util/Cache.h"
 #include "OpenGL/Texture2D.h"
 
 namespace rheel {
@@ -16,6 +17,9 @@ public:
 	enum class WrapType {
 		WRAP, CLAMP
 	};
+
+private:
+	using CacheTuple = std::tuple<uintptr_t, WrapType, bool>;
 
 public:
 	void Bind(unsigned textureUnit) const;
@@ -29,7 +33,7 @@ public:
 	static const ImageTexture& Get(const Image& image, WrapType type = WrapType::WRAP, bool linear = true);
 
 private:
-	static std::unordered_map<std::tuple<uintptr_t, WrapType, bool>, ImageTexture> _texture_cache;
+	static Cache<CacheTuple, ImageTexture> _texture_cache;
 
 };
 

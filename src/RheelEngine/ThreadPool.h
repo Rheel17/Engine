@@ -25,14 +25,14 @@ private:
 	};
 
 	template<typename T>
-	class Task : TaskBase {
+	class Task : public TaskBase {
 
 	public:
 		explicit Task(std::function<T()>&& task) :
 				_task(std::forward<std::function<T()>>(task)) {}
 
 		void operator()() override {
-			_result.set_value(_task());
+			Run_();
 		}
 
 		std::future<T> GetFuture() {
@@ -40,6 +40,17 @@ private:
 		}
 
 	private:
+		template<typename T_ = T, std::enable_if_t<std::is_same_v<T_, void>, int> = 0>
+		void Run_() {
+			_task();
+			_result.set_value();
+		}
+
+		template<typename T_ = T, std::enable_if_t<!std::is_same_v<T_, void>, int> = 0>
+		void Run_() {
+			_result.set_value(_task());
+		}
+
 		std::function<T()> _task;
 		std::promise<T> _result;
 
