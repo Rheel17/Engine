@@ -112,6 +112,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/UI/Elements/SceneElement.cpp RheelEngine/UI/Elements/SceneElement.h 
 		RheelEngine/UI/Elements/TextElement.cpp RheelEngine/UI/Elements/TextElement.h 
 		RheelEngine/UI/Elements/VignetteElement.cpp RheelEngine/UI/Elements/VignetteElement.h 
+		RheelEngine/Util/Cache.h 
 		RheelEngine/Util/glm_debug.cpp RheelEngine/Util/glm_debug.h 
 		RheelEngine/Util/Hashes.h 
 		RheelEngine/Util/Log.cpp RheelEngine/Util/Log.h 
