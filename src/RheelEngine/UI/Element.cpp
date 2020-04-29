@@ -5,7 +5,7 @@
 
 #include <utility>
 
-#include "Container.h"
+#include "UI.h"
 #include "../EngineResources.h"
 #include "../Renderer/ImageTexture.h"
 
@@ -305,7 +305,7 @@ const gl::Program& Element::GetCustomShader(const Shader& shader) {
 		shaderProgram.AttachShader(gl::Shader::ShaderType::FRAGMENT, shaderSource);
 		shaderProgram.Link();
 
-		ivec2 screenDimension = Engine::GetDisplayConfiguration().resolution;
+		ivec2 screenDimension = DisplayConfiguration::Get().resolution;
 		shaderProgram["_screen_dimensions"] = vec2{ screenDimension.x, screenDimension.y };
 
 		iter = _custom_shaders.emplace(shader.GetAddress(), std::move(shaderProgram)).first;
@@ -333,7 +333,7 @@ void Element::Initialize_() {
 	_ui_shader->AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_uishader_frag_glsl"));
 	_ui_shader->Link();
 
-	ivec2 screenDimension = Engine::GetDisplayConfiguration().resolution;
+	ivec2 screenDimension = DisplayConfiguration::Get().resolution;
 	_ui_shader->GetUniform("_screen_dimensions") = vec2{ screenDimension.x, screenDimension.y };
 	_ui_shader->GetUniform("_texture_sampler") = 0;
 

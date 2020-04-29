@@ -7,18 +7,18 @@
 
 namespace rheel {
 
-Game::Game(DisplayConfiguration displayConfiguration, const std::string& windowTitle) :
-		_display_configuration(std::move(displayConfiguration)) {
-
+Game::Game(DisplayConfiguration displayConfiguration, const std::string& windowTitle) {
 	// initialize the engine
 	DisplayConfiguration::InitializeGLFW();
 	Font::Initialize();
 
 	// create the window
-	_display_configuration.CalculateActualResolution_();
-	_window = new MainWindow(_display_configuration, windowTitle);
-	_display_configuration.ClampAnisotropicLevel_();
+	displayConfiguration.CalculateActualResolution_();
+	_window = new MainWindow(displayConfiguration, windowTitle, *this);
+	displayConfiguration.ClampAnisotropicLevel_();
 	_ui = std::make_unique<UI>(*_window);
+
+	DisplayConfiguration::Set_(std::move(displayConfiguration));
 
 	// initialize the audio manager
 	_audio_manager = std::make_unique<AudioManager>();
@@ -50,10 +50,6 @@ Game::~Game() {
 
 	// terminate the engine
 	DisplayConfiguration::TerminateGLFW();
-}
-
-const DisplayConfiguration& Game::GetDisplayConfiguration() const {
-	return _display_configuration;
 }
 
 MainWindow& Game::GetWindow() {

@@ -32,11 +32,6 @@ public:
 	virtual void Start() = 0;
 
 	/**
-	 * Returns the display configuration for this game.
-	 */
-	const DisplayConfiguration& GetDisplayConfiguration() const;
-
-	/**
 	 * Returns the game window.
 	 */
 	MainWindow& GetWindow();
@@ -92,7 +87,6 @@ public:
 private:
 	void Loop_();
 
-	DisplayConfiguration _display_configuration;
 	MainWindow* _window = nullptr;
 	std::unique_ptr<UI> _ui;
 

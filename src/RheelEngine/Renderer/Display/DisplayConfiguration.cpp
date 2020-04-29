@@ -59,6 +59,10 @@ void DisplayConfiguration::ClampAnisotropicLevel_() {
 	}
 }
 
+const DisplayConfiguration& DisplayConfiguration::Get() {
+	return _display_configuration;
+}
+
 void DisplayConfiguration::InitializeGLFW() {
 	if (!glfwInit()) {
 		Log::Error() << "Unable to initialize GLFW" << std::endl;
@@ -72,6 +76,10 @@ void DisplayConfiguration::InitializeGLFW() {
 
 void DisplayConfiguration::TerminateGLFW() {
 	glfwTerminate();
+}
+
+void DisplayConfiguration::Set_(DisplayConfiguration&& displayConfiguration) {
+	_display_configuration = std::move(displayConfiguration);
 }
 
 }

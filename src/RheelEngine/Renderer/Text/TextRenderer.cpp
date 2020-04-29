@@ -5,8 +5,8 @@
 
 #include <limits>
 
-#include "../../Engine.h"
 #include "../../EngineResources.h"
+#include "../Display/DisplayConfiguration.h"
 #include "../OpenGL/Context.h"
 
 #define STAGE_TRIANGLES        0
@@ -93,7 +93,7 @@ void TextRenderer::ResizeBuffer_(unsigned width, unsigned height) {
 int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size) {
 	assert(length <= Font::FONT_CACHE_SIZE);
 
-	auto screen = Engine::GetDisplayConfiguration().resolution;
+	auto screen = DisplayConfiguration::Get().resolution;
 	Initialize_();
 	ResizeBuffer_(screen.x, screen.y);
 

@@ -6,10 +6,10 @@
 #include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
 #include "SkyboxRenderer.h"
-#include "../Engine.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/SpotLight.h"
+#include "Display/DisplayConfiguration.h"
 
 namespace rheel {
 
@@ -84,7 +84,8 @@ CustomShaderModelRenderer& SceneRenderManager::GetModelRendererForCustomShader(c
 }
 
 std::unique_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height) {
-	return std::unique_ptr<ForwardSceneRenderer>(new ForwardSceneRenderer(this, std::move(cameraName), width, height));
+	return std::unique_ptr<ForwardSceneRenderer>(
+			new ForwardSceneRenderer(this, std::move(cameraName), width, height, DisplayConfiguration::Get().SampleCount()));
 }
 
 std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(Light* light) {
@@ -162,7 +163,7 @@ void SceneRenderManager::InitializeShaderLights(gl::Program& shaderProgram) cons
 int SceneRenderManager::ShadowLevel_() {
 	for (Light* light : _scene->GetLights()) {
 		if (light->CastsShadows()) {
-			return Engine::GetDisplayConfiguration().shadow_quality;
+			return DisplayConfiguration::Get().shadow_quality;
 		}
 	}
 

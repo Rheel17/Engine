@@ -3,8 +3,8 @@
  */
 #include "ShadowMapDirectional.h"
 
-#include "../Engine.h"
 #include "../Components/DirectionalLight.h"
+#include "Display/DisplayConfiguration.h"
 #include "OpenGL/Context.h"
 
 namespace rheel {
@@ -16,7 +16,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, Light* l
 
 	unsigned textureSize = 1024;
 
-	switch (Engine::GetDisplayConfiguration().shadow_quality) {
+	switch (DisplayConfiguration::Get().shadow_quality) {
 		case DisplayConfiguration::SHADOW_OFF:
 			abort();
 		case DisplayConfiguration::SHADOW_LOW:

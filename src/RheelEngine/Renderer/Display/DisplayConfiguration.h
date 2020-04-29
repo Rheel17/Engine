@@ -38,8 +38,14 @@ private:
 public:
 	static void InitializeGLFW();
 	static void TerminateGLFW();
+	static const DisplayConfiguration& Get();
 
 	static const ivec2 RESOLUTION_NATIVE;
+
+private:
+	static void Set_(DisplayConfiguration&& displayConfiguration);
+
+	static DisplayConfiguration _display_configuration;
 
 };
 
