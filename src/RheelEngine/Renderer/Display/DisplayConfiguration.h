@@ -11,7 +11,7 @@ namespace rheel {
  * A structure holding the display configuration for the window
  */
 class RE_API DisplayConfiguration {
-	friend class Engine;
+	friend class Game;
 
 public:
 	enum WindowMode { FULLSCREEN, WINDOWED_UNRESIZABLE };
@@ -25,7 +25,6 @@ public:
 
 	WindowMode window_mode = FULLSCREEN;
 	ivec2 resolution = RESOLUTION_NATIVE;
-	std::string title = "Rheel Game Engine";
 	bool vsync = true;
 	AntiAliasing aa_mode = AA_OFF;
 	ShadowQuality shadow_quality = SHADOW_OFF;

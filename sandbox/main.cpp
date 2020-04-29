@@ -100,16 +100,8 @@ static Scene* createScene() {
 }
 
 class SandboxGame : public Game {
-	void Initialize() override {
-		DisplayConfiguration config;
-		config.title = "Sandbox";
-		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
-		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
-		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
-		config.vsync = true;
-
-		Engine::SetDisplayConfiguration(std::move(config));
-	}
+	SandboxGame() :
+			Game(GetDisplayConfiguration_(), "Sandbox") {}
 
 	void Start() override {
 		Engine::SetActiveScene(createScene());
@@ -137,6 +129,15 @@ class SandboxGame : public Game {
 		sceneElement->RequestFocus();
 
 		Engine::GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
+	}
+
+	static DisplayConfiguration GetDisplayConfiguration_() {
+		DisplayConfiguration config;
+		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
+		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
+		config.aa_mode = DisplayConfiguration::AntiAliasing::MSAA_4;
+		config.vsync = true;
+		return config;
 	}
 
 };

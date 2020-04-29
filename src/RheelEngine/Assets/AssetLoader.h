@@ -13,7 +13,7 @@
 namespace rheel {
 
 class RE_API AssetLoader {
-	friend class Engine;
+	friend class Game;
 
 public:
 	/**

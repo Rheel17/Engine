@@ -93,10 +93,11 @@ void TextRenderer::ResizeBuffer_(unsigned width, unsigned height) {
 int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size) {
 	assert(length <= Font::FONT_CACHE_SIZE);
 
-	Initialize_();
-
-	// get the screen metrics
 	auto screen = Engine::GetDisplayConfiguration().resolution;
+	Initialize_();
+	ResizeBuffer_(screen.x, screen.y);
+
+	// get the metrics
 	float px = float(x) / screen.x * 2.0f - 1.0f;
 	float py = float(y) / screen.y * -2.0f + 1.0f;
 	float sx = float(size) / screen.x * 2.0f;

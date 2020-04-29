@@ -5,7 +5,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Engine.cpp RheelEngine/Engine.h 
 		RheelEngine/EngineResources.cpp RheelEngine/EngineResources.h 
 		RheelEngine/Entity.cpp RheelEngine/Entity.h 
-		RheelEngine/Game.h 
+		RheelEngine/Game.cpp RheelEngine/Game.h 
 		RheelEngine/Material.cpp RheelEngine/Material.h 
 		RheelEngine/PhysicsShape.cpp RheelEngine/PhysicsShape.h 
 		RheelEngine/RigidTransform.cpp RheelEngine/RigidTransform.h 

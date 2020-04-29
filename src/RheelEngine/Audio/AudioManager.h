@@ -16,7 +16,7 @@ class RE_API AudioManager {
 	RE_NO_MOVE(AudioManager);
 	RE_NO_COPY(AudioManager);
 
-	friend class Engine;
+	friend class Game;
 
 public:
 	AudioManager();
