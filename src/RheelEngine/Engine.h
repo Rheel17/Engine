@@ -12,7 +12,7 @@
 #include "Audio/AudioManager.h"
 #include "Renderer/ImageTexture.h"
 #include "Renderer/SceneRenderManager.h"
-#include "Renderer/Window.h"
+#include "Renderer/Display/MainWindow.h"
 
 namespace rheel {
 
@@ -27,7 +27,7 @@ class RE_API Engine {
 
 		// display
 		DisplayConfiguration display_configuration;
-		Window* window = nullptr;
+		MainWindow* window = nullptr;
 		UI* ui = nullptr;
 
 		// renderer
@@ -61,7 +61,7 @@ public:
 	/**
 	 * Gets the game window.
 	 */
-	static Window& GetWindow();
+	static MainWindow& GetWindow();
 
 	/**
 	 * Gets the current UI

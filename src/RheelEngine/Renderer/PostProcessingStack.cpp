@@ -2,7 +2,7 @@
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
 #include "PostProcessingStack.h"
-#include "OpenGL/State.h"
+#include "OpenGL/Context.h"
 
 namespace rheel {
 
@@ -20,7 +20,7 @@ PostProcessingStack::PostProcessingStack() :
 }
 
 void PostProcessingStack::Render(const gl::Framebuffer& input, const ivec2& pos, const ivec2& size) const {
-	gl::State::Push();
+	gl::Context::Current().Push();
 
 	// set size
 	_width = size.x;
@@ -51,12 +51,12 @@ void PostProcessingStack::Render(const gl::Framebuffer& input, const ivec2& pos,
 	pp(_bloom);
 
 	// resolve to the default frame buffer
-	gl::State::Pop();
-	gl::State::Push();
+	gl::Context::Current().Pop();
+	gl::Context::Current().Push();
 
 	inputBuffer.get().Blit({ 0, 0, _width, _height }, { pos.x, pos.y, size.x, size.y }, gl::Framebuffer::BitField::COLOR);
 
-	gl::State::Pop();
+	gl::Context::Current().Pop();
 }
 
 const gl::Framebuffer& PostProcessingStack::ResolveInput_(const gl::Framebuffer& input) const {
@@ -71,7 +71,7 @@ const gl::Framebuffer& PostProcessingStack::ResolveInput_(const gl::Framebuffer&
 		MarkFramebufferUse_(index, true);
 
 		// blit
-		gl::State::Push();
+		gl::Context::Current().Push();
 
 		tmp.BindForDrawing();
 		input.Blit(
@@ -79,7 +79,7 @@ const gl::Framebuffer& PostProcessingStack::ResolveInput_(const gl::Framebuffer&
 				{ 0, 0, _width, _height },
 				gl::Framebuffer::BitField::COLOR);
 
-		gl::State::Pop();
+		gl::Context::Current().Pop();
 		return tmp;
 	} else {
 		return input;

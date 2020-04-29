@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_STATEENABLES_H
-#define RHEELENGINE_STATEENABLES_H
+#ifndef RHEELENGINE_CONTEXTENABLES_H
+#define RHEELENGINE_CONTEXTENABLES_H
 #include "../../_common.h"
 
 #include <GL/glew.h>
@@ -16,13 +16,13 @@ enum class Capability {
 	CULL_FACE = GL_CULL_FACE
 };
 
-class RE_API StateEnables {
+class RE_API ContextEnables {
 
 public:
 
 public:
-	StateEnables();
-	explicit StateEnables(const StateEnables* parent);
+	ContextEnables();
+	explicit ContextEnables(const ContextEnables* parent);
 
 	void Enable(Capability cap);
 	void Disable(Capability cap);
@@ -33,7 +33,7 @@ public:
 
 private:
 	std::unordered_map<Capability, bool> _state_changes;
-	const StateEnables* _parent;
+	const ContextEnables* _parent;
 
 private:
 	static std::unordered_map<Capability, bool> _defaults;

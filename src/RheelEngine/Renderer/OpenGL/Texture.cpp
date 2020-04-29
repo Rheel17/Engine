@@ -3,7 +3,7 @@
  */
 #include "Texture.h"
 
-#include "State.h"
+#include "Context.h"
 
 namespace rheel::gl {
 
@@ -15,7 +15,7 @@ Texture::Target rheel::gl::Texture::GetTarget() const {
 }
 
 void Texture::Bind(unsigned int textureUnit) const {
-	State::BindTexture(textureUnit, *this);
+	Context::Current().BindTexture(textureUnit, *this);
 }
 
 }

@@ -3,12 +3,12 @@
  */
 #include "Renderbuffer.h"
 
-#include "State.h"
+#include "Context.h"
 
 namespace rheel::gl {
 
 void Renderbuffer::Bind() const {
-	State::BindRenderbuffer(*this);
+	Context::Current().BindRenderbuffer(*this);
 }
 
 void Renderbuffer::SetStorage(InternalFormat internalFormat, unsigned width, unsigned height) {

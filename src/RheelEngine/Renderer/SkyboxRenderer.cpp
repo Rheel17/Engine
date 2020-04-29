@@ -7,7 +7,7 @@
 #include "ImageTexture.h"
 #include "../EngineResources.h"
 #include "../Components/Skybox.h"
-#include "OpenGL/State.h"
+#include "OpenGL/Context.h"
 
 #define PART_NORTH   0
 #define PART_EAST    1
@@ -52,7 +52,7 @@ void SkyboxRenderer::Render(Camera* camera, unsigned width, unsigned height) con
 
 	for (int i = 0; i < 6; i++) {
 		if (images[i].IsNull()) {
-			gl::State::ClearTexture(i, gl::Texture::Target::TEXTURE_2D);
+			gl::Context::Current().ClearTexture(i, gl::Texture::Target::TEXTURE_2D);
 		} else {
 			ImageTexture::Get(images[i]).Bind(i);
 		}

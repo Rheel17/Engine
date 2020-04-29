@@ -3,7 +3,7 @@
  */
 #include "Program.h"
 
-#include "State.h"
+#include "Context.h"
 
 namespace rheel::gl {
 
@@ -24,7 +24,7 @@ Program& Program::operator=(Program&& p) noexcept {
 
 void Program::Use() const {
 	EnsureLinked_();
-	State::UseProgram(*this);
+	Context::Current().UseProgram(*this);
 }
 
 GLuint Program::GetHandle() const {

@@ -4,7 +4,7 @@
 #include "CustomShaderModelRenderer.h"
 
 #include "../EngineResources.h"
-#include "OpenGL/State.h"
+#include "OpenGL/Context.h"
 
 namespace rheel {
 

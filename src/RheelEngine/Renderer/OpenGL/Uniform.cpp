@@ -3,7 +3,7 @@
  */
 #include "Uniform.h"
 
-#include "State.h"
+#include "Context.h"
 
 namespace rheel::gl {
 
@@ -22,7 +22,7 @@ bool Uniform::IsValid() const {
 
 bool Uniform::Init_() const {
 	if (IsValid()) {
-		State::S_()._bindings.UseProgram(_program_handle);
+		Context::Current().UseProgram_(_program_handle);
 		return true;
 	}
 

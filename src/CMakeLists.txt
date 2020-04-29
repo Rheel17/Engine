@@ -63,7 +63,6 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Components/SpotLight.cpp RheelEngine/Components/SpotLight.h 
 		RheelEngine/Components/VoxelRenderComponent.cpp RheelEngine/Components/VoxelRenderComponent.h 
 		RheelEngine/Renderer/CustomShaderModelRenderer.cpp RheelEngine/Renderer/CustomShaderModelRenderer.h 
-		RheelEngine/Renderer/DisplayConfiguration.cpp RheelEngine/Renderer/DisplayConfiguration.h 
 		RheelEngine/Renderer/ForwardSceneRenderer.cpp RheelEngine/Renderer/ForwardSceneRenderer.h 
 		RheelEngine/Renderer/ImageTexture.cpp RheelEngine/Renderer/ImageTexture.h 
 		RheelEngine/Renderer/ModelRenderer.cpp RheelEngine/Renderer/ModelRenderer.h 
@@ -75,10 +74,17 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/ShadowMapDirectional.cpp RheelEngine/Renderer/ShadowMapDirectional.h 
 		RheelEngine/Renderer/SkyboxRenderer.cpp RheelEngine/Renderer/SkyboxRenderer.h 
 		RheelEngine/Renderer/VoxelRenderer.cpp RheelEngine/Renderer/VoxelRenderer.h 
-		RheelEngine/Renderer/Window.cpp RheelEngine/Renderer/Window.h 
+		RheelEngine/Renderer/Display/DisplayConfiguration.cpp RheelEngine/Renderer/Display/DisplayConfiguration.h 
+		RheelEngine/Renderer/Display/DummyWindow.cpp RheelEngine/Renderer/Display/DummyWindow.h 
+		RheelEngine/Renderer/Display/MainWindow.cpp RheelEngine/Renderer/Display/MainWindow.h 
+		RheelEngine/Renderer/Display/Window.cpp RheelEngine/Renderer/Display/Window.h 
 		RheelEngine/Renderer/OpenGL/AbstractTexture.cpp RheelEngine/Renderer/OpenGL/AbstractTexture.h 
 		RheelEngine/Renderer/OpenGL/Buffer.cpp RheelEngine/Renderer/OpenGL/Buffer.h 
 		RheelEngine/Renderer/OpenGL/Capabilities.cpp RheelEngine/Renderer/OpenGL/Capabilities.h 
+		RheelEngine/Renderer/OpenGL/Context.cpp RheelEngine/Renderer/OpenGL/Context.h 
+		RheelEngine/Renderer/OpenGL/ContextBindings.cpp RheelEngine/Renderer/OpenGL/ContextBindings.h 
+		RheelEngine/Renderer/OpenGL/ContextEnables.cpp RheelEngine/Renderer/OpenGL/ContextEnables.h 
+		RheelEngine/Renderer/OpenGL/ContextFunctions.cpp RheelEngine/Renderer/OpenGL/ContextFunctions.h 
 		RheelEngine/Renderer/OpenGL/Debug.cpp RheelEngine/Renderer/OpenGL/Debug.h 
 		RheelEngine/Renderer/OpenGL/Enums.h 
 		RheelEngine/Renderer/OpenGL/Framebuffer.cpp RheelEngine/Renderer/OpenGL/Framebuffer.h 
@@ -87,10 +93,6 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/Program.cpp RheelEngine/Renderer/OpenGL/Program.h 
 		RheelEngine/Renderer/OpenGL/Renderbuffer.cpp RheelEngine/Renderer/OpenGL/Renderbuffer.h 
 		RheelEngine/Renderer/OpenGL/Shader.cpp RheelEngine/Renderer/OpenGL/Shader.h 
-		RheelEngine/Renderer/OpenGL/State.cpp RheelEngine/Renderer/OpenGL/State.h 
-		RheelEngine/Renderer/OpenGL/StateBindings.cpp RheelEngine/Renderer/OpenGL/StateBindings.h 
-		RheelEngine/Renderer/OpenGL/StateEnables.cpp RheelEngine/Renderer/OpenGL/StateEnables.h 
-		RheelEngine/Renderer/OpenGL/StateFunctions.cpp RheelEngine/Renderer/OpenGL/StateFunctions.h 
 		RheelEngine/Renderer/OpenGL/Texture.cpp RheelEngine/Renderer/OpenGL/Texture.h 
 		RheelEngine/Renderer/OpenGL/Texture2D.cpp RheelEngine/Renderer/OpenGL/Texture2D.h 
 		RheelEngine/Renderer/OpenGL/Texture2DMultisample.cpp RheelEngine/Renderer/OpenGL/Texture2DMultisample.h 

@@ -3,7 +3,7 @@
  */
 #include "ModelRenderer.h"
 
-#include "OpenGL/State.h"
+#include "OpenGL/Context.h"
 #include "../EngineResources.h"
 
 #include <array>
@@ -133,9 +133,9 @@ gl::Program& ModelRenderer::GetOpaqueShader() {
 }
 
 void ModelRenderer::RenderObjects() const {
-	gl::State::ClearTexture(0, gl::Texture::Target::TEXTURE_2D);
-	gl::State::ClearTexture(1, gl::Texture::Target::TEXTURE_2D);
-	gl::State::ClearTexture(2, gl::Texture::Target::TEXTURE_2D);
+	gl::Context::Current().ClearTexture(0, gl::Texture::Target::TEXTURE_2D);
+	gl::Context::Current().ClearTexture(1, gl::Texture::Target::TEXTURE_2D);
+	gl::Context::Current().ClearTexture(2, gl::Texture::Target::TEXTURE_2D);
 
 	_object_data_buffer.SetData(_objects, gl::Buffer::Usage::STREAM_DRAW);
 	_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, _objects.size());

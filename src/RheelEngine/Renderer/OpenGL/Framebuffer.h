@@ -247,7 +247,7 @@ public:
 
 private:
 	// constructor for the default framebuffer
-	Framebuffer(uvec2 defaultViewport);
+	Framebuffer();
 
 	void AttachTexture_(InternalFormat internalFormat, Format format, GLenum attachment);
 	void AttachTextureMultisample_(InternalFormat internalFormat, unsigned samples, GLenum attachment);
@@ -289,12 +289,8 @@ private:
 	std::unordered_map<GLenum, renderbuffer_multisample_attachment> _attached_multisample_renderbuffers;
 
 public:
-	static void InitializeDefaultFramebuffer(uvec2 screenSize);
-	static const Framebuffer& DefaultFramebuffer();
+	static Framebuffer DefaultFramebuffer();
 	static uvec2 DefaultViewport();
-
-private:
-	static std::unique_ptr<Framebuffer> _default_framebuffer;
 
 };
 

@@ -3,7 +3,7 @@
  */
 #include "VertexArray.h"
 
-#include "State.h"
+#include "Context.h"
 #include "Capabilities.h"
 
 namespace rheel::gl {
@@ -83,7 +83,7 @@ void VertexArray::Bind() const {
 		std::cout << "";
 	}
 
-	State::BindVertexArray(*this);
+	Context::Current().BindVertexArray(*this);
 }
 
 void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, bool instanced) {

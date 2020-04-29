@@ -5,7 +5,7 @@
 
 #include "../Engine.h"
 #include "../Components/DirectionalLight.h"
-#include "OpenGL/State.h"
+#include "OpenGL/Context.h"
 
 namespace rheel {
 
@@ -69,7 +69,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, Light* l
 ShadowMapDirectional::~ShadowMapDirectional() = default;
 
 void ShadowMapDirectional::Update(Camera* camera, unsigned width, unsigned height) {
-	gl::State::Push();
+	gl::Context::Current().Push();
 
 	// set the lightspace matrices
 	CalculateViewProjectionMatrices_(camera, width, height);
@@ -91,7 +91,7 @@ void ShadowMapDirectional::Update(Camera* camera, unsigned width, unsigned heigh
 		}
 	}
 
-	gl::State::Pop();
+	gl::Context::Current().Pop();
 }
 
 std::vector<std::reference_wrapper<const gl::Texture2D>> ShadowMapDirectional::Textures() const {

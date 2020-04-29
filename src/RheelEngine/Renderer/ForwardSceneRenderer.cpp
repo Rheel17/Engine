@@ -7,7 +7,7 @@
 
 #include "ShadowMapDirectional.h"
 #include "../Engine.h"
-#include "OpenGL/State.h"
+#include "OpenGL/Context.h"
 
 namespace rheel {
 
@@ -24,7 +24,7 @@ void ForwardSceneRenderer::Render(float dt) {
 		return;
 	}
 
-	gl::State::Push();
+	gl::Context::Current().Push();
 
 	// render the shadows
 	RenderShadowMaps();
@@ -116,7 +116,7 @@ void ForwardSceneRenderer::Render(float dt) {
 	}
 
 	// clear everything again to return to normal
-	gl::State::Pop();
+	gl::Context::Current().Pop();
 }
 
 void ForwardSceneRenderer::Resize(unsigned width, unsigned height) {}

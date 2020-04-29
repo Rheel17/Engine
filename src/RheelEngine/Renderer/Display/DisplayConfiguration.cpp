@@ -3,8 +3,8 @@
  */
 #include "DisplayConfiguration.h"
 
-#include "OpenGL/Capabilities.h"
-#include <GLFW/glfw3.h>
+#include "../OpenGL/Capabilities.h"
+#include "Window.h"
 
 namespace rheel {
 
@@ -12,10 +12,14 @@ const ivec2 DisplayConfiguration::RESOLUTION_NATIVE{ -1, -1 };
 
 unsigned DisplayConfiguration::SampleCount() const {
 	switch (aa_mode) {
-		case MSAA_4: return 4;
-		case MSAA_8: return 8;
-		case MSAA_16: return 16;
-		default: return 1;
+		case MSAA_4:
+			return 4;
+		case MSAA_8:
+			return 8;
+		case MSAA_16:
+			return 16;
+		default:
+			return 1;
 	}
 }
 
@@ -53,6 +57,21 @@ void DisplayConfiguration::ClampAnisotropicLevel_() {
 			anisotropic_level = max;
 		}
 	}
+}
+
+void DisplayConfiguration::InitializeGLFW() {
+	if (!glfwInit()) {
+		Log::Error() << "Unable to initialize GLFW" << std::endl;
+		abort();
+	}
+
+	glfwSetErrorCallback([](int code, const char* description) {
+		Log::Error() << "GLFW " << code << ": " << description << std::endl;
+	});
+}
+
+void DisplayConfiguration::TerminateGLFW() {
+	glfwTerminate();
 }
 
 }

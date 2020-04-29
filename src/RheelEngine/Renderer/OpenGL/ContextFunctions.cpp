@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#include "StateFunctions.h"
+#include "ContextFunctions.h"
 
 namespace rheel::gl {
 
-StateFunctions::StateFunctions() :
+ContextFunctions::ContextFunctions() :
 		_parent(nullptr) {}
 
-StateFunctions::StateFunctions(gl::StateFunctions* parent) :
+ContextFunctions::ContextFunctions(gl::ContextFunctions* parent) :
 		_parent(parent) {}
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCSimplifyInspection"
 
-void StateFunctions::SetClearColor(float red, float green, float blue, float alpha) {
+void ContextFunctions::SetClearColor(float red, float green, float blue, float alpha) {
 	auto color = std::make_tuple(red, green, blue, alpha);
 
 	// check if a state change is necessary
@@ -33,11 +33,11 @@ void StateFunctions::SetClearColor(float red, float green, float blue, float alp
 	}
 }
 
-void StateFunctions::SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor) {
+void ContextFunctions::SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor) {
 	SetBlendFunction(sfactor, dfactor, sfactor, dfactor);
 }
 
-void StateFunctions::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha) {
+void ContextFunctions::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha) {
 	auto function = std::make_tuple(srcRGB, dstRGB, srcAlpha, dstAlpha);
 
 	// check if a state change is necessary
@@ -56,7 +56,7 @@ void StateFunctions::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, Bl
 	}
 }
 
-void StateFunctions::SetDepthFunction(CompareFunction func) {
+void ContextFunctions::SetDepthFunction(CompareFunction func) {
 	// check if a state change is necessary
 	if (GetDepthFunction_() == func) {
 		return;
@@ -73,7 +73,7 @@ void StateFunctions::SetDepthFunction(CompareFunction func) {
 	}
 }
 
-void StateFunctions::SetCullFace(CullFace mode) {
+void ContextFunctions::SetCullFace(CullFace mode) {
 	// check if a state change is necessary
 	if (GetCullFace_() == mode) {
 		return;
@@ -90,7 +90,7 @@ void StateFunctions::SetCullFace(CullFace mode) {
 	}
 }
 
-void StateFunctions::SetColorMask(bool red, bool green, bool blue, bool alpha) {
+void ContextFunctions::SetColorMask(bool red, bool green, bool blue, bool alpha) {
 	auto mask = std::make_tuple(red, green, blue, alpha);
 
 	// check if a state change is necessary
@@ -109,7 +109,7 @@ void StateFunctions::SetColorMask(bool red, bool green, bool blue, bool alpha) {
 	}
 }
 
-void StateFunctions::SetDepthMask(bool mask) {
+void ContextFunctions::SetDepthMask(bool mask) {
 	// check if a state change is necessary
 	if (GetDepthMask_() == mask) {
 		return;
@@ -126,7 +126,7 @@ void StateFunctions::SetDepthMask(bool mask) {
 	}
 }
 
-void StateFunctions::SetStencilFunc(CompareFunction func, uint8_t reference, uint8_t mask) {
+void ContextFunctions::SetStencilFunc(CompareFunction func, uint8_t reference, uint8_t mask) {
 	auto function = std::make_tuple(func, reference, mask);
 
 	// check if a state change is necessary
@@ -145,7 +145,7 @@ void StateFunctions::SetStencilFunc(CompareFunction func, uint8_t reference, uin
 	}
 }
 
-void StateFunctions::SetStencilMask(uint8_t mask) {
+void ContextFunctions::SetStencilMask(uint8_t mask) {
 	// check if a state change is necessary
 	if (GetStencilMask_() == mask) {
 		return;
@@ -162,7 +162,7 @@ void StateFunctions::SetStencilMask(uint8_t mask) {
 	}
 }
 
-void StateFunctions::SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass) {
+void ContextFunctions::SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass) {
 	auto op = std::make_tuple(sfail, dpfail, dppass);
 
 	// check if a state change is necessary
@@ -183,7 +183,7 @@ void StateFunctions::SetStencilOp(StencilFunction sfail, StencilFunction dpfail,
 
 #pragma clang diagnostic pop
 
-void StateFunctions::ResetChanges() {
+void ContextFunctions::ResetChanges() {
 	if (_clear_color.has_value()) {
 		const auto& [red, green, blue, alpha] = _parent == nullptr ? _default_clear_color : _parent->GetClearColor_();
 		glClearColor(red, green, blue, alpha);
@@ -240,7 +240,7 @@ void StateFunctions::ResetChanges() {
 	_stencil_op.reset();
 }
 
-std::tuple<float, float, float, float> StateFunctions::GetClearColor_() const {
+std::tuple<float, float, float, float> ContextFunctions::GetClearColor_() const {
 	// check the current instance
 	if (_clear_color.has_value()) {
 		return *_clear_color;
@@ -255,7 +255,7 @@ std::tuple<float, float, float, float> StateFunctions::GetClearColor_() const {
 	return _default_clear_color;
 }
 
-std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> StateFunctions::GetBlendFunction_() const {
+std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> ContextFunctions::GetBlendFunction_() const {
 	// check the current instance
 	if (_blending_factors.has_value()) {
 		return *_blending_factors;
@@ -270,7 +270,7 @@ std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> StateFunctions::G
 	return _default_blending_factors;
 }
 
-CompareFunction StateFunctions::GetDepthFunction_() const {
+CompareFunction ContextFunctions::GetDepthFunction_() const {
 	// check the current instance
 	if (_depth_function.has_value()) {
 		return *_depth_function;
@@ -285,7 +285,7 @@ CompareFunction StateFunctions::GetDepthFunction_() const {
 	return _default_depth_function;
 }
 
-CullFace StateFunctions::GetCullFace_() const {
+CullFace ContextFunctions::GetCullFace_() const {
 	// check the current instance
 	if (_cull_face.has_value()) {
 		return *_cull_face;
@@ -300,7 +300,7 @@ CullFace StateFunctions::GetCullFace_() const {
 	return _default_cull_face;
 }
 
-std::tuple<bool, bool, bool, bool> StateFunctions::GetColorMask_() const {
+std::tuple<bool, bool, bool, bool> ContextFunctions::GetColorMask_() const {
 	// check the current instance
 	if (_color_mask.has_value()) {
 		return *_color_mask;
@@ -315,7 +315,7 @@ std::tuple<bool, bool, bool, bool> StateFunctions::GetColorMask_() const {
 	return _default_color_mask;
 }
 
-bool StateFunctions::GetDepthMask_() const {
+bool ContextFunctions::GetDepthMask_() const {
 	// check the current instance
 	if (_depth_mask.has_value()) {
 		return *_depth_mask;
@@ -330,7 +330,7 @@ bool StateFunctions::GetDepthMask_() const {
 	return _default_depth_mask;
 }
 
-std::tuple<CompareFunction, uint8_t, uint8_t> StateFunctions::GetStencilFunc_() const {
+std::tuple<CompareFunction, uint8_t, uint8_t> ContextFunctions::GetStencilFunc_() const {
 	// check the current instance
 	if (_stencil_func.has_value()) {
 		return *_stencil_func;
@@ -345,7 +345,7 @@ std::tuple<CompareFunction, uint8_t, uint8_t> StateFunctions::GetStencilFunc_() 
 	return _default_stencil_func;
 }
 
-uint8_t StateFunctions::GetStencilMask_() const {
+uint8_t ContextFunctions::GetStencilMask_() const {
 	// check the current instance
 	if (_stencil_mask.has_value()) {
 		return *_stencil_mask;
@@ -360,7 +360,7 @@ uint8_t StateFunctions::GetStencilMask_() const {
 	return _default_stencil_mask;
 }
 
-std::tuple<StencilFunction, StencilFunction, StencilFunction> StateFunctions::GetStencilOp_() const {
+std::tuple<StencilFunction, StencilFunction, StencilFunction> ContextFunctions::GetStencilOp_() const {
 	// check the current instance
 	if (_stencil_op.has_value()) {
 		return *_stencil_op;

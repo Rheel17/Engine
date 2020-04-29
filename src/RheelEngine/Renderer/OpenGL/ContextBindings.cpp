@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#include "StateBindings.h"
+#include "ContextBindings.h"
 
 namespace rheel::gl {
 
-unsigned StateBindings::_active_texture_unit{ 0 };
+unsigned ContextBindings::_active_texture_unit{ 0 };
 
-StateBindings::StateBindings() :
+ContextBindings::ContextBindings() :
 		_parent(nullptr) {}
 
-StateBindings::StateBindings(const StateBindings* parent) :
+ContextBindings::ContextBindings(const ContextBindings* parent) :
 		_parent(parent) {}
 
-void StateBindings::BindBuffer(Buffer::Target target, GLuint name) {
+void ContextBindings::BindBuffer(Buffer::Target target, GLuint name) {
 	// check that a state change is necessary
 	if (GetBuffer_(target) == name) {
 		return;
@@ -30,7 +30,7 @@ void StateBindings::BindBuffer(Buffer::Target target, GLuint name) {
 	}
 }
 
-void StateBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, unsigned width, unsigned height) {
+void ContextBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, unsigned width, unsigned height) {
 	// get targets
 	std::vector<Framebuffer::Target> targets{};
 
@@ -72,7 +72,7 @@ void StateBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, uns
 	}
 }
 
-void StateBindings::BindRenderbuffer(GLuint name) {
+void ContextBindings::BindRenderbuffer(GLuint name) {
 	// check if a state change is necessary
 	if (GetRenderbuffer_() == name) {
 		return;
@@ -89,7 +89,7 @@ void StateBindings::BindRenderbuffer(GLuint name) {
 	}
 }
 
-void StateBindings::BindTexture(unsigned unit, Texture::Target target, GLuint name) {
+void ContextBindings::BindTexture(unsigned unit, Texture::Target target, GLuint name) {
 	auto key = std::make_pair(unit, target);
 
 	// check if a state change is necessary
@@ -108,7 +108,7 @@ void StateBindings::BindTexture(unsigned unit, Texture::Target target, GLuint na
 	}
 }
 
-void StateBindings::BindVertexArray(GLuint name) {
+void ContextBindings::BindVertexArray(GLuint name) {
 	// check if a state change is necessary
 	if (GetVertexArray_() == name) {
 		return;
@@ -124,7 +124,7 @@ void StateBindings::BindVertexArray(GLuint name) {
 	}
 }
 
-void StateBindings::UseProgram(GLuint handle) {
+void ContextBindings::UseProgram(GLuint handle) {
 	// check if a state change is necessary
 	if (GetProgram_() == handle) {
 		return;
@@ -140,7 +140,7 @@ void StateBindings::UseProgram(GLuint handle) {
 	}
 }
 
-void StateBindings::ResetChanges() {
+void ContextBindings::ResetChanges() {
 	for (const auto& [target, name] : _buffer_changes) {
 		glBindBuffer(GLenum(target), _parent == nullptr ? 0 : _parent->GetBuffer_(target));
 	}
@@ -180,7 +180,7 @@ void StateBindings::ResetChanges() {
 	_program_change.reset();
 }
 
-GLuint StateBindings::GetBuffer_(Buffer::Target target) const {
+GLuint ContextBindings::GetBuffer_(Buffer::Target target) const {
 	// check the current instance
 	if (auto iter = _buffer_changes.find(target); iter != _buffer_changes.end()) {
 		return iter->second;
@@ -195,7 +195,7 @@ GLuint StateBindings::GetBuffer_(Buffer::Target target) const {
 	return 0;
 }
 
-GLuint StateBindings::GetFramebuffer_(Framebuffer::Target target) const {
+GLuint ContextBindings::GetFramebuffer_(Framebuffer::Target target) const {
 	// check the current instance
 	if (auto iter = _framebuffer_changes.find(target); iter != _framebuffer_changes.end()) {
 		return iter->second;
@@ -210,7 +210,7 @@ GLuint StateBindings::GetFramebuffer_(Framebuffer::Target target) const {
 	return 0;
 }
 
-GLuint StateBindings::GetRenderbuffer_() const {
+GLuint ContextBindings::GetRenderbuffer_() const {
 	// check the current instance
 	if (_renderbuffer_change.has_value()) {
 		return *_renderbuffer_change;
@@ -225,7 +225,7 @@ GLuint StateBindings::GetRenderbuffer_() const {
 	return 0;
 }
 
-GLuint StateBindings::GetTexture_(unsigned unit, Texture::Target target) const {
+GLuint ContextBindings::GetTexture_(unsigned unit, Texture::Target target) const {
 	// check the current instance
 	if (auto iter = _texture_changes.find({ unit, target }); iter != _texture_changes.end()) {
 		return iter->second;
@@ -240,7 +240,7 @@ GLuint StateBindings::GetTexture_(unsigned unit, Texture::Target target) const {
 	return 0;
 }
 
-GLuint StateBindings::GetVertexArray_() const {
+GLuint ContextBindings::GetVertexArray_() const {
 	// check the current instance
 	if (_vertex_array_change.has_value()) {
 		return *_vertex_array_change;
@@ -255,7 +255,7 @@ GLuint StateBindings::GetVertexArray_() const {
 	return 0;
 }
 
-GLuint StateBindings::GetProgram_() const {
+GLuint ContextBindings::GetProgram_() const {
 	// check the current instance
 	if (_program_change.has_value()) {
 		return *_program_change;
@@ -270,7 +270,7 @@ GLuint StateBindings::GetProgram_() const {
 	return 0;
 }
 
-void StateBindings::SetViewport_(uvec2 dim) {
+void ContextBindings::SetViewport_(uvec2 dim) {
 	// check if a state change is necessary
 	if (GetViewport_() == dim) {
 		return;
@@ -287,7 +287,7 @@ void StateBindings::SetViewport_(uvec2 dim) {
 	}
 }
 
-uvec2 StateBindings::GetViewport_() const {
+uvec2 ContextBindings::GetViewport_() const {
 	// check the current instance
 	if (_viewport_change.has_value()) {
 		return *_viewport_change;
@@ -302,7 +302,7 @@ uvec2 StateBindings::GetViewport_() const {
 	return Framebuffer::DefaultViewport();
 }
 
-void StateBindings::SetActiveTextureUnit_(unsigned unit) {
+void ContextBindings::SetActiveTextureUnit_(unsigned unit) {
 	// check if a state change is necessary
 	if (_active_texture_unit == unit) {
 		return;

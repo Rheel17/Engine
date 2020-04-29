@@ -3,7 +3,7 @@
  */
 #include "Buffer.h"
 
-#include "State.h"
+#include "Context.h"
 
 namespace rheel::gl {
 
@@ -11,7 +11,7 @@ Buffer::Buffer(gl::Buffer::Target target) :
 		_target(target) {}
 
 void Buffer::Bind() const {
-	State::BindBuffer(*this);
+	Context::Current().BindBuffer(*this);
 }
 
 Buffer::Target Buffer::GetTarget() const {

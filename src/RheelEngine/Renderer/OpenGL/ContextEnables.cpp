@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#include "StateEnables.h"
+#include "ContextEnables.h"
 
 namespace rheel::gl {
 
-std::unordered_map<Capability, bool> StateEnables::_defaults;
+std::unordered_map<Capability, bool> ContextEnables::_defaults;
 
-StateEnables::StateEnables() :
+ContextEnables::ContextEnables() :
 		_parent(nullptr) {}
 
-StateEnables::StateEnables(const StateEnables* parent) :
+ContextEnables::ContextEnables(const ContextEnables* parent) :
 		_parent(parent) {}
 
-void StateEnables::Enable(Capability cap) {
+void ContextEnables::Enable(Capability cap) {
 	if (!IsEnabled(cap)) {
 		glEnable(GLenum(cap));
 
@@ -28,7 +28,7 @@ void StateEnables::Enable(Capability cap) {
 	}
 }
 
-void StateEnables::Disable(Capability cap) {
+void ContextEnables::Disable(Capability cap) {
 	if (IsEnabled(cap)) {
 		glDisable(GLenum(cap));
 
@@ -43,7 +43,7 @@ void StateEnables::Disable(Capability cap) {
 	}
 }
 
-bool StateEnables::IsEnabled(Capability cap) const {
+bool ContextEnables::IsEnabled(Capability cap) const {
 	// check whether we had a relevant state change in the current instance
 	if (auto iter = _state_changes.find(cap); iter != _state_changes.end()) {
 		return iter->second;
@@ -62,7 +62,7 @@ bool StateEnables::IsEnabled(Capability cap) const {
 	return iter->second;
 }
 
-void StateEnables::ResetChanges() {
+void ContextEnables::ResetChanges() {
 	for (const auto& [cap, enabled] : _state_changes) {
 		if (enabled) {
 			glDisable(GLenum(cap));

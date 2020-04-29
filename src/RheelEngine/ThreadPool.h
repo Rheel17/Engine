@@ -11,6 +11,8 @@
 #include <condition_variable>
 #include <future>
 
+#include "Renderer/Display/DummyWindow.h"
+
 namespace rheel {
 
 class RE_API ThreadPool {
@@ -93,8 +95,7 @@ private:
 	bool _stop_requested = false;
 
 private:
-	static void ThreadMain_(ThreadPool* pool, void* contextWindow);
-	static void* CreateWindowHandle_(void* mainWindow);
+	static void ThreadMain_(ThreadPool* pool, DummyWindow contextWindow);
 
 };
 

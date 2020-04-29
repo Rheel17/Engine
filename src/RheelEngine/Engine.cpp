@@ -16,7 +16,7 @@ Engine::EngineInstance::~EngineInstance() {
 }
 
 void Engine::Initialize_() {
-	Window::InitializeDisplaySystems();
+	DisplayConfiguration::InitializeGLFW();
 	Font::Initialize();
 	_instance.audio_manager = std::make_unique<AudioManager>();
 }
@@ -26,9 +26,7 @@ void Engine::Run_(Game* game) {
 
 	_instance.display_configuration.CalculateActualResolution_();
 
-	_instance.window = new Window(_instance.display_configuration);
-	_instance.window->Show();
-
+	_instance.window = new MainWindow(_instance.display_configuration);
 	_instance.display_configuration.ClampAnisotropicLevel_();
 
 	_instance.ui = new UI(
@@ -49,7 +47,7 @@ void Engine::Run_(Game* game) {
 void Engine::Terminate_() {
 	delete _instance.thread_pool;
 	_instance.audio_manager->StopAll_();
-	Window::DestroyDisplaySystems();
+	DisplayConfiguration::TerminateGLFW();
 }
 
 void Engine::SetDisplayConfiguration(DisplayConfiguration config) {
@@ -60,7 +58,7 @@ const DisplayConfiguration& Engine::GetDisplayConfiguration() {
 	return _instance.display_configuration;
 }
 
-Window& Engine::GetWindow() {
+MainWindow& Engine::GetWindow() {
 	return *_instance.window;
 }
 

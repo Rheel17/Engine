@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_STATEBINDINGS_H
-#define RHEELENGINE_STATEBINDINGS_H
+#ifndef RHEELENGINE_CONTEXTBINDINGS_H
+#define RHEELENGINE_CONTEXTBINDINGS_H
 #include "../../_common.h"
 
 #include "Buffer.h"
@@ -14,12 +14,12 @@ class Engine;
 
 namespace rheel::gl {
 
-class RE_API StateBindings {
+class RE_API ContextBindings {
 	friend class rheel::Engine;
 
 public:
-	StateBindings();
-	explicit StateBindings(const StateBindings* parent);
+	ContextBindings();
+	explicit ContextBindings(const ContextBindings* parent);
 
 	void BindBuffer(Buffer::Target target, GLuint name);
 	void BindFramebuffer(Framebuffer::Target target, GLuint name, unsigned width, unsigned height);
@@ -50,7 +50,7 @@ private:
 
 	std::optional<uvec2> _viewport_change;
 
-	const StateBindings* _parent;
+	const ContextBindings* _parent;
 
 private:
 	static void SetActiveTextureUnit_(unsigned unit);

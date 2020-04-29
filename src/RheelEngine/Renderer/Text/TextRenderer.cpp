@@ -7,7 +7,7 @@
 
 #include "../../Engine.h"
 #include "../../EngineResources.h"
-#include "../OpenGL/State.h"
+#include "../OpenGL/Context.h"
 
 #define STAGE_TRIANGLES        0
 #define STAGE_BEZIER        1
@@ -133,16 +133,16 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text
 	}
 
 	// set the text buffer as render target
-	gl::State::Push();
+	gl::Context::Current().Push();
 	_text_buffer->Clear(gl::Framebuffer::BitField::COLOR);
 
 	// enable the stencil buffer, disable the depth buffer
-	gl::State::Enable(gl::Capability::STENCIL_TEST);
-	gl::State::Disable(gl::Capability::DEPTH_TEST);
+	gl::Context::Current().Enable(gl::Capability::STENCIL_TEST);
+	gl::Context::Current().Disable(gl::Capability::DEPTH_TEST);
 
 	// for anti-aliasing, enable GL_BLEND
-	gl::State::Enable(gl::Capability::BLEND);
-	gl::State::SetBlendFunction(gl::BlendFactor::ONE, gl::BlendFactor::ONE);
+	gl::Context::Current().Enable(gl::Capability::BLEND);
+	gl::Context::Current().SetBlendFunction(gl::BlendFactor::ONE, gl::BlendFactor::ONE);
 
 	float subpixelWidth = 2.0f / (screen.x * 8);
 	float subpixelHeight = 2.0f / (screen.y * 8);
@@ -185,7 +185,7 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text
 	DrawTriangles_(triangles, bezierCurves, { subpixelWidth *  1.0f, subpixelHeight * -3.0f });
 
 	// reset the gl state
-	gl::State::Pop();
+	gl::Context::Current().Pop();
 
 	// draw the text to the current framebuffer
 	_shader["stage"] = STAGE_COPY;
@@ -200,15 +200,15 @@ void TextRenderer::DrawTriangles_(const std::vector<Character::Triangle>& triang
 		const std::vector<Character::Triangle>& bezierCurves, vec2 multisampleOffset) {
 
 	// only draw on the stencil buffer
-	gl::State::Push();
-	gl::State::SetColorMask(false, false, false, false);
-	gl::State::SetDepthMask(false);
+	gl::Context::Current().Push();
+	gl::Context::Current().SetColorMask(false, false, false, false);
+	gl::Context::Current().SetDepthMask(false);
 
 	// initialize the stencil buffer
 	_text_buffer->Clear(gl::Framebuffer::BitField::STENCIL);
-	gl::State::SetStencilFunc(gl::CompareFunction::NEVER, 0x01, 0xff);
-	gl::State::SetStencilMask(0x01);
-	gl::State::SetStencilOp(gl::StencilFunction::INVERT, gl::StencilFunction::INVERT, gl::StencilFunction::INVERT);
+	gl::Context::Current().SetStencilFunc(gl::CompareFunction::NEVER, 0x01, 0xff);
+	gl::Context::Current().SetStencilMask(0x01);
+	gl::Context::Current().SetStencilOp(gl::StencilFunction::INVERT, gl::StencilFunction::INVERT, gl::StencilFunction::INVERT);
 
 	// draw the simple triangles
 	_shader["stage"] = STAGE_TRIANGLES;
@@ -225,12 +225,12 @@ void TextRenderer::DrawTriangles_(const std::vector<Character::Triangle>& triang
 	_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 3 * bezierCurves.size());
 
 	// restore color and depth mask
-	gl::State::Pop();
+	gl::Context::Current().Pop();
 
 	// setup the resolve stage
 	_shader["stage"] = STAGE_RESOLVE;
-	gl::State::SetStencilFunc(gl::CompareFunction::EQUAL, 0x01, 0xFF);
-	gl::State::SetStencilOp(gl::StencilFunction::KEEP, gl::StencilFunction::KEEP, gl::StencilFunction::KEEP);
+	gl::Context::Current().SetStencilFunc(gl::CompareFunction::EQUAL, 0x01, 0xFF);
+	gl::Context::Current().SetStencilOp(gl::StencilFunction::KEEP, gl::StencilFunction::KEEP, gl::StencilFunction::KEEP);
 
 	// resolve the stencil buffer
 	_resolve_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);

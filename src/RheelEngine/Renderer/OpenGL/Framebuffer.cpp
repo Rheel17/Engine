@@ -5,11 +5,9 @@
 
 #include <iomanip>
 
-#include "State.h"
+#include "Context.h"
 
 namespace rheel::gl {
-
-std::unique_ptr<Framebuffer> Framebuffer::_default_framebuffer(nullptr);
 
 Framebuffer::Framebuffer(unsigned viewportWidth, unsigned viewportHeight) :
 		_viewport_width(viewportWidth),
@@ -38,17 +36,20 @@ Framebuffer::Framebuffer(const Framebuffer& original, unsigned newWidth, unsigne
 	SetDrawBuffers(original._draw_buffers);
 }
 
-Framebuffer::Framebuffer(uvec2 defaultViewport) :
-		Object(0),
-		_viewport_width(defaultViewport.x),
-		_viewport_height(defaultViewport.y) {}
+Framebuffer::Framebuffer() :
+		Object(0) {
+
+	auto viewport = DefaultViewport();
+	_viewport_width = viewport.x;
+	_viewport_height = viewport.y;
+}
 
 void Framebuffer::BindForDrawing() const {
-	State::BindFramebuffer(Target::DRAW, *this);
+	Context::Current().BindFramebuffer(Target::DRAW, *this);
 }
 
 void Framebuffer::BindForReading() const {
-	State::BindFramebuffer(Target::READ, *this);
+	Context::Current().BindFramebuffer(Target::READ, *this);
 }
 
 void Framebuffer::Clear(BitField buffersToClear) const {
@@ -223,16 +224,12 @@ void Framebuffer::SetDrawBuffers(std::vector<unsigned> colorAttachments) {
 	_draw_buffers = std::move(colorAttachments);
 }
 
-void Framebuffer::InitializeDefaultFramebuffer(uvec2 screenSize) {
-	_default_framebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(screenSize));
-}
-
-const Framebuffer& Framebuffer::DefaultFramebuffer() {
-	return *_default_framebuffer;
+Framebuffer Framebuffer::DefaultFramebuffer() {
+	return Framebuffer();
 }
 
 uvec2 Framebuffer::DefaultViewport() {
-	return { _default_framebuffer->_viewport_width, _default_framebuffer->_viewport_height };
+	return Context::Current().GetDefaultViewport();
 }
 
 void Framebuffer::AttachTexture_(InternalFormat internalFormat, Format format, GLenum attachment) {

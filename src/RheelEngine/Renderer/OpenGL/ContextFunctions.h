@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef RHEELENGINE_STATEFUNCTIONS_H
-#define RHEELENGINE_STATEFUNCTIONS_H
+#ifndef RHEELENGINE_CONTEXTFUNCTIONS_H
+#define RHEELENGINE_CONTEXTFUNCTIONS_H
 #include "../../_common.h"
 
 #include "Enums.h"
 
 namespace rheel::gl {
 
-class RE_API StateFunctions {
+class RE_API ContextFunctions {
 
 public:
-	StateFunctions();
-	explicit StateFunctions(StateFunctions* parent);
+	ContextFunctions();
+	explicit ContextFunctions(ContextFunctions* parent);
 
 	// clear
 	void SetClearColor(float red, float green, float blue, float alpha);
@@ -60,7 +60,7 @@ private:
 	std::optional<uint8_t> _stencil_mask;
 	std::optional<std::tuple<StencilFunction, StencilFunction, StencilFunction>> _stencil_op;
 
-	StateFunctions* _parent;
+	ContextFunctions* _parent;
 
 private:
 	static constexpr std::tuple<float, float, float, float> _default_clear_color = { 0.0f, 0.0f, 0.0f, 0.0f };

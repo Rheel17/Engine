@@ -3,7 +3,7 @@
  */
 #ifndef RHEELENGINE_DISPLAYCONFIGURATION_H
 #define RHEELENGINE_DISPLAYCONFIGURATION_H
-#include "../_common.h"
+#include "../../_common.h"
 
 namespace rheel {
 
@@ -37,6 +37,9 @@ private:
 	void ClampAnisotropicLevel_();
 
 public:
+	static void InitializeGLFW();
+	static void TerminateGLFW();
+
 	static const ivec2 RESOLUTION_NATIVE;
 
 };
