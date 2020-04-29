@@ -90,12 +90,13 @@ const gl::Context& Window::GetContext() const {
 
 void Window::CreateContext() {
 	glfwMakeContextCurrent(handle);
-	_context = std::unique_ptr<gl::Context>(new gl::Context(GetWindowSize()));
 
 	if (glewInit() != GLEW_OK) {
 		Log::Error() << "Could not initialize GLEW" << std::endl;
 		abort();
 	}
+
+	_context = std::unique_ptr<gl::Context>(new gl::Context(GetWindowSize()));
 }
 
 GLFWmonitor* Window::GetPrimaryMonitor() {

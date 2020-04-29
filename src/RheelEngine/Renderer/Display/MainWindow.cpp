@@ -6,7 +6,6 @@
 #include <sstream>
 
 #include "../../Engine.h"
-#include "../OpenGL/Context.h"
 #include "../OpenGL/Debug.h"
 
 namespace rheel {
@@ -119,7 +118,12 @@ void MainWindow::Loop() {
 		Engine::GetUI().Draw(time, dt);
 
 		// finish the update/render cycle
-		glfwSwapBuffers(handle);
+		if (GetWindowHints().doublebuffer) {
+			glfwSwapBuffers(handle);
+		} else {
+			glFlush();
+		}
+
 		gl::Context::Current().CheckStackConsistency();
 	}
 }

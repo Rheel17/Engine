@@ -170,12 +170,15 @@ void ContextBindings::ResetChanges() {
 		glUseProgram(_parent == nullptr ? 0 : _parent->GetProgram_());
 	}
 
+	glActiveTexture(GL_TEXTURE0 + (_parent == nullptr ? 0 : _parent->GetActiveTextureUnit_()));
+
 	_buffer_changes.clear();
 	_framebuffer_changes.clear();
 	_renderbuffer_change.reset();
 	_texture_changes.clear();
 	_vertex_array_change.reset();
 	_program_change.reset();
+	_texture_unit_change.reset();
 }
 
 GLuint ContextBindings::GetBuffer_(Buffer::Target target) const {
@@ -307,7 +310,7 @@ void ContextBindings::SetActiveTextureUnit_(unsigned unit) {
 	}
 
 	// perform the state change
-	glActiveTexture(unit);
+	glActiveTexture(GL_TEXTURE0 + unit);
 
 	// store the state change
 	if (_parent == nullptr ? unit == 0 : unit == _parent->GetActiveTextureUnit_()) {
