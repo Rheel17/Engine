@@ -5,8 +5,6 @@
 
 namespace rheel::gl {
 
-unsigned ContextBindings::_active_texture_unit{ 0 };
-
 ContextBindings::ContextBindings() :
 		_parent(nullptr) {}
 
@@ -304,15 +302,34 @@ uvec2 ContextBindings::GetViewport_() const {
 
 void ContextBindings::SetActiveTextureUnit_(unsigned unit) {
 	// check if a state change is necessary
-	if (_active_texture_unit == unit) {
+	if (GetActiveTextureUnit_() == unit) {
 		return;
 	}
 
-	// make the state change
-	glActiveTexture(GL_TEXTURE0 + unit);
+	// perform the state change
+	glActiveTexture(unit);
 
 	// store the state change
-	_active_texture_unit = unit;
+	if (_parent == nullptr ? unit == 0 : unit == _parent->GetActiveTextureUnit_()) {
+		_texture_unit_change.reset();
+	} else {
+		_texture_unit_change = unit;
+	}
+}
+
+unsigned ContextBindings::GetActiveTextureUnit_() const {
+	// check the current instance
+	if (_texture_unit_change.has_value()) {
+		return *_texture_unit_change;
+	}
+
+	// check the parent
+	if (_parent != nullptr) {
+		return _parent->GetActiveTextureUnit_();
+	}
+
+	// default: no binding
+	return 0;
 }
 
 }

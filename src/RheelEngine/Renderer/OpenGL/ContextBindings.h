@@ -41,6 +41,9 @@ private:
 	void SetViewport_(uvec2 dim);
 	uvec2 GetViewport_() const;
 
+	void SetActiveTextureUnit_(unsigned unit);
+	unsigned GetActiveTextureUnit_() const;
+
 	std::unordered_map<Buffer::Target, GLuint> _buffer_changes;
 	std::unordered_map<Framebuffer::Target, GLuint> _framebuffer_changes;
 	std::optional<GLuint> _renderbuffer_change;
@@ -49,13 +52,9 @@ private:
 	std::optional<GLuint> _program_change;
 
 	std::optional<uvec2> _viewport_change;
+	std::optional<unsigned> _texture_unit_change;
 
 	const ContextBindings* _parent;
-
-private:
-	static void SetActiveTextureUnit_(unsigned unit);
-
-	static unsigned _active_texture_unit;
 
 };
 
