@@ -5,24 +5,25 @@
 
 #include <sstream>
 
-#include "../../Engine.h"
+#include "../../Game.h"
 #include "../OpenGL/Debug.h"
 
 namespace rheel {
 
-static void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods);
-static void glfwCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint);
-static void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos);
-static void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods);
-static void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y);
-static void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus);
+void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods);
+void glfwCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint);
+void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos);
+void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods);
+void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y);
+void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus);
 
-MainWindow::MainWindow(DisplayConfiguration& configuration) :
+MainWindow::MainWindow(DisplayConfiguration& configuration, const std::string& title, Game& game) :
 		Window(CreateWindowHints_(configuration),
 				configuration.resolution.x,
 				configuration.resolution.y,
-				configuration.title,
-				configuration.window_mode == DisplayConfiguration::WindowMode::FULLSCREEN ? GetPrimaryMonitor() : nullptr) {
+				title,
+				configuration.window_mode == DisplayConfiguration::WindowMode::FULLSCREEN ? GetPrimaryMonitor() : nullptr),
+		_game(game) {
 
 	// pass the actual window width and height back to the engine
 	auto size = GetWindowSize();
@@ -115,7 +116,7 @@ void MainWindow::Loop() {
 		}
 
 		// update the scene
-		if (auto scene = Engine::GetActiveScene(); scene) {
+		if (auto scene = _game.GetActiveScene(); scene) {
 			scene->Update(time, dt);
 			Engine::GetSceneRenderManager(scene).Update();
 		}
@@ -125,7 +126,7 @@ void MainWindow::Loop() {
 		gl::Framebuffer::DefaultFramebuffer().Clear(gl::Framebuffer::BitField::COLOR_DEPTH);
 
 		// draw the game
-		Engine::GetUI().Draw(time, dt);
+		_game.GetUI().Draw(time, dt);
 
 		// finish the update/render cycle
 		if (GetWindowHints().doublebuffer) {
@@ -162,28 +163,34 @@ window_hints MainWindow::CreateWindowHints_(const DisplayConfiguration& configur
 	return hints;
 }
 
-static void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods) {
-	Engine::GetUI().OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
+void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods) {
+	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	window->_game.GetUI().OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
 }
 
-static void glfwCharCallback(GLFWwindow* glfwWindow, unsigned codepoint) {
-	Engine::GetUI().OnCharacter(codepoint);
+void glfwCharCallback(GLFWwindow* glfwWindow, unsigned codepoint) {
+	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	window->_game.GetUI().OnCharacter(codepoint);
 }
 
-static void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos) {
-	Engine::GetUI().OnMouseMove(xpos, ypos);
+void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos) {
+	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	window->_game.GetUI().OnMouseMove(xpos, ypos);
 }
 
-static void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods) {
-	Engine::GetUI().OnMouseButton(static_cast<Input::MouseButton>(button), static_cast<Input::Action>(action), mods);
+void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods) {
+	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	window->_game.GetUI().OnMouseButton(static_cast<Input::MouseButton>(button), static_cast<Input::Action>(action), mods);
 }
 
-static void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y) {
-	Engine::GetUI().OnScroll(x, y);
+void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y) {
+	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	window->_game.GetUI().OnScroll(x, y);
 }
 
-static void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus) {
-	Engine::GetUI().OnFocusChanged(focus);
+void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus) {
+	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	window->_game.GetUI().OnFocusChanged(focus);
 }
 
 }

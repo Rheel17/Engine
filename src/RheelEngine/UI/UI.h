@@ -6,16 +6,20 @@
 #include "../_common.h"
 
 #include "Container.h"
+#include "../Renderer/Display/MainWindow.h"
 
 namespace rheel {
 
 class RE_API UI {
-
 	RE_NO_COPY(UI);
 	RE_NO_MOVE(UI);
 
 public:
-	UI(unsigned width, unsigned height);
+	/**
+	 * Constructs the UI object. This instance will hold a reference to the
+	 * passed-trough window reference.
+	 */
+	explicit UI(MainWindow& window);
 
 	/**
 	 * Sets the contents of the UI to the container. Note: for custom
@@ -94,6 +98,7 @@ private:
 	Element* _focus_element = nullptr;
 	Element* _grabbed_element = nullptr;
 
+	MainWindow& _window;
 	unsigned _width;
 	unsigned _height;
 

@@ -13,15 +13,18 @@
 
 namespace rheel {
 
+class Game;
+
 class RE_API MainWindow : public Window {
 	RE_NO_MOVE(MainWindow);
 	RE_NO_COPY(MainWindow);
 
 public:
 	/**
-	 * Creates a window using the given display configuration.
+	 * Creates a window using the given display configuration and title. A
+	 * reference to the game will be kept.
 	 */
-	explicit MainWindow(DisplayConfiguration& configuration);
+	MainWindow(DisplayConfiguration& configuration, const std::string& title, Game& game);
 	~MainWindow();
 
 	void Loop();
@@ -49,11 +52,20 @@ public:
 	}
 
 private:
+	Game& _game;
+
 	std::queue<std::unique_ptr<TaskBase>> _task_queue;
 	std::mutex _mutex;
 
 private:
 	static window_hints CreateWindowHints_(const DisplayConfiguration& configuration);
+
+	friend void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods);
+	friend void glfwCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint);
+	friend void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos);
+	friend void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods);
+	friend void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y);
+	friend void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus);
 
 };
 

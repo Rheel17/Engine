@@ -17,13 +17,11 @@
 
 namespace rheel {
 
-class UI;
-
 class Container;
+class UI;
 
 class RE_API Element : public InputCallback {
 	friend class UI;
-
 	friend class Container;
 
 private:
@@ -230,15 +228,13 @@ protected:
 	 * Draws a textured quad. Vertices are specified in pixel-space.
 	 * Counter-clockwise ordering is recommended.
 	 */
-	static void DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3,
-			const gl::Texture2D& texture);
+	static void DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const gl::Texture2D& texture);
 
 	/**
 	 * Draws a textured quad. Vertices are specified in pixel-space.
 	 * Counter-clockwise ordering is required.
 	 */
-	static void DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4,
-			const gl::Texture2D& texture);
+	static void DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const gl::Texture2D& texture);
 
 	/**
 	 * Draws the texture at the specified rectangle. The entire texture will be
@@ -250,8 +246,7 @@ protected:
 	 * Draws a textured quad. Vertices are specified in pixel-space.
 	 * Counter-clockwise ordering is required.
 	 */
-	static void DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4,
-			const Image& image,	float alpha = 1.0f);
+	static void DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const Image& image,	float alpha = 1.0f);
 
 	/**
 	 * Draws the texture at the specified rectangle. The entire texture will be
@@ -285,4 +280,5 @@ private:
 
 }
 
+#include "Container.h"
 #endif

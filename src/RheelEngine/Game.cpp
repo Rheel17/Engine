@@ -16,15 +16,15 @@ Game::Game(DisplayConfiguration displayConfiguration, const std::string& windowT
 
 	// create the window
 	_display_configuration.CalculateActualResolution_();
-	_window = new MainWindow(_display_configuration);
+	_window = new MainWindow(_display_configuration, windowTitle);
 	_display_configuration.ClampAnisotropicLevel_();
-	_ui = std::make_unique<UI>(_display_configuration.resolution.x, _display_configuration.resolution.y);
+	_ui = std::make_unique<UI>(*_window);
 
 	// initialize the audio manager
 	_audio_manager = std::make_unique<AudioManager>();
 
 	// spool up the thread pool
-	_thread_pool = new ThreadPool;
+	_thread_pool = new ThreadPool(*_window);
 
 	// show the window
 	_window->SetVisible(true);

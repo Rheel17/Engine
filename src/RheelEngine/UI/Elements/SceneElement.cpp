@@ -3,7 +3,6 @@
  */
 #include "SceneElement.h"
 
-#include "../../Engine.h"
 #include "../../Renderer/SceneRenderer.h"
 
 namespace rheel {
