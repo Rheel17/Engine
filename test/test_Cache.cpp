@@ -15,6 +15,16 @@ static const auto& getLength2 = [](const std::string& str) {
 	return str.length() + 2;
 };
 
+static const auto& getLengthSleep = [](const std::string& str) {
+	std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	return str.length();
+};
+
+static const auto& getLengthSleep2 = [](const std::string& str) {
+	std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	return str.length() + 2;
+};
+
 TEST(Cache, Keep) {
 	Cache<std::string, std::string::size_type, keep_policy> cache;
 
@@ -86,4 +96,27 @@ TEST(Cache, LastInFirstOut) {
 	EXPECT_EQ(cache.Get("Hello"), 7);
 	EXPECT_EQ(cache.GetSize(), 4);
 	EXPECT_EQ(cache.ContainsKey("Hi"), false);
+}
+
+TEST(Cache, MultithreadedKeep) {
+	Cache<std::string, std::string::size_type, keep_policy> cache;
+
+	std::thread t1([&](){
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		EXPECT_EQ(cache.Put("Hello", getLengthSleep2), false);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		EXPECT_EQ(cache.Get("Hi", getLengthSleep2), 4);
+	});
+
+	std::thread t2([&](){
+		EXPECT_EQ(cache.Put("Hello", getLengthSleep), true);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		EXPECT_EQ(cache.Get("Hi", getLengthSleep), 4);
+	});
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(200));
+	t1.join();
+	t2.join();
 }
