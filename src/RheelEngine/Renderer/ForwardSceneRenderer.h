@@ -19,7 +19,7 @@ protected:
 	void Resize(unsigned width, unsigned height) override;
 
 private:
-	ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height);
+	ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount);
 
 };
 

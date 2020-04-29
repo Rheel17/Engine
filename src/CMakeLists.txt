@@ -2,7 +2,6 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine.h 
 		RheelEngine/Color.cpp RheelEngine/Color.h 
 		RheelEngine/Component.cpp RheelEngine/Component.h 
-		RheelEngine/Engine.cpp RheelEngine/Engine.h 
 		RheelEngine/EngineResources.cpp RheelEngine/EngineResources.h 
 		RheelEngine/Entity.cpp RheelEngine/Entity.h 
 		RheelEngine/Game.cpp RheelEngine/Game.h 

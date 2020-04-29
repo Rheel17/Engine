@@ -6,7 +6,6 @@
 
 // includes for all required header files
 // BEGIN GENERATED INCLUDES
-#include "RheelEngine/Engine.h"
 #include "RheelEngine/Animator/ConstantInterpolator.h"
 #include "RheelEngine/Animator/CosineInterpolator.h"
 #include "RheelEngine/Animator/CubicInterpolator.h"

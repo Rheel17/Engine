@@ -5,8 +5,6 @@
 
 #include <iostream>
 
-#include "../Engine.h"
-
 namespace rheel {
 
 ModelRenderComponent::ModelRenderComponent(Model model, Material material) :
@@ -41,14 +39,12 @@ void ModelRenderComponent::Activate() {
 			_object_data.SetMaterialColor(_material.GetColor());
 			break;
 		case Material::TEXTURED:
-			_object_data = Engine::GetSceneRenderManager(GetParent()->scene).GetModelRenderer(_model)
-					.AddTexturedObject(_material);
+			_object_data = Engine::GetSceneRenderManager(GetParent()->scene).GetModelRenderer(_model).AddTexturedObject(_material);
 			_object_data.SetMaterialVector(_material.MaterialVector());
 			_object_data.SetMaterialColor(_material.GetColor());
 			break;
 		case Material::CUSTOM_SHADER:
-			_object_data = Engine::GetSceneRenderManager(GetParent()->scene)
-					.GetModelRendererForCustomShader(_model, _material.GetCustomShader()).AddObject();
+			_object_data = Engine::GetSceneRenderManager(GetParent()->scene).GetModelRendererForCustomShader(_model, _material.GetCustomShader()).AddObject();
 			break;
 	}
 }

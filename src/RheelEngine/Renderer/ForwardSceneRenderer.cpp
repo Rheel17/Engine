@@ -3,16 +3,13 @@
  */
 #include "ForwardSceneRenderer.h"
 
-#include <utility>
-
 #include "ShadowMapDirectional.h"
-#include "../Engine.h"
 #include "OpenGL/Context.h"
 
 namespace rheel {
 
-ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height) :
-		SceneRenderer(manager, std::move(cameraName), width, height, Engine::GetDisplayConfiguration().SampleCount(), true) {}
+ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount) :
+		SceneRenderer(manager, std::move(cameraName), width, height, sampleCount, true) {}
 
 void ForwardSceneRenderer::Render(float dt) {
 	// get the camera
