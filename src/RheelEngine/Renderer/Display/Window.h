@@ -77,6 +77,12 @@ public:
 	 */
 	const gl::Context& GetContext() const;
 
+	/**
+	 * If visible is true, this shows the window. If visible is false, this
+	 * hides the window
+	 */
+	void SetVisible(bool visible);
+
 protected:
 	/**
 	 * Creates an OpenGL context for this window, and makes it the context on

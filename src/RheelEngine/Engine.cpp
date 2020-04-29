@@ -39,6 +39,8 @@ void Engine::Run_(Game* game) {
 
 	_instance.thread_pool = new ThreadPool;
 
+	_instance.window->SetVisible(true);
+
 	game->Start();
 
 	_instance.window->Loop();

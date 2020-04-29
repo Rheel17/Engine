@@ -88,6 +88,14 @@ const gl::Context& Window::GetContext() const {
 	return *_context;
 }
 
+void Window::SetVisible(bool visible) {
+	if (visible) {
+		glfwShowWindow(handle);
+	} else {
+		glfwHideWindow(handle);
+	}
+}
+
 void Window::CreateContext() {
 	glfwMakeContextCurrent(handle);
 

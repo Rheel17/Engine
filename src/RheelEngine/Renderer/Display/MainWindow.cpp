@@ -151,6 +151,7 @@ vec2 MainWindow::GetMousePosition() const {
 
 window_hints MainWindow::CreateWindowHints_(const DisplayConfiguration& configuration) {
 	window_hints hints;
+	hints.visible = false;
 	hints.resizable = false;
 	hints.doublebuffer = configuration.vsync;
 
