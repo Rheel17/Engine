@@ -36,7 +36,7 @@ ThreadPool::~ThreadPool() {
 	}
 }
 
-std::unique_ptr<ThreadPool::TaskBase> ThreadPool::GetNextTask_() {
+std::unique_ptr<TaskBase> ThreadPool::GetNextTask_() {
 	// wait for a task to become available
 	std::unique_lock lock(_queue_mutex);
 	_queue_wait.wait(lock, [this]() { return _stop_requested || !_execution_queue.empty(); });

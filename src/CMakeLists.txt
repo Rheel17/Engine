@@ -10,6 +10,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/PhysicsShape.cpp RheelEngine/PhysicsShape.h 
 		RheelEngine/RigidTransform.cpp RheelEngine/RigidTransform.h 
 		RheelEngine/Scene.cpp RheelEngine/Scene.h 
+		RheelEngine/Task.h 
 		RheelEngine/ThreadPool.cpp RheelEngine/ThreadPool.h 
 		RheelEngine/Transform.cpp RheelEngine/Transform.h 
 		RheelEngine/_common.h 

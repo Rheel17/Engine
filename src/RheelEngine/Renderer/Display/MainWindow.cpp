@@ -104,6 +104,16 @@ void MainWindow::Loop() {
 
 		time = newTime;
 
+		// run UI thread tasks
+		{
+			std::lock_guard lock(_mutex);
+			while (!_task_queue.empty()) {
+				auto task = std::move(_task_queue.front());
+				_task_queue.pop();
+				task->operator()();
+			}
+		}
+
 		// update the scene
 		if (auto scene = Engine::GetActiveScene(); scene) {
 			scene->Update(time, dt);
