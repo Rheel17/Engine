@@ -121,4 +121,5 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Util/Log.cpp RheelEngine/Util/Log.h 
 		RheelEngine/Util/Math.h 
 		RheelEngine/Util/MsTimer.h 
+		RheelEngine/Util/pseudo_static_pointer.h 
 )

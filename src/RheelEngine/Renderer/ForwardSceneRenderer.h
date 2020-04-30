@@ -12,6 +12,11 @@ namespace rheel {
 class RE_API ForwardSceneRenderer : public SceneRenderer {
 	friend class SceneRenderManager;
 
+	struct RE_API empty_shadow_map {
+		empty_shadow_map();
+		gl::Texture2D texture;
+	};
+
 public:
 	void Render(float dt) override;
 
@@ -21,6 +26,7 @@ protected:
 private:
 	ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount);
 
+	pseudo_static_pointer<empty_shadow_map> _empty_shadow_map;
 };
 
 }

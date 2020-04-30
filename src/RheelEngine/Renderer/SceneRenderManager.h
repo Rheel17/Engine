@@ -22,6 +22,18 @@ class RE_API SceneRenderManager {
 	RE_NO_COPY(SceneRenderManager);
 	RE_NO_MOVE(SceneRenderManager);
 
+	struct RE_API model_shaders {
+		model_shaders();
+		gl::Program forward_model_shader;
+		gl::Program opaque_shader;
+	};
+
+	struct RE_API lighting_quad {
+		lighting_quad();
+		gl::VertexArray vao;
+		gl::Buffer vbo;
+	};
+
 public:
 	explicit SceneRenderManager(Scene* scene);
 
@@ -92,6 +104,9 @@ public:
 	 */
 	void InitializeShaderLights(gl::Program& shaderProgram) const;
 
+	gl::Program& GetForwardModelShader();
+	gl::Program& GetOpaqueShader();
+
 private:
 	int ShadowLevel_();
 
@@ -109,12 +124,8 @@ private:
 	std::vector<float> _lights_spot_attenuation;
 	int _shadow_level{};
 
-private:
-	static void Initialize_();
-
-	static std::unique_ptr<gl::VertexArray> _lighting_quad_vao;
-	static std::unique_ptr<gl::Buffer> _lighting_quad_vbo;
-	static bool _lighting_quad_initialized;
+	pseudo_static_pointer<model_shaders> _model_shaders;
+	pseudo_static_pointer<lighting_quad> _lighting_quad;
 
 };
 

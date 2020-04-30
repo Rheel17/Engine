@@ -8,12 +8,10 @@
 
 namespace rheel {
 
-std::unordered_map<std::uintptr_t, gl::Program> CustomShaderModelRenderer::_shader_cache;
-
 CustomShaderModelRenderer::CustomShaderModelRenderer(const Model& model, const Shader& shader) :
 		_vertex_buffer_object(gl::Buffer::Target::ARRAY),
 		_object_data_buffer(gl::Buffer::Target::ARRAY),
-		_shader(std::move(GetCompiledShader_(shader))) {
+		_shader(GetCompiledShader_(shader)) {
 
 	_vertex_buffer_object.SetData(model.GetVertices());
 	_object_data_buffer.SetData(std::vector<ModelRenderer::ObjectData>());
@@ -58,9 +56,8 @@ gl::Program& CustomShaderModelRenderer::GetShaderProgram() {
 
 gl::Program& CustomShaderModelRenderer::GetCompiledShader_(const Shader& shader) {
 	auto address = shader.GetAddress();
-	auto iter = _shader_cache.find(address);
 
-	if (iter == _shader_cache.end()) {
+	return _shader_cache->cache.Get(address, [shader](std::uintptr_t){
 		std::string shaderSource = EngineResources::PreprocessShader("Shaders_modelshader_custom_header_frag_glsl");
 		shaderSource += "\n\n";
 		shaderSource += "#line 1\n";
@@ -87,10 +84,8 @@ gl::Program& CustomShaderModelRenderer::GetCompiledShader_(const Shader& shader)
 			shaderProgram["_shadowMap3"] = 6;
 		}
 
-		iter = _shader_cache.emplace(shader.GetAddress(), std::move(shaderProgram)).first;
-	}
-
-	return iter->second;
+		return shaderProgram;
+	});
 }
 
 }

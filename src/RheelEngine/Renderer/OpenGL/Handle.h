@@ -33,16 +33,16 @@ class RE_API Handle {
 
 public:
 	/**
-	 * The real name is generated lazily - when it is needed.
+	 * Generate the handle.
 	 */
-	Handle() = default;
+	Handle() :
+			_name(_generator()) {}
 
 	/**
-	 * Uses the raw OpenGL handle as id.
+	 * Uses the raw OpenGL name as handle.
 	 */
 	explicit Handle(GLuint raw) :
-			_name(raw),
-			_generated(true) {}
+			_name(raw) {}
 
 	/**
 	 * Deletes the handle using the deleter.
@@ -56,7 +56,7 @@ public:
 	/**
 	 * Moves the handle to a new object, and invalidates the original handle.
 	 */
-	Handle(Handle&& h) noexcept :
+	Handle(Handle&& h) noexcept:
 			_generated(h._generated),
 			_name(h._name) {
 
@@ -84,11 +84,6 @@ public:
 	 * Returns the OpenGL name of this handle.
 	 */
 	GLuint GetName() const {
-		if (!_generated) {
-			_name = _generator();
-			_generated = true;
-		}
-
 		return _name;
 	}
 

@@ -12,6 +12,12 @@ namespace rheel {
 
 class RE_API Bloom : public PostProcessingEffect {
 
+	struct RE_API shaders {
+		shaders();
+		gl::Program bloom_shader;
+		gl::Program combine_shader;
+	};
+
 public:
 	Bloom(float thresholdStart, float thresholdEnd, float multiplier, float sigma, unsigned samples);
 
@@ -23,12 +29,7 @@ private:
 	float _multiplier;
 	std::vector<float> _kernel;
 
-private:
-	static gl::Program& BloomShader_();
-	static gl::Program& CombineShader_();
-
-	static std::unique_ptr<gl::Program> _bloom_shader;
-	static std::unique_ptr<gl::Program> _combine_shader;
+	mutable pseudo_static_pointer<shaders> _shaders;
 
 };
 

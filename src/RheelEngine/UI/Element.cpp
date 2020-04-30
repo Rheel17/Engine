@@ -14,12 +14,21 @@ namespace rheel {
 #define MODE_COLORED    1
 #define MODE_TEXTURED   2
 
-std::unique_ptr<gl::Program> Element::_ui_shader(nullptr);
-std::unique_ptr<gl::VertexArray> Element::_ui_vao(nullptr);
-std::unique_ptr<gl::Buffer> Element::_ui_vertex_data(nullptr);
-bool Element::_initialized = false;
+Element::ogl_data::ogl_data() :
+		ui_vertex_data(gl::Buffer::Target::ARRAY) {
 
-std::unordered_map<std::uintptr_t, gl::Program> Element::_custom_shaders;
+	ui_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
+	ui_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_uishader_frag_glsl"));
+	ui_shader.Link();
+
+	ivec2 screenDimension = DisplayConfiguration::Get().resolution;
+	ui_shader.GetUniform("_screen_dimensions") = vec2{ screenDimension.x, screenDimension.y };
+	ui_shader.GetUniform("_texture_sampler") = 0;
+
+	ui_vertex_data.SetDataEmpty(gl::Buffer::Usage::STREAM_DRAW);
+	ui_vao.SetVertexAttributes<vec2, vec4, vec2>(ui_vertex_data);
+
+}
 
 bool Element::Bounds::operator==(const Bounds& bounds) const {
 	return bounds.x == x && bounds.y == y && bounds.width == width && bounds.height == height;
@@ -225,15 +234,19 @@ void Element::OnMouseScroll_(const vec2& scrollComponents) {
 }
 #pragma clang diagnostic pop
 
-void Element::DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3) {
+const TextRenderer& Element::GetTextRenderer() const {
+	return _ogl_data->text_renderer;
+}
+
+void Element::DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3) const {
 	Draw_({ v1, v2, v3 }, MODE_COLORED);
 }
 
-void Element::DrawColoredQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4) {
+void Element::DrawColoredQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4) const {
 	Draw_({ v1, v2, v3, v3, v4, v1 }, MODE_COLORED);
 }
 
-void Element::DrawColoredQuad(const Bounds& bounds, const Color& color) {
+void Element::DrawColoredQuad(const Bounds& bounds, const Color& color) const {
 	DrawColoredQuad(
 			Vertex({ bounds.x, bounds.y }, color),
 			Vertex({ bounds.x, bounds.y + bounds.height }, color),
@@ -241,17 +254,17 @@ void Element::DrawColoredQuad(const Bounds& bounds, const Color& color) {
 			Vertex({ bounds.x + bounds.width, bounds.y }, color));
 }
 
-void Element::DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const gl::Texture2D& texture) {
+void Element::DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const gl::Texture2D& texture) const {
 	texture.Bind(0);
 	Draw_({ v1, v2, v3 }, MODE_TEXTURED);
 }
 
-void Element::DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const gl::Texture2D& texture) {
+void Element::DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const gl::Texture2D& texture) const {
 	texture.Bind(0);
 	Draw_({ v1, v2, v3, v3, v4, v1 }, MODE_TEXTURED);
 }
 
-void Element::DrawTexturedQuad(const Bounds& bounds, const gl::Texture2D& texture) {
+void Element::DrawTexturedQuad(const Bounds& bounds, const gl::Texture2D& texture) const {
 	DrawTexturedQuad(
 			Vertex({ bounds.x, bounds.y }, { 0.0f, 1.0f }),
 			Vertex({ bounds.x, bounds.y + bounds.height }, { 0.0f, 0.0f }),
@@ -260,12 +273,12 @@ void Element::DrawTexturedQuad(const Bounds& bounds, const gl::Texture2D& textur
 			texture);
 }
 
-void Element::DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const Image& image, float alpha) {
+void Element::DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const Image& image, float alpha) const {
 	ImageTexture::Get(image).Bind(0);
 	Draw_({ v1, v2, v3, v3, v4, v1 }, MODE_TEXTURED, alpha);
 }
 
-void Element::DrawTexturedQuad(const Bounds& bounds, const Image& image, float alpha) {
+void Element::DrawTexturedQuad(const Bounds& bounds, const Image& image, float alpha) const {
 	DrawTexturedQuad(
 			Vertex({ bounds.x, bounds.y }, { 0.0f, 1.0f }),
 			Vertex({ bounds.x, bounds.y + bounds.height }, { 0.0f, 0.0f }),
@@ -274,9 +287,7 @@ void Element::DrawTexturedQuad(const Bounds& bounds, const Image& image, float a
 			image, alpha);
 }
 
-void Element::DrawShaderedQuad(const Bounds& bounds, const Shader& shader) {
-	Initialize_();
-
+void Element::DrawShaderedQuad(const Bounds& bounds, const Shader& shader) const {
 	Vertex v1({ bounds.x, bounds.y });
 	Vertex v2({ bounds.x, bounds.y + bounds.height });
 	Vertex v3({ bounds.x + bounds.width, bounds.y + bounds.height });
@@ -286,15 +297,14 @@ void Element::DrawShaderedQuad(const Bounds& bounds, const Shader& shader) {
 	program.Use();
 
 	std::vector<Vertex> vertices = { v1, v2, v3, v3, v4, v1 };
-	_ui_vertex_data->SetData(vertices, gl::Buffer::Usage::STREAM_DRAW);
-	_ui_vao->DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, vertices.size());
+	_ogl_data->ui_vertex_data.SetData(vertices, gl::Buffer::Usage::STREAM_DRAW);
+	_ogl_data->ui_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, vertices.size());
 }
 
-const gl::Program& Element::GetCustomShader(const Shader& shader) {
+const gl::Program& Element::GetCustomShader(const Shader& shader) const {
 	auto address = shader.GetAddress();
-	auto iter = _custom_shaders.find(address);
 
-	if (iter == _custom_shaders.end()) {
+	return _ogl_data->custom_shaders.Get(address, [shader](std::uintptr_t){
 		std::string shaderSource = EngineResources::PreprocessShader("Shaders_uishader_custom_header_frag_glsl");
 		shaderSource += "\n\n";
 		shaderSource += "#line 1\n";
@@ -308,40 +318,15 @@ const gl::Program& Element::GetCustomShader(const Shader& shader) {
 		ivec2 screenDimension = DisplayConfiguration::Get().resolution;
 		shaderProgram["_screen_dimensions"] = vec2{ screenDimension.x, screenDimension.y };
 
-		iter = _custom_shaders.emplace(shader.GetAddress(), std::move(shaderProgram)).first;
-	}
-
-	return iter->second;
+		return shaderProgram;
+	});
 }
 
-void Element::Draw_(const std::vector<Vertex>& vertices, int mode, float alpha) {
-	Initialize_();
-
-	_ui_shader->GetUniform("_ui_mode") = mode;
-	_ui_shader->GetUniform("_alpha") = alpha;
-	_ui_vertex_data->SetData(vertices, gl::Buffer::Usage::STREAM_DRAW);
-	_ui_vao->DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, vertices.size());
-}
-
-void Element::Initialize_() {
-	if (_initialized) {
-		return;
-	}
-
-	_ui_shader = std::make_unique<gl::Program>();
-	_ui_shader->AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
-	_ui_shader->AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_uishader_frag_glsl"));
-	_ui_shader->Link();
-
-	ivec2 screenDimension = DisplayConfiguration::Get().resolution;
-	_ui_shader->GetUniform("_screen_dimensions") = vec2{ screenDimension.x, screenDimension.y };
-	_ui_shader->GetUniform("_texture_sampler") = 0;
-
-	_ui_vertex_data = std::make_unique<gl::Buffer>(gl::Buffer::Target::ARRAY);
-	_ui_vao = std::make_unique<gl::VertexArray>();
-	_ui_vao->SetVertexAttributes<vec2, vec4, vec2>(*_ui_vertex_data);
-
-	_initialized = true;
+void Element::Draw_(const std::vector<Vertex>& vertices, int mode, float alpha) const {
+	_ogl_data->ui_shader.GetUniform("_ui_mode") = mode;
+	_ogl_data->ui_shader.GetUniform("_alpha") = alpha;
+	_ogl_data->ui_vertex_data.SetData(vertices, gl::Buffer::Usage::STREAM_DRAW);
+	_ogl_data->ui_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, vertices.size());
 }
 
 }

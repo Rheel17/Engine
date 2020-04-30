@@ -7,10 +7,15 @@
 
 #include "ModelRenderer.h"
 #include "../Assets/Shader.h"
+#include "../Util/Cache.h"
 
 namespace rheel {
 
 class RE_API CustomShaderModelRenderer {
+
+	struct RE_API shader_cache {
+		Cache<std::uintptr_t, gl::Program> cache;
+	};
 
 public:
 	CustomShaderModelRenderer(const Model& model, const Shader& shader);
@@ -30,14 +35,14 @@ private:
 	gl::Buffer _vertex_buffer_object;
 	mutable gl::Buffer _object_data_buffer;
 
-	gl::Program _shader;
+	gl::Program& _shader;
 
 	ModelRenderer::ObjectDataVector _objects;
 
 private:
-	static std::unordered_map<std::uintptr_t, gl::Program> _shader_cache;
+	pseudo_static_pointer<shader_cache> _shader_cache;
 
-	static gl::Program& GetCompiledShader_(const Shader& shader);
+	gl::Program& GetCompiledShader_(const Shader& shader);
 
 };
 

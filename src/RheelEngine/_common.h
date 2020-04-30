@@ -12,6 +12,7 @@
 
 #include "Util/Math.h"
 #include "Util/Log.h"
+#include "Util/pseudo_static_pointer.h"
 
 #include <memory>
 #include <string>

@@ -4,9 +4,14 @@
 #include "ForwardSceneRenderer.h"
 
 #include "ShadowMapDirectional.h"
-#include "OpenGL/Context.h"
 
 namespace rheel {
+
+ForwardSceneRenderer::empty_shadow_map::empty_shadow_map() {
+	texture.SetEmpty(gl::InternalFormat::DEPTH_COMPONENT_32F, 1, 1, gl::Format::DEPTH_COMPONENT);
+	texture.SetCompareMode(gl::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
+	texture.SetCompareFunction(gl::CompareFunction::LEQUAL);
+}
 
 ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount) :
 		SceneRenderer(manager, std::move(cameraName), width, height, sampleCount, true) {}
@@ -35,7 +40,7 @@ void ForwardSceneRenderer::Render(float dt) {
 	// get the shaders for the custom shaded models, add the normal
 	// model shader
 	auto modelShaders = GetManager()->CustomShaderPrograms();
-	modelShaders.emplace_back(ModelRenderer::GetForwardModelShader());
+	modelShaders.emplace_back(GetManager()->GetForwardModelShader());
 
 	// initialize the model shaders
 	for (auto modelShaderRef : modelShaders) {
@@ -94,7 +99,7 @@ void ForwardSceneRenderer::Render(float dt) {
 	// texture units, to make sure OpenGL doesn't complain about non-depth
 	// textures bound to sampler2DShadow uniforms.
 	for (int i = shadowMapCount; i < 4; i++) {
-		ShadowMapDirectional::EmptyShadowMap().Bind(textureUnit++);
+		_empty_shadow_map->texture.Bind(textureUnit++);
 	}
 
 	// render all objects

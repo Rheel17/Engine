@@ -7,8 +7,13 @@
 
 namespace rheel {
 
-std::unique_ptr<gl::Buffer> PostProcessingEffect::_screen_quad_buffer;
-std::unique_ptr<gl::VertexArray> PostProcessingEffect::_screen_quad;
+PostProcessingEffect::screen_quad::screen_quad() :
+		vbo(gl::Buffer::Target::ARRAY) {
+
+	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
+	vbo.SetData(triangles, sizeof(triangles));
+	vao.SetVertexAttributes<vec2>(vbo);
+}
 
 unsigned PostProcessingEffect::UnusedFramebufferIndex() const {
 	return Stack_()->UnusedFramebufferIndex_();
@@ -34,17 +39,8 @@ PostProcessingStack *PostProcessingEffect::Stack_() const {
 	return _stack;
 }
 
-void PostProcessingEffect::DrawScreenQuad() {
-	if (!_screen_quad) {
-		GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
-        _screen_quad_buffer = std::make_unique<gl::Buffer>(gl::Buffer::Target::ARRAY);
-		_screen_quad_buffer->SetData(triangles, sizeof(triangles));
-
-        _screen_quad = std::make_unique<gl::VertexArray>();
-		_screen_quad->SetVertexAttributes<vec2>(*_screen_quad_buffer);
-	}
-
-	_screen_quad->DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
+void PostProcessingEffect::DrawScreenQuad() const {
+	_screen_quad->vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
 }
 
 }

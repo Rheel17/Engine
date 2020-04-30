@@ -5,22 +5,41 @@
 
 #include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
+#include "../EngineResources.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/SpotLight.h"
 
 namespace rheel {
 
-std::unique_ptr<gl::VertexArray> SceneRenderManager::_lighting_quad_vao(nullptr);
-std::unique_ptr<gl::Buffer> SceneRenderManager::_lighting_quad_vbo(nullptr);
-bool SceneRenderManager::_lighting_quad_initialized = false;
+SceneRenderManager::model_shaders::model_shaders() {
+	forward_model_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
+	forward_model_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
+	forward_model_shader.Link();
+	forward_model_shader["ambientTexture"] = 0;
+	forward_model_shader["diffuseTexture"] = 1;
+	forward_model_shader["specularTexture"] = 2;
+	forward_model_shader["_shadowMap0"] = 3;
+	forward_model_shader["_shadowMap1"] = 4;
+	forward_model_shader["_shadowMap2"] = 5;
+	forward_model_shader["_shadowMap3"] = 6;
+
+	opaque_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
+	opaque_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
+	opaque_shader.Link();
+}
+
+SceneRenderManager::lighting_quad::lighting_quad() :
+		vbo(gl::Buffer::Target::ARRAY) {
+
+	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
+	vbo.SetData(triangles, sizeof(triangles));
+	vao.SetVertexAttributes<vec2>(vbo);
+}
 
 SceneRenderManager::SceneRenderManager(Scene* scene) :
 		_scene(scene),
-		_skybox_renderer(std::make_shared<SkyboxRenderer>(this)) {
-
-	Initialize_();
-}
+		_skybox_renderer(std::make_shared<SkyboxRenderer>(this)) {}
 
 bool SceneRenderManager::ShouldDrawShadows() const {
 	return _shadow_level > 0;
@@ -158,6 +177,14 @@ void SceneRenderManager::InitializeShaderLights(gl::Program& shaderProgram) cons
 	}
 }
 
+gl::Program& SceneRenderManager::GetForwardModelShader() {
+	return _model_shaders->forward_model_shader;
+}
+
+gl::Program& SceneRenderManager::GetOpaqueShader() {
+	return _model_shaders->opaque_shader;
+}
+
 int SceneRenderManager::ShadowLevel_() {
 	for (Light* light : _scene->GetLights()) {
 		if (light->CastsShadows()) {
@@ -166,21 +193,6 @@ int SceneRenderManager::ShadowLevel_() {
 	}
 
 	return 0;
-}
-
-void SceneRenderManager::Initialize_() {
-	if (_lighting_quad_initialized) {
-		return;
-	}
-
-	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
-	_lighting_quad_vbo = std::make_unique<gl::Buffer>(gl::Buffer::Target::ARRAY);
-	_lighting_quad_vbo->SetData(triangles, sizeof(triangles));
-
-	_lighting_quad_vao = std::make_unique<gl::VertexArray>();
-	_lighting_quad_vao->SetVertexAttributes<vec2>(*_lighting_quad_vbo);
-
-	_lighting_quad_initialized = true;
 }
 
 }
