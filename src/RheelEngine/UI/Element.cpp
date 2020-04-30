@@ -323,6 +323,10 @@ const gl::Program& Element::GetCustomShader(const Shader& shader) const {
 }
 
 void Element::Draw_(const std::vector<Vertex>& vertices, int mode, float alpha) const {
+	if (mode == MODE_COLORED) {
+		gl::Context::Current().ClearTexture(0, gl::Texture::Target::TEXTURE_2D);
+	}
+
 	_ogl_data->ui_shader.GetUniform("_ui_mode") = mode;
 	_ogl_data->ui_shader.GetUniform("_alpha") = alpha;
 	_ogl_data->ui_vertex_data.SetData(vertices, gl::Buffer::Usage::STREAM_DRAW);
