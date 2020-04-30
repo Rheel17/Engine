@@ -3,7 +3,6 @@
  */
 #include "Scene.h"
 
-#include "Entity.h"
 #include "Component.h"
 
 namespace rheel {
@@ -21,7 +20,7 @@ Game& Scene::GetGame() {
 }
 
 Entity* Scene::AddEntity(std::string name, RigidTransform transform) {
-	Entity* entity = _root_entity->AddChild(std::move(name), transform);
+	Entity* entity = _root_entity->AddChild(std::move(name), std::move(transform));
 	_entities.push_back(entity);
 	return entity;
 }

@@ -29,13 +29,13 @@ Entity::~Entity() {
 	}
 }
 
-Entity* Entity::AddChild(std::string name, RigidTransform transform) {
-	if (auto [it, inserted] = _child_names.insert(name); !inserted) {
-		Log::Error() << "A child with name already exists: " << name << std::endl;
+Entity* Entity::AddChild(std::string childName, RigidTransform childTransform) {
+	if (auto [it, inserted] = _child_names.insert(childName); !inserted) {
+		Log::Error() << "A child with name already exists: " << childName << std::endl;
 		return nullptr;
 	}
 
-	Entity* entity = new Entity(std::move(name), this, transform);
+	Entity* entity = new Entity(std::move(childName), this, std::move(childTransform));
 	auto ptr = std::unique_ptr<Entity>(entity);
 
 	_children.push_back(std::move(ptr));

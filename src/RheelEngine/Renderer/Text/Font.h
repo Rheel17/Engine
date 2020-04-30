@@ -24,6 +24,7 @@ private:
 	struct delete_free_type_library {
 		void operator()(FT_Library *ft) {
 			FT_Done_FreeType(*ft);
+			delete ft;
 		};
 	};
 

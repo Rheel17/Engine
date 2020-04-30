@@ -48,9 +48,9 @@ private:
 
 	std::unordered_set<Input::Key> _pressed_keys;
 	std::unordered_set<Input::Scancode> _pressed_scancodes;
-	vec2 _mouse_position;
-	vec2 _mouse_delta;
-	vec2 _mouse_scroll;
+	vec2 _mouse_position{};
+	vec2 _mouse_delta{};
+	vec2 _mouse_scroll{};
 	bool _got_mouse = false;
 
 };
