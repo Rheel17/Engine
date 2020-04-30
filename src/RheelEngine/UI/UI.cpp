@@ -5,10 +5,14 @@
 
 namespace rheel {
 
-UI::UI(MainWindow& window) :
-		_window(window),
-		_width(window.GetWindowSize().x),
-		_height(window.GetWindowSize().y) {}
+UI::UI(Game& game) :
+		_game(game),
+		_width(game.GetWindow().GetWindowSize().x),
+		_height(game.GetWindow().GetWindowSize().y) {}
+
+Game& UI::GetGame() {
+	return _game;
+}
 
 void UI::SetContainer(Container&& container) {
 	_ui_container->operator=(std::forward<Container>(container));
@@ -59,15 +63,15 @@ Element* UI::FocusElement() const {
 }
 
 void UI::GrabMouse(Element* element) {
-	_window.SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	_game.GetWindow().SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	_grabbed_element = element;
 	_mouseover_element = element;
 	_mouse_grabbed = true;
 }
 
 void UI::ReleaseMouse() {
-	_window.SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	_mouse = _window.GetMousePosition();
+	_game.GetWindow().SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	_mouse = _game.GetWindow().GetMousePosition();
 	_grabbed_element = nullptr;
 	_mouse_grabbed = false;
 	_mouse_jump = true;

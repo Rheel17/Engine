@@ -4,6 +4,7 @@
 #include "SceneElement.h"
 
 #include "../../Renderer/SceneRenderer.h"
+#include "../UI.h"
 
 namespace rheel {
 
@@ -156,7 +157,9 @@ void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
 }
 
 void SceneElement::InitializeRenderer_(const Bounds& bounds) const {
-	if (_scene_renderer && (!_use_active_scene || _scene == Engine::GetActiveScene())) {
+	auto& game = RootContainer()->ParentUI()->GetGame();
+
+	if (_scene_renderer && (!_use_active_scene || _scene == game.GetActiveScene())) {
 		_scene_renderer->SetSize(bounds.width, bounds.height);
 		return;
 	}
@@ -164,14 +167,14 @@ void SceneElement::InitializeRenderer_(const Bounds& bounds) const {
 	_scene_renderer = nullptr;
 
 	if (_use_active_scene) {
-		_scene = Engine::GetActiveScene();
+		_scene = game.GetActiveScene();
 	}
 
 	if (_scene == nullptr) {
 		return;
 	}
 
-	auto renderer = Engine::GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_name, bounds.width, bounds.height);
+	auto renderer = game.GetRenderer().GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_name, bounds.width, bounds.height);
 	SceneRenderer* ptr = renderer.release();
 	_scene_renderer = std::shared_ptr<SceneRenderer>(ptr);
 }

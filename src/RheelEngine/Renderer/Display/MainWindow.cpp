@@ -6,6 +6,8 @@
 #include <sstream>
 
 #include "../../Game.h"
+#include "../../Scene.h"
+#include "../../UI/UI.h"
 #include "../OpenGL/Debug.h"
 
 namespace rheel {
@@ -118,7 +120,7 @@ void MainWindow::Loop() {
 		// update the scene
 		if (auto scene = _game.GetActiveScene(); scene) {
 			scene->Update(time, dt);
-			Engine::GetSceneRenderManager(scene).Update();
+			_game.GetRenderer().GetSceneRenderManager(scene).Update();
 		}
 
 		// initialize OpenGL state

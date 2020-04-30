@@ -8,10 +8,10 @@
 #include "OpenGL/Program.h"
 #include "OpenGL/VertexArray.h"
 #include "../Assets/Image.h"
-#include "../Components/Camera.h"
 
 namespace rheel {
 
+class Camera;
 class SceneRenderManager;
 
 class RE_API SkyboxRenderer {

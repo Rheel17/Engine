@@ -5,9 +5,10 @@
 
 #include "SceneRenderManager.h"
 #include "ImageTexture.h"
-#include "../EngineResources.h"
-#include "../Components/Skybox.h"
 #include "OpenGL/Context.h"
+#include "../Components/Camera.h"
+#include "../Components/Skybox.h"
+#include "../EngineResources.h"
 
 #define PART_NORTH   0
 #define PART_EAST    1

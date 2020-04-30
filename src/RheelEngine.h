@@ -6,6 +6,8 @@
 
 // includes for all required header files
 // BEGIN GENERATED INCLUDES
+#include "RheelEngine/Game.h"
+#include "RheelEngine/Scene.h"
 #include "RheelEngine/Animator/ConstantInterpolator.h"
 #include "RheelEngine/Animator/CosineInterpolator.h"
 #include "RheelEngine/Animator/CubicInterpolator.h"
@@ -28,6 +30,7 @@
 #include "RheelEngine/Components/Skybox.h"
 #include "RheelEngine/Components/SpotLight.h"
 #include "RheelEngine/Components/VoxelRenderComponent.h"
+#include "RheelEngine/UI/UI.h"
 #include "RheelEngine/UI/Elements/ColorElement.h"
 #include "RheelEngine/UI/Elements/CrosshairElement.h"
 #include "RheelEngine/UI/Elements/EmptyElement.h"

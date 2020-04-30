@@ -20,9 +20,9 @@ private:
 
 };
 
-static void createCube(Entity* cube) {
+static void createCube(Entity* cube, Game& game) {
 	static auto boxModel = StaticModelGeneratorBox({ 1.0f, 1.0f, 1.0f })();
-	static auto boxShader = Engine::GetAssetLoader().glsl.Load("Resources/test_shader.glsl");
+	auto boxShader = game.GetAssetLoader().glsl.Load("Resources/test_shader.glsl");
 
 	cube->AddComponent<ModelRenderComponent>(boxModel, Material({ 0.0f, 0.2f, 0.2f, 1.0f }, 0.7f, 0.5f));
 
@@ -67,8 +67,8 @@ static void createFloor(Entity* floor) {
 	floor->AddComponent<RigidBody>(PhysicsShape::Box({ 20.0f, 0.5f, 20.0f }));
 }
 
-static Scene* createScene() {
-	auto scene = new Scene();
+static ScenePointer createScene(Game& game) {
+	auto scene = game.CreateScene();
 	scene->AddRootComponent<FpsUpdater>();
 
 	auto physicsScene = scene->AddRootComponent<PhysicsScene>();
@@ -77,7 +77,7 @@ static Scene* createScene() {
 	auto cube = scene->AddEntity(
 			scene->UniqueEntityName("cube"),
 			RigidTransform({ 0.0f, 0.5f, 0.0f }));
-	createCube(cube);
+	createCube(cube, game);
 
 	auto ramp1 = scene->AddEntity("ramp1", RigidTransform({ -8, 3, 0 }, quat(vec3{ 0, 0, -0.6f })));
 	createRamp(ramp1);
@@ -100,11 +100,13 @@ static Scene* createScene() {
 }
 
 class SandboxGame : public Game {
+
+public:
 	SandboxGame() :
 			Game(GetDisplayConfiguration_(), "Sandbox") {}
 
 	void Start() override {
-		Engine::SetActiveScene(createScene());
+		SetActiveScene(createScene(*this));
 
 		Container ui;
 
@@ -125,10 +127,10 @@ class SandboxGame : public Game {
 		auto fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
 		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
 
-		Engine::GetUI().SetContainer(std::move(ui));
+		GetUI().SetContainer(std::move(ui));
 		sceneElement->RequestFocus();
 
-		Engine::GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
+		GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
 	}
 
 	static DisplayConfiguration GetDisplayConfiguration_() {

@@ -5,11 +5,9 @@
 
 #include "ForwardSceneRenderer.h"
 #include "ShadowMapDirectional.h"
-#include "SkyboxRenderer.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/SpotLight.h"
-#include "Display/DisplayConfiguration.h"
 
 namespace rheel {
 

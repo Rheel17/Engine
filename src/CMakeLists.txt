@@ -64,6 +64,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Components/VoxelRenderComponent.cpp RheelEngine/Components/VoxelRenderComponent.h 
 		RheelEngine/Renderer/CustomShaderModelRenderer.cpp RheelEngine/Renderer/CustomShaderModelRenderer.h 
 		RheelEngine/Renderer/ForwardSceneRenderer.cpp RheelEngine/Renderer/ForwardSceneRenderer.h 
+		RheelEngine/Renderer/GameRenderer.cpp RheelEngine/Renderer/GameRenderer.h 
 		RheelEngine/Renderer/ImageTexture.cpp RheelEngine/Renderer/ImageTexture.h 
 		RheelEngine/Renderer/ModelRenderer.cpp RheelEngine/Renderer/ModelRenderer.h 
 		RheelEngine/Renderer/PostProcessingEffect.cpp RheelEngine/Renderer/PostProcessingEffect.h 

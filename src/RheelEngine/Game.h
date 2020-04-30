@@ -5,16 +5,24 @@
 #define RHEELENGINE_GAME_H
 #include "_common.h"
 
-#include "Scene.h"
 #include "ThreadPool.h"
 #include "Assets/AssetLoader.h"
 #include "Audio/AudioManager.h"
-#include "UI/UI.h"
+#include "Renderer/GameRenderer.h"
 #include "Renderer/ImageTexture.h"
 #include "Renderer/SceneRenderManager.h"
 #include "Renderer/Display/MainWindow.h"
 
 namespace rheel {
+
+class Scene;
+class UI;
+
+struct RE_API scene_deleter {
+	void operator()(Scene* scene);
+};
+
+using ScenePointer = std::unique_ptr<Scene, scene_deleter>;
 
 class RE_API Game {
 	RE_NO_COPY(Game)
@@ -42,6 +50,11 @@ public:
 	UI& GetUI();
 
 	/**
+	 * Returns this game's renderer.
+	 */
+	GameRenderer& GetRenderer();
+
+	/**
 	 * Returns this game's asset loader.
 	 */
 	AssetLoader& GetAssetLoader();
@@ -52,15 +65,20 @@ public:
 	AudioManager& GetAudioManager();
 
 	/**
-	 * Sets the current active scene. The engine will take ownership of the
-	 * pointer passed, so do not pass a managed pointer. If exists, the previous
-	 * scene will be deleted. Use SetActiveScreen(nullptr) to remove the current
-	 * scene.
+	 * Creates a new scene for this game.
 	 */
-	void SetActiveScene(Scene* scene);
+	ScenePointer CreateScene();
 
 	/**
-	 * Returns the current active scene.
+	 * Sets the current active scene. The engine will take ownership of the
+	 * pointer passed. If exists, the previous active scene will be deleted. Use
+	 * SetActiveScreen(nullptr) to remove the current scene.
+	 */
+	void SetActiveScene(ScenePointer scene);
+
+	/**
+	 * Returns the current active scene, or nullptr if there is no current
+	 * active scene.
 	 */
 	Scene* GetActiveScene();
 
@@ -88,14 +106,15 @@ private:
 	void Loop_();
 
 	MainWindow* _window = nullptr;
-	std::unique_ptr<UI> _ui;
+	UI* _ui;
+	GameRenderer* _renderer;
 
 	std::unique_ptr<AudioManager> _audio_manager;
 
 	AssetLoader _asset_loader;
 	ThreadPool* _thread_pool = nullptr;
 
-	Scene* _active_scene = nullptr;
+	ScenePointer _active_scene = nullptr;
 
 private:
 	template<typename T>

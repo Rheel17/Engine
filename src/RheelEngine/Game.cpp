@@ -3,9 +3,15 @@
  */
 #include "Game.h"
 
+#include "Scene.h"
+#include "UI/UI.h"
 #include "Renderer/Text/Font.h"
 
 namespace rheel {
+
+void scene_deleter::operator()(Scene* scene) {
+	delete scene;
+}
 
 Game::Game(DisplayConfiguration displayConfiguration, const std::string& windowTitle) {
 	// initialize the engine
@@ -16,7 +22,8 @@ Game::Game(DisplayConfiguration displayConfiguration, const std::string& windowT
 	displayConfiguration.CalculateActualResolution_();
 	_window = new MainWindow(displayConfiguration, windowTitle, *this);
 	displayConfiguration.ClampAnisotropicLevel_();
-	_ui = std::make_unique<UI>(*_window);
+	_ui = new UI(*this);
+	_renderer = new GameRenderer;
 
 	DisplayConfiguration::Set_(std::move(displayConfiguration));
 
@@ -45,7 +52,8 @@ Game::~Game() {
 	delete _thread_pool;
 
 	// destroy the window and its contents
-	// TODO: destroy all OpenGL objects
+	delete _ui;
+	delete _renderer;
 	delete _window;
 
 	// terminate the engine
@@ -60,6 +68,10 @@ UI& Game::GetUI() {
 	return *_ui;
 }
 
+GameRenderer& Game::GetRenderer() {
+	return *_renderer;
+}
+
 AssetLoader& Game::GetAssetLoader() {
 	return _asset_loader;
 }
@@ -68,13 +80,16 @@ AudioManager& Game::GetAudioManager() {
 	return *_audio_manager;
 }
 
-void Game::SetActiveScene(Scene* scene) {
-	delete _active_scene;
-	_active_scene = scene;
+ScenePointer Game::CreateScene() {
+	return ScenePointer(new Scene(*this));
+}
+
+void Game::SetActiveScene(ScenePointer scene) {
+	_active_scene = std::move(scene);
 }
 
 Scene* Game::GetActiveScene() {
-	return _active_scene;
+	return _active_scene.get();
 }
 
 ThreadPool& Game::GetThreadPool() {

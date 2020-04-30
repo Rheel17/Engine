@@ -6,20 +6,21 @@
 #define RHEELENGINE_SCENERENDERMANAGER_H
 #include "../_common.h"
 
-#include "ModelRenderer.h"
 #include "CustomShaderModelRenderer.h"
 #include "SkyboxRenderer.h"
 #include "OpenGL/Framebuffer.h"
 #include "../Assets/Model.h"
-#include "../Scene.h"
 
 namespace rheel {
 
+class Light;
+class Scene;
 class SceneRenderer;
-
 class ShadowMap;
 
 class RE_API SceneRenderManager {
+	RE_NO_COPY(SceneRenderManager);
+	RE_NO_MOVE(SceneRenderManager);
 
 public:
 	explicit SceneRenderManager(Scene* scene);

@@ -9,6 +9,7 @@
 namespace rheel {
 
 const ivec2 DisplayConfiguration::RESOLUTION_NATIVE{ -1, -1 };
+DisplayConfiguration DisplayConfiguration::_display_configuration;
 
 unsigned DisplayConfiguration::SampleCount() const {
 	switch (aa_mode) {
