@@ -1,10 +1,9 @@
 /*
  * Copyright (c) 2020 Levi van Rheenen
  */
-#ifndef PSEUDO_STATIC_POINTER_H
-#define PSEUDO_STATIC_POINTER_H
-
-#include <cstdlib>
+#ifndef RHEELENGINE_PSEUDO_STATIC_POINTER_H
+#define RHEELENGINE_PSEUDO_STATIC_POINTER_H
+#include "../_common.h"
 
 namespace rheel {
 
@@ -24,7 +23,7 @@ namespace rheel {
  * default-constructed again.
  */
 template<typename T>
-struct pseudo_static_pointer {
+struct RE_API pseudo_static_pointer {
 
 public:
 	using reference = T&;
@@ -48,11 +47,11 @@ public:
 		_decrease_ref_count();
 	}
 
-	pseudo_static_pointer(const pseudo_static_pointer& ps) {
+	pseudo_static_pointer(const pseudo_static_pointer&) {
 		_increase_ref_count();
 	}
 
-	pseudo_static_pointer(pseudo_static_pointer&& ps) {
+	pseudo_static_pointer(pseudo_static_pointer&&) {
 		_increase_ref_count();
 	}
 
@@ -87,7 +86,6 @@ private:
 
 	static inline size_t _reference_count = 0;
 	static inline pointer _value = nullptr;
-
 };
 
 }
