@@ -29,14 +29,6 @@ SceneRenderManager::model_shaders::model_shaders() {
 	opaque_shader.Link();
 }
 
-SceneRenderManager::lighting_quad::lighting_quad() :
-		vbo(gl::Buffer::Target::ARRAY) {
-
-	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
-	vbo.SetData(triangles, sizeof(triangles));
-	vao.SetVertexAttributes<vec2>(vbo);
-}
-
 SceneRenderManager::SceneRenderManager(Scene* scene) :
 		_scene(scene),
 		_skybox_renderer(std::make_shared<SkyboxRenderer>(this)) {}

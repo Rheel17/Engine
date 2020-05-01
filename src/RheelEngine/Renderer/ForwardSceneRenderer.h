@@ -16,6 +16,7 @@ class RE_API ForwardSceneRenderer : public SceneRenderer {
 		empty_shadow_map();
 		gl::Texture2D texture;
 	};
+	pseudo_static_pointer<empty_shadow_map> _empty_shadow_map;
 
 public:
 	void Render(float dt) override;
@@ -26,7 +27,6 @@ protected:
 private:
 	ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount);
 
-	pseudo_static_pointer<empty_shadow_map> _empty_shadow_map;
 };
 
 }

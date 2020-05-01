@@ -27,12 +27,7 @@ class RE_API SceneRenderManager {
 		gl::Program forward_model_shader;
 		gl::Program opaque_shader;
 	};
-
-	struct RE_API lighting_quad {
-		lighting_quad();
-		gl::VertexArray vao;
-		gl::Buffer vbo;
-	};
+	pseudo_static_pointer<model_shaders> _model_shaders;
 
 public:
 	explicit SceneRenderManager(Scene* scene);
@@ -123,9 +118,6 @@ private:
 	std::vector<float> _lights_attenuation;
 	std::vector<float> _lights_spot_attenuation;
 	int _shadow_level{};
-
-	pseudo_static_pointer<model_shaders> _model_shaders;
-	pseudo_static_pointer<lighting_quad> _lighting_quad;
 
 };
 

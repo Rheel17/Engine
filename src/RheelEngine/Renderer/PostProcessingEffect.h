@@ -20,6 +20,7 @@ class PostProcessingEffect {
 		gl::Buffer vbo;
 		gl::VertexArray vao;
 	};
+	mutable pseudo_static_pointer<screen_quad> _screen_quad;
 
 public:
 	virtual ~PostProcessingEffect() = default;
@@ -57,9 +58,6 @@ private:
 
 protected:
 	void DrawScreenQuad() const;
-
-private:
-	mutable pseudo_static_pointer<screen_quad> _screen_quad;
 
 };
 

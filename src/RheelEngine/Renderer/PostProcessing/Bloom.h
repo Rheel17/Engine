@@ -17,6 +17,7 @@ class RE_API Bloom : public PostProcessingEffect {
 		gl::Program bloom_shader;
 		gl::Program combine_shader;
 	};
+	mutable pseudo_static_pointer<shaders> _shaders;
 
 public:
 	Bloom(float thresholdStart, float thresholdEnd, float multiplier, float sigma, unsigned samples);
@@ -28,8 +29,6 @@ private:
 	float _threshold_end;
 	float _multiplier;
 	std::vector<float> _kernel;
-
-	mutable pseudo_static_pointer<shaders> _shaders;
 
 };
 

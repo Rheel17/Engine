@@ -34,6 +34,7 @@ class RE_API Element : public InputCallback {
 		Cache<std::uintptr_t, gl::Program> custom_shaders;
 		TextRenderer text_renderer;
 	};
+	mutable pseudo_static_pointer<ogl_data> _ogl_data;
 
 private:
 	using CbPtr = std::shared_ptr<InputCallback>;
@@ -283,8 +284,6 @@ protected:
 
 private:
 	void Draw_(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f) const;
-
-	mutable pseudo_static_pointer<ogl_data> _ogl_data;
 
 };
 

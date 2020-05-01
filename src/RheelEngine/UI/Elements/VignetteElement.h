@@ -14,6 +14,7 @@ class RE_API VignetteElement : public Element {
 		vignette_shader();
 		Shader shader;
 	};
+	pseudo_static_pointer<vignette_shader> _shader;
 
 public:
 	VignetteElement(Color color, float innerRadius, float outerRadius, float curvature = 1.0f);
@@ -28,8 +29,6 @@ private:
 	float _inner_radius;
 	float _outer_radius;
 	float _curvature;
-
-	pseudo_static_pointer<vignette_shader> _shader;
 
 };
 

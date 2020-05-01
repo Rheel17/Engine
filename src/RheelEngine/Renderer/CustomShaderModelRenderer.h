@@ -16,6 +16,7 @@ class RE_API CustomShaderModelRenderer {
 	struct RE_API shader_cache {
 		Cache<std::uintptr_t, gl::Program> cache;
 	};
+	pseudo_static_pointer<shader_cache> _shader_cache;
 
 public:
 	CustomShaderModelRenderer(const Model& model, const Shader& shader);
@@ -40,8 +41,6 @@ private:
 	ModelRenderer::ObjectDataVector _objects;
 
 private:
-	pseudo_static_pointer<shader_cache> _shader_cache;
-
 	gl::Program& GetCompiledShader_(const Shader& shader);
 
 };

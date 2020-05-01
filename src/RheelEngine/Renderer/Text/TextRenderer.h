@@ -26,6 +26,7 @@ class RE_API TextRenderer {
 		gl::Framebuffer text_buffer;
 		gl::Program shader;
 	};
+	mutable pseudo_static_pointer<ogl_data> _ogl_data;
 
 public:
 	void DrawText(Font& font, const Color& color, const std::wstring& text, int x, int y, unsigned size) const;
@@ -37,8 +38,6 @@ private:
 	int DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size) const;
 
 	void DrawTriangles_(const std::vector<Character::Triangle>& triangles, const std::vector<Character::Triangle>& bezierCurves, vec2 multisampleOffset) const;
-
-	mutable pseudo_static_pointer<ogl_data> _ogl_data;
 
 };
 
