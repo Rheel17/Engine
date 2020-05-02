@@ -314,7 +314,7 @@ void Container::Layout() {
 	}
 }
 
-void Container::Draw(float time, float dt) const {
+void Container::DoDraw(float time, float dt) const {
 	for (auto elem : _elements) {
 		elem->Draw(time, dt);
 	}

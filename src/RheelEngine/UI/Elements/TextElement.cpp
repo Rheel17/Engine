@@ -61,7 +61,7 @@ void TextElement::SetText(std::wstring text) {
 	SetDefaultSize(_font.StringWidth(_w_text, _size), _font_ascend + _font_descend);
 }
 
-void TextElement::Draw(float time, float dt) const {
+void TextElement::DoDraw(float time, float dt) const {
 	const Bounds& bounds = GetBounds();
 
 	unsigned textBounds = _font_ascend + _font_descend;

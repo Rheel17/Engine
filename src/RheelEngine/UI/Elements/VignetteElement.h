@@ -22,7 +22,7 @@ public:
 public:
 	bool IsOpaque() override;
 
-	void Draw(float time, float dt) const override;
+	void DoDraw(float time, float dt) const override;
 
 private:
 	Color _color;

@@ -8,7 +8,7 @@ namespace rheel {
 CrosshairElement::CrosshairElement(unsigned size) :
 		_size(size) {}
 
-void CrosshairElement::Draw(float time, float dt) const {
+void CrosshairElement::DoDraw(float time, float dt) const {
 	const Bounds& bounds = GetBounds();
 
 	Bounds horizontal = {

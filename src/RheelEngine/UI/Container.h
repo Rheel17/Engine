@@ -75,8 +75,7 @@ public:
 	template<typename T>
 	T* AddElement(const T& element) {
 		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class");
-		static_assert(std::is_copy_constructible<T>::value,
-				"Element must be copy-constructible; try InsertElement with std::move()");
+		static_assert(std::is_copy_constructible<T>::value, "Element must be copy-constructible; try InsertElement with std::move()");
 
 		T* ptr = new T(element);
 		ptr->_parent_container = this;
@@ -93,8 +92,7 @@ public:
 	 */
 	template<typename T>
 	T* InsertElement(T&& element) {
-		static_assert(std::is_base_of<Element, T>::value,
-				"Element must derive from the Element class, did you std::move()?");
+		static_assert(std::is_base_of<Element, T>::value, "Element must derive from the Element class, did you std::move()?");
 		static_assert(std::is_move_constructible<T>::value, "Element must be move-constructible");
 
 		T* ptr = new T(std::forward<T>(element));
@@ -196,7 +194,7 @@ public:
 	/**
 	 * Draws the container.
 	 */
-	void Draw(float time, float dt) const override;
+	void DoDraw(float time, float dt) const override;
 
 	/**
 	 * Called when this element has been resized.

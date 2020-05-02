@@ -20,7 +20,7 @@ bool VignetteElement::IsOpaque() {
 	return false;
 }
 
-void VignetteElement::Draw(float time, float dt) const {
+void VignetteElement::DoDraw(float time, float dt) const {
 	const auto& shaderProgram = GetCustomShader(_shader->shader);
 	shaderProgram["parameters"] = vec3{ _inner_radius, _outer_radius, _curvature };
 	shaderProgram["color"] = _color;

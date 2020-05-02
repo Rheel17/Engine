@@ -134,6 +134,14 @@ Container* Element::RootContainer() {
 	return nullptr;
 }
 
+void Element::Draw(float time, float dt) const {
+	if (_animator) {
+		_animator->Update(dt);
+	}
+
+	DoDraw(time, dt);
+}
+
 void Element::AddInputCallback(std::shared_ptr<InputCallback> callback) {
 	_callback_list.push_back(std::move(callback));
 }
@@ -233,6 +241,18 @@ void Element::OnMouseScroll_(const vec2& scrollComponents) {
 	Callback_([scrollComponents](const CbPtr& ptr) { ptr->OnMouseScroll(scrollComponents); });
 }
 #pragma clang diagnostic pop
+
+Animator& Element::GetAnimator() {
+	if (!_animator) {
+		_animator = std::make_unique<Animator>();
+	}
+
+	return *_animator;
+}
+
+bool Element::HasAnimator() const {
+	return static_cast<bool>(_animator);
+}
 
 const TextRenderer& Element::GetTextRenderer() const {
 	return _ogl_data->text_renderer;

@@ -9,6 +9,7 @@
 
 #include "InputCallback.h"
 #include "../Color.h"
+#include "../Animator/Animator.h"
 #include "../Assets/Image.h"
 #include "../Assets/Shader.h"
 #include "../Renderer/OpenGL/Program.h"
@@ -23,6 +24,8 @@ class Container;
 class UI;
 
 class RE_API Element : public InputCallback {
+	RE_NO_COPY(Element);
+
 	friend class UI;
 	friend class Container;
 
@@ -73,6 +76,9 @@ protected:
 
 public:
 	~Element() override = default;
+
+	Element(Element&&) = default;
+	Element& operator=(Element&&) = default;
 
 	/**
 	 * Sets the default width and height of this Element.
@@ -160,6 +166,11 @@ public:
 	Container* RootContainer();
 
 	/**
+	 * Draws the element. Override DoDraw(float, float) for custom drawing.
+	 */
+	void Draw(float time, float dt) const;
+
+	/**
 	 * Adds an input callback. When an input event occurs, this callback object
 	 * will also receive the event. Events are received in the same order as
 	 * callbacks are added.
@@ -171,11 +182,6 @@ public:
 	 * input events.
 	 */
 	void RemoveInputCallback(const std::shared_ptr<InputCallback>& callback);
-
-	/**
-	 * Draws this UI element.
-	 */
-	virtual void Draw(float time, float dt) const = 0;
 
 protected:
 	Element();
@@ -219,6 +225,22 @@ private:
 	std::vector<CbPtr> _callback_list;
 
 protected:
+	/**
+	 * Draws this UI element.
+	 */
+	virtual void DoDraw(float time, float dt) const = 0;
+
+	/**
+	 * Returns the animator for this element. If the element doesn't have an
+	 * animator, it will be created.
+	 */
+	Animator& GetAnimator();
+
+	/**
+	 * Returns whether this element has an animator.
+	 */
+	bool HasAnimator() const;
+
 	/**
 	 * Returns the text renderer.
 	 */
@@ -284,6 +306,8 @@ protected:
 
 private:
 	void Draw_(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f) const;
+
+	mutable std::unique_ptr<Animator> _animator;
 
 };
 
