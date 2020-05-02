@@ -52,7 +52,7 @@ public:
 	 * multiple elements share the position, the top one (last added) is
 	 * returned.
 	 */
-	Element* ElementAt(unsigned x, unsigned y);
+	Element* GetElementAt(unsigned x, unsigned y);
 
 	/**
 	 * Requests that the given element be given focus in this UI.
@@ -62,7 +62,7 @@ public:
 	/**
 	 * Returns the element which is in focus (can be nullptr).
 	 */
-	Element* FocusElement() const;
+	Element* GetFocusElement() const;
 
 	/**
 	 * Grabs the mouse such that it is no longer capable of leaving the window.
@@ -98,7 +98,9 @@ public:
 	void OnFocusChanged(bool focus);
 
 private:
-	std::unique_ptr<Container> _ui_container = std::unique_ptr<Container>(new Container(this));
+	void InitContainer_();
+
+	std::unique_ptr<Container> _ui_container;
 
 	Game& _game;
 

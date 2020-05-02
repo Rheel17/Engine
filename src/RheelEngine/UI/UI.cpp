@@ -8,29 +8,34 @@ namespace rheel {
 UI::UI(Game& game) :
 		_game(game),
 		_width(game.GetWindow().GetWindowSize().x),
-		_height(game.GetWindow().GetWindowSize().y) {}
+		_height(game.GetWindow().GetWindowSize().y) {
+
+	SetContainer(Container());
+}
 
 Game& UI::GetGame() {
 	return _game;
 }
 
 void UI::SetContainer(Container&& container) {
-	_ui_container->operator=(std::forward<Container>(container));
-	_ui_container->_parent_ui = this;
-	_ui_container->SetBounds({ 0, 0, _width, _height });
+	if (!_ui_container) {
+		_ui_container = std::make_unique<Container>(std::move(container));
+	} else {
+		_ui_container->operator=(std::move(container));
+		InitContainer_();
+	}
 }
 
 void UI::SetContainer(std::unique_ptr<Container> container) {
 	_ui_container = std::move(container);
-	_ui_container->_parent_ui = this;
-	_ui_container->SetBounds({ 0, 0, _width, _height });
+	InitContainer_();
 }
 
 const Container& UI::GetContainer() const {
 	return *_ui_container;
 }
 
-Element* UI::ElementAt(unsigned x, unsigned y) {
+Element* UI::GetElementAt(unsigned x, unsigned y) {
 	return _ui_container->ElementAt(x, y);
 }
 
@@ -58,7 +63,7 @@ bool UI::RequestFocus(Element* element) {
 	return true;
 }
 
-Element* UI::FocusElement() const {
+Element* UI::GetFocusElement() const {
 	return _focus_element;
 }
 
@@ -183,6 +188,18 @@ void UI::OnFocusChanged(bool focus) {
 			_focus_element->OnFocusLost_();
 		}
 	}
+}
+
+void UI::InitContainer_() {
+	_ui_container->_parent_ui = this;
+	_ui_container->SetBounds({ 0, 0, _width, _height });
+
+	ReleaseMouse();
+	_mouseover_element = nullptr;
+	_focus_element = nullptr;
+	_grabbed_element = nullptr;
+
+	RequestFocus(_ui_container.get());
 }
 
 }

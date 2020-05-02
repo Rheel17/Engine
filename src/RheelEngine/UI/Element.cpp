@@ -55,7 +55,7 @@ bool Element::IsFocusable() const {
 }
 
 bool Element::HasFocus() const {
-	return RootContainer()->ParentUI()->FocusElement() == this;
+	return RootContainer()->ParentUI()->GetFocusElement() == this;
 }
 
 bool Element::RequestFocus() {
