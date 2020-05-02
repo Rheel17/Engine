@@ -6,16 +6,26 @@
 #include "../_common.h"
 
 #include "Container.h"
+#include "../Game.h"
+#include "../Renderer/Display/MainWindow.h"
 
 namespace rheel {
 
 class RE_API UI {
-
 	RE_NO_COPY(UI);
 	RE_NO_MOVE(UI);
 
 public:
-	UI(unsigned width, unsigned height);
+	/**
+	 * Constructs the UI object. This instance will hold a reference to the
+	 * passed-trough game reference.
+	 */
+	explicit UI(Game& game);
+
+	/**
+	 * Returns the corresponding game of this UI.
+	 */
+	Game& GetGame();
 
 	/**
 	 * Sets the contents of the UI to the container. Note: for custom
@@ -89,6 +99,8 @@ public:
 
 private:
 	std::unique_ptr<Container> _ui_container = std::unique_ptr<Container>(new Container(this));
+
+	Game& _game;
 
 	Element* _mouseover_element = nullptr;
 	Element* _focus_element = nullptr;

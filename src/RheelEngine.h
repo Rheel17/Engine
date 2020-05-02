@@ -6,7 +6,8 @@
 
 // includes for all required header files
 // BEGIN GENERATED INCLUDES
-#include "RheelEngine/Engine.h"
+#include "RheelEngine/Game.h"
+#include "RheelEngine/Scene.h"
 #include "RheelEngine/Animator/ConstantInterpolator.h"
 #include "RheelEngine/Animator/CosineInterpolator.h"
 #include "RheelEngine/Animator/CubicInterpolator.h"
@@ -29,6 +30,7 @@
 #include "RheelEngine/Components/Skybox.h"
 #include "RheelEngine/Components/SpotLight.h"
 #include "RheelEngine/Components/VoxelRenderComponent.h"
+#include "RheelEngine/UI/UI.h"
 #include "RheelEngine/UI/Elements/ColorElement.h"
 #include "RheelEngine/UI/Elements/CrosshairElement.h"
 #include "RheelEngine/UI/Elements/EmptyElement.h"
@@ -47,11 +49,11 @@ template<typename GameClass>
 void entry() {
 	static_assert(std::is_default_constructible<GameClass>::value, "Game Class must be default-constructible");
 	static_assert(std::is_base_of<rheel::Game, GameClass>::value, "Game Class must derive from rheel::Game");
-	Engine::Initialize_();
+
 	Game* game = new GameClass;
-	Engine::Run_(game);
+	game->Start();
+	game->Loop_();
 	delete game;
-	Engine::Terminate_();
 }
 
 }

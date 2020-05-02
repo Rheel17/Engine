@@ -15,6 +15,13 @@ class PostProcessingStack;
 class PostProcessingEffect {
 	friend class PostProcessingStack;
 
+	struct RE_API screen_quad {
+		screen_quad();
+		gl::Buffer vbo;
+		gl::VertexArray vao;
+	};
+	mutable pseudo_static_pointer<screen_quad> _screen_quad;
+
 public:
 	virtual ~PostProcessingEffect() = default;
 
@@ -50,11 +57,7 @@ private:
 	PostProcessingStack *_stack;
 
 protected:
-	static void DrawScreenQuad();
-
-private:
-	static std::unique_ptr<gl::Buffer> _screen_quad_buffer;
-	static std::unique_ptr<gl::VertexArray> _screen_quad;
+	void DrawScreenQuad() const;
 
 };
 

@@ -3,7 +3,7 @@
  */
 #include "ImageTexture.h"
 
-#include "../Engine.h"
+#include "Display/DisplayConfiguration.h"
 
 namespace rheel {
 
@@ -16,7 +16,7 @@ void ImageTexture::Bind(unsigned textureUnit) const {
 ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
 	// Set correct texture parameters
 	if (linear) {
-		if (Engine::GetDisplayConfiguration().enable_mipmaps) {
+		if (DisplayConfiguration::Get().enable_mipmaps) {
 			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::LINEAR_MIPMAP_LINEAR);
 		} else {
 			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::LINEAR);
@@ -24,7 +24,7 @@ ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
 
 		_texture.SetMagnificationFilter(gl::Texture::FilterFunction::LINEAR);
 	} else {
-		if (Engine::GetDisplayConfiguration().enable_mipmaps) {
+		if (DisplayConfiguration::Get().enable_mipmaps) {
 			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::NEAREST_MIPMAP_NEAREST);
 		} else {
 			_texture.SetMinifyingFilter(gl::Texture::FilterFunction::NEAREST);
@@ -42,13 +42,13 @@ ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
 
 	}
 
-	_texture.SetAnisotropyParameter(Engine::GetDisplayConfiguration().anisotropic_level);
+	_texture.SetAnisotropyParameter(DisplayConfiguration::Get().anisotropic_level);
 
 	// upload texure data to the GPU
 	_texture.SetData(gl::InternalFormat::RGBA, image.GetWidth(), image.GetHeight(), gl::Format::RGBA, image.GetRawColorData());
 
 	// generate mipmaps
-	if (Engine::GetDisplayConfiguration().enable_mipmaps) {
+	if (DisplayConfiguration::Get().enable_mipmaps) {
 		_texture.GenerateMipmap();
 	}
 }

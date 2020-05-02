@@ -177,13 +177,13 @@ public:
 	 * removed from the cache.
 	 */
 	template<typename Constructor>
-	V& Get(const K& key, Constructor constructor) {
+	V& Get(const K& key, Constructor&& constructor) {
 		// ensure that no other thread is modifying the cache while the element
 		// is loading/constructing. This is needed to ensure the element is
 		// removed from the cache before it is accessed.
 		std::lock_guard lock(_mutex);
 
-		bool changed = Put(key, std::forward<Constructor>(constructor));
+		bool changed = Put(key, std::forward<Constructor&&>(constructor));
 		auto element = reinterpret_cast<uintptr_t>(&(*_key_set.find(key)));
 
 		if (!changed) {
@@ -205,7 +205,7 @@ public:
 	 * Returns whether the element was newly inserted in the cache.
 	 */
 	template<typename Constructor>
-	bool Put(const K& key, Constructor constructor) {
+	bool Put(const K& key, Constructor&& constructor) {
 		uintptr_t pointer;
 
 		// First check that the cache does not yet contain the key. Otherwise

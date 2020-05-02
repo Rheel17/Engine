@@ -3,20 +3,24 @@
  */
 #include "Scene.h"
 
-#include "Entity.h"
 #include "Component.h"
 
 namespace rheel {
 
-Scene::Scene() :
+Scene::Scene(Game& game) :
+		_game(game),
 		_root_entity(new Entity("__scene_root__", this)) {}
 
 Scene::~Scene() {
 	delete _root_entity;
 }
 
+Game& Scene::GetGame() {
+	return _game;
+}
+
 Entity* Scene::AddEntity(std::string name, RigidTransform transform) {
-	Entity* entity = _root_entity->AddChild(std::move(name), transform);
+	Entity* entity = _root_entity->AddChild(std::move(name), std::move(transform));
 	_entities.push_back(entity);
 	return entity;
 }

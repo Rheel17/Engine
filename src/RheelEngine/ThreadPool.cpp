@@ -3,17 +3,15 @@
  */
 #include "ThreadPool.h"
 
-#include "Engine.h"
-
 namespace rheel {
 
-ThreadPool::ThreadPool() {
+ThreadPool::ThreadPool(const Window& window) {
 	// create the threads
 	unsigned numThreads = std::thread::hardware_concurrency();
 	_threads.reserve(numThreads);
 
 	for (unsigned i = 0; i < numThreads; i++) {
-		_threads.emplace_back(ThreadMain_, this, DummyWindow(Engine::GetWindow()));
+		_threads.emplace_back(ThreadMain_, this, DummyWindow(window));
 	}
 
 	Log::Info() << "Thread pool: " << numThreads << " threads" << std::endl;

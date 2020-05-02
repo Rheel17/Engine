@@ -3,8 +3,6 @@
  */
 #include "Skybox.h"
 
-#include "../Engine.h"
-
 namespace rheel {
 
 Skybox::Skybox(std::array<Image, 6> images, float scale) :

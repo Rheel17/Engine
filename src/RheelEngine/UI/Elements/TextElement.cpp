@@ -68,9 +68,9 @@ void TextElement::Draw(float time, float dt) const {
 	unsigned y = bounds.y + (bounds.height - textBounds) / 2 + _font_ascend;
 
 	if (_wide) {
-		TextRenderer::DrawText(_font, Color{ 1.0f, 1.0f, 1.0f, 1.0f }, _w_text, bounds.x, y, _size);
+		GetTextRenderer().DrawText(_font, Color{ 1.0f, 1.0f, 1.0f, 1.0f }, _w_text, bounds.x, y, _size);
 	} else {
-		TextRenderer::DrawText(_font, Color{ 1.0f, 1.0f, 1.0f, 1.0f }, _text, bounds.x, y, _size);
+		GetTextRenderer().DrawText(_font, Color{ 1.0f, 1.0f, 1.0f, 1.0f }, _text, bounds.x, y, _size);
 	}
 }
 

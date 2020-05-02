@@ -3,20 +3,18 @@
  */
 #include "ShadowMapDirectional.h"
 
-#include "../Engine.h"
 #include "../Components/DirectionalLight.h"
+#include "Display/DisplayConfiguration.h"
 #include "OpenGL/Context.h"
 
 namespace rheel {
-
-std::unique_ptr<gl::Texture2D> ShadowMapDirectional::_empty_shadow_map;
 
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, Light* light) :
 		ShadowMap(manager, light) {
 
 	unsigned textureSize = 1024;
 
-	switch (Engine::GetDisplayConfiguration().shadow_quality) {
+	switch (DisplayConfiguration::Get().shadow_quality) {
 		case DisplayConfiguration::SHADOW_OFF:
 			abort();
 		case DisplayConfiguration::SHADOW_LOW:
@@ -74,7 +72,7 @@ void ShadowMapDirectional::Update(Camera* camera, unsigned width, unsigned heigh
 	// set the lightspace matrices
 	CalculateViewProjectionMatrices_(camera, width, height);
 
-	gl::Program& modelShader = ModelRenderer::GetOpaqueShader();
+	gl::Program& modelShader = GetManager()->GetOpaqueShader();
 
 	for (unsigned i = 0; i < _csm_count; i++) {
 		modelShader["lightspaceMatrix"] = _light_matrices[i];
@@ -170,17 +168,6 @@ void ShadowMapDirectional::CalculateViewProjectionMatrices_(Camera* camera, unsi
 
 		_light_matrices[i] = projectionMatrix * viewMatrix;
 	}
-}
-
-const gl::Texture2D& ShadowMapDirectional::EmptyShadowMap() {
-	if (!_empty_shadow_map) {
-		_empty_shadow_map = std::make_unique<gl::Texture2D>();
-		_empty_shadow_map->SetEmpty(gl::InternalFormat::DEPTH_COMPONENT_32F, 1, 1, gl::Format::DEPTH_COMPONENT);
-		_empty_shadow_map->SetCompareMode(gl::Texture::CompareMode::COMPARE_REF_TO_TEXTURE);
-		_empty_shadow_map->SetCompareFunction(gl::CompareFunction::LEQUAL);
-	}
-
-	return *_empty_shadow_map;
 }
 
 }

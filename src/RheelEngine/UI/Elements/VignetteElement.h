@@ -10,6 +10,11 @@
 namespace rheel {
 
 class RE_API VignetteElement : public Element {
+	struct RE_API vignette_shader {
+		vignette_shader();
+		Shader shader;
+	};
+	pseudo_static_pointer<vignette_shader> _shader;
 
 public:
 	VignetteElement(Color color, float innerRadius, float outerRadius, float curvature = 1.0f);
@@ -24,12 +29,6 @@ private:
 	float _inner_radius;
 	float _outer_radius;
 	float _curvature;
-
-	static std::unique_ptr<Shader> _shader;
-	static bool _initialized;
-
-private:
-	static void Initialize_();
 
 };
 

@@ -2,10 +2,9 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine.h 
 		RheelEngine/Color.cpp RheelEngine/Color.h 
 		RheelEngine/Component.cpp RheelEngine/Component.h 
-		RheelEngine/Engine.cpp RheelEngine/Engine.h 
 		RheelEngine/EngineResources.cpp RheelEngine/EngineResources.h 
 		RheelEngine/Entity.cpp RheelEngine/Entity.h 
-		RheelEngine/Game.h 
+		RheelEngine/Game.cpp RheelEngine/Game.h 
 		RheelEngine/Material.cpp RheelEngine/Material.h 
 		RheelEngine/PhysicsShape.cpp RheelEngine/PhysicsShape.h 
 		RheelEngine/RigidTransform.cpp RheelEngine/RigidTransform.h 
@@ -65,6 +64,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Components/VoxelRenderComponent.cpp RheelEngine/Components/VoxelRenderComponent.h 
 		RheelEngine/Renderer/CustomShaderModelRenderer.cpp RheelEngine/Renderer/CustomShaderModelRenderer.h 
 		RheelEngine/Renderer/ForwardSceneRenderer.cpp RheelEngine/Renderer/ForwardSceneRenderer.h 
+		RheelEngine/Renderer/GameRenderer.cpp RheelEngine/Renderer/GameRenderer.h 
 		RheelEngine/Renderer/ImageTexture.cpp RheelEngine/Renderer/ImageTexture.h 
 		RheelEngine/Renderer/ModelRenderer.cpp RheelEngine/Renderer/ModelRenderer.h 
 		RheelEngine/Renderer/PostProcessingEffect.cpp RheelEngine/Renderer/PostProcessingEffect.h 
@@ -121,4 +121,5 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Util/Log.cpp RheelEngine/Util/Log.h 
 		RheelEngine/Util/Math.h 
 		RheelEngine/Util/MsTimer.h 
+		RheelEngine/Util/pseudo_static_pointer.h 
 )

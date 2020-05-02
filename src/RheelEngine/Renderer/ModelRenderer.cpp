@@ -10,10 +10,6 @@
 
 namespace rheel {
 
-gl::Program ModelRenderer::_forward_model_shader;
-gl::Program ModelRenderer::_opaque_shader;
-bool ModelRenderer::_are_shaders_initialized = false;
-
 ModelRenderer::ObjectData::ObjectData() :
 		_model_matrix(glm::identity<mat4>()),
 		_normal_model_matrix(glm::identity<mat4>()),
@@ -122,16 +118,6 @@ void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectDataPtr
 	Remove_(_textured_objects[material], std::forward<ObjectDataPtr>(object));
 }
 
-gl::Program& ModelRenderer::GetForwardModelShader() {
-	InitializeShaders_();
-	return _forward_model_shader;
-}
-
-gl::Program& ModelRenderer::GetOpaqueShader() {
-	InitializeShaders_();
-	return _opaque_shader;
-}
-
 void ModelRenderer::RenderObjects() const {
 	gl::Context::Current().ClearTexture(0, gl::Texture::Target::TEXTURE_2D);
 	gl::Context::Current().ClearTexture(1, gl::Texture::Target::TEXTURE_2D);
@@ -160,29 +146,6 @@ void ModelRenderer::Remove_(ObjectDataVector& objects, ObjectDataPtr&& data) {
 	}
 
 	objects.erase(objects.begin() + index);
-}
-
-void ModelRenderer::InitializeShaders_() {
-	if (_are_shaders_initialized) {
-		return;
-	}
-
-	_forward_model_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
-	_forward_model_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
-	_forward_model_shader.Link();
-	_forward_model_shader["ambientTexture"] = 0;
-	_forward_model_shader["diffuseTexture"] = 1;
-	_forward_model_shader["specularTexture"] = 2;
-	_forward_model_shader["_shadowMap0"] = 3;
-	_forward_model_shader["_shadowMap1"] = 4;
-	_forward_model_shader["_shadowMap2"] = 5;
-	_forward_model_shader["_shadowMap3"] = 6;
-
-	_opaque_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_opaqueshader_vert_glsl"));
-	_opaque_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_opaqueshader_frag_glsl"));
-	_opaque_shader.Link();
-
-	_are_shaders_initialized = true;
 }
 
 }

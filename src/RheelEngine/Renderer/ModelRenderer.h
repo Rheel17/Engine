@@ -92,17 +92,6 @@ private:
 	ObjectDataVector _objects;
 	std::map<Material, ObjectDataVector, material_texture_compare> _textured_objects;
 
-public:
-	static gl::Program& GetForwardModelShader();
-	static gl::Program& GetOpaqueShader();
-
-private:
-	static void InitializeShaders_();
-
-	static gl::Program _forward_model_shader;
-	static gl::Program _opaque_shader;
-	static bool _are_shaders_initialized;
-
 };
 
 }

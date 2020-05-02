@@ -8,14 +8,9 @@
 #include "Buffer.h"
 #include "Framebuffer.h"
 
-namespace rheel {
-class Engine;
-}
-
 namespace rheel::gl {
 
 class RE_API ContextBindings {
-	friend class rheel::Engine;
 
 public:
 	ContextBindings();

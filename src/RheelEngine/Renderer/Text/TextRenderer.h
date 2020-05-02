@@ -15,36 +15,29 @@
 namespace rheel {
 
 class RE_API TextRenderer {
-	friend class Engine;
+	struct ogl_data {
+		ogl_data();
+		gl::Buffer triangle_buffer;
+		gl::VertexArray vao;
 
-	RE_NO_CONSTRUCT(TextRenderer)
+		gl::Buffer resolve_vbo;
+		gl::VertexArray resolve_vao;
+
+		gl::Framebuffer text_buffer;
+		gl::Program shader;
+	};
+	mutable pseudo_static_pointer<ogl_data> _ogl_data;
 
 public:
-	static void DrawText(Font& font, const Color& color, const std::wstring& text, int x, int y, unsigned size);
-	static void DrawText(Font& font, const Color& color, const std::string& text, int x, int y, unsigned size);
+	void DrawText(Font& font, const Color& color, const std::wstring& text, int x, int y, unsigned size) const;
+	void DrawText(Font& font, const Color& color, const std::string& text, int x, int y, unsigned size) const;
 
 private:
-	static void Initialize_();
+	void ResizeBuffer_(unsigned width, unsigned height) const;
 
-	static void ResizeBuffer_(unsigned width, unsigned height);
+	int DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size) const;
 
-	static int DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size);
-
-	static void DrawTriangles_(const std::vector<Character::Triangle>& triangles,
-			const std::vector<Character::Triangle>& bezierCurves, vec2 multisampleOffset);
-
-	static gl::Buffer _triangle_buffer;
-	static gl::VertexArray _vao;
-
-	static gl::Buffer _resolve_vbo;
-	static gl::VertexArray _resolve_vao;
-
-	static std::unique_ptr<gl::Framebuffer> _text_buffer;
-	static gl::Program _shader;
-
-	static bool _initialized;
-	static unsigned _width;
-	static unsigned _height;
+	void DrawTriangles_(const std::vector<Character::Triangle>& triangles, const std::vector<Character::Triangle>& bezierCurves, vec2 multisampleOffset) const;
 
 };
 

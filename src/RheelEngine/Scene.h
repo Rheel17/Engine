@@ -6,19 +6,18 @@
 #include "_common.h"
 
 #include "Entity.h"
+#include "Game.h"
 #include "Assets/Image.h"
 
 namespace rheel {
 
 class Camera;
-
 class Light;
-
 class Skybox;
-
 class ComponentInputProxy;
 
 class RE_API Scene {
+	friend class Game;
 	friend class Camera;
 	friend class Light;
 	friend class Skybox;
@@ -28,8 +27,12 @@ class RE_API Scene {
 	RE_NO_COPY(Scene);
 
 public:
-	Scene();
 	~Scene();
+
+	/**
+	 * Returns the game of this scene.
+	 */
+	Game& GetGame();
 
 	/**
 	 * Adds an empty entity to the scene. This function returns a pointer to the
@@ -126,6 +129,10 @@ public:
 	void Update(float time, float dt);
 
 private:
+	explicit Scene(Game& game);
+
+	Game& _game;
+
 	Entity* _root_entity;
 
 	std::unordered_map<std::string, Camera*> _cameras;

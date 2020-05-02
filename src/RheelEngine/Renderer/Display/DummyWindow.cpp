@@ -5,11 +5,11 @@
 
 namespace rheel {
 
-DummyWindow::DummyWindow(const MainWindow& mainWindow) :
+DummyWindow::DummyWindow(const Window& mainWindow) :
 		Window(CreateWindowHints_(mainWindow), 1, 1, "", nullptr, mainWindow) {
 }
 
-window_hints DummyWindow::CreateWindowHints_(const MainWindow& mainWindow) {
+window_hints DummyWindow::CreateWindowHints_(const Window& mainWindow) {
 	window_hints hints;
 	hints.visible = false;
 	hints.context_version_major = mainWindow.GetWindowHints().context_version_major;

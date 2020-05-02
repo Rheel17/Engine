@@ -36,12 +36,6 @@ private:
 	std::vector<gl::Framebuffer> _shadow_buffers;
 	std::vector<mat4> _light_matrices;
 
-public:
-	static const gl::Texture2D& EmptyShadowMap();
-
-private:
-	static std::unique_ptr<gl::Texture2D> _empty_shadow_map;
-
 };
 
 }

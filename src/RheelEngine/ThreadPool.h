@@ -18,7 +18,12 @@ namespace rheel {
 class RE_API ThreadPool {
 
 public:
-	ThreadPool();
+	/**
+	 * Constructs and starts a thread pool. The mainWindow parameter represents
+	 * the window to share an OpenGL context with.
+	 */
+	explicit ThreadPool(const Window& mainWindow);
+
 	~ThreadPool();
 
 	/**

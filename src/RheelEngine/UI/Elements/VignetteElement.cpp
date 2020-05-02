@@ -7,8 +7,8 @@
 
 namespace rheel {
 
-std::unique_ptr<Shader> VignetteElement::_shader;
-bool VignetteElement::_initialized;
+VignetteElement::vignette_shader::vignette_shader() :
+		shader(EngineResources::AsString("Shaders_vignette_glsl")) {}
 
 VignetteElement::VignetteElement(Color color, float innerRadius, float outerRadius, float curvature) :
 		_color(color),
@@ -21,22 +21,11 @@ bool VignetteElement::IsOpaque() {
 }
 
 void VignetteElement::Draw(float time, float dt) const {
-	Initialize_();
-
-	const auto& shaderProgram = GetCustomShader(*_shader);
+	const auto& shaderProgram = GetCustomShader(_shader->shader);
 	shaderProgram["parameters"] = vec3{ _inner_radius, _outer_radius, _curvature };
 	shaderProgram["color"] = _color;
 
-	DrawShaderedQuad(GetBounds(), *_shader);
-}
-
-void VignetteElement::Initialize_() {
-	if (_initialized) {
-		return;
-	}
-
-	_shader = std::make_unique<Shader>(EngineResources::AsString("Shaders_vignette_glsl"));
-	_initialized = true;
+	DrawShaderedQuad(GetBounds(), _shader->shader);
 }
 
 }
