@@ -57,6 +57,8 @@ private:
 
 };
 
+std::ostream& operator<<(std::ostream& out, Texture::Target target);
+
 }
 
 #endif

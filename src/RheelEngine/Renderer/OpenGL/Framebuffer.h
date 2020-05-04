@@ -294,6 +294,8 @@ public:
 
 };
 
+std::ostream& operator<<(std::ostream& out, Framebuffer::Target target);
+
 }
 
 #endif

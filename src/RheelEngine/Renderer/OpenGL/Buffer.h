@@ -90,6 +90,8 @@ private:
 
 };
 
+std::ostream& operator<<(std::ostream& out, Buffer::Target target);
+
 }
 
 #endif

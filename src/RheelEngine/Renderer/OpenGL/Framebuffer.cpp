@@ -17,19 +17,19 @@ Framebuffer::Framebuffer(const Framebuffer& original, unsigned newWidth, unsigne
 		_viewport_width(newWidth),
 		_viewport_height(newHeight) {
 
-	for (const auto& [attachment, texture] : original._attached_textures) {
+	for (const auto&[attachment, texture] : original._attached_textures) {
 		AttachTexture_(texture.internalFormat, texture.format, attachment);
 	}
 
-	for (const auto& [attachment, texture] : original._attached_multisample_textures) {
+	for (const auto&[attachment, texture] : original._attached_multisample_textures) {
 		AttachTextureMultisample_(texture.internal_format, texture.samples, attachment);
 	}
 
-	for (const auto& [attachment, buffer] : original._attached_renderbuffers) {
+	for (const auto&[attachment, buffer] : original._attached_renderbuffers) {
 		AttachRenderbuffer_(buffer.internal_format, attachment);
 	}
 
-	for (const auto& [attachment, buffer] : original._attached_multisample_renderbuffers) {
+	for (const auto&[attachment, buffer] : original._attached_multisample_renderbuffers) {
 		AttachRenderbufferMultisample_(buffer.internal_format, buffer.samples, attachment);
 	}
 
@@ -242,11 +242,13 @@ void Framebuffer::AttachTexture_(InternalFormat internalFormat, Format format, G
 	Texture2D& texture = (_attached_textures[attachment] = { Texture2D(), internalFormat, format }).texture;
 
 	// initialize texture
+	gl::Context::Current().Push();
 	texture.SetEmpty(internalFormat, _viewport_width, _viewport_height, format);
 	texture.SetWrapParameterS(Texture::WrapParameter::CLAMP_TO_EDGE);
 	texture.SetWrapParameterT(Texture::WrapParameter::CLAMP_TO_EDGE);
 	texture.SetMinifyingFilter(Texture::FilterFunction::LINEAR);
 	texture.SetMagnificationFilter(Texture::FilterFunction::LINEAR);
+	gl::Context::Current().Pop();
 
 	// attach the texture to the framebuffer
 	BindForDrawing();
@@ -263,7 +265,9 @@ void Framebuffer::AttachTextureMultisample_(InternalFormat internalFormat, unsig
 	Texture2DMultisample& texture = (_attached_multisample_textures[attachment] = { Texture2DMultisample(), internalFormat, samples }).texture;
 
 	// initialize texture
+	gl::Context::Current().Push();
 	texture.Initialize(internalFormat, _viewport_width, _viewport_height, samples);
+	gl::Context::Current().Pop();
 
 	// attach the texture to the framebuffer
 	BindForDrawing();
@@ -280,7 +284,9 @@ void Framebuffer::AttachRenderbuffer_(InternalFormat internalFormat, GLenum atta
 	Renderbuffer& buffer = (_attached_renderbuffers[attachment] = { Renderbuffer(), internalFormat }).buffer;
 
 	// initialize buffer
+	gl::Context::Current().Push();
 	buffer.SetStorage(internalFormat, _viewport_width, _viewport_height);
+	gl::Context::Current().Pop();
 
 	// attach the renderbuffer to the framebuffer
 	BindForDrawing();
@@ -297,7 +303,9 @@ void Framebuffer::AttachRenderbufferMultisample_(InternalFormat internalFormat, 
 	Renderbuffer& buffer = (_attached_multisample_renderbuffers[attachment] = { Renderbuffer(), internalFormat, samples }).buffer;
 
 	// initialize buffer
+	gl::Context::Current().Push();
 	buffer.SetStorageMultisample(internalFormat, _viewport_width, _viewport_height, samples);
+	gl::Context::Current().Pop();
 
 	// attach the renderbuffer to the framebuffer
 	BindForDrawing();
@@ -316,6 +324,19 @@ bool Framebuffer::HasAttachment_(GLenum attachment) const {
 	return !(_attached_textures.find(attachment) == _attached_textures.end() &&
 			_attached_multisample_textures.find(attachment) == _attached_multisample_textures.end() &&
 			_attached_renderbuffers.find(attachment) == _attached_renderbuffers.end());
+}
+
+std::ostream& operator<<(std::ostream& out, Framebuffer::Target target) {
+	switch (target) {
+		case Framebuffer::Target::DRAW:
+			return out << "DRAW";
+		case Framebuffer::Target::READ:
+			return out << "READ";
+		case Framebuffer::Target::BOTH:
+			return out << "BOTH";
+	}
+
+	return out;
 }
 
 }
