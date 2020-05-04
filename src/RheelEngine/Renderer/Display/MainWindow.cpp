@@ -110,7 +110,10 @@ void MainWindow::Loop() {
 			while (!_task_queue.empty()) {
 				auto task = std::move(_task_queue.front());
 				_task_queue.pop();
+
+				GetContext().Push();
 				task->operator()();
+				GetContext().Pop();
 			}
 		}
 
@@ -137,8 +140,6 @@ void MainWindow::Loop() {
 		}
 
 		gl::Context::Current().CheckStackConsistency();
-
-		std::cout << std::endl << std::endl;
 	}
 }
 
