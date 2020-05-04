@@ -21,6 +21,8 @@ TextRenderer::ogl_data::ogl_data() :
 		resolve_vbo(gl::Buffer::Target::ARRAY),
 		text_buffer(1, 1) {
 
+	gl::ContextScope cs;
+
 	shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_frag_glsl"));
 	shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_vert_glsl"));
 	shader.Link();
@@ -112,59 +114,58 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text
 	}
 
 	// set the text buffer as render target
-	gl::Context::Current().Push();
-	_ogl_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
+	{
+		gl::ContextScope cs;
+		_ogl_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
 
-	// enable the stencil buffer, disable the depth buffer
-	gl::Context::Current().Enable(gl::Capability::STENCIL_TEST);
-	gl::Context::Current().Disable(gl::Capability::DEPTH_TEST);
+		// enable the stencil buffer, disable the depth buffer
+		gl::Context::Current().Enable(gl::Capability::STENCIL_TEST);
+		gl::Context::Current().Disable(gl::Capability::DEPTH_TEST);
 
-	// for anti-aliasing, enable GL_BLEND
-	gl::Context::Current().Enable(gl::Capability::BLEND);
-	gl::Context::Current().SetBlendFunction(gl::BlendFactor::ONE, gl::BlendFactor::ONE);
+		// for anti-aliasing, enable GL_BLEND
+		gl::Context::Current().Enable(gl::Capability::BLEND);
+		gl::Context::Current().SetBlendFunction(gl::BlendFactor::ONE, gl::BlendFactor::ONE);
 
-	float subpixelWidth = 2.0f / (screen.x * 8);
-	float subpixelHeight = 2.0f / (screen.y * 8);
+		float subpixelWidth = 2.0f / (screen.x * 8);
+		float subpixelHeight = 2.0f / (screen.y * 8);
 
-	_ogl_data->shader["color"] = vec4{ color.r, color.g, color.b, color.a / 4.0f };
+		_ogl_data->shader["color"] = vec4{ color.r, color.g, color.b, color.a / 4.0f };
 
-	// find the bounds of the final quad
-	constexpr float fmin = std::numeric_limits<float>::lowest();
-	constexpr float fmax = std::numeric_limits<float>::max();
-	vec4 bounds{ fmax, fmax, fmin, fmin };
+		// find the bounds of the final quad
+		constexpr float fmin = std::numeric_limits<float>::lowest();
+		constexpr float fmax = std::numeric_limits<float>::max();
+		vec4 bounds{ fmax, fmax, fmin, fmin };
 
-	for (const auto& t : bezierCurves) {
-		for (int i = 0; i < 3; i++) {
-			bounds[0] = std::min(bounds[0], t[i].x);
-			bounds[1] = std::min(bounds[1], t[i].y);
-			bounds[2] = std::max(bounds[2], t[i].x);
-			bounds[3] = std::max(bounds[3], t[i].y);
+		for (const auto& t : bezierCurves) {
+			for (int i = 0; i < 3; i++) {
+				bounds[0] = std::min(bounds[0], t[i].x);
+				bounds[1] = std::min(bounds[1], t[i].y);
+				bounds[2] = std::max(bounds[2], t[i].x);
+				bounds[3] = std::max(bounds[3], t[i].y);
+			}
 		}
-	}
 
-	for (const auto& t : triangles) {
-		for (int i = 1; i < 3; i++) {
-			bounds[0] = std::min(bounds[0], t[i].x);
-			bounds[1] = std::min(bounds[1], t[i].y);
-			bounds[2] = std::max(bounds[2], t[i].x);
-			bounds[3] = std::max(bounds[3], t[i].y);
+		for (const auto& t : triangles) {
+			for (int i = 1; i < 3; i++) {
+				bounds[0] = std::min(bounds[0], t[i].x);
+				bounds[1] = std::min(bounds[1], t[i].y);
+				bounds[2] = std::max(bounds[2], t[i].x);
+				bounds[3] = std::max(bounds[3], t[i].y);
+			}
 		}
+
+		bounds[0] -= 4.0f / screen.x;
+		bounds[1] -= 4.0f / screen.y;
+		bounds[2] += 4.0f / screen.x;
+		bounds[3] += 4.0f / screen.y;
+
+		_ogl_data->shader["bounds"] = bounds;
+
+		DrawTriangles_(triangles, bezierCurves, { subpixelWidth * -1.0f, subpixelHeight * 3.0f });
+		DrawTriangles_(triangles, bezierCurves, { subpixelWidth * 3.0f, subpixelHeight * 1.0f });
+		DrawTriangles_(triangles, bezierCurves, { subpixelWidth * -3.0f, subpixelHeight * -1.0f });
+		DrawTriangles_(triangles, bezierCurves, { subpixelWidth * 1.0f, subpixelHeight * -3.0f });
 	}
-
-	bounds[0] -= 4.0f / screen.x;
-	bounds[1] -= 4.0f / screen.y;
-	bounds[2] += 4.0f / screen.x;
-	bounds[3] += 4.0f / screen.y;
-
-	_ogl_data->shader["bounds"] = bounds;
-
-	DrawTriangles_(triangles, bezierCurves, { subpixelWidth * -1.0f, subpixelHeight *  3.0f });
-	DrawTriangles_(triangles, bezierCurves, { subpixelWidth *  3.0f, subpixelHeight *  1.0f });
-	DrawTriangles_(triangles, bezierCurves, { subpixelWidth * -3.0f, subpixelHeight * -1.0f });
-	DrawTriangles_(triangles, bezierCurves, { subpixelWidth *  1.0f, subpixelHeight * -3.0f });
-
-	// reset the gl state
-	gl::Context::Current().Pop();
 
 	// draw the text to the current framebuffer
 	_ogl_data->shader["stage"] = STAGE_COPY;
@@ -179,32 +180,33 @@ void TextRenderer::DrawTriangles_(const std::vector<Character::Triangle>& triang
 		const std::vector<Character::Triangle>& bezierCurves, vec2 multisampleOffset) const {
 
 	// only draw on the stencil buffer
-	gl::Context::Current().Push();
-	gl::Context::Current().SetColorMask(false, false, false, false);
-	gl::Context::Current().SetDepthMask(false);
+	{
+		gl::ContextScope cs;
+		gl::Context::Current().SetColorMask(false, false, false, false);
+		gl::Context::Current().SetDepthMask(false);
 
-	// initialize the stencil buffer
-	_ogl_data->text_buffer.Clear(gl::Framebuffer::BitField::STENCIL);
-	gl::Context::Current().SetStencilFunc(gl::CompareFunction::NEVER, 0x01, 0xff);
-	gl::Context::Current().SetStencilMask(0x01);
-	gl::Context::Current().SetStencilOp(gl::StencilFunction::INVERT, gl::StencilFunction::INVERT, gl::StencilFunction::INVERT);
+		// initialize the stencil buffer
+		_ogl_data->text_buffer.Clear(gl::Framebuffer::BitField::STENCIL);
+		gl::Context::Current().SetStencilFunc(gl::CompareFunction::NEVER, 0x01, 0xff);
+		gl::Context::Current().SetStencilMask(0x01);
+		gl::Context::Current().SetStencilOp(gl::StencilFunction::INVERT, gl::StencilFunction::INVERT, gl::StencilFunction::INVERT);
 
-	// draw the simple triangles
-	_ogl_data->shader["stage"] = STAGE_TRIANGLES;
-	_ogl_data->shader["multisampleOffset"] = multisampleOffset;
-	_ogl_data->vao.Bind();
-	_ogl_data->triangle_buffer.SetData(triangles);
+		// draw the simple triangles
+		_ogl_data->shader["stage"] = STAGE_TRIANGLES;
+		_ogl_data->shader["multisampleOffset"] = multisampleOffset;
+		_ogl_data->vao.Bind();
+		_ogl_data->triangle_buffer.SetData(triangles);
 
-	_ogl_data->vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 3 * triangles.size());
+		_ogl_data->vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 3 * triangles.size());
 
-	// flip the bezier curves
-	_ogl_data->shader["stage"] = STAGE_BEZIER;
-	_ogl_data->triangle_buffer.SetData(bezierCurves);
+		// flip the bezier curves
+		_ogl_data->shader["stage"] = STAGE_BEZIER;
+		_ogl_data->triangle_buffer.SetData(bezierCurves);
 
-	_ogl_data->vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 3 * bezierCurves.size());
+		_ogl_data->vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 3 * bezierCurves.size());
 
-	// restore color and depth mask
-	gl::Context::Current().Pop();
+		// restore color and depth mask
+	}
 
 	// setup the resolve stage
 	_ogl_data->shader["stage"] = STAGE_RESOLVE;

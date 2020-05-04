@@ -97,6 +97,34 @@ public:
 
 };
 
+/**
+ * A RAII class for context pushing/popping
+ */
+class RE_API ContextScope {
+	RE_NO_COPY(ContextScope);
+	RE_NO_MOVE(ContextScope);
+
+public:
+	/**
+	 * Pushes the current context.
+	 */
+	ContextScope();
+
+	/**
+	 * Pushes the supplied context.
+	 */
+	ContextScope(Context& context);
+
+	/**
+	 * Pops the context
+	 */
+	~ContextScope();
+
+private:
+	Context& _context;
+
+};
+
 }
 
 #endif

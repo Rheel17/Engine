@@ -57,7 +57,9 @@ gl::Program& CustomShaderModelRenderer::GetShaderProgram() {
 gl::Program& CustomShaderModelRenderer::GetCompiledShader_(const Shader& shader) {
 	auto address = shader.GetAddress();
 
-	return _shader_cache->cache.Get(address, [shader](std::uintptr_t){
+	return _shader_cache->cache.Get(address, [shader](std::uintptr_t) {
+		gl::ContextScope cs;
+
 		std::string shaderSource = EngineResources::PreprocessShader("Shaders_modelshader_custom_header_frag_glsl");
 		shaderSource += "\n\n";
 		shaderSource += "#line 1\n";

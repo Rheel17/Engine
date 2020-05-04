@@ -316,6 +316,7 @@ void Container::Layout() {
 
 void Container::DoDraw(float time, float dt) const {
 	for (auto elem : _elements) {
+		gl::ContextScope cs;
 		elem->Draw(time, dt);
 	}
 }

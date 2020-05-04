@@ -13,9 +13,13 @@ PostProcessingStack::PostProcessingStack() :
 				std::make_pair<gl::Framebuffer>(gl::Framebuffer(1, 1), false)
 		}) {
 
-	for (auto& b : _temp_buffers) {
-		b.first.AttachTexture(gl::InternalFormat::RGBA, gl::Format::RGBA, 0);
-		b.first.SetDrawBuffers({ 0 });
+	{
+		gl::ContextScope cs;
+
+		for (auto& b : _temp_buffers) {
+			b.first.AttachTexture(gl::InternalFormat::RGBA, gl::Format::RGBA, 0);
+			b.first.SetDrawBuffers({ 0 });
+		}
 	}
 }
 
@@ -71,15 +75,16 @@ const gl::Framebuffer& PostProcessingStack::ResolveInput_(const gl::Framebuffer&
 		MarkFramebufferUse_(index, true);
 
 		// blit
-		gl::Context::Current().Push();
+		{
+			gl::ContextScope cs;
 
-		tmp.BindForDrawing();
-		input.Blit(
-				{ 0, 0, input.GetViewportWidth(), input.GetViewportHeight() },
-				{ 0, 0, _width, _height },
-				gl::Framebuffer::BitField::COLOR);
+			tmp.BindForDrawing();
+			input.Blit(
+					{ 0, 0, input.GetViewportWidth(), input.GetViewportHeight() },
+					{ 0, 0, _width, _height },
+					gl::Framebuffer::BitField::COLOR);
 
-		gl::Context::Current().Pop();
+		}
 		return tmp;
 	} else {
 		return input;

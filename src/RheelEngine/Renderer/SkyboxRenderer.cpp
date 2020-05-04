@@ -23,6 +23,8 @@ SkyboxRenderer::SkyboxRenderer(SceneRenderManager* manager) :
 		_manager(manager),
 		_vertex_buffer_object(gl::Buffer::Target::ARRAY) {
 
+	gl::ContextScope cs;
+
 	// initialize the shader
 	_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_skybox_vert_glsl"));
 	_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_skybox_frag_glsl"));

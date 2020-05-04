@@ -25,8 +25,8 @@ public:
 
 	void DoDraw(float time, float dt) const override;
 
-private:
-	Color _color;
+	// the color of the element.
+	Color color;
 
 };
 

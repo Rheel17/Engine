@@ -163,4 +163,17 @@ Context& Context::Current() {
 	return window->GetContext();
 }
 
+ContextScope::ContextScope() :
+		ContextScope(Context::Current()) {}
+
+ContextScope::ContextScope(Context& context) :
+		_context(context) {
+
+	_context.Push();
+}
+
+ContextScope::~ContextScope() {
+	_context.Pop();
+}
+
 }

@@ -67,7 +67,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, Light* l
 ShadowMapDirectional::~ShadowMapDirectional() = default;
 
 void ShadowMapDirectional::Update(Camera* camera, unsigned width, unsigned height) {
-	gl::Context::Current().Push();
+	gl::ContextScope cs;
 
 	// set the lightspace matrices
 	CalculateViewProjectionMatrices_(camera, width, height);
@@ -88,8 +88,6 @@ void ShadowMapDirectional::Update(Camera* camera, unsigned width, unsigned heigh
 			renderer.RenderToShadowMap();
 		}
 	}
-
-	gl::Context::Current().Pop();
 }
 
 std::vector<std::reference_wrapper<const gl::Texture2D>> ShadowMapDirectional::Textures() const {

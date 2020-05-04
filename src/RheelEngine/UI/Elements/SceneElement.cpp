@@ -39,6 +39,8 @@ PostProcessingStack& SceneElement::GetPostProcessingStack() {
 }
 
 void SceneElement::DoDraw(float time, float dt) const {
+	gl::Context::Current().Enable(gl::Capability::DEPTH_TEST);
+
 	const Bounds& bounds = GetBounds();
 	InitializeRenderer_(bounds);
 

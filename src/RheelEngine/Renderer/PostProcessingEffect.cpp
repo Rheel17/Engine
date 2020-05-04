@@ -4,11 +4,14 @@
 #include "PostProcessingEffect.h"
 
 #include "PostProcessingStack.h"
+#include "OpenGL/Context.h"
 
 namespace rheel {
 
 PostProcessingEffect::screen_quad::screen_quad() :
 		vbo(gl::Buffer::Target::ARRAY) {
+
+	gl::ContextScope cs;
 
 	GLfloat triangles[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
 	vbo.SetData(triangles, sizeof(triangles));

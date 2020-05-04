@@ -21,11 +21,14 @@ Game::Game(DisplayConfiguration displayConfiguration, const std::string& windowT
 	// create the window
 	displayConfiguration.CalculateActualResolution_();
 	_window = new MainWindow(displayConfiguration, windowTitle, *this);
+
+	// update the display configuration
 	displayConfiguration.ClampAnisotropicLevel_();
+	DisplayConfiguration::Set_(std::move(displayConfiguration));
+
+	// initialize the window contents
 	_ui = new UI(*this);
 	_renderer = new GameRenderer;
-
-	DisplayConfiguration::Set_(std::move(displayConfiguration));
 
 	// initialize the audio manager
 	_audio_manager = std::make_unique<AudioManager>();

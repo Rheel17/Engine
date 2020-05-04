@@ -242,13 +242,15 @@ void Framebuffer::AttachTexture_(InternalFormat internalFormat, Format format, G
 	Texture2D& texture = (_attached_textures[attachment] = { Texture2D(), internalFormat, format }).texture;
 
 	// initialize texture
-	gl::Context::Current().Push();
-	texture.SetEmpty(internalFormat, _viewport_width, _viewport_height, format);
-	texture.SetWrapParameterS(Texture::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetWrapParameterT(Texture::WrapParameter::CLAMP_TO_EDGE);
-	texture.SetMinifyingFilter(Texture::FilterFunction::LINEAR);
-	texture.SetMagnificationFilter(Texture::FilterFunction::LINEAR);
-	gl::Context::Current().Pop();
+	{
+		gl::ContextScope cs;
+
+		texture.SetEmpty(internalFormat, _viewport_width, _viewport_height, format);
+		texture.SetWrapParameterS(Texture::WrapParameter::CLAMP_TO_EDGE);
+		texture.SetWrapParameterT(Texture::WrapParameter::CLAMP_TO_EDGE);
+		texture.SetMinifyingFilter(Texture::FilterFunction::LINEAR);
+		texture.SetMagnificationFilter(Texture::FilterFunction::LINEAR);
+	}
 
 	// attach the texture to the framebuffer
 	BindForDrawing();
@@ -265,9 +267,10 @@ void Framebuffer::AttachTextureMultisample_(InternalFormat internalFormat, unsig
 	Texture2DMultisample& texture = (_attached_multisample_textures[attachment] = { Texture2DMultisample(), internalFormat, samples }).texture;
 
 	// initialize texture
-	gl::Context::Current().Push();
-	texture.Initialize(internalFormat, _viewport_width, _viewport_height, samples);
-	gl::Context::Current().Pop();
+	{
+		gl::ContextScope cs;
+		texture.Initialize(internalFormat, _viewport_width, _viewport_height, samples);
+	}
 
 	// attach the texture to the framebuffer
 	BindForDrawing();
@@ -284,9 +287,10 @@ void Framebuffer::AttachRenderbuffer_(InternalFormat internalFormat, GLenum atta
 	Renderbuffer& buffer = (_attached_renderbuffers[attachment] = { Renderbuffer(), internalFormat }).buffer;
 
 	// initialize buffer
-	gl::Context::Current().Push();
-	buffer.SetStorage(internalFormat, _viewport_width, _viewport_height);
-	gl::Context::Current().Pop();
+	{
+		gl::ContextScope cs;
+		buffer.SetStorage(internalFormat, _viewport_width, _viewport_height);
+	}
 
 	// attach the renderbuffer to the framebuffer
 	BindForDrawing();
@@ -303,9 +307,10 @@ void Framebuffer::AttachRenderbufferMultisample_(InternalFormat internalFormat, 
 	Renderbuffer& buffer = (_attached_multisample_renderbuffers[attachment] = { Renderbuffer(), internalFormat, samples }).buffer;
 
 	// initialize buffer
-	gl::Context::Current().Push();
-	buffer.SetStorageMultisample(internalFormat, _viewport_width, _viewport_height, samples);
-	gl::Context::Current().Pop();
+	{
+		gl::ContextScope cs;
+		buffer.SetStorageMultisample(internalFormat, _viewport_width, _viewport_height, samples);
+	}
 
 	// attach the renderbuffer to the framebuffer
 	BindForDrawing();

@@ -94,6 +94,8 @@ ModelRenderer::ModelRenderer(const Model& model) :
 		_vertex_buffer_object(gl::Buffer::Target::ARRAY),
 		_object_data_buffer(gl::Buffer::Target::ARRAY) {
 
+	gl::ContextScope cs;
+
 	_vertex_buffer_object.SetData(model.GetVertices());
 	_object_data_buffer.SetData(std::vector<ObjectData>());
 

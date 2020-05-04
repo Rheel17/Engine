@@ -13,6 +13,8 @@
 namespace rheel {
 
 SceneRenderManager::model_shaders::model_shaders() {
+	gl::ContextScope cs;
+
 	forward_model_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
 	forward_model_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_modelshader_frag_glsl"));
 	forward_model_shader.Link();

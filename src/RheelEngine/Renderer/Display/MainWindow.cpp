@@ -74,9 +74,6 @@ MainWindow::MainWindow(DisplayConfiguration& configuration, const std::string& t
 	// initialize OpenGL state
 	GetContext().SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	GetContext().Enable(gl::Capability::DEPTH_TEST);
-	GetContext().SetDepthFunction(gl::CompareFunction::LEQUAL);
-
 	GetContext().Enable(gl::Capability::CULL_FACE);
 	GetContext().SetCullFace(gl::CullFace::BACK);
 
@@ -124,13 +121,15 @@ void MainWindow::Loop() {
 		}
 
 		// initialize OpenGL state
-		gl::Context::Current().ClearProgram();
+		GetContext().Push();
 		gl::Framebuffer::DefaultFramebuffer().Clear(gl::Framebuffer::BitField::COLOR_DEPTH);
 
 		// draw the game
 		_game.GetUI().Draw(time, dt);
 
 		// finish the update/render cycle
+		GetContext().Pop();
+
 		if (GetWindowHints().doublebuffer) {
 			glfwSwapBuffers(handle);
 		} else {
@@ -138,6 +137,8 @@ void MainWindow::Loop() {
 		}
 
 		gl::Context::Current().CheckStackConsistency();
+
+		std::cout << std::endl << std::endl;
 	}
 }
 

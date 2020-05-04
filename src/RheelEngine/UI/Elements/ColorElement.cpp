@@ -6,16 +6,16 @@
 namespace rheel {
 
 ColorElement::ColorElement(Color color) :
-		_color(color) {}
+		color(color) {}
 
 ColorElement::ColorElement(unsigned width, unsigned height, Color color) :
-		_color(color) {
+		color(color) {
 
 	SetDefaultSize(width, height);
 }
 
 void ColorElement::DoDraw(float time, float dt) const {
-	DrawColoredQuad(GetBounds(), _color);
+	DrawColoredQuad(GetBounds(), color);
 }
 
 }

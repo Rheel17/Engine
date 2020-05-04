@@ -17,6 +17,8 @@ namespace rheel {
 Element::ogl_data::ogl_data() :
 		ui_vertex_data(gl::Buffer::Target::ARRAY) {
 
+	gl::ContextScope cs;
+
 	ui_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
 	ui_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_uishader_frag_glsl"));
 	ui_shader.Link();
@@ -27,7 +29,6 @@ Element::ogl_data::ogl_data() :
 
 	ui_vertex_data.SetDataEmpty(gl::Buffer::Usage::STREAM_DRAW);
 	ui_vao.SetVertexAttributes<vec2, vec4, vec2>(ui_vertex_data);
-
 }
 
 bool Element::Bounds::operator==(const Bounds& bounds) const {
@@ -324,7 +325,9 @@ void Element::DrawShaderedQuad(const Bounds& bounds, const Shader& shader) const
 const gl::Program& Element::GetCustomShader(const Shader& shader) const {
 	auto address = shader.GetAddress();
 
-	return _ogl_data->custom_shaders.Get(address, [shader](std::uintptr_t){
+	return _ogl_data->custom_shaders.Get(address, [shader](std::uintptr_t) {
+		gl::ContextScope cs;
+
 		std::string shaderSource = EngineResources::PreprocessShader("Shaders_uishader_custom_header_frag_glsl");
 		shaderSource += "\n\n";
 		shaderSource += "#line 1\n";

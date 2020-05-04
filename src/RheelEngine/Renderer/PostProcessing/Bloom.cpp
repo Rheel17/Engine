@@ -4,10 +4,13 @@
 #include "Bloom.h"
 
 #include "../../EngineResources.h"
+#include "../OpenGL/Context.h"
 
 namespace rheel {
 
 Bloom::shaders::shaders() {
+	gl::ContextScope cs;
+
 	bloom_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_postprocessing_vert_glsl"));
 	bloom_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_postprocessing_bloom_frag_glsl"));
 	bloom_shader.Link();
