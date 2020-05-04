@@ -22,6 +22,7 @@ namespace rheel::gl {
 class RE_API Context {
 	friend class Uniform;
 	friend class rheel::Window;
+	friend class ContextBindings;
 
 	RE_NO_COPY(Context);
 
@@ -29,12 +30,12 @@ private:
 	class ContextImpl {
 
 	public:
-		ContextImpl() = default;
+		ContextImpl(Context& context);
 		ContextImpl(ContextImpl* parent);
 		~ContextImpl();
 
 		ContextImpl* parent = nullptr;
-		ContextBindings bindings{};
+		ContextBindings bindings;
 		ContextEnables enables{};
 		ContextFunctions functions{};
 
@@ -82,8 +83,14 @@ private:
 	/* Used by uniforms to set their program */
 	void UseProgram_(GLuint handle);
 
+	void SetActiveTextureUnit_(unsigned unit);
+
 	std::stack<std::unique_ptr<ContextImpl>> _context_stack;
 	uvec2 _default_viewport;
+
+	// It doesn't really make sense to make this ContextImpl-local, since it is
+	// just meta state
+	unsigned _current_active_texture;
 
 public:
 	static Context& Current();

@@ -2,13 +2,16 @@
  * Copyright (c) 2020 Levi van Rheenen
  */
 #include "ContextBindings.h"
+#include "Context.h"
 
 namespace rheel::gl {
 
-ContextBindings::ContextBindings() :
+ContextBindings::ContextBindings(Context& context) :
+		_context(context),
 		_parent(nullptr) {}
 
 ContextBindings::ContextBindings(const ContextBindings* parent) :
+		_context(parent->_context),
 		_parent(parent) {}
 
 void ContextBindings::BindBuffer(Buffer::Target target, GLuint name) {
@@ -96,7 +99,7 @@ void ContextBindings::BindTexture(unsigned unit, Texture::Target target, GLuint 
 	}
 
 	// perform the state change
-	SetActiveTextureUnit_(unit);
+	_context.SetActiveTextureUnit_(unit);
 	glBindTexture(GLenum(target), name);
 
 	if (_parent == nullptr ? (name == 0) : name == _parent->GetTexture_(unit, target)) {
@@ -158,7 +161,7 @@ void ContextBindings::ResetChanges() {
 
 	for (const auto& [pair, name] : _texture_changes) {
 		const auto& [unit, target] = pair;
-		SetActiveTextureUnit_(unit);
+		_context.SetActiveTextureUnit_(unit);
 		glBindTexture(GLenum(target), _parent == nullptr ? 0 : _parent->GetTexture_(unit, target));
 	}
 
@@ -170,15 +173,12 @@ void ContextBindings::ResetChanges() {
 		glUseProgram(_parent == nullptr ? 0 : _parent->GetProgram_());
 	}
 
-	glActiveTexture(GL_TEXTURE0 + (_parent == nullptr ? 0 : _parent->GetActiveTextureUnit_()));
-
 	_buffer_changes.clear();
 	_framebuffer_changes.clear();
 	_renderbuffer_change.reset();
 	_texture_changes.clear();
 	_vertex_array_change.reset();
 	_program_change.reset();
-	_texture_unit_change.reset();
 }
 
 GLuint ContextBindings::GetBuffer_(Buffer::Target target) const {
@@ -301,38 +301,6 @@ uvec2 ContextBindings::GetViewport_() const {
 
 	// default: no binding
 	return Framebuffer::DefaultViewport();
-}
-
-void ContextBindings::SetActiveTextureUnit_(unsigned unit) {
-	// check if a state change is necessary
-	if (GetActiveTextureUnit_() == unit) {
-		return;
-	}
-
-	// perform the state change
-	glActiveTexture(GL_TEXTURE0 + unit);
-
-	// store the state change
-	if (_parent == nullptr ? unit == 0 : unit == _parent->GetActiveTextureUnit_()) {
-		_texture_unit_change.reset();
-	} else {
-		_texture_unit_change = unit;
-	}
-}
-
-unsigned ContextBindings::GetActiveTextureUnit_() const {
-	// check the current instance
-	if (_texture_unit_change.has_value()) {
-		return *_texture_unit_change;
-	}
-
-	// check the parent
-	if (_parent != nullptr) {
-		return _parent->GetActiveTextureUnit_();
-	}
-
-	// default: no binding
-	return 0;
 }
 
 }

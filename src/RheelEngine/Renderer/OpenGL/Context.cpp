@@ -7,6 +7,9 @@
 
 namespace rheel::gl {
 
+Context::ContextImpl::ContextImpl(Context& context) :
+		bindings(context) {}
+
 Context::ContextImpl::ContextImpl(ContextImpl* parent) :
 		parent(parent),
 		bindings(&parent->bindings),
@@ -26,7 +29,7 @@ Context::ContextImpl::~ContextImpl() {
 Context::Context(uvec2 defaultViewport) :
 		_default_viewport(defaultViewport) {
 
-	_context_stack.push(std::make_unique<ContextImpl>());
+	_context_stack.push(std::make_unique<ContextImpl>(*this));
 }
 
 Context::~Context() noexcept {
@@ -143,6 +146,15 @@ void Context::SetStencilOp(StencilFunction sfail, StencilFunction dpfail, Stenci
 
 void Context::UseProgram_(GLuint handle) {
 	_context_stack.top()->bindings.UseProgram(handle);
+}
+
+void Context::SetActiveTextureUnit_(unsigned unit) {
+	if (_current_active_texture == unit) {
+		return;
+	}
+
+	glActiveTexture(GL_TEXTURE0 + unit);
+	_current_active_texture = unit;
 }
 
 Context& Context::Current() {
