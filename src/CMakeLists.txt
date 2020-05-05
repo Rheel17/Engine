@@ -101,6 +101,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/VertexArray.cpp RheelEngine/Renderer/OpenGL/VertexArray.h 
 		RheelEngine/Renderer/PostProcessing/Bloom.cpp RheelEngine/Renderer/PostProcessing/Bloom.h 
 		RheelEngine/Renderer/Text/Character.cpp RheelEngine/Renderer/Text/Character.h 
+		RheelEngine/Renderer/Text/Encoding.cpp RheelEngine/Renderer/Text/Encoding.h 
 		RheelEngine/Renderer/Text/Font.cpp RheelEngine/Renderer/Text/Font.h 
 		RheelEngine/Renderer/Text/TextRenderer.cpp RheelEngine/Renderer/Text/TextRenderer.h 
 		RheelEngine/UI/Constraint.cpp RheelEngine/UI/Constraint.h 
@@ -108,7 +109,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/UI/Element.cpp RheelEngine/UI/Element.h 
 		RheelEngine/UI/Input.h 
 		RheelEngine/UI/InputCallback.h 
-		RheelEngine/UI/UI.cpp RheelEngine/UI/UI.h 
+		RheelEngine/UI/UI.cpp RheelEngine/UI/UI.h
 		RheelEngine/UI/Elements/ColorElement.cpp RheelEngine/UI/Elements/ColorElement.h 
 		RheelEngine/UI/Elements/CrosshairElement.cpp RheelEngine/UI/Elements/CrosshairElement.h 
 		RheelEngine/UI/Elements/EmptyElement.cpp RheelEngine/UI/Elements/EmptyElement.h 
