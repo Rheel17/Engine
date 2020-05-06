@@ -74,6 +74,10 @@ bool Window::ShouldClose() const {
 	return glfwWindowShouldClose(handle);
 }
 
+void Window::Close() const {
+	glfwSetWindowShouldClose(handle, true);
+}
+
 uvec2 Window::GetWindowSize() const {
 	int width, height;
 	glfwGetWindowSize(handle, &width, &height);

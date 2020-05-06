@@ -63,6 +63,11 @@ public:
 	bool ShouldClose() const;
 
 	/**
+	 * Sets ShouldClose to true.
+	 */
+	void Close() const;
+
+	/**
 	 * Returns the actual size of the window.
 	 */
 	uvec2 GetWindowSize() const;

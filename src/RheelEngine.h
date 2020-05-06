@@ -31,6 +31,7 @@
 #include "RheelEngine/Components/SpotLight.h"
 #include "RheelEngine/Components/VoxelRenderComponent.h"
 #include "RheelEngine/UI/UI.h"
+#include "RheelEngine/UI/Elements/ButtonElement.h"
 #include "RheelEngine/UI/Elements/ColorElement.h"
 #include "RheelEngine/UI/Elements/CrosshairElement.h"
 #include "RheelEngine/UI/Elements/EmptyElement.h"

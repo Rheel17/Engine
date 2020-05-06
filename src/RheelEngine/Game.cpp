@@ -63,6 +63,10 @@ Game::~Game() {
 	DisplayConfiguration::TerminateGLFW();
 }
 
+void Game::Stop() {
+	_window->Close();
+}
+
 MainWindow& Game::GetWindow() {
 	return *_window;
 }

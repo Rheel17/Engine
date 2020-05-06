@@ -40,6 +40,11 @@ public:
 	virtual void Start() = 0;
 
 	/**
+	 * Stops the game.
+	 */
+	void Stop();
+
+	/**
 	 * Returns the game window.
 	 */
 	MainWindow& GetWindow();

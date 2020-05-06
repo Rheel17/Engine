@@ -109,7 +109,8 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/UI/Element.cpp RheelEngine/UI/Element.h 
 		RheelEngine/UI/Input.h 
 		RheelEngine/UI/InputCallback.h 
-		RheelEngine/UI/UI.cpp RheelEngine/UI/UI.h
+		RheelEngine/UI/UI.cpp RheelEngine/UI/UI.h 
+		RheelEngine/UI/Elements/ButtonElement.cpp RheelEngine/UI/Elements/ButtonElement.h 
 		RheelEngine/UI/Elements/ColorElement.cpp RheelEngine/UI/Elements/ColorElement.h 
 		RheelEngine/UI/Elements/CrosshairElement.cpp RheelEngine/UI/Elements/CrosshairElement.h 
 		RheelEngine/UI/Elements/EmptyElement.cpp RheelEngine/UI/Elements/EmptyElement.h 

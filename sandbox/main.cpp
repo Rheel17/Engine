@@ -89,7 +89,7 @@ static ScenePointer createScene(Game& game) {
 	createFloor(floor);
 
 	auto light = scene->AddEntity("main_light");
-	auto lightComponent = light->AddComponent<DirectionalLight>(Color{ 1, 1, 1, 1 }, vec3{ 0.2f, -2.0f, -1.0f });
+	auto lightComponent = light->AddComponent<DirectionalLight>(Color(1.0f, 1.0f, 1.0f, 1.0f), vec3{ 0.2f, -2.0f, -1.0f });
 	lightComponent->SetShadowDistance(100.0f);
 
 	auto camera = scene->AddEntity("main_camera", RigidTransform(vec3{ -12.0f, 7.5f, 0.0f }, vec3{ 0.0f, -M_PI / 2.0f, 0.0f }));
@@ -113,6 +113,7 @@ public:
 		auto sceneElement = ui.InsertElement(SceneElement("main_camera"));
 		ui.AddConstraint(sceneElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(sceneElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
+		sceneElement->SetGrabOnFocus(false);
 
 		auto vignetteElement = ui.InsertElement(VignetteElement(Color{ 0.0f, 0.0f, 0.0f, 0.5f }, 0.5f, 2.0f));
 		ui.AddConstraint(vignetteElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
@@ -127,9 +128,11 @@ public:
 		auto fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
 		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
 
-		GetUI().SetContainer(std::move(ui));
-		sceneElement->RequestFocus();
+		auto buttonElement = ui.InsertElement(ButtonElement([this](){ Stop(); }));
+		ui.AddConstraint(buttonElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT,  100);
+		ui.AddConstraint(buttonElement, Constraint::TOP_LEFT, buttonElement, Constraint::BOTTOM_RIGHT, -100);
 
+		GetUI().SetContainer(std::move(ui));
 		GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
 	}
 
