@@ -21,7 +21,7 @@ struct cache_policy {
 	/**
 	 * called when an element is accessed
 	 */
-	virtual void Access(uintptr_t k) {}
+	virtual void Access(uintptr_t k) const {}
 
 	/**
 	 * Called when an element is inserted
@@ -50,9 +50,10 @@ struct keep_policy : public cache_policy {
  * space left
  */
 struct least_recently_used_policy : public cache_policy {
-	void Access(uintptr_t key) override {
+	void Access(uintptr_t key) const override {
 		_lru_list.erase(_index[key]);
-		Insert(key);
+		_lru_list.push_back(key);
+		_index[key] = --_lru_list.cend();
 	}
 
 	void Insert(uintptr_t key) override {
@@ -68,8 +69,8 @@ struct least_recently_used_policy : public cache_policy {
 	}
 
 private:
-	std::list<uintptr_t> _lru_list;
-	std::unordered_map<uintptr_t, std::list<uintptr_t>::const_iterator> _index;
+	mutable std::list<uintptr_t> _lru_list;
+	mutable std::unordered_map<uintptr_t, std::list<uintptr_t>::const_iterator> _index;
 
 };
 
