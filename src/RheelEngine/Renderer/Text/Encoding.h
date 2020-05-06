@@ -32,6 +32,12 @@ public:
 	 */
 	static char32_t Utf8ToCodePoint(const std::string& str);
 
+	/**
+	 * Returns the number of bytes needed to encode the unicode code point in
+	 * UTF-8. If an invalid code point is given, this will return 0.
+	 */
+	static size_t Utf8Lenght(char32_t c);
+
 };
 
 }

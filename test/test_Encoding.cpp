@@ -37,3 +37,17 @@ TEST(Encoding, Utf8ToCodePoint) {
 	EXPECT_EQ(Encoding::Utf8ToCodePoint("\xef\xbf\x00"), -1);
 	EXPECT_EQ(Encoding::Utf8ToCodePoint("\xf0\xbf\xbf\x00"), -1);
 }
+
+TEST(Encoding, Utf8Length) {
+	EXPECT_EQ(Encoding::Utf8Lenght(0x00),    1);
+	EXPECT_EQ(Encoding::Utf8Lenght(0x24),    1);
+	EXPECT_EQ(Encoding::Utf8Lenght(0xa2),    2);
+	EXPECT_EQ(Encoding::Utf8Lenght(0x939),   3);
+	EXPECT_EQ(Encoding::Utf8Lenght(0x20ac),  3);
+	EXPECT_EQ(Encoding::Utf8Lenght(0xd55c),  3);
+	EXPECT_EQ(Encoding::Utf8Lenght(0x10348), 4);
+
+	EXPECT_EQ(Encoding::Utf8Lenght(-1),       0);
+	EXPECT_EQ(Encoding::Utf8Lenght(0x110000), 0);
+	EXPECT_EQ(Encoding::Utf8Lenght(0x257943), 0);
+}

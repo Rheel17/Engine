@@ -22,7 +22,6 @@ std::string Encoding::CodePointToUtf8(char32_t c) {
 
 	std::string result;
 
-
 	if (c < 0x800) {
 		// 110bbbcc 10cccccc
 
@@ -105,7 +104,7 @@ char32_t Encoding::Utf8ToCodePoint(const char* c) {
 		return -1;
 	}
 
-	if (leadingOnes == 2)  {
+	if (leadingOnes == 2) {
 		// 110bbbcc 10cccccc
 		return ((b0 & 0b00011111) << 6) | (b1 & 0b00111111);
 	}
@@ -137,6 +136,26 @@ char32_t Encoding::Utf8ToCodePoint(const char* c) {
 
 char32_t Encoding::Utf8ToCodePoint(const std::string& str) {
 	return Utf8ToCodePoint(str.c_str());
+}
+
+size_t Encoding::Utf8Lenght(char32_t c) {
+	if (c < 0) {
+		return 0;
+	}
+
+	if (c < 0x80) {
+		return 1;
+	}
+
+	if (c < 0x800) {
+		return 2;
+	} else if (c < 0x10000) {
+		return 3;
+	} else if (c < 0x110000) {
+		return 4;
+	}
+
+	return 0;
 }
 
 }
