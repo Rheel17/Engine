@@ -29,13 +29,22 @@ class RE_API TextRenderer {
 	mutable pseudo_static_pointer<ogl_data> _ogl_data;
 
 public:
-	void DrawText(Font& font, const Color& color, const std::wstring& text, int x, int y, unsigned size) const;
+	/**
+	 * Draws the text with the given parameters. Note that the text must be an
+	 * UTF-8 encoded string.
+	 */
 	void DrawText(Font& font, const Color& color, const std::string& text, int x, int y, unsigned size) const;
+
+	/**
+	 * Draws the text with the given parameters. Note that the text must be a
+	 * null-terminated UTF-8 encoded string.
+	 */
+	void DrawText(Font& font, const Color& color, const char* text, int x, int y, unsigned size) const;
 
 private:
 	void ResizeBuffer_(unsigned width, unsigned height) const;
 
-	int DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size) const;
+	int DrawChars_(Font& font, const Color& color, const char** text, int x, int y, unsigned size) const;
 
 	void DrawTriangles_(const std::vector<Character::Triangle>& triangles, const std::vector<Character::Triangle>& bezierCurves, vec2 multisampleOffset) const;
 

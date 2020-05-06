@@ -5,6 +5,8 @@
 
 #include <fstream>
 
+#include "Encoding.h"
+
 namespace rheel {
 
 std::unique_ptr<FT_Library, Font::delete_free_type_library> Font::_ft;
@@ -17,35 +19,10 @@ Font::~Font() {
 	FT_Done_Face(_face);
 }
 
-const Character& Font::LoadCharacter(wchar_t c) {
-	auto iter = _character_cache_reference.find(c);
-
-	if (iter == _character_cache_reference.end()) {
-		// character needs to be loaded
-
-		if (_character_cache.size() == FONT_CACHE_SIZE) {
-			// character cache is full
-
-			character_cache_item back = _character_cache.back();
-			_character_cache.pop_back();
-			_character_cache_reference.erase(back.character);
-		}
-
-		Character data = LoadCharacter_(c);
-		_character_cache.push_front({ c, data });
-		_character_cache_reference[c] = _character_cache.begin();
-	} else {
-		// character was already loaded
-
-		auto ref = iter->second;
-		Character data = ref->character_data;
-
-		_character_cache.erase(ref);
-		_character_cache.push_front({ c, data });
-		_character_cache_reference[c] = _character_cache.begin();
-	}
-
-	return _character_cache_reference[c]->character_data;
+const Character& Font::LoadCharacter(char32_t c) {
+	return _character_cache.Get(c, [this](char32_t c) {
+		return LoadCharacter_(c);
+	});
 }
 
 unsigned Font::Ascend(unsigned size) const {
@@ -59,35 +36,30 @@ unsigned Font::Descend(unsigned size) const {
 }
 
 unsigned Font::CharacterWidth(char character, unsigned size) const {
-	return CharacterWidth((wchar_t) character, size);
+	return CharacterWidth((char32_t) character, size);
 }
 
-unsigned Font::CharacterWidth(wchar_t character, unsigned size) const {
-	auto iter = _character_cache_reference.find(character);
-
-	if (iter == _character_cache_reference.end()) {
+unsigned Font::CharacterWidth(char32_t character, unsigned size) const {
+	if (!_character_cache.ContainsKey(character)) {
 		if (FT_Load_Char(_face, character, FT_LOAD_NO_SCALE | FT_LOAD_ADVANCE_ONLY)) {
-			throw std::runtime_error("Could not load character '" + std::to_string(character) + "'.");
+			std::string ch = Encoding::CodePointToUtf8(character);
+
+			if (ch.empty()) {
+				Log::Error() << "Invalid code point: " << (uint32_t) character << " (0x" << std::hex << (uint32_t) character << ")" << std::endl;
+				abort();
+			}
+
+			Log::Error() << "Could not load character '" << ch << "'." << std::endl;
+			abort();
 		}
 
 		return size * (_face->glyph->advance.x / float(_face->units_per_EM));
 	}
 
-	return size * iter->second->character_data.Advance();
+	return size * _character_cache.Get(character).Advance();
 }
 
-unsigned Font::StringWidth(const char *str, unsigned size) const {
-	unsigned width = 0;
-
-	while (*str != 0) {
-		width += CharacterWidth(*str, size);
-		str++;
-	}
-
-	return width;
-}
-
-unsigned Font::StringWidth(const wchar_t *str, unsigned size) const {
+unsigned Font::StringWidth(const char* str, unsigned size) const {
 	unsigned width = 0;
 
 	while (*str != 0) {
@@ -102,14 +74,18 @@ unsigned Font::StringWidth(const std::string& str, unsigned size) const {
 	return StringWidth(str.c_str(), size);
 }
 
-unsigned Font::StringWidth(const std::wstring& str, unsigned size) const {
-	return StringWidth(str.c_str(), size);
-}
-
-Character Font::LoadCharacter_(wchar_t c) {
+Character Font::LoadCharacter_(char32_t c) {
 	// load the character
 	if (FT_Load_Char(_face, c, FT_LOAD_NO_SCALE)) {
-		throw std::runtime_error("Could not load character '" + std::to_string(c) + "'.");
+		std::string ch = Encoding::CodePointToUtf8(c);
+
+		if (ch.empty()) {
+			Log::Error() << "Invalid code point: " << (uint32_t) c << " (0x" << std::hex << (uint32_t) c << ")" << std::endl;
+			abort();
+		}
+
+		Log::Error() << "Could not load character '" << ch << "'." << std::endl;
+		abort();
 	}
 
 	unsigned short em = _face->units_per_EM;
@@ -131,15 +107,17 @@ void Font::Initialize() {
 }
 
 void Font::RegisterFont(const std::string& filename, const std::string& name) {
-    InitializeFreeType_();
+	InitializeFreeType_();
 
 	if (_registered_fonts.find(name) != _registered_fonts.end()) {
-		throw std::runtime_error("Font '" + name + "' already registered");
+		Log::Error() << "Font '" << name << "' already registered" << std::endl;
+		abort();
 	}
 
 	FT_Face face;
 	if (FT_New_Face(*_ft, filename.c_str(), 0, &face)) {
-		throw std::runtime_error("Failed to create font from " + filename);
+		Log::Error() << "Failed to create font from " << filename << std::endl;
+		abort();
 	}
 
 	_registered_fonts.emplace(name, face);
@@ -148,7 +126,8 @@ void Font::RegisterFont(const std::string& filename, const std::string& name) {
 Font& Font::GetFont(const std::string& name) {
 	auto iter = _registered_fonts.find(name);
 	if (iter == _registered_fonts.end()) {
-		throw std::runtime_error("Font '" + name + "' not found. Is it registered?");
+		Log::Error() << "Font '" << name << "' not found. Is it registered?" << std::endl;
+		abort();
 	}
 
 	return iter->second;
@@ -160,11 +139,12 @@ Font& Font::GetDefaultFont() {
 
 void Font::InitializeFreeType_() {
 	if (!_ft) {
-		FT_Library *library = new FT_Library;
+		FT_Library* library = new FT_Library;
 		_ft = std::unique_ptr<FT_Library, delete_free_type_library>(library);
 
 		if (FT_Init_FreeType(_ft.get())) {
-			throw std::runtime_error("FreeType initialization failed.");
+			Log::Error() << "FreeType initialization failed." << std::endl;
+			abort();
 		}
 	}
 }

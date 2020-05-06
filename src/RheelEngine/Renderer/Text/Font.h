@@ -8,6 +8,7 @@
 #include <list>
 
 #include "Character.h"
+#include "../../Util/Cache.h"
 
 namespace rheel {
 
@@ -16,11 +17,6 @@ class RE_API Font {
 	RE_NO_MOVE(Font)
 
 private:
-	struct character_cache_item {
-		wchar_t character{};
-		Character character_data;
-	};
-
 	struct delete_free_type_library {
 		void operator()(FT_Library *ft) {
 			FT_Done_FreeType(*ft);
@@ -32,24 +28,41 @@ public:
 	explicit Font(FT_Face face);
 	~Font();
 
-	const Character& LoadCharacter(wchar_t c);
+	const Character& LoadCharacter(char32_t c);
 
 	unsigned Ascend(unsigned size) const;
 	unsigned Descend(unsigned size) const;
 
+	/**
+	 * Returns the character width in pixels, using a character and its font
+	 * size.
+	 */
 	unsigned CharacterWidth(char character, unsigned size) const;
-	unsigned CharacterWidth(wchar_t character, unsigned size) const;
-	unsigned StringWidth(const char *str, unsigned size) const;
-	unsigned StringWidth(const wchar_t *str, unsigned size) const;
+
+	/**
+	 * Returns the character width in pixels of the given unicode code point and
+	 * its font size.
+	 */
+	unsigned CharacterWidth(char32_t code, unsigned size) const;
+
+	/**
+	 * Returns the string width in pixels of the given unicode string. The
+	 * string must be UTF-8 encoded and null-terminated.
+	 */
+	unsigned StringWidth(const char* str, unsigned size) const;
+
+	/**
+	 * Returns the string width in pixels of the given unicode string. The
+	 * string must be UTF-8 encoded.
+	 * @return
+	 */
 	unsigned StringWidth(const std::string& str, unsigned size) const;
-	unsigned StringWidth(const std::wstring& str, unsigned size) const;
 
 private:
-	Character LoadCharacter_(wchar_t c);
+	Character LoadCharacter_(char32_t c);
 
 	FT_Face _face;
-	std::list<character_cache_item> _character_cache;
-	std::unordered_map<wchar_t, std::list<character_cache_item>::iterator> _character_cache_reference;
+	Cache<char32_t, Character, least_recently_used_policy> _character_cache = Cache<char32_t, Character, least_recently_used_policy>(FONT_CACHE_SIZE);
 
 public:
 	static constexpr auto DEFAULT_FONT = "__default_font__";

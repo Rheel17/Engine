@@ -5,13 +5,14 @@
 
 #include <limits>
 
-#include "../../EngineResources.h"
+#include "Encoding.h"
 #include "../Display/DisplayConfiguration.h"
 #include "../OpenGL/Context.h"
+#include "../../EngineResources.h"
 
-#define STAGE_TRIANGLES        0
+#define STAGE_TRIANGLES     0
 #define STAGE_BEZIER        1
-#define STAGE_RESOLVE        2
+#define STAGE_RESOLVE       2
 #define STAGE_COPY          3
 
 namespace rheel {
@@ -43,26 +44,14 @@ TextRenderer::ogl_data::ogl_data() :
 // This text rendering system is based on the amazing blog post by Evan Wallace:
 // https://medium.com/@evanwallace/easy-scalable-text-rendering-on-the-gpu-c3f4d782c5ac
 
-void TextRenderer::DrawText(Font& font, const Color& color, const std::wstring& text, int x, int y, unsigned size) const {
-	const wchar_t* chars = text.c_str();
-	unsigned length = text.length();
-
-	// draw a maximum of Font::NUM_GLYPHS characters at a time.
-	while (length > 0) {
-		unsigned charsLength = std::min(length, Font::FONT_CACHE_SIZE);
-
-		x = DrawChars_(font, color, chars, charsLength, x, y, size);
-
-		length -= charsLength;
-		chars += charsLength;
-	}
+void TextRenderer::DrawText(Font& font, const Color& color, const std::string& text, int x, int y, unsigned size) const {
+	DrawText(font, color, text.c_str(), x, y, size);
 }
 
-void TextRenderer::DrawText(Font& font, const Color& color, const std::string& text, int x, int y, unsigned size) const {
-	std::wstring wide;
-	wide.assign(text.begin(), text.end());
-
-	DrawText(font, color, wide, x, y, size);
+void TextRenderer::DrawText(Font& font, const Color& color, const char* text, int x, int y, unsigned int size) const {
+	while (*text != 0) {
+		x = DrawChars_(font, color, &text, x, y, size);
+	}
 }
 
 void TextRenderer::ResizeBuffer_(unsigned width, unsigned height) const {
@@ -71,9 +60,7 @@ void TextRenderer::ResizeBuffer_(unsigned width, unsigned height) const {
 	}
 }
 
-int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text, unsigned length, int x, int y, unsigned size) const {
-	assert(length <= Font::FONT_CACHE_SIZE);
-
+int TextRenderer::DrawChars_(Font& font, const Color& color, const char** text, int x, int y, unsigned size) const {
 	auto screen = DisplayConfiguration::Get().resolution;
 	ResizeBuffer_(screen.x, screen.y);
 
@@ -97,8 +84,13 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text
 	std::vector<Character::Triangle> bezierCurves;
 
 	// load the characters and populate the triangle and Bézier curve vectors.
-	for (unsigned i = 0; i < length; i++) {
-		const Character& c = font.LoadCharacter(text[i]);
+	for (unsigned i = 0; i < Font::FONT_CACHE_SIZE; i++) {
+		char32_t character = Encoding::Utf8ToCodePoint(*text);
+		if (character == 0) {
+			break;
+		}
+
+		const Character& c = font.LoadCharacter(character);
 		std::vector<Character::Triangle> cTriangles = c.Triangles();
 		std::vector<Character::Triangle> cBezierCurves = c.BezierCurveTriangles();
 
@@ -111,6 +103,8 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const wchar_t* text
 
 		x += c.Advance() * size;
 		px += c.Advance() * sx;
+
+		*text += Encoding::Utf8Lenght(character);
 	}
 
 	// set the text buffer as render target
