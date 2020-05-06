@@ -23,7 +23,7 @@ bool VignetteElement::IsOpaque() {
 void VignetteElement::DoDraw(float time, float dt) const {
 	const auto& shaderProgram = GetCustomShader(_shader->shader);
 	shaderProgram["parameters"] = vec3{ _inner_radius, _outer_radius, _curvature };
-	shaderProgram["color"] = _color;
+	shaderProgram["color"] = static_cast<vec4>(_color);
 
 	DrawShaderedQuad(GetBounds(), _shader->shader);
 }

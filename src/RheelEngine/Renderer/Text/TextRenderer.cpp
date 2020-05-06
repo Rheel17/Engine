@@ -123,7 +123,7 @@ int TextRenderer::DrawChars_(Font& font, const Color& color, const char** text, 
 		float subpixelWidth = 2.0f / (screen.x * 8);
 		float subpixelHeight = 2.0f / (screen.y * 8);
 
-		_ogl_data->shader["color"] = vec4{ color.r, color.g, color.b, color.a / 4.0f };
+		_ogl_data->shader["color"] = vec4{ color.Red(), color.Green(), color.Blue(), color.Alpha() / 4.0f };
 
 		// find the bounds of the final quad
 		constexpr float fmin = std::numeric_limits<float>::lowest();
