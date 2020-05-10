@@ -1,34 +1,34 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#include "Character.h"
+#include "Glyph.h"
 
 #include <algorithm>
 
 namespace rheel {
 
-Character::contour_point::operator vec2() const {
+Glyph::contour_point::operator vec2() const {
 	return { x, y };
 }
 
-Character::Character(const FT_GlyphSlot& glyph, unsigned short em) {
+Glyph::Glyph(const FT_GlyphSlot& glyph, unsigned short em) {
     LoadTriangles_(glyph->outline, float(em));
 	_advance = glyph->advance.x / float(em);
 }
 
-const std::vector<Character::Triangle>& Character::Triangles() const {
+const std::vector<Glyph::Triangle>& Glyph::Triangles() const {
 	return _triangles;
 }
 
-const std::vector<Character::Triangle>& Character::BezierCurveTriangles() const {
+const std::vector<Glyph::Triangle>& Glyph::BezierCurveTriangles() const {
 	return _bezier_curves;
 }
 
-float Character::Advance() const {
+float Glyph::Advance() const {
 	return _advance;
 }
 
-void Character::LoadTriangles_(const FT_Outline& outline, float em) {
+void Glyph::LoadTriangles_(const FT_Outline& outline, float em) {
 	if (outline.n_contours == 0 || outline.n_points == 0) {
 		return;
 	}
@@ -103,7 +103,7 @@ void Character::LoadTriangles_(const FT_Outline& outline, float em) {
 	}
 }
 
-void Character::AddContour_(const Contour& contour, float em) {
+void Glyph::AddContour_(const Contour& contour, float em) {
 	// add the contour
 	unsigned startIndex = 0;
 
@@ -117,7 +117,7 @@ void Character::AddContour_(const Contour& contour, float em) {
 			// if the previous was more than 1 less than this, we had an 'off'
 			// point in between, so add the Bézier curve.
 			if (i - startIndex > 1) {
-				_bezier_curves.push_back(CreateTriangle_(v1, (vec2) contour[i - 1] / em, v2));
+				_bezier_curves.push_back(CreateBezier_(v1, (vec2) contour[i - 1] / em, v2));
 			}
 
 			// start the new triangle/curve at the current 'on' point.
@@ -126,7 +126,20 @@ void Character::AddContour_(const Contour& contour, float em) {
 	}
 }
 
-Character::Triangle Character::CreateTriangle_(const vec2& v1, const vec2& v2, const vec2& v3) {
+Glyph::Triangle Glyph::CreateTriangle_(const vec2& v1, const vec2& v2, const vec2& v3) {
+	vec2 u = v2 - v1;
+	vec2 v = v3 - v1;
+
+	// calculate the determinant of the matrix [u v]. The sign of y will
+	// determine the side of the third point, and thus if a flip is needed.
+	if (u.y * v.x - u.x * v.y > 0) {
+		return Triangle {{ vec3(v1, -1.0f), vec3(v3, -1.0f), vec3(v2, -1.0f) }};
+	} else {
+		return Triangle {{ vec3(v1, -1.0f), vec3(v2, -1.0f), vec3(v3, -1.0f) }};
+	}
+}
+
+Glyph::Triangle Glyph::CreateBezier_(const vec2& v1, const vec2& v2, const vec2& v3) {
 	vec2 u = v2 - v1;
 	vec2 v = v3 - v1;
 

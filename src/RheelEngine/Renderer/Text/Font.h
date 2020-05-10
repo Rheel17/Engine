@@ -7,7 +7,7 @@
 
 #include <list>
 
-#include "Character.h"
+#include "Glyph.h"
 #include "../../Util/Cache.h"
 
 namespace rheel {
@@ -28,7 +28,7 @@ public:
 	explicit Font(FT_Face face);
 	~Font();
 
-	const Character& LoadCharacter(char32_t c);
+	Glyph LoadCharacter(char32_t c);
 
 	unsigned Ascend(unsigned size) const;
 	unsigned Descend(unsigned size) const;
@@ -59,10 +59,7 @@ public:
 	unsigned StringWidth(const std::string& str, unsigned size) const;
 
 private:
-	Character LoadCharacter_(char32_t c);
-
 	FT_Face _face;
-	Cache<char32_t, Character, least_recently_used_policy> _character_cache = Cache<char32_t, Character, least_recently_used_policy>(FONT_CACHE_SIZE);
 
 public:
 	static constexpr auto DEFAULT_FONT = "__default_font__";
@@ -71,8 +68,6 @@ public:
 	static void RegisterFont(const std::string& filename, const std::string& name);
 	static Font& GetFont(const std::string& name);
 	static Font& GetDefaultFont();
-
-	static constexpr unsigned FONT_CACHE_SIZE = 256;
 
 private:
 	static void InitializeFreeType_();

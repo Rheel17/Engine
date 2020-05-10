@@ -19,10 +19,22 @@ Font::~Font() {
 	FT_Done_Face(_face);
 }
 
-const Character& Font::LoadCharacter(char32_t c) {
-	return _character_cache.Get(c, [this](char32_t c) {
-		return LoadCharacter_(c);
-	});
+Glyph Font::LoadCharacter(char32_t c) {
+	// load the character
+	if (FT_Load_Char(_face, c, FT_LOAD_NO_SCALE)) {
+		std::string ch = Encoding::CodePointToUtf8(c);
+
+		if (ch.empty()) {
+			Log::Error() << "Invalid code point: " << (uint32_t) c << " (0x" << std::hex << (uint32_t) c << ")" << std::endl;
+			abort();
+		}
+
+		Log::Error() << "Could not load character '" << ch << "'." << std::endl;
+		abort();
+	}
+
+	unsigned short em = _face->units_per_EM;
+	return Glyph(_face->glyph, em);
 }
 
 unsigned Font::Ascend(unsigned size) const {
@@ -40,23 +52,19 @@ unsigned Font::CharacterWidth(char character, unsigned size) const {
 }
 
 unsigned Font::CharacterWidth(char32_t character, unsigned size) const {
-	if (!_character_cache.ContainsKey(character)) {
-		if (FT_Load_Char(_face, character, FT_LOAD_NO_SCALE | FT_LOAD_ADVANCE_ONLY)) {
-			std::string ch = Encoding::CodePointToUtf8(character);
+	if (FT_Load_Char(_face, character, FT_LOAD_NO_SCALE | FT_LOAD_ADVANCE_ONLY)) {
+		std::string ch = Encoding::CodePointToUtf8(character);
 
-			if (ch.empty()) {
-				Log::Error() << "Invalid code point: " << (uint32_t) character << " (0x" << std::hex << (uint32_t) character << ")" << std::endl;
-				abort();
-			}
-
-			Log::Error() << "Could not load character '" << ch << "'." << std::endl;
+		if (ch.empty()) {
+			Log::Error() << "Invalid code point: " << (uint32_t) character << " (0x" << std::hex << (uint32_t) character << ")" << std::endl;
 			abort();
 		}
 
-		return size * (_face->glyph->advance.x / float(_face->units_per_EM));
+		Log::Error() << "Could not load character '" << ch << "'." << std::endl;
+		abort();
 	}
 
-	return size * _character_cache.Get(character).Advance();
+	return size * (_face->glyph->advance.x / float(_face->units_per_EM));
 }
 
 unsigned Font::StringWidth(const char* str, unsigned size) const {
@@ -72,24 +80,6 @@ unsigned Font::StringWidth(const char* str, unsigned size) const {
 
 unsigned Font::StringWidth(const std::string& str, unsigned size) const {
 	return StringWidth(str.c_str(), size);
-}
-
-Character Font::LoadCharacter_(char32_t c) {
-	// load the character
-	if (FT_Load_Char(_face, c, FT_LOAD_NO_SCALE)) {
-		std::string ch = Encoding::CodePointToUtf8(c);
-
-		if (ch.empty()) {
-			Log::Error() << "Invalid code point: " << (uint32_t) c << " (0x" << std::hex << (uint32_t) c << ")" << std::endl;
-			abort();
-		}
-
-		Log::Error() << "Could not load character '" << ch << "'." << std::endl;
-		abort();
-	}
-
-	unsigned short em = _face->units_per_EM;
-	return Character(_face->glyph, em);
 }
 
 void Font::Initialize() {
