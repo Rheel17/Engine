@@ -107,8 +107,8 @@ public:
 	/**
 	 * Constructs a cache with the maximum possible size
 	 */
-	Cache() :
-			Cache(std::numeric_limits<SizeType>::max()) {
+	explicit Cache(Policy&& policy = Policy()) :
+			Cache(std::numeric_limits<SizeType>::max(), std::forward<Policy>(policy)) {
 
 		static_assert(std::is_same_v<Policy, keep_policy>, "Default-constructed cache requires keep_policy");
 	}
@@ -116,8 +116,9 @@ public:
 	/**
 	 * Constructs a cache with a maximum number of elements.
 	 */
-	Cache(SizeType capacity) :
-			_capacity(capacity) {}
+	explicit Cache(SizeType capacity, Policy&& policy) :
+			_capacity(capacity),
+			_policy(std::forward<Policy>(policy)) {}
 
 	/**
 	 * Returns the amount of elements in the cache, including the elements that
