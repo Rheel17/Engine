@@ -43,6 +43,7 @@ size_t GlyphBuffer::Load(const char* text) {
 		}
 
 		text += Encoding::Utf8Lenght(character);
+		loaded++;
 	}
 
 	if (updates > 0) {
@@ -85,7 +86,7 @@ bool GlyphBuffer::Load_(char32_t character) {
 		_glyph_memory_count += diff;
 
 		_glyph_memory = static_cast<GlyphDataType*>(std::realloc(_glyph_memory, _glyph_memory_count * sizeof(GlyphDataType)));
-		std::memmove(_glyph_memory + offset + newLength, _glyph_memory + offset + prevLength, (_glyph_memory_count - offset - prevLength) * sizeof(GlyphDataType));
+		std::memmove(_glyph_memory + offset + newLength, _glyph_memory + offset + prevLength, (_glyph_memory_count - offset - newLength) * sizeof(GlyphDataType));
 
 		// update the offsets
 		for (size_t i = _next_slot + 1; i < _cache_size; i++) {

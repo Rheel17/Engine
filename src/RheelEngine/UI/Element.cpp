@@ -255,7 +255,7 @@ bool Element::HasAnimator() const {
 	return static_cast<bool>(_animator);
 }
 
-const TextRenderer& Element::GetTextRenderer() const {
+TextRenderer& Element::GetTextRenderer() const {
 	return _ogl_data->text_renderer;
 }
 
