@@ -21,8 +21,8 @@ public:
 		COPY_READ = GL_COPY_READ_BUFFER,
 		COPY_WRITE = GL_COPY_WRITE_BUFFER,
 		DISPATCH_INDIRECT = GL_DISPATCH_INDIRECT_BUFFER,
-		// GL_ELEMENT_ARRAY_BUFFER is not valid without a VAO context, so putting
-		// it here would only encourage bugs
+		// GL_ELEMENT_ARRAY_BUFFER is not valid without a VAO context,
+		// so putting it here would only encourage bugs
 		PIXEL_PACK = GL_PIXEL_PACK_BUFFER,
 		PIXEL_UNPACK = GL_PIXEL_UNPACK_BUFFER,
 		QUERY = GL_QUERY_BUFFER,
@@ -56,33 +56,57 @@ public:
 
 	/**
 	 * Resets the contents of the buffer.
-	 * Use the usage pramater to specify usage hits to OpenGL. Default is STATIC_DRAW.
-	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * Use the usage pramater to specify usage hits to OpenGL. Default is
+	 * STATIC_DRAW. See
+	 * https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
 	void SetDataEmpty(Usage usage = Usage::STATIC_DRAW);
 
 	/**
-	 * Set the contents of the buffer. Count elements will be read from the data pointer.
-	 * Use the usage parameter to specify usage hits to OpenGL. Default is STATIC_DRAW.
-	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * Set the contents of the buffer. Count elements will be read from the data
+	 * pointer. Use the usage parameter to specify usage hits to OpenGL. Default
+	 * is STATIC_DRAW. See
+	 * https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
-	template<class T>
+	template<typename T>
 	void SetData(const T* data, size_t count, Usage usage = Usage::STATIC_DRAW) {
 		Bind();
 		glBufferData(GLenum(_target), count * sizeof(T), data, GLenum(usage));
 	}
 
 	/**
-	 * Sets the contents of the buffer. All elements from the vector will be read.
-	 * Use the usage parameter to specify usage hits to OpenGL. Default is STATIC_DRAW.
-	 * See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * Sets the contents of the buffer. All elements from the vector will be
+	 * read. Use the usage parameter to specify usage hits to OpenGL.
+	 * Default is STATIC_DRAW. See
+	 * https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
 	 */
 	template<typename T>
 	void SetData(const std::vector<T>& data, Usage usage = Usage::STATIC_DRAW) {
 		SetData(data.data(), data.size(), usage);
+	}
+
+	/**
+	 * Replaces part of the contents of the buffer. Count elements will be read
+	 * from the data pointer. The first element will be put at the specified
+	 * index, measured in elements (not bytes!).
+	 */
+	template<typename T>
+	void SetSubData(size_t index, const T* data, size_t count) {
+		Bind();
+		glBufferSubData(GLenum(_target), index * sizeof(T), count * sizeof(T), data);
+	}
+
+	/**
+	 * Replaces part of the contents of the buffer. All elements of the vector
+	 * will be read. The first element will be put at the specified* index,
+	 * measured in elements (not bytes!).
+	 */
+	template<typename T>
+	void SetSubData(size_t index, const std::vector<T>& data) {
+		SetSubData(index, data.data(), data.size());
 	}
 
 private:
