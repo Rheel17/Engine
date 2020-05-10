@@ -105,8 +105,8 @@ private:
 	Game& _game;
 
 	Element* _mouseover_element = nullptr;
+	Element* _clicked_element = nullptr;
 	Element* _focus_element = nullptr;
-	Element* _grabbed_element = nullptr;
 
 	unsigned _width;
 	unsigned _height;

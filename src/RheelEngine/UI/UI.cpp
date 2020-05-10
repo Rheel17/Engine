@@ -69,7 +69,6 @@ Element* UI::GetFocusElement() const {
 
 void UI::GrabMouse(Element* element) {
 	_game.GetWindow().SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	_grabbed_element = element;
 	_mouseover_element = element;
 	_mouse_grabbed = true;
 }
@@ -77,7 +76,6 @@ void UI::GrabMouse(Element* element) {
 void UI::ReleaseMouse() {
 	_game.GetWindow().SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	_mouse = _game.GetWindow().GetMousePosition();
-	_grabbed_element = nullptr;
 	_mouse_grabbed = false;
 	_mouse_jump = true;
 }
@@ -112,7 +110,7 @@ void UI::OnMouseMove(float x, float y) {
 	_mouse.x = x;
 	_mouse.y = y;
 
-	if (_mouse_down_count > 0) {
+	if (_mouse_down_count > 0 && _mouseover_element != nullptr && _mouseover_element->IsDragEnabled()) {
 		// a mouse button is down, so we drag
 		_mouseover_element->OnMouseDrag_(_mouse_down_position, _mouse);
 		return;
@@ -132,6 +130,12 @@ void UI::OnMouseMove(float x, float y) {
 		}
 	}
 
+	if (_clicked_element != nullptr && _clicked_element != _mouseover_element) {
+		// we moved the mouse away from the element we clicked, so cancel the
+		// click
+		_clicked_element = nullptr;
+	}
+
 	if (_mouseover_element) {
 		if (_mouse_jump) {
 			_mouseover_element->OnMouseJump_(_mouse);
@@ -146,21 +150,25 @@ void UI::OnMouseButton(Input::MouseButton button, Input::Action action, Input::M
 	if (_mouseover_element) {
 		switch (action) {
 			case Input::Action::PRESS:
+				_clicked_element = _mouseover_element;
+
 				if (++_mouse_down_count == 1) {
 					_mouse_down_position = _mouse;
 				}
 
-				if (_mouseover_element->IsFocusable()) {
-					RequestFocus(_mouseover_element);
+				if (_clicked_element->IsFocusable()) {
+					RequestFocus(_clicked_element);
 				}
 
-				_mouseover_element->OnMouseButtonPress_(button, mods);
+				_clicked_element->OnMouseButtonPress_(button, mods);
 				break;
 			case Input::Action::REPEAT:
 				break;
 			case Input::Action::RELEASE:
-				_mouse_down_count--;
-				_mouseover_element->OnMouseButtonRelease_(button, mods);
+				if (_clicked_element) {
+					_mouse_down_count--;
+					_clicked_element->OnMouseButtonRelease_(button, mods);
+				}
 				break;
 		}
 	}
@@ -196,8 +204,8 @@ void UI::InitContainer_() {
 
 	ReleaseMouse();
 	_mouseover_element = nullptr;
+	_clicked_element = nullptr;
 	_focus_element = nullptr;
-	_grabbed_element = nullptr;
 
 	RequestFocus(_ui_container.get());
 }
