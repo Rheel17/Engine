@@ -45,6 +45,7 @@ bool UI::RequestFocus(Element* element) {
 	}
 
 	if (element && !element->IsFocusable()) {
+		Log::Warning() << "Requested focus on non-focusable element" << std::endl;
 		return false;
 	}
 
@@ -207,7 +208,9 @@ void UI::InitContainer_() {
 	_clicked_element = nullptr;
 	_focus_element = nullptr;
 
-	RequestFocus(_ui_container.get());
+	if (_ui_container->IsFocusable()) {
+		RequestFocus(_ui_container.get());
+	}
 }
 
 }

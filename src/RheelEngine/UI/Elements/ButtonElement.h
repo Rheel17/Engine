@@ -13,24 +13,24 @@ class RE_API ButtonElement : public Element {
 
 public:
 	ButtonElement();
-
-	ButtonElement(std::string text) :
-			text(text),
-			_action() {}
-
-	ButtonElement(std::string&& text) :
-			text(std::move(text)),
-			_action() {}
+	ButtonElement(const std::string& text);
+	ButtonElement(std::string&& text);
 
 	template<typename Action>
 	ButtonElement(Action&& action) :
 			text("Button"),
-			_action(std::forward<Action>(action)) {}
+			_action(std::forward<Action>(action)) {
+
+		SetFocusable(true);
+	}
 
 	template<typename Action>
 	ButtonElement(Action&& action, std::string text) :
 			text(text),
-			_action(action) {}
+			_action(action) {
+
+		SetFocusable(true);
+	}
 
 	virtual ~ButtonElement() = default;
 

@@ -7,7 +7,24 @@ namespace rheel {
 
 ButtonElement::ButtonElement() :
 		text("Button"),
-		_action() {}
+		_action() {
+
+	SetFocusable(true);
+}
+
+ButtonElement::ButtonElement(const std::string& text) :
+		text(text),
+		_action() {
+
+	SetFocusable(true);
+}
+
+ButtonElement::ButtonElement(std::string&& text) :
+		text(std::move(text)),
+		_action() {
+
+	SetFocusable(true);
+}
 
 void ButtonElement::PerformAction() const {
 	_action();
@@ -33,6 +50,7 @@ void ButtonElement::DoDraw(float time, float dt) const {
 }
 
 void ButtonElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
+	RequestFocus();
 	_active = true;
 }
 

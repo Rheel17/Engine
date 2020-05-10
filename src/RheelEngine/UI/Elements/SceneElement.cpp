@@ -115,7 +115,7 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 }
 
 void SceneElement::OnMouseMove(const vec2& position) {
-	if (!_scene) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
@@ -126,7 +126,7 @@ void SceneElement::OnMouseMove(const vec2& position) {
 }
 
 void SceneElement::OnMouseJump(const vec2& position) {
-	if (!_scene) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
@@ -148,7 +148,7 @@ void SceneElement::OnMouseDrag(const vec2& origin, const vec2& position) {
 }
 
 void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
-	if (!_scene) {
+	if (!_scene || !HasFocus()) {
 		return;
 	}
 
