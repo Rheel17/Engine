@@ -10,8 +10,8 @@ namespace rheel {
 GlyphBuffer::callback_lru::callback_lru(GlyphBuffer& gb) :
 		_gb(gb) {}
 
-uintptr_t GlyphBuffer::callback_lru::EnsureSpace() {
-	uintptr_t removePtr = least_recently_used_policy::EnsureSpace();
+uintptr_t GlyphBuffer::callback_lru::MakeSpace() {
+	uintptr_t removePtr = least_recently_used_policy::MakeSpace();
 	char32_t remove = *reinterpret_cast<char32_t*>(removePtr);
 
 	_gb._next_slot = remove;
@@ -22,7 +22,12 @@ uintptr_t GlyphBuffer::callback_lru::EnsureSpace() {
 }
 
 GlyphBuffer::GlyphBuffer(Font& font) :
-		_font(font) {}
+		_font(font) {
+
+	// pre-allocate a 256k glyph buffer.
+	_glyph_buffer.SetAllocationPolicy(gl::Buffer::AllocationPolicy::KEEP_BIGGER);
+	_glyph_buffer.SetDataEmptySize(262144, gl::Buffer::Usage::STREAM_DRAW);
+}
 
 GlyphBuffer::~GlyphBuffer() {
 	free(_glyph_memory);
@@ -38,7 +43,7 @@ size_t GlyphBuffer::Load(const char* text) {
 			break;
 		}
 
-		if (!Load_(character)) {
+		if (Load_(character)) {
 			updates++;
 		}
 
@@ -59,7 +64,33 @@ const gl::Buffer& GlyphBuffer::GetGlyphBuffer() const {
 }
 
 const std::pair<size_t, size_t>& GlyphBuffer::GetOffset(char32_t character) const {
-	return _glyph_offsets.find(character)->second;
+	return _glyph_offsets.find(_glyph_index.find(character)->second)->second;
+}
+
+void GlyphBuffer::AddIndices(char32_t character, std::vector<uint32_t>& indices) const {
+	auto[offset, length] = GetOffset(character);
+	const Glyph& glyph = _cache.Get(character);
+
+	size_t triangleCount = glyph.Triangles().size();
+	size_t bezierCount = glyph.BezierCurveTriangles().size();
+
+	// triangles
+	for (size_t i = 0; i < triangleCount; i++) {
+		indices.push_back(offset);
+		indices.push_back(offset + 1 + i * 2);
+		indices.push_back(offset + 2 + i * 2);
+	}
+
+	// bezier curves
+	uint32_t bezierOffset = offset;
+
+	if (triangleCount > 0) {
+		bezierOffset += 1 + 2 * triangleCount;
+	}
+
+	for (size_t i = 0; i < 3 * bezierCount; i++) {
+		indices.push_back(bezierOffset + i);
+	}
 }
 
 bool GlyphBuffer::Load_(char32_t character) {
@@ -71,13 +102,19 @@ bool GlyphBuffer::Load_(char32_t character) {
 
 	// the character was put newly in the buffer
 	assert(_next_slot != _no_slot);
-	_glyphs[_next_slot] = &_cache.Get(character);
+	Glyph& glyph = _cache.Get(character);
+
 	_glyph_index[character] = _next_slot;
 	_cache_size++;
 
 	// actually load the glyph data into the buffer
 	auto[offset, prevLength] = _glyph_offsets[_next_slot];
-	size_t newLength = GetGlyphLength_(*_glyphs[_next_slot]);
+	size_t newLength = GetGlyphLength_(glyph);
+
+	if (offset == 0 && _next_slot > 0) {
+		auto[beforeOffset, beforeLength] = _glyph_offsets[_next_slot - 1];
+		offset = beforeOffset + beforeLength;
+	}
 
 	if (newLength != prevLength) {
 		// reallocate the glyph data array and move values past the current slot
@@ -85,8 +122,13 @@ bool GlyphBuffer::Load_(char32_t character) {
 		ptrdiff_t diff = static_cast<ptrdiff_t>(newLength) - static_cast<ptrdiff_t>(prevLength);
 		_glyph_memory_count += diff;
 
-		_glyph_memory = static_cast<GlyphDataType*>(std::realloc(_glyph_memory, _glyph_memory_count * sizeof(GlyphDataType)));
-		std::memmove(_glyph_memory + offset + newLength, _glyph_memory + offset + prevLength, (_glyph_memory_count - offset - newLength) * sizeof(GlyphDataType));
+		if (_glyph_memory_capacity < _glyph_memory_count) {
+			_glyph_memory_capacity = _glyph_memory_count;
+			_glyph_memory = static_cast<GlyphDataType*>(std::realloc(_glyph_memory, _glyph_memory_capacity * sizeof(GlyphDataType)));
+		}
+
+		std::memmove(_glyph_memory + offset + newLength, _glyph_memory + offset + prevLength,
+				(_glyph_memory_count - offset - newLength) * sizeof(GlyphDataType));
 
 		// update the offsets
 		for (size_t i = _next_slot + 1; i < _cache_size; i++) {
@@ -94,7 +136,7 @@ bool GlyphBuffer::Load_(char32_t character) {
 		}
 	}
 
-	LoadGlyph_(*_glyphs[_next_slot], _glyph_memory + offset);
+	LoadGlyph_(glyph, _glyph_memory + offset);
 	_glyph_offsets[_next_slot] = std::make_pair(offset, newLength);
 
 	// update the next slot
@@ -108,18 +150,31 @@ bool GlyphBuffer::Load_(char32_t character) {
 }
 
 size_t GlyphBuffer::GetGlyphLength_(const Glyph& glyph) {
-	return 3 * (glyph.Triangles().size() + glyph.BezierCurveTriangles().size());
+	size_t length = 3 * glyph.BezierCurveTriangles().size();
+
+	if (glyph.Triangles().size() > 0) {
+		length += 1 + 2 * glyph.Triangles().size();
+	}
+
+	return length;
 }
 
 void GlyphBuffer::LoadGlyph_(const Glyph& glyph, GlyphBuffer::GlyphDataType* array) {
-	for (const auto& triangle : glyph.Triangles()) {
-		array[0] = triangle[0];
-		array[1] = triangle[1];
-		array[2] = triangle[2];
-
-		array += 3;
+	// common point for the triangles
+	if (glyph.Triangles().size() > 0) {
+		array[0] = glyph.Triangles()[0][0];
+		array++;
 	}
 
+	// other point for triangles
+	for (const auto& triangle : glyph.Triangles()) {
+		array[0] = triangle[1];
+		array[1] = triangle[2];
+
+		array += 2;
+	}
+
+	// bezier curves
 	for (const auto& triangle : glyph.BezierCurveTriangles()) {
 		array[0] = triangle[0];
 		array[1] = triangle[1];

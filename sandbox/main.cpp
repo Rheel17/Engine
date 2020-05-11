@@ -1,4 +1,5 @@
 #include <RheelEngine.h>
+#include <RheelEngine/Renderer/Text/Encoding.h>
 
 using namespace rheel;
 
@@ -24,11 +25,14 @@ class LotsOfText : public Element {
 
 protected:
 	virtual void DoDraw(float time, float dt) const override {
-		// for (int i = 0; i < GetBounds().width / 10; i++) {
-		// 	for (int j = 0; j < GetBounds().height / 10; j++) {
-		// 		GetTextRenderer().DrawText(Font::GetDefaultFont(), 0xFFFFFF, "This is a text", i * 10, j * 10, 10);
-		// 	}
-		// }
+		char32_t c = 0;
+
+		for (int i = 0; i < GetBounds().width / 80; i++) {
+			for (int j = 0; j < GetBounds().height / 80; j++) {
+				GetTextRenderer().DrawText(Font::GetDefaultFont(), 0xFFFFFF, Encoding::CodePointToUtf8(c), i * 20, j * 20, 20);
+				c++;
+			}
+		}
 	}
 
 };
@@ -138,8 +142,8 @@ public:
 		ui.AddConstraint(crosshairElement, Constraint::TOP, nullptr, Constraint::TOP);
 		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM);
 
-		auto fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
-		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
+		// auto fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
+		// ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
 
 		auto buttonElement = ui.InsertElement(ButtonElement([this](){ Stop(); }));
 		ui.AddConstraint(buttonElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT,  100);
@@ -150,7 +154,7 @@ public:
 		ui.AddConstraint(lotsOfText, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
 		GetUI().SetContainer(std::move(ui));
-		GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
+		// GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
 	}
 
 	static DisplayConfiguration GetDisplayConfiguration_() {

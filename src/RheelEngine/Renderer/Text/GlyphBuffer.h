@@ -19,7 +19,7 @@ class RE_API GlyphBuffer {
 	struct callback_lru : public least_recently_used_policy {
 		callback_lru(GlyphBuffer& gb);
 
-		virtual uintptr_t EnsureSpace() override;
+		virtual uintptr_t MakeSpace() override;
 
 	private:
 		GlyphBuffer& _gb;
@@ -48,6 +48,13 @@ public:
 	 */
 	const std::pair<size_t, size_t>& GetOffset(char32_t character) const;
 
+	/**
+	 * Adds the indices for the given character to the index vector. If the
+	 * specified character is not loaded in the glyph buffer using the last
+	 * Load(...) call, calling this method causes undefined behaviour.
+	 */
+	void AddIndices(char32_t character, std::vector<uint32_t>& indices) const;
+
 public:
 	static constexpr size_t CAPACITY = 256;
 
@@ -57,7 +64,6 @@ private:
 	Font& _font;
 
 	Cache<char32_t, Glyph, callback_lru> _cache{ CAPACITY, callback_lru(*this) };
-	std::array<Glyph*, CAPACITY> _glyphs{};
 	std::unordered_map<char32_t, size_t> _glyph_index;
 	std::unordered_map<size_t, std::pair<size_t, size_t>> _glyph_offsets;
 	size_t _next_slot = 0;
@@ -69,6 +75,7 @@ private:
 
 	GlyphDataType* _glyph_memory = nullptr;
 	size_t _glyph_memory_count = 0;
+	size_t _glyph_memory_capacity = 0;
 
 	gl::Buffer _glyph_buffer{ gl::Buffer::Target::ARRAY };
 

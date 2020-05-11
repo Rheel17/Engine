@@ -77,8 +77,7 @@ public:
 	 * ARRAY target. Use the attributes vector the specify actual vertex
 	 * attributes.
 	 */
-	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes,
-			bool instanced = false);
+	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, bool instanced = false);
 
 	/**
 	 * Set the vertex attributes of this VAO. The specified buffer must have an
@@ -141,6 +140,13 @@ public:
 	 * that the VAO is complete, i.e. it has vertex data and indices.
 	 */
 	void DrawElements(Mode mode, unsigned instances = 1) const;
+
+	/**
+	 * Draws the contents ofthe VAO using glDrawElementsIndirect, using the
+	 * indirect buffer as GL_DRAW_INDRECT_BUFFER. Make sure that the indirect
+	 * buffer's target is DRAW_INDRECT.
+	 */
+	void MultiDrawElementsIndirect(VertexArray::Mode mode, const Buffer& indirect, size_t count) const;
 
 private:
 	template<typename T>

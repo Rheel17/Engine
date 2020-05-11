@@ -18,9 +18,29 @@ Buffer::Target Buffer::GetTarget() const {
 	return _target;
 }
 
-void Buffer::SetDataEmpty(Buffer::Usage usage) {
+Buffer::AllocationPolicy Buffer::GetAllocationPolicy() const {
+	return _allocation_policy;
+}
+
+void Buffer::SetAllocationPolicy(AllocationPolicy policy) {
+	_allocation_policy = policy;
+}
+
+void Buffer::SetDataEmpty(Usage usage) {
 	Bind();
 	glBufferData(GLenum(_target), 0, nullptr, GLenum(usage));
+	glFinish();
+
+	_byte_size = 0;
+}
+
+void Buffer::SetDataEmptySize(size_t byteCount, Buffer::Usage usage) {
+	Bind();
+
+	if (_allocation_policy == AllocationPolicy::REALLOCATE || byteCount > _byte_size) {
+		glBufferData(GLenum(_target), byteCount, nullptr, GLenum(usage));
+		_byte_size = byteCount;
+	}
 }
 
 std::ostream& operator<<(std::ostream& out, Buffer::Target target) {
@@ -49,6 +69,8 @@ std::ostream& operator<<(std::ostream& out, Buffer::Target target) {
 			return out << "TRANSFORM_FEEDBACK";
 		case Buffer::Target::UNIFORM:
 			return out << "UNIFORM";
+		case Buffer::Target::DRAW_INDIRECT:
+			return out << "DRAW_INDIRECT";
 	}
 
 	return out;

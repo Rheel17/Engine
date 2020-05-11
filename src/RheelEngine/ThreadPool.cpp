@@ -7,7 +7,7 @@ namespace rheel {
 
 ThreadPool::ThreadPool(const Window& window) {
 	// create the threads
-	unsigned numThreads = std::thread::hardware_concurrency();
+	unsigned numThreads = 1;//std::thread::hardware_concurrency();
 	_threads.reserve(numThreads);
 
 	for (unsigned i = 0; i < numThreads; i++) {

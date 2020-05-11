@@ -29,7 +29,8 @@ public:
 		SHADER_STORAGE = GL_SHADER_STORAGE_BUFFER,
 		TEXTURE = GL_TEXTURE_BUFFER,
 		TRANSFORM_FEEDBACK = GL_TRANSFORM_FEEDBACK_BUFFER,
-		UNIFORM = GL_UNIFORM_BUFFER
+		UNIFORM = GL_UNIFORM_BUFFER,
+		DRAW_INDIRECT = GL_DRAW_INDIRECT_BUFFER
 	};
 
 	enum class Usage {
@@ -44,6 +45,22 @@ public:
 		DYNAMIC_COPY = GL_DYNAMIC_COPY
 	};
 
+	enum class AllocationPolicy {
+		/**
+		 * Reallocate the buffer on every SetData(...) call. This translates to
+		 * a glBufferData call.
+		 */
+		REALLOCATE,
+
+		/**
+		 * If the buffer was previously bigger or equal of size, keep the buffer
+		 * on the SetData(...) call. If the buffer needs to grow, this
+		 * translates to a glBufferData call, but if the buffer does not need to
+		 * grow, it translates to a glBufferSubData call.
+		 */
+		KEEP_BIGGER
+	};
+
 public:
 	explicit Buffer(Target target);
 
@@ -52,16 +69,43 @@ public:
 	 */
 	void Bind() const;
 
+	/**
+	 * Returns the target of this buffer.
+	 */
 	Target GetTarget() const;
 
 	/**
-	 * Resets the contents of the buffer.
-	 * Use the usage pramater to specify usage hits to OpenGL. Default is
-	 * STATIC_DRAW. See
+	 * Returns the current allocation policy for this buffer.
+	 */
+	AllocationPolicy GetAllocationPolicy() const;
+
+	/**
+	 * Sets the current allocation policy for this buffer.
+	 */
+	void SetAllocationPolicy(AllocationPolicy policy);
+
+	/**
+	 * Resets the contents of the buffer. Use the usage parameter to specify
+	 * usage hits to OpenGL. Default is STATIC_DRAW. See
 	 * https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
 	 * for more information on this.
+	 *
+	 * Note: this method ignores the allocation policy and will always use
+	 * glBufferData to clear the buffer.
 	 */
 	void SetDataEmpty(Usage usage = Usage::STATIC_DRAW);
+
+	/**
+	 * Allocates the amount of bytes on the GPU for this buffer, but doesn't
+	 * supply any data. Use the usage parameter to specify usage hits to OpenGL.
+	 * Default is STATIC_DRAW. See
+	 * https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
+	 * for more information on this.
+	 *
+	 * If this buffer's allocation policy is KEEP_BIGGER and the buffer is
+	 * already bigger than the required byte count, this method does nothing.
+	 */
+	void SetDataEmptySize(size_t byteCount, Usage usage = Usage::STATIC_DRAW);
 
 	/**
 	 * Set the contents of the buffer. Count elements will be read from the data
@@ -73,7 +117,19 @@ public:
 	template<typename T>
 	void SetData(const T* data, size_t count, Usage usage = Usage::STATIC_DRAW) {
 		Bind();
-		glBufferData(GLenum(_target), count * sizeof(T), data, GLenum(usage));
+
+		size_t byteCount = count * sizeof(T);
+
+		if (_allocation_policy == AllocationPolicy::REALLOCATE || byteCount > _byte_size) {
+			glBufferData(GLenum(_target), byteCount, data, GLenum(usage));
+			glFinish();
+			_byte_size = byteCount;
+		} else if (_allocation_policy == AllocationPolicy::KEEP_BIGGER) {
+			glBufferSubData(GLenum(_target), 0, byteCount, data);
+		} else {
+			Log::Error() << "Invalid allocation policy" << std::endl;
+			abort();
+		}
 	}
 
 	/**
@@ -111,6 +167,8 @@ public:
 
 private:
 	Target _target;
+	AllocationPolicy _allocation_policy = AllocationPolicy::KEEP_BIGGER;
+	size_t _byte_size = 0;
 
 };
 

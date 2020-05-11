@@ -90,7 +90,7 @@ private:
 
 	// It doesn't really make sense to make this ContextImpl-local, since it is
 	// just meta state
-	unsigned _current_active_texture;
+	unsigned _current_active_texture = 0;
 
 public:
 	static Context& Current();

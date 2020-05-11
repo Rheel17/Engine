@@ -5,25 +5,11 @@
 #define RHEELENGINE_TEXTRENDERER_H
 #include "../../_common.h"
 
-#include "GlyphBuffer.h"
-#include "../OpenGL/VertexArray.h"
-#include "../OpenGL/Program.h"
-#include "../OpenGL/Framebuffer.h"
-#include "../../Color.h"
+#include "FontRenderer.h"
 
 namespace rheel {
 
 class RE_API TextRenderer {
-	struct ogl_data {
-		ogl_data();
-		gl::Buffer resolve_vbo;
-		gl::VertexArray resolve_vao;
-
-		gl::Framebuffer text_buffer;
-		gl::Program shader;
-	};
-
-	mutable pseudo_static_pointer<ogl_data> _ogl_data;
 
 public:
 	/**
@@ -39,10 +25,9 @@ public:
 	void DrawText(Font& font, const Color& color, const char* text, int x, int y, unsigned size);
 
 private:
-	void ResizeBuffer_(unsigned width, unsigned height) const;
 	int DrawChars_(Font& font, const Color& color, const char** text, int x, int y, unsigned size);
 
-	Cache<Font*, std::unique_ptr<GlyphBuffer>> _glyph_buffers;
+	Cache<Font*, std::unique_ptr<FontRenderer>> _renderers;
 
 };
 

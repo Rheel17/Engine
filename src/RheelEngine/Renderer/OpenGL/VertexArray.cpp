@@ -154,8 +154,19 @@ void VertexArray::DrawElements(VertexArray::Mode mode, unsigned instances) const
 	DrawElements(mode, _index_count, 0, instances);
 }
 
-void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride,
-		bool instanced) {
+void VertexArray::MultiDrawElementsIndirect(VertexArray::Mode mode, const Buffer& indirect, size_t count) const {
+	if (indirect.GetTarget() != Buffer::Target::DRAW_INDIRECT) {
+		Log::Error() << "Indirect buffer does not have target DRAW_INDIRECT" << std::endl;
+		abort();
+	}
+
+	Bind();
+	indirect.Bind();
+
+	glMultiDrawElementsIndirect(GLenum(mode), _index_type, nullptr, count, 0);
+}
+
+void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced) {
 	std::vector<VertexAttribute> attributes;
 
 	GLsizeiptr offset = 0;
