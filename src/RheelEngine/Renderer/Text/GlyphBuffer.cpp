@@ -14,7 +14,7 @@ uintptr_t GlyphBuffer::callback_lru::MakeSpace() {
 	uintptr_t removePtr = least_recently_used_policy::MakeSpace();
 	char32_t remove = *reinterpret_cast<char32_t*>(removePtr);
 
-	_gb._next_slot = remove;
+	_gb._next_slot = _gb._glyph_index[remove];
 	_gb._glyph_index.erase(remove);
 	_gb._cache_size--;
 
@@ -102,6 +102,7 @@ bool GlyphBuffer::Load_(char32_t character) {
 
 	// the character was put newly in the buffer
 	assert(_next_slot != _no_slot);
+	assert(_next_slot < CAPACITY);
 	Glyph& glyph = _cache.Get(character);
 
 	_glyph_index[character] = _next_slot;
