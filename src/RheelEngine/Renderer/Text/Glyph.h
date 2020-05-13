@@ -33,6 +33,7 @@ public:
 	const std::vector<Triangle>& Triangles() const;
 	const std::vector<Triangle>& BezierCurveTriangles() const;
 	float Advance() const;
+	const vec4& Bounds() const;
 
 private:
 	Glyph(const FT_GlyphSlot& glyph, unsigned short em);
@@ -47,6 +48,7 @@ private:
 	std::vector<Triangle> _triangles;
 	std::vector<Triangle> _bezier_curves;
 	float _advance;
+	vec4 _bounds;
 
 };
 

@@ -87,7 +87,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/ContextEnables.cpp RheelEngine/Renderer/OpenGL/ContextEnables.h 
 		RheelEngine/Renderer/OpenGL/ContextFunctions.cpp RheelEngine/Renderer/OpenGL/ContextFunctions.h 
 		RheelEngine/Renderer/OpenGL/Debug.cpp RheelEngine/Renderer/OpenGL/Debug.h 
-		RheelEngine/Renderer/OpenGL/DrawElementsIndirectCommand.h 
+		RheelEngine/Renderer/OpenGL/DrawIndirectBuffer.h 
 		RheelEngine/Renderer/OpenGL/Enums.h 
 		RheelEngine/Renderer/OpenGL/Framebuffer.cpp RheelEngine/Renderer/OpenGL/Framebuffer.h 
 		RheelEngine/Renderer/OpenGL/Handle.h 

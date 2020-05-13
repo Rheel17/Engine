@@ -56,6 +56,23 @@ void ContextFunctions::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, 
 	}
 }
 
+void ContextFunctions::SetLogicOp(LogicOp opcode) {
+	// check if a state change is necessary
+	if (GetLogicOp_() == opcode) {
+		return;
+	}
+
+	// perform the state change
+	glLogicOp(GLenum(opcode));
+
+	// store the state change
+	if (_parent == nullptr ? (opcode == _default_logic_op) : (opcode == _parent->GetLogicOp_())) {
+		_logic_op.reset();
+	} else {
+		_logic_op = opcode;
+	}
+}
+
 void ContextFunctions::SetDepthFunction(CompareFunction func) {
 	// check if a state change is necessary
 	if (GetDepthFunction_() == func) {
@@ -268,6 +285,21 @@ std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> ContextFunctions:
 
 	// default
 	return _default_blending_factors;
+}
+
+LogicOp ContextFunctions::GetLogicOp_() const {
+	// check the current instance
+	if (_logic_op.has_value()) {
+		return *_logic_op;
+	}
+
+	// check the parent
+	if (_parent != nullptr) {
+		return _parent->GetLogicOp_();
+	}
+
+	// default
+	return _default_logic_op;
 }
 
 CompareFunction ContextFunctions::GetDepthFunction_() const {

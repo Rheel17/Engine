@@ -18,8 +18,12 @@ class RE_API FontRenderer {
 		static_data();
 
 		gl::Framebuffer text_buffer;
+
 		gl::Program draw_program;
 		gl::Program resolve_program;
+
+		gl::VertexArray resolve_vao;
+		gl::Buffer resolve_vbo;
 	};
 
 	pseudo_static_pointer<static_data> _static_data;
@@ -43,7 +47,7 @@ private:
 	GlyphBuffer _glyph_buffer;
 	gl::VertexArray _character_vao;
 	gl::Buffer _transform_buffer{ gl::Buffer::Target::ARRAY };
-	gl::Buffer _indirect_buffer{ gl::Buffer::Target::DRAW_INDIRECT };
+	gl::DrawElementsIndirectBuffer _indirect_buffer;
 
 };
 

@@ -37,21 +37,28 @@ public:
 	size_t Load(const char* text);
 
 	/**
+	 * Returns a loaded glyph for the character. If the specified character was
+	 * not loaded in the glyph buffer using the last Load(...) call, calling
+	 * this method will fail.
+	 */
+	const Glyph& GetLoadedGlyph(char32_t c);
+
+	/**
 	 * Returns the GPU buffer.
 	 */
 	const gl::Buffer& GetGlyphBuffer() const;
 
 	/**
 	 * Returns the [position, count] of the loaded glyph. If the specified
-	 * character is not loaded in the glyph buffer using the last Load(...)
-	 * call, calling this method causes undefined behaviour.
+	 * character was not loaded in the glyph buffer using the last Load(...)
+	 * call, calling this method will fail.
 	 */
 	const std::pair<size_t, size_t>& GetOffset(char32_t character) const;
 
 	/**
 	 * Adds the indices for the given character to the index vector. If the
-	 * specified character is not loaded in the glyph buffer using the last
-	 * Load(...) call, calling this method causes undefined behaviour.
+	 * specified character was not loaded in the glyph buffer using the last
+	 * Load(...) call, calling this method will fail.
 	 */
 	void AddIndices(char32_t character, std::vector<uint32_t>& indices) const;
 

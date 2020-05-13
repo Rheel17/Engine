@@ -59,6 +59,10 @@ size_t GlyphBuffer::Load(const char* text) {
 	return loaded;
 }
 
+const Glyph& GlyphBuffer::GetLoadedGlyph(char32_t c) {
+	return _cache.Get(c);
+}
+
 const gl::Buffer& GlyphBuffer::GetGlyphBuffer() const {
 	return _glyph_buffer;
 }

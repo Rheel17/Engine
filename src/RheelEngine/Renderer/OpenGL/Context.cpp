@@ -116,6 +116,10 @@ void Context::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFact
 	_context_stack.top()->functions.SetBlendFunction(srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
+void Context::SetLogicOp(LogicOp opcode) {
+	_context_stack.top()->functions.SetLogicOp(opcode);
+}
+
 void Context::SetDepthFunction(CompareFunction func) {
 	_context_stack.top()->functions.SetDepthFunction(func);
 }

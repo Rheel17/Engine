@@ -12,8 +12,14 @@ Glyph::contour_point::operator vec2() const {
 }
 
 Glyph::Glyph(const FT_GlyphSlot& glyph, unsigned short em) {
-    LoadTriangles_(glyph->outline, float(em));
+	LoadTriangles_(glyph->outline, float(em));
 	_advance = glyph->advance.x / float(em);
+	_bounds = vec4(
+			glyph->metrics.horiBearingX,
+			glyph->metrics.horiBearingY - glyph->metrics.height,
+			glyph->metrics.horiBearingX + glyph->metrics.width,
+			glyph->metrics.horiBearingY
+	) / float(em);
 }
 
 const std::vector<Glyph::Triangle>& Glyph::Triangles() const {
@@ -26,6 +32,10 @@ const std::vector<Glyph::Triangle>& Glyph::BezierCurveTriangles() const {
 
 float Glyph::Advance() const {
 	return _advance;
+}
+
+const vec4& Glyph::Bounds() const {
+	return _bounds;
 }
 
 void Glyph::LoadTriangles_(const FT_Outline& outline, float em) {

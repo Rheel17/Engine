@@ -101,7 +101,7 @@ ModelRenderer::ModelRenderer(const Model& model) :
 
 	_vao.SetVertexAttributes<vec3, vec3, vec2>(_vertex_buffer_object);
 	_vao.SetVertexIndices(model.GetIndices());
-	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ObjectData), true);
+	_vao.SetVertexAttributes<mat4, mat4, vec4, vec4>(_object_data_buffer, sizeof(ObjectData), 1);
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddObject() {

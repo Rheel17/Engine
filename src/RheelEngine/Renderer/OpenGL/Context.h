@@ -69,6 +69,7 @@ public:
 	void SetClearColor(float red, float green, float blue, float alpha);
 	void SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor);
 	void SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha);
+	void SetLogicOp(LogicOp opcode);
 	void SetDepthFunction(CompareFunction func);
 	void SetCullFace(CullFace mode);
 	void SetColorMask(bool red, bool green, bool blue, bool alpha);
