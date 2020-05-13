@@ -211,6 +211,11 @@ void ContextFunctions::ResetChanges() {
 		glBlendFuncSeparate(GLenum(srcRGB), GLenum(dstRGB), GLenum(srcAlpha), GLenum(dstAlpha));
 	}
 
+	if (_logic_op.has_value()) {
+		const auto& opcode = _parent == nullptr ? _default_logic_op : _parent->GetLogicOp_();
+		glLogicOp(GLenum(opcode));
+	}
+
 	if (_depth_function.has_value()) {
 		const auto& func = _parent == nullptr ? _default_depth_function : _parent->GetDepthFunction_();
 		glDepthFunc(GLenum(func));

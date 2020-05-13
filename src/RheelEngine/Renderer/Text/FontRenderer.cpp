@@ -116,8 +116,8 @@ int FontRenderer::Render(const char** text, int x, int y) {
 		// draw the glyphs
 		gl::ContextScope cs1;
 
-		gl::Context::Current().Enable(gl::Capability::COLOR_LOGIC_OP);
 		gl::Context::Current().Disable(gl::Capability::BLEND);
+		gl::Context::Current().Enable(gl::Capability::COLOR_LOGIC_OP);
 		gl::Context::Current().SetLogicOp(gl::LogicOp::XOR);
 
 		_static_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
