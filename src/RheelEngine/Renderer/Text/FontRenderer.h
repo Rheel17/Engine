@@ -45,8 +45,6 @@ private:
 	Color _color = 0xFFFFFF;
 
 	GlyphBuffer _glyph_buffer;
-	gl::VertexArray _character_vao;
-	gl::Buffer _transform_buffer{ gl::Buffer::Target::ARRAY };
 	gl::DrawElementsIndirectBuffer _indirect_buffer;
 
 };

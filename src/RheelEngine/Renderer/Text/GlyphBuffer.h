@@ -7,7 +7,7 @@
 
 #include "Font.h"
 #include "Glyph.h"
-#include "../OpenGL/Buffer.h"
+#include "../OpenGL/VertexArray.h"
 #include "../../Util/Cache.h"
 
 namespace rheel {
@@ -27,7 +27,7 @@ class RE_API GlyphBuffer {
 	};
 
 public:
-	GlyphBuffer(Font& font);
+	GlyphBuffer(Font& font, unsigned samples);
 	~GlyphBuffer();
 
 	/**
@@ -44,35 +44,37 @@ public:
 	const Glyph& GetLoadedGlyph(char32_t c);
 
 	/**
-	 * Returns the GPU buffer.
+	 * Returns the buffer for transforms.
 	 */
-	const gl::Buffer& GetGlyphBuffer() const;
+	gl::Buffer& GetTransformBuffer();
 
 	/**
-	 * Returns the [position, count] of the loaded glyph. If the specified
-	 * character was not loaded in the glyph buffer using the last Load(...)
-	 * call, calling this method will fail.
+	 * Returns the VAO
 	 */
-	const std::pair<size_t, size_t>& GetOffset(char32_t character) const;
+	const gl::VertexArray& GetVertexArray() const;
 
 	/**
-	 * Adds the indices for the given character to the index vector. If the
-	 * specified character was not loaded in the glyph buffer using the last
+	 * Returns the [position, count] of the loaded glyph in the index buffer. If
+	 * the specified character was not loaded in the glyph buffer using the last
 	 * Load(...) call, calling this method will fail.
 	 */
-	void AddIndices(char32_t character, std::vector<uint32_t>& indices) const;
+	const std::pair<unsigned, unsigned>& GetOffset(char32_t character) const;
 
 public:
 	static constexpr size_t CAPACITY = 256;
 
 private:
 	bool Load_(char32_t character);
+	void UpdateIndices_();
+	void AddIndices_(char32_t character, std::vector<uint32_t>& indices);
 
 	Font& _font;
 
 	Cache<char32_t, Glyph, callback_lru> _cache{ CAPACITY, callback_lru(*this) };
-	std::unordered_map<char32_t, size_t> _glyph_index;
+	std::array<char32_t, CAPACITY> _glyphs;
+	std::unordered_map<char32_t, size_t> _glyph_slot;
 	std::unordered_map<size_t, std::pair<size_t, size_t>> _glyph_offsets;
+	std::unordered_map<char32_t, std::pair<unsigned, unsigned>> _glyph_index_offsets;
 	size_t _next_slot = 0;
 	size_t _cache_size = 0;
 
@@ -85,6 +87,8 @@ private:
 	size_t _glyph_memory_capacity = 0;
 
 	gl::Buffer _glyph_buffer{ gl::Buffer::Target::ARRAY };
+	gl::Buffer _transform_buffer{ gl::Buffer::Target::ARRAY };
+	gl::VertexArray _glyph_vao;
 
 private:
 	static constexpr size_t _no_slot = std::numeric_limits<size_t>::max();

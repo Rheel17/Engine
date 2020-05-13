@@ -17,5 +17,6 @@ void main(void) {
 	}
 
 	float fraction = float(samples) / 4.0;
-	frag_Color = color * fraction;
+	frag_Color = color;
+	frag_Color.a *= fraction;
 }

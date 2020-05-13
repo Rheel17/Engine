@@ -37,14 +37,7 @@ FontRenderer::static_data::static_data() :
 
 FontRenderer::FontRenderer(Font& font) :
 		_font(font),
-		_glyph_buffer(font) {
-
-	_transform_buffer.SetAllocationPolicy(gl::Buffer::AllocationPolicy::KEEP_BIGGER);
-	_indirect_buffer.SetAllocationPolicy(gl::Buffer::AllocationPolicy::KEEP_BIGGER);
-
-	_character_vao.SetVertexAttributes<vec3>(_glyph_buffer.GetGlyphBuffer());
-	_character_vao.SetVertexAttributes<vec4>(_transform_buffer, 0, 4);
-}
+		_glyph_buffer(font, 4) {}
 
 void FontRenderer::SetSize(unsigned int size) {
 	_size = size;
@@ -78,7 +71,6 @@ int FontRenderer::Render(const char** text, int x, int y) {
 	float by = 400.0f / screen.y;
 
 	// prepare the draw
-	std::vector<unsigned> indices;
 	std::vector<vec4> transforms;
 	gl::DrawElementsIndirectBuffer::Commands commands;
 
@@ -87,19 +79,15 @@ int FontRenderer::Render(const char** text, int x, int y) {
 	for (unsigned i = 0; i < count; i++) {
 		char32_t c = Encoding::Utf8ToCodePoint(*text);
 
-		// add the indices to the index buffer
-		// TODO: this can also be done by a glyph-buffer buffer
-		unsigned indexOffset = indices.size();
-		_glyph_buffer.AddIndices(c, indices);
-		unsigned indexCount = indices.size() - indexOffset;
+		const auto&[offset, count] = _glyph_buffer.GetOffset(c);
 
 		// add the draw call
 		commands.push_back({
-				indexCount,  // count          (glyph size)
-				4,           // instance_count (samples)
-				indexOffset, // first_index    (glyph start)
-				0,           // base_vertex
-				i            // base_instance  (glyph index)
+				count,  // count          (glyph size)
+				4,      // instance_count (samples)
+				offset, // first_index    (glyph start)
+				0,      // base_vertex
+				i       // base_instance  (glyph index)
 		});
 
 		// transform the glyph
@@ -121,8 +109,7 @@ int FontRenderer::Render(const char** text, int x, int y) {
 	}
 
 	// upload the buffers
-	_character_vao.SetVertexIndices(indices);
-	_transform_buffer.SetData(transforms);
+	_glyph_buffer.GetTransformBuffer().SetData(transforms);
 	_indirect_buffer.SetData(commands);
 
 	{
@@ -135,7 +122,7 @@ int FontRenderer::Render(const char** text, int x, int y) {
 
 		_static_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
 		_static_data->draw_program.Use();
-		_character_vao.DrawElementsIndirect(gl::VertexArray::Mode::TRIANGLES, _indirect_buffer, count);
+		_glyph_buffer.GetVertexArray().DrawElementsIndirect(gl::VertexArray::Mode::TRIANGLES, _indirect_buffer, count);
 	}
 
 	// resolve to the main framebuffer

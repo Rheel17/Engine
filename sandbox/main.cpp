@@ -21,22 +21,6 @@ private:
 
 };
 
-class LotsOfText : public Element {
-
-protected:
-	virtual void DoDraw(float time, float dt) const override {
-		char32_t c = 0;
-
-		for (int i = 0; i < GetBounds().width / 20; i++) {
-			for (int j = 0; j < GetBounds().height / 20; j++) {
-				GetTextRenderer().DrawText(Font::GetDefaultFont(), 0xFFFFFF, Encoding::CodePointToUtf8(c), i * 20, j * 20, 20);
-				c++;
-			}
-		}
-	}
-
-};
-
 static void createCube(Entity* cube, Game& game) {
 	static auto boxModel = StaticModelGeneratorBox({ 1.0f, 1.0f, 1.0f })();
 	auto boxShader = game.GetAssetLoader().glsl.Load("Resources/test_shader.glsl");
@@ -148,10 +132,6 @@ public:
 		auto buttonElement = ui.InsertElement(ButtonElement([this](){ Stop(); }));
 		ui.AddConstraint(buttonElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT,  100);
 		ui.AddConstraint(buttonElement, Constraint::TOP_LEFT, buttonElement, Constraint::BOTTOM_RIGHT, -100);
-
-		auto lotsOfText = ui.InsertElement(LotsOfText());
-		ui.AddConstraint(lotsOfText, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
-		ui.AddConstraint(lotsOfText, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
 		GetUI().SetContainer(std::move(ui));
 		GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
