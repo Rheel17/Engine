@@ -29,6 +29,7 @@ FontRenderer::static_data::static_data() :
 	resolve_program.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_fontshader_resolve_vert_glsl"));
 	resolve_program.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_fontshader_resolve_frag_glsl"));
 	resolve_program.Link();
+	resolve_program["color"] = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	GLfloat triangles[] = { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
 	resolve_vbo.SetData(triangles, sizeof(triangles));
@@ -44,7 +45,11 @@ void FontRenderer::SetSize(unsigned int size) {
 }
 
 void FontRenderer::SetColor(Color color) {
-	_color = color;
+	if (_color != color) {
+		gl::ContextScope cs;
+		_color = color;
+		_static_data->resolve_program["color"] = (vec4) color;
+	}
 }
 
 int FontRenderer::Render(const char** text, int x, int y) {
@@ -142,7 +147,6 @@ int FontRenderer::Render(const char** text, int x, int y) {
 	// resolve to the main framebuffer
 	_static_data->text_buffer.GetTextureAttachment(0).Bind(0);
 	_static_data->resolve_program["bounds"] = bounds;
-	_static_data->resolve_program["color"] = (vec4) _color;
 	_static_data->resolve_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
 
 	return x;

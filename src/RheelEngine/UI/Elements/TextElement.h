@@ -14,31 +14,20 @@ namespace rheel {
 class RE_API TextElement : public Element {
 
 public:
-	/**
-	 * Create a text component with text and size. The default font is used.
-	 */
-	TextElement(std::string text, unsigned size);
+	TextElement(const std::string& text, unsigned size, const Color& color, Font& font = Font::GetDefaultFont());
 
-	/**
-	 * Create a text component with text, font, and size.
-	 */
-	TextElement(std::string text, Font& font, unsigned size);
-
-	/**
-	 * Sets the text displayed by this element
-	 */
-	void SetText(std::string text);
+	TextElement(std::string&& text, unsigned size, const Color& color, Font& font = Font::GetDefaultFont());
 
 	void DoDraw(float time, float dt) const override;
 
+	std::string text;
+	Color color;
+	unsigned size;
+
 private:
-	std::string _text;
-
 	Font& _font;
-
-	unsigned _font_ascend;
-	unsigned _font_descend;
-	unsigned _size;
+	float _font_ascend;
+	float _font_descend;
 
 };
 

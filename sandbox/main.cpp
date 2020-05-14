@@ -11,7 +11,7 @@ public:
 
 	void Update() override {
 		if (_element) {
-			_element->SetText(std::to_string(int(std::round(1.0 / GetTimeDelta()))) + " FPS");
+			_element->text = std::to_string(int(std::round(1.0 / GetTimeDelta()))) + " FPS";
 		}
 	}
 
@@ -125,7 +125,7 @@ public:
 		ui.AddConstraint(crosshairElement, Constraint::TOP, nullptr, Constraint::TOP);
 		ui.AddConstraint(crosshairElement, Constraint::BOTTOM, nullptr, Constraint::BOTTOM);
 
-		auto fpsElement = ui.InsertElement(TextElement("0 FPS", Font::GetDefaultFont(), 20));
+		auto fpsElement = ui.InsertElement(TextElement("0 FPS", 20, 0xFFFFFF));
 		ui.AddConstraint(fpsElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
 
 		auto buttonElement = ui.InsertElement(ButtonElement([this](){ Stop(); }));

@@ -47,6 +47,10 @@ bool Color::operator==(const Color& color) const {
 	return _r == color._r && _g == color._g && _b == color._b && _a == color._a;
 }
 
+bool Color::operator!=(const Color& color) const {
+	return !(*this == color);
+}
+
 bool Color::operator<(const Color& color) const {
 	return std::tie(_r, _g, _b, _a) < std::tie(color._r, color._g, color._b, color._a);
 }

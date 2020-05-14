@@ -47,6 +47,7 @@ public:
 	operator ivec4() const;
 
 	bool operator==(const Color& color) const;
+	bool operator!=(const Color& color) const;
 	bool operator<(const Color& color) const;
 
 	/**
