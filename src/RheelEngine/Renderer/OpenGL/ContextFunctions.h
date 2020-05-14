@@ -9,10 +9,12 @@
 
 namespace rheel::gl {
 
+class Context;
+
 class RE_API ContextFunctions {
 
 public:
-	ContextFunctions();
+	explicit ContextFunctions(Context& context);
 	explicit ContextFunctions(ContextFunctions* parent);
 
 	// clear
@@ -21,6 +23,9 @@ public:
 	// blending
 	void SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor);
 	void SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha);
+
+	// logic
+	void SetLogicOp(LogicOp opcode);
 
 	// depth
 	void SetDepthFunction(CompareFunction func);
@@ -37,11 +42,15 @@ public:
 	void SetStencilMask(uint8_t mask);
 	void SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass);
 
+	// scissor
+	void SetScissorTest(int x, int y, unsigned width, unsigned height);
+
 	void ResetChanges();
 
 private:
 	std::tuple<float, float, float, float> GetClearColor_() const;
 	std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> GetBlendFunction_() const;
+	LogicOp GetLogicOp_() const;
 	CompareFunction GetDepthFunction_() const;
 	CullFace GetCullFace_() const;
 	std::tuple<bool, bool, bool, bool> GetColorMask_() const;
@@ -49,9 +58,13 @@ private:
 	std::tuple<CompareFunction, uint8_t, uint8_t> GetStencilFunc_() const;
 	uint8_t GetStencilMask_() const;
 	std::tuple<StencilFunction, StencilFunction, StencilFunction> GetStencilOp_() const;
+	std::tuple<int, int, unsigned, unsigned> GetScissorTest_() const;
+
+	Context& _context;
 
 	std::optional<std::tuple<float, float, float, float>> _clear_color;
 	std::optional<std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor>> _blending_factors;
+	std::optional<LogicOp> _logic_op;
 	std::optional<CompareFunction> _depth_function;
 	std::optional<CullFace> _cull_face;
 	std::optional<std::tuple<bool, bool, bool, bool>> _color_mask;
@@ -59,6 +72,7 @@ private:
 	std::optional<std::tuple<CompareFunction, uint8_t, uint8_t>> _stencil_func;
 	std::optional<uint8_t> _stencil_mask;
 	std::optional<std::tuple<StencilFunction, StencilFunction, StencilFunction>> _stencil_op;
+	std::optional<std::tuple<int, int, unsigned, unsigned>> _scissor_test;
 
 	ContextFunctions* _parent;
 
@@ -66,6 +80,7 @@ private:
 	static constexpr std::tuple<float, float, float, float> _default_clear_color = { 0.0f, 0.0f, 0.0f, 0.0f };
 	static constexpr std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> _default_blending_factors =
 			{ BlendFactor::ONE, BlendFactor::ZERO, BlendFactor::ONE, BlendFactor::ZERO };
+	static constexpr LogicOp _default_logic_op = LogicOp::COPY;
 	static constexpr CompareFunction _default_depth_function = CompareFunction::LESS;
 	static constexpr CullFace _default_cull_face = CullFace::BACK;
 	static constexpr std::tuple<bool, bool, bool, bool> _default_color_mask = { true, true, true, true };
@@ -75,6 +90,8 @@ private:
 	static constexpr uint8_t _default_stencil_mask = 0xFF;
 	static constexpr std::tuple<StencilFunction, StencilFunction, StencilFunction> _default_stencil_op =
 			{ StencilFunction::KEEP, StencilFunction::KEEP, StencilFunction::KEEP };
+
+	std::tuple<int, int, unsigned, unsigned> GetDefaultScissorTest_() const;
 
 };
 

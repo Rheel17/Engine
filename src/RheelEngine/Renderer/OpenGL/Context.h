@@ -36,8 +36,8 @@ private:
 
 		ContextImpl* parent = nullptr;
 		ContextBindings bindings;
-		ContextEnables enables{};
-		ContextFunctions functions{};
+		ContextEnables enables;
+		ContextFunctions functions;
 
 	};
 
@@ -69,6 +69,7 @@ public:
 	void SetClearColor(float red, float green, float blue, float alpha);
 	void SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor);
 	void SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha);
+	void SetLogicOp(LogicOp opcode);
 	void SetDepthFunction(CompareFunction func);
 	void SetCullFace(CullFace mode);
 	void SetColorMask(bool red, bool green, bool blue, bool alpha);
@@ -76,6 +77,7 @@ public:
 	void SetStencilFunc(CompareFunction func, uint8_t reference, uint8_t mask);
 	void SetStencilMask(uint8_t mask);
 	void SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass);
+	void SetScissorTest(int x, int y, unsigned width, unsigned height);
 
 private:
 	explicit Context(uvec2 defaultViewport);
@@ -90,7 +92,7 @@ private:
 
 	// It doesn't really make sense to make this ContextImpl-local, since it is
 	// just meta state
-	unsigned _current_active_texture;
+	unsigned _current_active_texture = 0;
 
 public:
 	static Context& Current();

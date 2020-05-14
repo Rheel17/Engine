@@ -15,7 +15,7 @@ class Context;
 class RE_API ContextBindings {
 
 public:
-	ContextBindings(Context& context);
+	explicit ContextBindings(Context& context);
 	explicit ContextBindings(const ContextBindings* parent);
 
 	void BindBuffer(Buffer::Target target, GLuint name);

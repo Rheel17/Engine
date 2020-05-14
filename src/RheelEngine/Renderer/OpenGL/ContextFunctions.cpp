@@ -3,12 +3,16 @@
  */
 #include "ContextFunctions.h"
 
+#include "Context.h"
+
 namespace rheel::gl {
 
-ContextFunctions::ContextFunctions() :
+ContextFunctions::ContextFunctions(Context& context) :
+		_context(context),
 		_parent(nullptr) {}
 
 ContextFunctions::ContextFunctions(gl::ContextFunctions* parent) :
+		_context(parent->_context),
 		_parent(parent) {}
 
 #pragma clang diagnostic push
@@ -53,6 +57,23 @@ void ContextFunctions::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, 
 		_blending_factors.reset();
 	} else {
 		_blending_factors = function;
+	}
+}
+
+void ContextFunctions::SetLogicOp(LogicOp opcode) {
+	// check if a state change is necessary
+	if (GetLogicOp_() == opcode) {
+		return;
+	}
+
+	// perform the state change
+	glLogicOp(GLenum(opcode));
+
+	// store the state change
+	if (_parent == nullptr ? (opcode == _default_logic_op) : (opcode == _parent->GetLogicOp_())) {
+		_logic_op.reset();
+	} else {
+		_logic_op = opcode;
 	}
 }
 
@@ -181,6 +202,25 @@ void ContextFunctions::SetStencilOp(StencilFunction sfail, StencilFunction dpfai
 	}
 }
 
+void ContextFunctions::SetScissorTest(int x, int y, unsigned width, unsigned height) {
+	auto test = std::make_tuple(x, y, width, height);
+
+	// check if a state change is necessary
+	if (GetScissorTest_() == test) {
+		return;
+	}
+
+	// perform the state change
+	glScissor(x, y, width, height);
+
+	// store the state change
+	if (_parent == nullptr ? (test == GetDefaultScissorTest_()) : (test == _parent->GetScissorTest_())) {
+		_scissor_test.reset();
+	} else {
+		_scissor_test = test;
+	}
+}
+
 #pragma clang diagnostic pop
 
 void ContextFunctions::ResetChanges() {
@@ -192,6 +232,11 @@ void ContextFunctions::ResetChanges() {
 	if (_blending_factors.has_value()) {
 		const auto& [srcRGB, dstRGB, srcAlpha, dstAlpha] = _parent == nullptr ? _default_blending_factors : _parent->GetBlendFunction_();
 		glBlendFuncSeparate(GLenum(srcRGB), GLenum(dstRGB), GLenum(srcAlpha), GLenum(dstAlpha));
+	}
+
+	if (_logic_op.has_value()) {
+		const auto& opcode = _parent == nullptr ? _default_logic_op : _parent->GetLogicOp_();
+		glLogicOp(GLenum(opcode));
 	}
 
 	if (_depth_function.has_value()) {
@@ -229,6 +274,11 @@ void ContextFunctions::ResetChanges() {
 		glStencilOp(GLenum(sfail), GLenum(dpfail), GLenum(dppass));
 	}
 
+	if (_scissor_test.has_value()) {
+		const auto& [x, y, width, height] = _parent == nullptr ? GetDefaultScissorTest_() : _parent->GetScissorTest_();
+		glScissor(x, y, width, height);
+	}
+
 	_clear_color.reset();
 	_blending_factors.reset();
 	_depth_function.reset();
@@ -238,6 +288,7 @@ void ContextFunctions::ResetChanges() {
 	_stencil_func.reset();
 	_stencil_mask.reset();
 	_stencil_op.reset();
+	_scissor_test.reset();
 }
 
 std::tuple<float, float, float, float> ContextFunctions::GetClearColor_() const {
@@ -268,6 +319,21 @@ std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> ContextFunctions:
 
 	// default
 	return _default_blending_factors;
+}
+
+LogicOp ContextFunctions::GetLogicOp_() const {
+	// check the current instance
+	if (_logic_op.has_value()) {
+		return *_logic_op;
+	}
+
+	// check the parent
+	if (_parent != nullptr) {
+		return _parent->GetLogicOp_();
+	}
+
+	// default
+	return _default_logic_op;
 }
 
 CompareFunction ContextFunctions::GetDepthFunction_() const {
@@ -373,6 +439,26 @@ std::tuple<StencilFunction, StencilFunction, StencilFunction> ContextFunctions::
 
 	// default
 	return _default_stencil_op;
+}
+
+std::tuple<int, int, unsigned, unsigned> ContextFunctions::GetScissorTest_() const {
+	// check the current instance
+	if (_scissor_test.has_value()) {
+		return *_scissor_test;
+	}
+
+	// check the parent
+	if (_parent != nullptr) {
+		return _parent->GetScissorTest_();
+	}
+
+	// default
+	return GetDefaultScissorTest_();
+}
+
+std::tuple<int, int, unsigned, unsigned> ContextFunctions::GetDefaultScissorTest_() const {
+	uvec2 viewport = _context.GetDefaultViewport();
+	return std::make_tuple(0, 0, viewport.x, viewport.y);
 }
 
 }

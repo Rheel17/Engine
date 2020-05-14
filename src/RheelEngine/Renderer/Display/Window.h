@@ -29,7 +29,7 @@ struct window_hints {
 	bool visible = true;
 	bool doublebuffer = true;
 
-	uint8_t context_version_major = 3;
+	uint8_t context_version_major = 4;
 	uint8_t context_version_minor = 3;
 	Profile opengl_profile = OPENGL_CORE_PROFILE;
 	bool opengl_debug_context = false;

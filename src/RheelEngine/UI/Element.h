@@ -244,7 +244,7 @@ protected:
 	/**
 	 * Returns the text renderer.
 	 */
-	const TextRenderer& GetTextRenderer() const;
+	TextRenderer& GetTextRenderer() const;
 
 	/**
 	 * Draws a colored triangle. Vertices are specified in pixel-space.

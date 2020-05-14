@@ -11,9 +11,11 @@ namespace rheel::gl {
 
 enum class Capability {
 	BLEND = GL_BLEND,
+	COLOR_LOGIC_OP = GL_COLOR_LOGIC_OP,
 	DEPTH_TEST = GL_DEPTH_TEST,
 	STENCIL_TEST = GL_STENCIL_TEST,
-	CULL_FACE = GL_CULL_FACE
+	SCISSOR_TEST = GL_SCISSOR_TEST,
+	CULL_FACE = GL_CULL_FACE,
 };
 
 class RE_API ContextEnables {

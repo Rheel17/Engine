@@ -8,7 +8,7 @@
 #include <typeindex>
 #include <set>
 
-#include "Buffer.h"
+#include "DrawIndirectBuffer.h"
 #include "Enums.h"
 
 namespace rheel::gl {
@@ -75,10 +75,11 @@ public:
 	/**
 	 * Set the vertex attributes of this VAO. The specified buffer must have an
 	 * ARRAY target. Use the attributes vector the specify actual vertex
-	 * attributes.
+	 * attributes. The instanceDevisor parameter specifies the number of
+	 * instances that will pass between updates of the attribute. Use 0 to make
+	 * this a per-vertex attribute (the default).
 	 */
-	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes,
-			bool instanced = false);
+	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, unsigned instanceDivisor = 0);
 
 	/**
 	 * Set the vertex attributes of this VAO. The specified buffer must have an
@@ -99,10 +100,14 @@ public:
 	 * The attributes will always have consecutive indices starting at 0, and
 	 * assumed to be tightly packed in the buffer. If this is not the case, use
 	 * custom VertexAttribute values.
+	 *
+	 * The instanceDevisor parameter specifies the number of instances that will
+	 * pass between updates of the attribute. Use 0 to make this a per-vertex
+	 * attribute (the default).
 	 */
 	template<typename... Types>
-	void SetVertexAttributes(const Buffer& buffer, GLsizei stride = 0, bool instanced = false) {
-		SetVertexAttributes_(buffer, { typeid(Types)... }, stride, instanced);
+	void SetVertexAttributes(const Buffer& buffer, GLsizei stride = 0, unsigned instanceDivisor = 0) {
+		SetVertexAttributes_(buffer, { typeid(Types)... }, stride, instanceDivisor);
 	}
 
 	/**
@@ -142,23 +147,44 @@ public:
 	 */
 	void DrawElements(Mode mode, unsigned instances = 1) const;
 
+	/**
+	 * Draws the contents of the VAO using glDrawArraysIndirect or
+	 * glMultiDrawArraysIndirect, depending on the count. Is uses the indirect
+	 * buffer as GL_DRAW_INDRECT_BUFFER.
+	 */
+	void DrawArraysIndirect(VertexArray::Mode mode, const DrawArraysIndirectBuffer& indirect, size_t count = 1) const;
+
+	/**
+	 * Draws the contents of the VAO using glDrawElementsIndirect or
+	 * glMultiDrawElementsIndirect, depending on the count. Is uses the indirect
+	 * buffer as GL_DRAW_INDRECT_BUFFER.
+	 */
+	void DrawElementsIndirect(VertexArray::Mode mode, const DrawElementsIndirectBuffer& indirect, size_t count = 1) const;
+
 private:
 	template<typename T>
 	void SetIndices_(const std::vector<T>& indices, GLenum type) {
 		Bind();
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _index_buffer.GetName());
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(T), indices.data(), GL_STATIC_DRAW);
-
 		_index_type = type;
 		_index_count = indices.size();
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _index_buffer.GetName());
+
+		if (_index_capacity < _index_count) {
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index_count * sizeof(T), indices.data(), GL_STATIC_DRAW);
+			_index_capacity = _index_count;
+		} else {
+			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, _index_count * sizeof(T), indices.data());
+		}
 	}
 
-	void SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, bool instanced);
+	void SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, unsigned instanceDivisor);
 	GLuint FirstUnusedIndex_(GLuint consecutive = 1);
 
 	ElementArrayBuffer _index_buffer;
-	unsigned _index_count;
+	unsigned _index_count = 0;
+	unsigned _index_capacity = 0;
 	GLenum _index_type;
 
 	bool _has_initialized_unused_attribute_indices = false;

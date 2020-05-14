@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef RHEELENGINE_CHARACTER_H
-#define RHEELENGINE_CHARACTER_H
+#ifndef RHEELENGINE_GLYPH_H
+#define RHEELENGINE_GLYPH_H
 #include "../../_common.h"
 
 #include <ft2build.h>
@@ -12,7 +12,7 @@
 
 namespace rheel {
 
-class RE_API Character {
+class RE_API Glyph {
 	friend class Font;
 
 private:
@@ -33,18 +33,22 @@ public:
 	const std::vector<Triangle>& Triangles() const;
 	const std::vector<Triangle>& BezierCurveTriangles() const;
 	float Advance() const;
+	const vec4& Bounds() const;
 
 private:
-	Character(const FT_GlyphSlot& glyph, unsigned short em);
+	Glyph(const FT_GlyphSlot& glyph, unsigned short em);
 
 	void LoadTriangles_(const FT_Outline& outline, float em);
 	void AddContour_(const Contour& contour, float em);
+
 	static Triangle CreateTriangle_(const vec2& v1, const vec2& v2, const vec2& v3);
+	static Triangle CreateBezier_(const vec2& v1, const vec2& v2, const vec2& v3);
 
 	vec2 _common{};
 	std::vector<Triangle> _triangles;
 	std::vector<Triangle> _bezier_curves;
 	float _advance;
+	vec4 _bounds;
 
 };
 

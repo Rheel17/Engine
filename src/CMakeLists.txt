@@ -87,6 +87,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/ContextEnables.cpp RheelEngine/Renderer/OpenGL/ContextEnables.h 
 		RheelEngine/Renderer/OpenGL/ContextFunctions.cpp RheelEngine/Renderer/OpenGL/ContextFunctions.h 
 		RheelEngine/Renderer/OpenGL/Debug.cpp RheelEngine/Renderer/OpenGL/Debug.h 
+		RheelEngine/Renderer/OpenGL/DrawIndirectBuffer.h 
 		RheelEngine/Renderer/OpenGL/Enums.h 
 		RheelEngine/Renderer/OpenGL/Framebuffer.cpp RheelEngine/Renderer/OpenGL/Framebuffer.h 
 		RheelEngine/Renderer/OpenGL/Handle.h 
@@ -100,9 +101,11 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/Uniform.cpp RheelEngine/Renderer/OpenGL/Uniform.h 
 		RheelEngine/Renderer/OpenGL/VertexArray.cpp RheelEngine/Renderer/OpenGL/VertexArray.h 
 		RheelEngine/Renderer/PostProcessing/Bloom.cpp RheelEngine/Renderer/PostProcessing/Bloom.h 
-		RheelEngine/Renderer/Text/Character.cpp RheelEngine/Renderer/Text/Character.h 
 		RheelEngine/Renderer/Text/Encoding.cpp RheelEngine/Renderer/Text/Encoding.h 
 		RheelEngine/Renderer/Text/Font.cpp RheelEngine/Renderer/Text/Font.h 
+		RheelEngine/Renderer/Text/FontRenderer.cpp RheelEngine/Renderer/Text/FontRenderer.h 
+		RheelEngine/Renderer/Text/Glyph.cpp RheelEngine/Renderer/Text/Glyph.h 
+		RheelEngine/Renderer/Text/GlyphBuffer.cpp RheelEngine/Renderer/Text/GlyphBuffer.h 
 		RheelEngine/Renderer/Text/TextRenderer.cpp RheelEngine/Renderer/Text/TextRenderer.h 
 		RheelEngine/UI/Constraint.cpp RheelEngine/UI/Constraint.h 
 		RheelEngine/UI/Container.cpp RheelEngine/UI/Container.h 

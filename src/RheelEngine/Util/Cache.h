@@ -31,7 +31,7 @@ struct cache_policy {
 	/**
 	 * Picks which element to remove
 	 */
-	virtual uintptr_t EnsureSpace() = 0;
+	virtual uintptr_t MakeSpace() = 0;
 
 	static constexpr uintptr_t DONT_REMOVE = 0;
 };
@@ -40,7 +40,7 @@ struct cache_policy {
  * Simple policy where every element is kept for the duration of the cache
  */
 struct keep_policy : public cache_policy {
-	uintptr_t EnsureSpace() override {
+	uintptr_t MakeSpace() override {
 		return DONT_REMOVE;
 	}
 };
@@ -61,7 +61,7 @@ struct least_recently_used_policy : public cache_policy {
 		_index[key] = --_lru_list.cend();
 	}
 
-	uintptr_t EnsureSpace() override {
+	uintptr_t MakeSpace() override {
 		uintptr_t element = _lru_list.front();
 		_lru_list.pop_front();
 		_index.erase(element);
@@ -82,7 +82,7 @@ struct last_in_frist_out_policy : public cache_policy {
 		_lifo_queue.push(key);
 	}
 
-	uintptr_t EnsureSpace() override {
+	uintptr_t MakeSpace() override {
 		uintptr_t element = _lifo_queue.front();
 		_lifo_queue.pop();
 		return element;
@@ -107,8 +107,8 @@ public:
 	/**
 	 * Constructs a cache with the maximum possible size
 	 */
-	Cache() :
-			Cache(std::numeric_limits<SizeType>::max()) {
+	explicit Cache(Policy&& policy = Policy()) :
+			Cache(std::numeric_limits<SizeType>::max(), std::forward<Policy>(policy)) {
 
 		static_assert(std::is_same_v<Policy, keep_policy>, "Default-constructed cache requires keep_policy");
 	}
@@ -116,8 +116,9 @@ public:
 	/**
 	 * Constructs a cache with a maximum number of elements.
 	 */
-	Cache(SizeType capacity) :
-			_capacity(capacity) {}
+	explicit Cache(SizeType capacity, Policy&& policy) :
+			_capacity(capacity),
+			_policy(std::forward<Policy>(policy)) {}
 
 	/**
 	 * Returns the amount of elements in the cache, including the elements that
@@ -230,7 +231,7 @@ public:
 
 			// make space for the new element
 			if (_size == _capacity) {
-				uintptr_t remove = _policy.EnsureSpace();
+				uintptr_t remove = _policy.MakeSpace();
 				_cache.erase(remove);
 				_key_set.erase(*reinterpret_cast<K*>(remove));
 				_size--;

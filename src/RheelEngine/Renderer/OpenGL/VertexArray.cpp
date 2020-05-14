@@ -28,13 +28,11 @@ VertexArray::VertexAttribute::VertexAttribute(GLuint index, GLint size, Type typ
 	}
 
 	if (size == GL_RGBA && type != Type::UNSIGNED_BYTE && type != Type::INT_2_10_10_10_REV && type != Type::UNSIGNED_INT_2_10_10_10_REV) {
-		throw std::invalid_argument(
-				"size GL_RGBA must be paired with Type::UNSIGNED_BYTE, Type::INT_2_10_10_10_REV, or Type::UNSIGNED_INT_2_10_10_10_REV.");
+		throw std::invalid_argument("size GL_RGBA must be paired with Type::UNSIGNED_BYTE, Type::INT_2_10_10_10_REV, or Type::UNSIGNED_INT_2_10_10_10_REV.");
 	}
 
 	if ((type == Type::INT_2_10_10_10_REV || type == Type::UNSIGNED_INT_2_10_10_10_REV) && size != 4 && size != GL_RGBA) {
-		throw std::invalid_argument(
-				"type Type::INT_2_10_10_10_REV or Type::UNSIGNED_INT_2_10_10_10_REV must be paired with size 4 or GL_RGBA.");
+		throw std::invalid_argument("type Type::INT_2_10_10_10_REV or Type::UNSIGNED_INT_2_10_10_10_REV must be paired with size 4 or GL_RGBA.");
 	}
 
 	if (type == Type::UNSIGNED_INT_10F_11F_11F_REV && size != 3) {
@@ -86,7 +84,7 @@ void VertexArray::Bind() const {
 	Context::Current().BindVertexArray(*this);
 }
 
-void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, bool instanced) {
+void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, unsigned instanceDivisor) {
 	if (buffer.GetTarget() != Buffer::Target::ARRAY) {
 		throw std::invalid_argument("buffer must have target ARRAY");
 	}
@@ -104,8 +102,8 @@ void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<Ve
 				attribute._stride,
 				(GLvoid*) attribute._offset);
 
-		if (instanced) {
-			glVertexAttribDivisor(attribute._index, 1);
+		if (instanceDivisor > 0) {
+			glVertexAttribDivisor(attribute._index, instanceDivisor);
 		}
 	}
 }
@@ -154,8 +152,29 @@ void VertexArray::DrawElements(VertexArray::Mode mode, unsigned instances) const
 	DrawElements(mode, _index_count, 0, instances);
 }
 
-void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride,
-		bool instanced) {
+void VertexArray::DrawArraysIndirect(VertexArray::Mode mode, const DrawArraysIndirectBuffer& indirect, size_t count) const {
+	Bind();
+	indirect.Bind();
+
+	if (count == 1) {
+		glDrawArraysIndirect(GLenum(mode), nullptr);
+	} else {
+		glMultiDrawArraysIndirect(GLenum(mode), nullptr, count, 0);
+	}
+}
+
+void VertexArray::DrawElementsIndirect(VertexArray::Mode mode, const DrawElementsIndirectBuffer& indirect, size_t count) const {
+	Bind();
+	indirect.Bind();
+
+	if (count == 1) {
+		glDrawElementsIndirect(GLenum(mode), _index_type, nullptr);
+	} else {
+		glMultiDrawElementsIndirect(GLenum(mode), _index_type, nullptr, count, 0);
+	}
+}
+
+void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, unsigned instanceDivisor) {
 	std::vector<VertexAttribute> attributes;
 
 	GLsizeiptr offset = 0;
@@ -209,7 +228,7 @@ void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<s
 		attribute._stride = attributeStride;
 	}
 
-	SetVertexAttributes(buffer, attributes, instanced);
+	SetVertexAttributes(buffer, attributes, instanceDivisor);
 }
 
 GLuint VertexArray::FirstUnusedIndex_(GLuint consecutive) {
