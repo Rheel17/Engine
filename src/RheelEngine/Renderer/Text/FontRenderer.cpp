@@ -67,8 +67,8 @@ int FontRenderer::Render(const char** text, int x, int y) {
 	float sy = float(_size) / screen.y * 2.0f;
 
 	// buffer space
-	float bx = 400.0f / screen.x;
-	float by = 400.0f / screen.y;
+	float bx = 4.0f / screen.x;
+	float by = 4.0f / screen.y;
 
 	// prepare the draw
 	std::vector<vec4> transforms;
@@ -113,14 +113,28 @@ int FontRenderer::Render(const char** text, int x, int y) {
 	_indirect_buffer.SetData(commands);
 
 	{
-		// draw the glyphs
 		gl::ContextScope cs1;
+		_static_data->text_buffer.BindForDrawing();
+
+		// clear the text buffer
+		{
+			gl::ContextScope cs2;
+			gl::Context::Current().Enable(gl::Capability::SCISSOR_TEST);
+			gl::Context::Current().SetScissorTest(
+					(0.5f + 0.5f * bounds.x) * screen.x - 4,
+					(0.5f + 0.5f * bounds.y) * screen.y - 4,
+					((bounds.z - bounds.x) * 0.5f) * screen.x + 8,
+					((bounds.w - bounds.y) * 0.5f) * screen.y + 8
+			);
+
+			_static_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
+		}
 
 		gl::Context::Current().Disable(gl::Capability::BLEND);
 		gl::Context::Current().Enable(gl::Capability::COLOR_LOGIC_OP);
 		gl::Context::Current().SetLogicOp(gl::LogicOp::XOR);
 
-		_static_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
+		// draw the characters
 		_static_data->draw_program.Use();
 		_glyph_buffer.GetVertexArray().DrawElementsIndirect(gl::VertexArray::Mode::TRIANGLES, _indirect_buffer, count);
 	}

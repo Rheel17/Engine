@@ -3,12 +3,16 @@
  */
 #include "ContextFunctions.h"
 
+#include "Context.h"
+
 namespace rheel::gl {
 
-ContextFunctions::ContextFunctions() :
+ContextFunctions::ContextFunctions(Context& context) :
+		_context(context),
 		_parent(nullptr) {}
 
 ContextFunctions::ContextFunctions(gl::ContextFunctions* parent) :
+		_context(parent->_context),
 		_parent(parent) {}
 
 #pragma clang diagnostic push
@@ -198,6 +202,25 @@ void ContextFunctions::SetStencilOp(StencilFunction sfail, StencilFunction dpfai
 	}
 }
 
+void ContextFunctions::SetScissorTest(int x, int y, unsigned width, unsigned height) {
+	auto test = std::make_tuple(x, y, width, height);
+
+	// check if a state change is necessary
+	if (GetScissorTest_() == test) {
+		return;
+	}
+
+	// perform the state change
+	glScissor(x, y, width, height);
+
+	// store the state change
+	if (_parent == nullptr ? (test == GetDefaultScissorTest_()) : (test == _parent->GetScissorTest_())) {
+		_scissor_test.reset();
+	} else {
+		_scissor_test = test;
+	}
+}
+
 #pragma clang diagnostic pop
 
 void ContextFunctions::ResetChanges() {
@@ -251,6 +274,11 @@ void ContextFunctions::ResetChanges() {
 		glStencilOp(GLenum(sfail), GLenum(dpfail), GLenum(dppass));
 	}
 
+	if (_scissor_test.has_value()) {
+		const auto& [x, y, width, height] = _parent == nullptr ? GetDefaultScissorTest_() : _parent->GetScissorTest_();
+		glScissor(x, y, width, height);
+	}
+
 	_clear_color.reset();
 	_blending_factors.reset();
 	_depth_function.reset();
@@ -260,6 +288,7 @@ void ContextFunctions::ResetChanges() {
 	_stencil_func.reset();
 	_stencil_mask.reset();
 	_stencil_op.reset();
+	_scissor_test.reset();
 }
 
 std::tuple<float, float, float, float> ContextFunctions::GetClearColor_() const {
@@ -410,6 +439,26 @@ std::tuple<StencilFunction, StencilFunction, StencilFunction> ContextFunctions::
 
 	// default
 	return _default_stencil_op;
+}
+
+std::tuple<int, int, unsigned, unsigned> ContextFunctions::GetScissorTest_() const {
+	// check the current instance
+	if (_scissor_test.has_value()) {
+		return *_scissor_test;
+	}
+
+	// check the parent
+	if (_parent != nullptr) {
+		return _parent->GetScissorTest_();
+	}
+
+	// default
+	return GetDefaultScissorTest_();
+}
+
+std::tuple<int, int, unsigned, unsigned> ContextFunctions::GetDefaultScissorTest_() const {
+	uvec2 viewport = _context.GetDefaultViewport();
+	return std::make_tuple(0, 0, viewport.x, viewport.y);
 }
 
 }

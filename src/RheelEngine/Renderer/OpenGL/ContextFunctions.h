@@ -9,10 +9,12 @@
 
 namespace rheel::gl {
 
+class Context;
+
 class RE_API ContextFunctions {
 
 public:
-	ContextFunctions();
+	explicit ContextFunctions(Context& context);
 	explicit ContextFunctions(ContextFunctions* parent);
 
 	// clear
@@ -40,6 +42,9 @@ public:
 	void SetStencilMask(uint8_t mask);
 	void SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass);
 
+	// scissor
+	void SetScissorTest(int x, int y, unsigned width, unsigned height);
+
 	void ResetChanges();
 
 private:
@@ -53,6 +58,9 @@ private:
 	std::tuple<CompareFunction, uint8_t, uint8_t> GetStencilFunc_() const;
 	uint8_t GetStencilMask_() const;
 	std::tuple<StencilFunction, StencilFunction, StencilFunction> GetStencilOp_() const;
+	std::tuple<int, int, unsigned, unsigned> GetScissorTest_() const;
+
+	Context& _context;
 
 	std::optional<std::tuple<float, float, float, float>> _clear_color;
 	std::optional<std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor>> _blending_factors;
@@ -64,6 +72,7 @@ private:
 	std::optional<std::tuple<CompareFunction, uint8_t, uint8_t>> _stencil_func;
 	std::optional<uint8_t> _stencil_mask;
 	std::optional<std::tuple<StencilFunction, StencilFunction, StencilFunction>> _stencil_op;
+	std::optional<std::tuple<int, int, unsigned, unsigned>> _scissor_test;
 
 	ContextFunctions* _parent;
 
@@ -81,6 +90,8 @@ private:
 	static constexpr uint8_t _default_stencil_mask = 0xFF;
 	static constexpr std::tuple<StencilFunction, StencilFunction, StencilFunction> _default_stencil_op =
 			{ StencilFunction::KEEP, StencilFunction::KEEP, StencilFunction::KEEP };
+
+	std::tuple<int, int, unsigned, unsigned> GetDefaultScissorTest_() const;
 
 };
 

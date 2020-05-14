@@ -8,7 +8,9 @@
 namespace rheel::gl {
 
 Context::ContextImpl::ContextImpl(Context& context) :
-		bindings(context) {}
+		bindings(context),
+		enables(),
+		functions(context) {}
 
 Context::ContextImpl::ContextImpl(ContextImpl* parent) :
 		parent(parent),
@@ -146,6 +148,10 @@ void Context::SetStencilMask(uint8_t mask) {
 
 void Context::SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass) {
 	_context_stack.top()->functions.SetStencilOp(sfail, dpfail, dppass);
+}
+
+void Context::SetScissorTest(int x, int y, unsigned int width, unsigned int height) {
+	_context_stack.top()->functions.SetScissorTest(x, y, width, height);
 }
 
 void Context::UseProgram_(GLuint handle) {

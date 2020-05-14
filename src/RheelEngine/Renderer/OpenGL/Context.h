@@ -36,8 +36,8 @@ private:
 
 		ContextImpl* parent = nullptr;
 		ContextBindings bindings;
-		ContextEnables enables{};
-		ContextFunctions functions{};
+		ContextEnables enables;
+		ContextFunctions functions;
 
 	};
 
@@ -77,6 +77,7 @@ public:
 	void SetStencilFunc(CompareFunction func, uint8_t reference, uint8_t mask);
 	void SetStencilMask(uint8_t mask);
 	void SetStencilOp(StencilFunction sfail, StencilFunction dpfail, StencilFunction dppass);
+	void SetScissorTest(int x, int y, unsigned width, unsigned height);
 
 private:
 	explicit Context(uvec2 defaultViewport);
