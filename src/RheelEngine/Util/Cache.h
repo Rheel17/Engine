@@ -93,13 +93,16 @@ private:
 
 };
 
+template<typename K, typename V, typename Policy = keep_policy, bool threadsafe = false>
+class RE_API Cache;
+
 /**
  * Thread-safe cache implementation with several policies. Because of the
  * internals of the cache, it works best and fastest if the key type (K) is
  * trivially-copyable.
  */
-template<typename K, typename V, class Policy = keep_policy>
-class RE_API Cache {
+template<typename K, typename V, typename Policy>
+class RE_API Cache<K, V, Policy, true> {
 
 public:
 	using SizeType = size_t;
@@ -108,15 +111,12 @@ public:
 	 * Constructs a cache with the maximum possible size
 	 */
 	explicit Cache(Policy&& policy = Policy()) :
-			Cache(std::numeric_limits<SizeType>::max(), std::forward<Policy>(policy)) {
-
-		static_assert(std::is_same_v<Policy, keep_policy>, "Default-constructed cache requires keep_policy");
-	}
+			Cache(std::numeric_limits<SizeType>::max(), std::forward<Policy>(policy)) {}
 
 	/**
 	 * Constructs a cache with a maximum number of elements.
 	 */
-	explicit Cache(SizeType capacity, Policy&& policy) :
+	explicit Cache(SizeType capacity, Policy&& policy = Policy()) :
 			_capacity(capacity),
 			_policy(std::forward<Policy>(policy)) {}
 
@@ -279,8 +279,146 @@ private:
 
 	std::unordered_set<K> _key_set;
 	std::unordered_map<uintptr_t, V> _cache;
+
 	std::unordered_map<uintptr_t, std::unique_ptr<std::condition_variable_any>> _loading;
 	mutable std::recursive_mutex _mutex;
+
+	Policy _policy;
+};
+
+/**
+ * Non-thread-safe cache implementation
+ */
+template<typename K, typename V, typename Policy>
+class RE_API Cache<K, V, Policy, false> {
+
+public:
+	using SizeType = size_t;
+
+	/**
+	 * Constructs a cache with the maximum possible size
+	 */
+	explicit Cache(Policy&& policy = Policy()) :
+			Cache(std::numeric_limits<SizeType>::max(), std::forward<Policy>(policy)) {}
+
+	/**
+	 * Constructs a cache with a maximum number of elements.
+	 */
+	explicit Cache(SizeType capacity, Policy&& policy = Policy()) :
+			_capacity(capacity),
+			_policy(std::forward<Policy>(policy)) {}
+
+	/**
+	 * Returns the amount of elements in the cache, including the elements that
+	 * are currently loading.
+	 */
+	SizeType GetSize() const {
+		return _size;
+	}
+
+	/**
+	 * Returns the capacity of the cache.
+	 */
+	SizeType GetCapacity() const {
+		return _capacity;
+	}
+
+	/**
+	 * Returns whether the cache contains the key.
+	 */
+	bool ContainsKey(const K& key) const {
+		return _key_set.find(key) != _key_set.end();
+	}
+
+	/**
+	 * Returns the value for the given key. If the key is not in this cache,
+	 * this causes undefined behaviour.
+	 */
+	const V& Get(const K& key) const {
+		auto element = reinterpret_cast<uintptr_t>(&(*_key_set.find(key)));
+		_policy.Access(element);
+
+		return _cache.find(element)->second;
+	}
+
+	/**
+	 * Returns the value for the given key. If the key is not in this cache,
+	 * this causes undefined behaviour.
+	 */
+	V& Get(const K& key) {
+		auto element = reinterpret_cast<uintptr_t>(&(*_key_set.find(key)));
+		_policy.Access(element);
+
+		return _cache.find(element)->second;
+	}
+
+	/**
+	 * Atomically checks if a value for the key exists, and inserts a new value
+	 * for the key if it does not exist. The value should be created by the
+	 * constructor parameter. Returned is a reference to the (possibly newly
+	 * inserted) reference and a bool denoting whether a new value was inserted.
+	 *
+	 * Depending on the cache policy, this might cause other elements to be
+	 * removed from the cache.
+	 */
+	template<typename Constructor>
+	V& Get(const K& key, Constructor&& constructor) {
+		bool changed = Put(key, std::forward<Constructor&&>(constructor));
+		auto element = reinterpret_cast<uintptr_t>(&(*_key_set.find(key)));
+
+		if (!changed) {
+			_policy.Access(element);
+		}
+
+		return _cache.find(element)->second;
+	}
+
+	/**
+	 * Atomically checks if a value for the key exists, and inserts a new value
+	 * for the key if it does not exist.
+	 *
+	 * Depending on the cache policy, this might cause other elements to be
+	 * removed from the cache.
+	 *
+	 * Returns whether the element was newly inserted in the cache.
+	 */
+	template<typename Constructor>
+	bool Put(const K& key, Constructor&& constructor) {
+		uintptr_t pointer;
+
+		// First check that the cache does not yet contain the key.
+		if (auto iter = _key_set.find(key); iter != _key_set.end()) {
+			return false;
+		}
+
+		// make space for the new element
+		if (_size == _capacity) {
+			uintptr_t remove = _policy.MakeSpace();
+			_cache.erase(remove);
+			_key_set.erase(*reinterpret_cast<K*>(remove));
+			_size--;
+		}
+
+		// initial insertion into the cache
+		auto[iter, inserted] = _key_set.insert(key);
+		pointer = reinterpret_cast<uintptr_t>(&(*iter));
+		_size++;
+
+		// add the asset to the cache
+		_cache.try_emplace(pointer, constructor(key));
+
+		// notify the policy of the insertion
+		_policy.Insert(pointer);
+
+		return true;
+	}
+
+private:
+	SizeType _size = 0;
+	SizeType _capacity;
+
+	std::unordered_set<K> _key_set;
+	std::unordered_map<uintptr_t, V> _cache;
 
 	Policy _policy;
 };

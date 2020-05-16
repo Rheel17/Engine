@@ -99,7 +99,7 @@ TEST(Cache, LastInFirstOut) {
 }
 
 TEST(Cache, MultithreadedKeep) {
-	Cache<std::string, std::string::size_type, keep_policy> cache;
+	Cache<std::string, std::string::size_type, keep_policy, true> cache;
 
 	std::thread t1([&](){
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));

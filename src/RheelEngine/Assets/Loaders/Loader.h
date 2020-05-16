@@ -48,7 +48,7 @@ public:
 	}
 
 private:
-	Cache<std::string, T, keep_policy> _cache;
+	Cache<std::string, T, keep_policy, true> _cache;
 
 private:
 	static T Load_(const std::string& path) {

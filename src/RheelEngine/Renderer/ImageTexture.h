@@ -33,7 +33,7 @@ public:
 	static const ImageTexture& Get(const Image& image, WrapType type = WrapType::WRAP, bool linear = true);
 
 private:
-	static Cache<CacheTuple, ImageTexture> _texture_cache;
+	static Cache<CacheTuple, ImageTexture, keep_policy, true> _texture_cache;
 
 };
 
