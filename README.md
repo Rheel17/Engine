@@ -8,11 +8,11 @@ well as a sample game project in <code>/sandbox</code>.
 ## Dependencies
 This project uses the following external dependencies:
 * [freealut 1.10](https://github.com/vancegroup/freealut)
-* [Bullet3 2.88](https://github.com/bulletphysics/bullet3)
+* [Bullet3 2.89](https://github.com/bulletphysics/bullet3)
 * [FreeType](https://www.freetype.org/)
 * [GLEW 2.1.0](http://glew.sourceforge.net/)
-* [GLFW 3.3](https://www.glfw.org/)
-* [libpng 1.6.36](http://www.libpng.org/pub/png/libpng.html)
+* [GLFW 3.3.2](https://www.glfw.org/)
+* [libpng 1.6.37](http://www.libpng.org/pub/png/libpng.html)
 * [vhacd](https://github.com/kmammou/v-hacd)
 
 ## Build
