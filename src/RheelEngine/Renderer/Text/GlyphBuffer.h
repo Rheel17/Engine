@@ -34,7 +34,7 @@ public:
 	 * Loads an UTF-8 string into the buffer. Returns the number of characters
 	 * that were put in the buffer.
 	 */
-	size_t Load(const char* text);
+	size_t Load(const char32_t* text, size_t count);
 
 	/**
 	 * Returns a loaded glyph for the character. If the specified character was

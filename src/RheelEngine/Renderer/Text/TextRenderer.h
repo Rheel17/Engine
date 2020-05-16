@@ -10,11 +10,12 @@
 namespace rheel {
 
 class RE_API TextRenderer {
+
+public:
 	enum class TextAlign {
 		LEFT, CENTER, RIGHT
 	};
 
-public:
 	/**
 	 * Draws the text with the given parameters. The text will be drawn in a
 	 * single line.
@@ -38,6 +39,9 @@ public:
 	 * begin at the next 4-space boundary. Use SetTabBoundary() to configure
 	 * this. Except for spaces and tabs, all whitespace characters will have a
 	 * width of zero.
+	 *
+	 * The text will be rendered between x and x+width horizontally, with the
+	 * first line's baseline as y.
 	 */
 	void DrawParagraph(const std::string& text, int x, int y, unsigned width, Font& font, unsigned size, const Color& color, TextAlign align);
 
@@ -52,14 +56,28 @@ public:
 	 * begin at the next 4-space boundary. Use SetTabBoundary() to configure
 	 * this. Except for spaces and tabs, all whitespace characters will have a
 	 * width of zero.
+	 *
+	 * The text will be rendered between x and x+width horizontally, with the
+	 * first line's baseline as y.
 	 */
 	void DrawParagraph(const char* text, int x, int y, unsigned width, Font& font, unsigned size, const Color& color, TextAlign align);
 
 private:
-	int DrawChars_(const char** text, int x, int y, Font& font, unsigned size, const Color& color);
+	// pointer will be freed when the textrenderer gets destructed. This is to
+	// re-use its memory. Under the hood, it uses a std::vector.
+	const char32_t* GetUnicodeArray_(const char* text);
+
+	void DrawParagraphLine_(
+			const char32_t* text, size_t count,
+			int x, int y, unsigned width,
+			Font& font, unsigned size, const Color& color,
+			TextAlign align, unsigned textWidth);
+	int DrawChars_(const char32_t** text, size_t count, int x, int y, Font& font, unsigned size, const Color& color);
 
 	Cache<Font*, std::unique_ptr<FontRenderer>> _renderers;
-	unsigned _tab_boundary;
+	unsigned _tab_boundary = 4;
+
+	std::vector<char32_t> _unicode_array;
 
 };
 

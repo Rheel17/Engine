@@ -3,8 +3,6 @@
  */
 #include "GlyphBuffer.h"
 
-#include "Encoding.h"
-
 namespace rheel {
 
 GlyphBuffer::callback_lru::callback_lru(GlyphBuffer& gb) :
@@ -37,21 +35,20 @@ GlyphBuffer::~GlyphBuffer() {
 	free(_glyph_memory);
 }
 
-size_t GlyphBuffer::Load(const char* text) {
+size_t GlyphBuffer::Load(const char32_t* text, size_t count) {
 	size_t loaded = 0;
 	size_t updates = 0;
 
 	while (updates < CAPACITY) {
-		char32_t character = Encoding::Utf8ToCodePoint(text);
-		if (character == 0) {
+		if (*text == 0 || (count > 0 && loaded == count)) {
 			break;
 		}
 
-		if (Load_(character)) {
+		if (Load_(*text)) {
 			updates++;
 		}
 
-		text += Encoding::Utf8Lenght(character);
+		text++;
 		loaded++;
 	}
 

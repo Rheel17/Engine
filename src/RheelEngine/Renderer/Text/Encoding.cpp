@@ -53,6 +53,42 @@ std::string Encoding::CodePointToUtf8(char32_t c) {
 }
 
 char32_t Encoding::Utf8ToCodePoint(const char* c) {
+	size_t shift;
+	return Utf8ToCodePointHelper_(c, &shift);
+}
+
+char32_t Encoding::Utf8ToCodePoint(const std::string& str) {
+	return Utf8ToCodePoint(str.c_str());
+}
+
+char32_t Encoding::ReadUtf8(const char** c) {
+	size_t shift = 0;
+	char32_t result = Utf8ToCodePointHelper_(*c, &shift);
+	*c += shift;
+	return result;
+}
+
+size_t Encoding::Utf8Lenght(char32_t c) {
+	if (c < 0) {
+		return 0;
+	}
+
+	if (c < 0x80) {
+		return 1;
+	}
+
+	if (c < 0x800) {
+		return 2;
+	} else if (c < 0x10000) {
+		return 3;
+	} else if (c < 0x110000) {
+		return 4;
+	}
+
+	return 0;
+}
+
+char32_t Encoding::Utf8ToCodePointHelper_(const char* c, size_t* shift) {
 	uint8_t b0 = static_cast<uint8_t>(c[0]);
 
 	uint8_t inv = ~b0;
@@ -95,6 +131,7 @@ char32_t Encoding::Utf8ToCodePoint(const char* c) {
 
 	if (leadingOnes == 0) {
 		// 0ccccccc
+		*shift = 1;
 		return b0;
 	}
 
@@ -106,6 +143,7 @@ char32_t Encoding::Utf8ToCodePoint(const char* c) {
 
 	if (leadingOnes == 2) {
 		// 110bbbcc 10cccccc
+		*shift = 2;
 		return ((b0 & 0b00011111) << 6) | (b1 & 0b00111111);
 	}
 
@@ -117,6 +155,7 @@ char32_t Encoding::Utf8ToCodePoint(const char* c) {
 
 	if (leadingOnes == 3) {
 		// 1110bbbb 10bbbbcc 10cccccc
+		*shift = 3;
 		return ((b0 & 0b00001111) << 12) | ((b1 & 0b00111111) << 6) | (b2 & 0b00111111);
 	}
 
@@ -128,34 +167,11 @@ char32_t Encoding::Utf8ToCodePoint(const char* c) {
 
 	if (leadingOnes == 4) {
 		// 11110aaa 10aabbbb 10bbbbcc 10cccccc
+		*shift = 4;
 		return ((b0 & 0b00001111) << 18) | ((b1 & 0b00111111) << 12) | ((b2 & 0b00111111) << 6) | (b3 & 0b00111111);
 	}
 
 	return -1;
-}
-
-char32_t Encoding::Utf8ToCodePoint(const std::string& str) {
-	return Utf8ToCodePoint(str.c_str());
-}
-
-size_t Encoding::Utf8Lenght(char32_t c) {
-	if (c < 0) {
-		return 0;
-	}
-
-	if (c < 0x80) {
-		return 1;
-	}
-
-	if (c < 0x800) {
-		return 2;
-	} else if (c < 0x10000) {
-		return 3;
-	} else if (c < 0x110000) {
-		return 4;
-	}
-
-	return 0;
 }
 
 }

@@ -3,7 +3,6 @@
  */
 #include "FontRenderer.h"
 
-#include "Encoding.h"
 #include "../Display/DisplayConfiguration.h"
 #include "../OpenGL/Context.h"
 #include "../../EngineResources.h"
@@ -52,7 +51,7 @@ void FontRenderer::SetColor(Color color) {
 	}
 }
 
-int FontRenderer::Render(const char** text, int x, int y) {
+int FontRenderer::Render(const char32_t** text, size_t count, int x, int y) {
 	gl::ContextScope cs;
 
 	// prepare the offscreen buffer
@@ -60,8 +59,8 @@ int FontRenderer::Render(const char** text, int x, int y) {
 	ResizeBuffer_(screen.x, screen.y);
 
 	// load the glyphs into the glyph buffer
-	unsigned count = _glyph_buffer.Load(*text);
-	if (count == 0) {
+	unsigned drawCount = _glyph_buffer.Load(*text, count);
+	if (drawCount == 0) {
 		return x;
 	}
 
@@ -81,24 +80,22 @@ int FontRenderer::Render(const char** text, int x, int y) {
 
 	vec4 bounds(1.0f, 1.0f, -1.0f, -1.0f);
 
-	for (unsigned i = 0; i < count; i++) {
-		char32_t c = Encoding::Utf8ToCodePoint(*text);
-
-		const auto&[offset, count] = _glyph_buffer.GetOffset(c);
+	for (unsigned i = 0; i < drawCount; i++) {
+		const auto&[offset, glyphSize] = _glyph_buffer.GetOffset(**text);
 
 		// add the draw call
 		commands.push_back({
-				count,  // count          (glyph size)
-				4,      // instance_count (samples)
-				offset, // first_index    (glyph start)
-				0,      // base_vertex
-				i       // base_instance  (glyph index)
+				glyphSize,  // count          (glyph size)
+				4,          // instance_count (samples)
+				offset,     // first_index    (glyph start)
+				0,          // base_vertex
+				i           // base_instance  (glyph index)
 		});
 
 		// transform the glyph
 		transforms.push_back(vec4{ px, py, sx, sy });
 
-		const auto& glyph = _glyph_buffer.GetLoadedGlyph(c);
+		const auto& glyph = _glyph_buffer.GetLoadedGlyph(**text);
 
 		// increase the bounds of the resolve quad to include this glyph
 		const vec4& glyphBounds = glyph.Bounds();
@@ -109,8 +106,8 @@ int FontRenderer::Render(const char** text, int x, int y) {
 
 		// move to the next character
 		x += glyph.Advance() * _size;
-		px += glyph.Advance() * sx;
-		*text += Encoding::Utf8Lenght(c);
+		px = float(x) / screen.x * 2.0f - 1.0f;
+		(*text)++;
 	}
 
 	// upload the buffers

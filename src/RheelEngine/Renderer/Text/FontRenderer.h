@@ -34,7 +34,7 @@ public:
 	void SetSize(unsigned size);
 	void SetColor(Color color);
 
-	int Render(const char** text, int x, int y);
+	int Render(const char32_t** text, size_t count, int x, int y);
 
 private:
 	void ResizeBuffer_(unsigned width, unsigned height);
