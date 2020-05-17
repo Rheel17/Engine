@@ -65,14 +65,14 @@ const DisplayConfiguration& DisplayConfiguration::Get() {
 }
 
 void DisplayConfiguration::InitializeGLFW() {
+	glfwSetErrorCallback([](int code, const char* description) {
+		Log::Error() << "GLFW " << code << ": " << description << std::endl;
+	});
+
 	if (!glfwInit()) {
 		Log::Error() << "Unable to initialize GLFW" << std::endl;
 		abort();
 	}
-
-	glfwSetErrorCallback([](int code, const char* description) {
-		Log::Error() << "GLFW " << code << ": " << description << std::endl;
-	});
 }
 
 void DisplayConfiguration::TerminateGLFW() {
