@@ -4,22 +4,20 @@
 #ifndef RHEELENGINE__COMMON_H
 #define RHEELENGINE__COMMON_H
 
+#if defined(_WIN32)
+#define RE_API_EXPORT __declspec(dllexport)
+#define RE_API_IMPORT __declspec(dllimport)
+#elif defined(__linux__)
+#define RE_API_EXPORT __attribute__((visibility("default")))
+#define RE_API_IMPORT
+#else
+#error "Platform not supported"
+#endif
+
 #ifdef BUILDING_RHEELENGINE_DLL
-#if defined(_WIN32)
-#define RE_API __declspec(dllexport)
-#elif defined(__linux__)
-#define RE_API __attribute__((visibility("default")))
+#define RE_API RE_API_EXPORT
 #else
-#error "Platform not supported"
-#endif
-#else
-#if defined(_WIN32)
-#define RE_API __declspec(dllimport)
-#elif defined(__linux__)
-#define RE_API
-#else
-#error "Platform not supported"
-#endif
+#define RE_API RE_API_IMPORT
 #endif
 
 #include "Util/Math.h"

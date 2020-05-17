@@ -60,15 +60,15 @@ void entry() {
 }
 
 // macro for entry point
-#define RHEEL_ENGINE_ENTRY(GameClass)	      									\
-	/* Force dedicated GPU usage */												\
-	extern "C" {																\
-		__declspec(dllexport) unsigned long NvOptimusEnablement = 1;			\
-		__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;		\
-	}																			\
-																				\
-	int main(int argc, char* argv[]) {      									\
-		rheel::entry<GameClass>();												\
+#define RHEEL_ENGINE_ENTRY(GameClass)	      							\
+	/* Force dedicated GPU usage */										\
+	extern "C" {														\
+		RE_API_EXPORT unsigned long NvOptimusEnablement = 1;			\
+		RE_API_EXPORT int AmdPowerXpressRequestHighPerformance = 1;		\
+	}																	\
+																		\
+	int main(int argc, char* argv[]) {      							\
+		rheel::entry<GameClass>();										\
 	}
 
 #endif
