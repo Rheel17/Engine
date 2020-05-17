@@ -17,7 +17,7 @@ This project uses the following external dependencies:
 * [libpng 1.6.37](http://www.libpng.org/pub/png/libpng.html)
 
 ## Build
-To build, CMake and Python are needed. Tested to work with MinGW.
+To build, CMake and Python 3.x are needed. Tested to work with MinGW.
 
 1. Create a build directory:
 	* `mkdir build`
