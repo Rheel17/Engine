@@ -3,9 +3,15 @@
  */
 #include "glm_debug.h"
 
-#include <string_format.h>
-
 #define FP "% 9.4f"
+
+template<typename... Args>
+std::string string_format(const std::string& format, Args... args) {
+	size_t size = snprintf(nullptr, 0, format.c_str(), args...) + 1;
+	std::unique_ptr<char[]> buf(new char[ size ]);
+	snprintf(buf.get(), size, format.c_str(), args...);
+	return std::string(buf.get(), buf.get() + size - 1);
+}
 
 std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec) {
 	return stream << string_format("(" FP ", " FP ")", vec.x, vec.y);
