@@ -7,27 +7,22 @@ well as a sample game project in <code>/sandbox</code>.
 
 ## Dependencies
 This project uses the following external dependencies:
-* [freealut 1.10](https://github.com/vancegroup/freealut)
-* [Bullet3 2.89](https://github.com/bulletphysics/bullet3)
-* [FreeType](https://www.freetype.org/)
-* [GLEW 2.1.0](http://glew.sourceforge.net/)
+* [GLM](https://glm.g-truc.net/)
 * [GLFW 3.3.2](https://www.glfw.org/)
+* [GLEW 2.1.0](http://glew.sourceforge.net/)
+* [RapidXml](http://rapidxml.sourceforge.net/)
+* [freealut 1.10](https://github.com/vancegroup/freealut) (windows) [alut](https://svn.ict.usc.edu/svn_vh_public/trunk/lib/vhcl/openal/docs/alut.html) (linux)
+* [FreeType](https://www.freetype.org/)
+* [Bullet3 2.89](https://github.com/bulletphysics/bullet3)
 * [libpng 1.6.37](http://www.libpng.org/pub/png/libpng.html)
-* [vhacd](https://github.com/kmammou/v-hacd)
 
 ## Build
 To build, CMake and Python are needed. Tested to work with MinGW.
 
-1. Copy external shared libraries (Windows: .dll files) to the `lib` folder:
-    * glew32
-    * libalut
-    * libpng16
-    * libzlib
-    * OpenAL32
-2. Create a build directory:
+1. Create a build directory:
 	* `mkdir build`
 	* `cd build`
-3. Run CMake:
+2. Run CMake:
 	* `cmake .. [-G <generator>] [options]`
 		
 		Use the `-G <generator>` to specify the 
@@ -40,11 +35,10 @@ To build, CMake and Python are needed. Tested to work with MinGW.
         * Libary includes: `-DEXTERNAL_INCLUDE_DIRECTORY="<directory>"`
         * Libary libs: `-DEXTERNAL_LIBRARY_DIRECTORY="<directory>"`
 
-4. Run your build tool.
+3. Run your build tool.
     
-    For example, with MinGW:
-    
-    * `make`
+    * `cmake --build .` should work for most platforms
+    * `make -j <cores>` for linux/MinGW for multithreaded building
 
 <sup><sub>© 2020 Levi van Rheenen</sub></sup>
 
