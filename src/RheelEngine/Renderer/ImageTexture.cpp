@@ -33,10 +33,12 @@ ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {
 	}
 
 	switch (type) {
-		case WrapType::WRAP: _texture.SetWrapParameterS(gl::Texture::WrapParameter::REPEAT);
+		case WrapType::WRAP:
+			_texture.SetWrapParameterS(gl::Texture::WrapParameter::REPEAT);
 			_texture.SetWrapParameterT(gl::Texture::WrapParameter::REPEAT);
 			break;
-		case WrapType::CLAMP: _texture.SetWrapParameterS(gl::Texture::WrapParameter::CLAMP_TO_EDGE);
+		case WrapType::CLAMP:
+			_texture.SetWrapParameterS(gl::Texture::WrapParameter::CLAMP_TO_EDGE);
 			_texture.SetWrapParameterT(gl::Texture::WrapParameter::CLAMP_TO_EDGE);
 			break;
 

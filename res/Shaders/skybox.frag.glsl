@@ -6,8 +6,8 @@ flat in int vf_TextureIndex;
 
 out vec4 frag_Color;
 
-uniform sampler2D textures[6];
+uniform sampler2DArray textures;
 
 void main(void) {
-    frag_Color = texture2D(textures[vf_TextureIndex], vf_TextureCoordinates);
+    frag_Color = texture(textures, vec3(vf_TextureCoordinates, vf_TextureIndex));
 }

@@ -29,12 +29,15 @@ SkyboxRenderer::SkyboxRenderer(SceneRenderManager* manager) :
 	_shader.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_skybox_vert_glsl"));
 	_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_skybox_frag_glsl"));
 	_shader.Link();
-	_shader["textures"] = std::vector<GLint>{ 0, 1, 2, 3, 4, 5 };
+	_shader["textures"] = 0;
 
 	// initialize the skybox model
 	_vertex_buffer_object.SetData(CreateSkyboxVertices_());
 	_vao.SetVertexAttributes<vec3, vec3>(_vertex_buffer_object);
 	_vao.SetVertexIndices(CreateSkyboxIndices_());
+
+	// initialize the texture
+	_textures = CreateTexture_(1, 1);
 }
 
 void SkyboxRenderer::Render(Camera* camera, unsigned width, unsigned height) const {
@@ -52,16 +55,54 @@ void SkyboxRenderer::Render(Camera* camera, unsigned width, unsigned height) con
 	_shader["scale"] = skybox->GetScale();
 
 	const auto& images = skybox->GetImages();
+	bool changed = false;
 
 	for (int i = 0; i < 6; i++) {
-		if (images[i].IsNull()) {
-			gl::Context::Current().ClearTexture(i, gl::Texture::Target::TEXTURE_2D);
-		} else {
-			ImageTexture::Get(images[i]).Bind(i);
+		if (_current_images[i].GetAddress() != images[i].GetAddress()) {
+			// changed skybox
+			LoadImage_(images[i], i);
+			_current_images[i] = images[i];
+			changed = true;
 		}
 	}
 
+	if (changed) {
+		_textures.GenerateMipmap();
+	}
+
+	_textures.Bind(0);
 	_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, 36);
+}
+
+void SkyboxRenderer::LoadImage_(Image image, unsigned layer) const {
+	unsigned imageWidth = std::max(image.GetWidth(), 1u);
+	unsigned imageHeight = std::max(image.GetHeight(), 1u);
+
+	if (imageWidth != _current_width || imageHeight != _current_height) {
+		_current_width = imageWidth;
+		_current_height = imageHeight;
+		_textures = CreateTexture_(_current_width, _current_height);
+	}
+
+	_textures.SetLayerData(image.GetWidth(), image.GetHeight(), layer, gl::Format::RGBA, image.GetRawColorData());
+}
+
+gl::Texture2DArray SkyboxRenderer::CreateTexture_(unsigned width, unsigned height) {
+	gl::Texture2DArray texture;
+
+	if (DisplayConfiguration::Get().enable_mipmaps) {
+		texture.SetMinifyingFilter(gl::Texture::FilterFunction::LINEAR_MIPMAP_LINEAR);
+	} else {
+		texture.SetMinifyingFilter(gl::Texture::FilterFunction::LINEAR);
+	}
+
+	texture.SetMagnificationFilter(gl::Texture::FilterFunction::LINEAR);
+	texture.SetWrapParameterS(gl::Texture::WrapParameter::CLAMP_TO_EDGE);
+	texture.SetWrapParameterT(gl::Texture::WrapParameter::CLAMP_TO_EDGE);
+	texture.SetAnisotropyParameter(DisplayConfiguration::Get().anisotropic_level);
+	texture.Initialize(gl::InternalFormat::RGBA8, width, height, 6);
+
+	return texture;
 }
 
 std::vector<SkyboxRenderer::vertex> SkyboxRenderer::CreateSkyboxVertices_() {

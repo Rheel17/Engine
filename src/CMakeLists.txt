@@ -97,6 +97,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/OpenGL/Shader.cpp RheelEngine/Renderer/OpenGL/Shader.h 
 		RheelEngine/Renderer/OpenGL/Texture.cpp RheelEngine/Renderer/OpenGL/Texture.h 
 		RheelEngine/Renderer/OpenGL/Texture2D.cpp RheelEngine/Renderer/OpenGL/Texture2D.h 
+		RheelEngine/Renderer/OpenGL/Texture2DArray.cpp RheelEngine/Renderer/OpenGL/Texture2DArray.h 
 		RheelEngine/Renderer/OpenGL/Texture2DMultisample.cpp RheelEngine/Renderer/OpenGL/Texture2DMultisample.h 
 		RheelEngine/Renderer/OpenGL/Uniform.cpp RheelEngine/Renderer/OpenGL/Uniform.h 
 		RheelEngine/Renderer/OpenGL/VertexArray.cpp RheelEngine/Renderer/OpenGL/VertexArray.h 
