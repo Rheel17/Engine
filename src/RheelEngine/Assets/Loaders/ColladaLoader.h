@@ -5,7 +5,7 @@
 #define RHEELENGINE_COLLADALOADER_H
 #include "../../_common.h"
 
-#include <rapidxml_utils.hpp>
+#include <rapidxml/rapidxml_utils.hpp>
 
 #include "Loader.h"
 #include "../../Util/Hashes.h"
