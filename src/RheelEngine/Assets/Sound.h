@@ -5,7 +5,7 @@
 #define RHEELENGINE_SOUND_H
 #include "../_common.h"
 
-#include <al/al.h>
+#include <AL/al.h>
 
 #include "Asset.h"
 
