@@ -13,8 +13,10 @@
 namespace rheel {
 
 class RE_API Font {
-	RE_NO_COPY(Font)
-	RE_NO_MOVE(Font)
+	RE_NO_COPY(Font);
+	RE_NO_MOVE(Font);
+
+	friend class FontRenderer;
 
 private:
 	struct delete_free_type_library {
@@ -26,40 +28,41 @@ private:
 
 public:
 	explicit Font(FT_Face face);
-	~Font();
 
-	Glyph LoadCharacter(char32_t c);
-
-	unsigned Ascend(unsigned size) const;
-	unsigned Descend(unsigned size) const;
-
-	/**
-	 * Returns the character width in pixels, using a character and its font
-	 * size.
-	 */
-	unsigned CharacterWidth(char character, unsigned size) const;
+	float Ascend() const;
+	float Descend() const;
 
 	/**
 	 * Returns the character width in pixels of the given unicode code point and
 	 * its font size.
 	 */
-	unsigned CharacterWidth(char32_t code, unsigned size) const;
+	float CharacterWidth(char32_t code) const;
 
 	/**
 	 * Returns the string width in pixels of the given unicode string. The
 	 * string must be UTF-8 encoded and null-terminated.
 	 */
-	unsigned StringWidth(const char* str, unsigned size) const;
+	float StringWidth(const char* str) const;
 
 	/**
 	 * Returns the string width in pixels of the given unicode string. The
 	 * string must be UTF-8 encoded.
 	 * @return
 	 */
-	unsigned StringWidth(const std::string& str, unsigned size) const;
+	float StringWidth(const std::string& str) const;
 
 private:
-	FT_Face _face;
+	std::pair<unsigned int, unsigned int> LoadGlyph_(const std::vector<Glyph::Triangle>& triangles, const std::vector<Glyph::Triangle>& beziers);
+
+	float _ascend;
+	float _descend;
+
+	std::vector<uint32_t> _glyph_index;
+	std::vector<Glyph> _glyphs;
+	std::vector<std::pair<unsigned, unsigned>> _glyph_offsets;
+
+	std::vector<vec3> _glyph_vertices;
+	std::vector<unsigned> _glyph_indices;
 
 public:
 	static constexpr auto DEFAULT_FONT = "__default_font__";

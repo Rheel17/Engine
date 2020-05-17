@@ -31,7 +31,6 @@ class RE_API DrawIndirectBuffer : public Buffer {
 
 public:
 	using Command = CommandType;
-	using Commands = std::vector<CommandType>;
 
 	DrawIndirectBuffer() :
 			Buffer(Target::DRAW_INDIRECT) {}

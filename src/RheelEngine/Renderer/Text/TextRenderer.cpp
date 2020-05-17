@@ -36,7 +36,7 @@ void TextRenderer::DrawParagraph(
 
 	const char32_t* chars = GetUnicodeArray_(text);
 
-	unsigned spaceWidth = font.CharacterWidth(U' ', size);
+	unsigned spaceWidth = font.CharacterWidth(U' ') * size;
 	unsigned lineHeight = size * 1.1;
 
 	unsigned currentWidth = 0;
@@ -87,7 +87,7 @@ void TextRenderer::DrawParagraph(
 			continue;
 		}
 
-		unsigned cwidth = font.CharacterWidth(c, size);
+		unsigned cwidth = font.CharacterWidth(c) * size;
 		currentWidth += cwidth;
 		currentOffset++;
 

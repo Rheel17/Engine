@@ -36,8 +36,13 @@ FontRenderer::static_data::static_data() :
 }
 
 FontRenderer::FontRenderer(Font& font) :
-		_font(font),
-		_glyph_buffer(font, 4) {}
+		_font(font) {
+
+	_glyph_buffer.SetData(font._glyph_vertices);
+	_character_vao.SetVertexAttributes<vec3>(_glyph_buffer);
+	_character_vao.SetVertexAttributes<vec4>(_transform_buffer, 0, 4);
+	_character_vao.SetVertexIndices(font._glyph_indices);
+}
 
 void FontRenderer::SetSize(unsigned int size) {
 	_size = size;
@@ -52,17 +57,15 @@ void FontRenderer::SetColor(Color color) {
 }
 
 int FontRenderer::Render(const char32_t** text, size_t count, int x, int y) {
+	if (count == 0 || count > MAX_CHARS) {
+		count = MAX_CHARS;
+	}
+
 	gl::ContextScope cs;
 
 	// prepare the offscreen buffer
 	auto screen = DisplayConfiguration::Get().resolution;
 	ResizeBuffer_(screen.x, screen.y);
-
-	// load the glyphs into the glyph buffer
-	unsigned drawCount = _glyph_buffer.Load(*text, count);
-	if (drawCount == 0) {
-		return x;
-	}
 
 	// base transform
 	float px = float(x) / screen.x * 2.0f - 1.0f;
@@ -75,27 +78,26 @@ int FontRenderer::Render(const char32_t** text, size_t count, int x, int y) {
 	float by = 4.0f / screen.y;
 
 	// prepare the draw
-	std::vector<vec4> transforms;
-	gl::DrawElementsIndirectBuffer::Commands commands;
-
 	vec4 bounds(1.0f, 1.0f, -1.0f, -1.0f);
 
-	for (unsigned i = 0; i < drawCount; i++) {
-		const auto&[offset, glyphSize] = _glyph_buffer.GetOffset(**text);
+	size_t numChars = 0;
+	for (unsigned i = 0; **text && i < count; i++) {
+		const auto&[offset, glyphSize] = _font._glyph_offsets[_font._glyph_index[**text]];
 
 		// add the draw call
-		commands.push_back({
+		numChars++;
+		_commands[i] = {
 				glyphSize,  // count          (glyph size)
 				4,          // instance_count (samples)
 				offset,     // first_index    (glyph start)
 				0,          // base_vertex
 				i           // base_instance  (glyph index)
-		});
+		};
 
 		// transform the glyph
-		transforms.push_back(vec4{ px, py, sx, sy });
+		_transforms[i] = { px, py, sx, sy };
 
-		const auto& glyph = _glyph_buffer.GetLoadedGlyph(**text);
+		const auto& glyph = _font._glyphs[_font._glyph_index[**text]];
 
 		// increase the bounds of the resolve quad to include this glyph
 		const vec4& glyphBounds = glyph.Bounds();
@@ -111,8 +113,8 @@ int FontRenderer::Render(const char32_t** text, size_t count, int x, int y) {
 	}
 
 	// upload the buffers
-	_glyph_buffer.GetTransformBuffer().SetData(transforms);
-	_indirect_buffer.SetData(commands);
+	_transform_buffer.SetData(_transforms.data(), numChars, gl::Buffer::Usage::STREAM_DRAW);
+	_indirect_buffer.SetData(_commands.data(), numChars, gl::Buffer::Usage::STREAM_DRAW);
 
 	{
 		gl::ContextScope cs1;
@@ -138,7 +140,7 @@ int FontRenderer::Render(const char32_t** text, size_t count, int x, int y) {
 
 		// draw the characters
 		_static_data->draw_program.Use();
-		_glyph_buffer.GetVertexArray().DrawElementsIndirect(gl::VertexArray::Mode::TRIANGLES, _indirect_buffer, count);
+		_character_vao.DrawElementsIndirect(gl::VertexArray::Mode::TRIANGLES, _indirect_buffer, numChars);
 	}
 
 	// resolve to the main framebuffer

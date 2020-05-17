@@ -6,80 +6,103 @@
 #include <fstream>
 
 #include "Encoding.h"
+#include "../../Util/MsTimer.h"
 
 namespace rheel {
 
 std::unique_ptr<FT_Library, Font::delete_free_type_library> Font::_ft;
 std::unordered_map<std::string, Font> Font::_registered_fonts;
 
-Font::Font(FT_Face face) :
-		_face(face) {}
+// TODO: let the user decide before initializing what character range they want,
+//  so unicode/ascii/etc. Load only the necessary glyphs.
 
-Font::~Font() {
-	FT_Done_Face(_face);
-}
+Font::Font(FT_Face face) {
+	_glyph_index.reserve(0x110000);
+	_glyphs.reserve(face->num_glyphs);
+	_glyph_offsets.reserve(face->num_glyphs);
 
-Glyph Font::LoadCharacter(char32_t c) {
-	// load the character
-	if (FT_Load_Char(_face, c, FT_LOAD_NO_SCALE)) {
-		std::string ch = Encoding::CodePointToUtf8(c);
+	std::vector<Glyph::Triangle> triangles;
+	std::vector<Glyph::Triangle> beziers;
 
-		if (ch.empty()) {
-			Log::Error() << "Invalid code point: " << (uint32_t) c << " (0x" << std::hex << (uint32_t) c << ")" << std::endl;
-			abort();
-		}
+	for (unsigned glyphIndex = 0; glyphIndex < face->num_glyphs; glyphIndex++) {
+		triangles.clear();
+		beziers.clear();
 
-		Log::Error() << "Could not load character '" << ch << "'." << std::endl;
-		abort();
+		FT_Load_Glyph(face, glyphIndex, FT_LOAD_NO_SCALE);
+		_glyphs[glyphIndex] = Glyph(face->glyph, face->units_per_EM, triangles, beziers);
+		_glyph_offsets[glyphIndex] = LoadGlyph_(triangles, beziers);
 	}
 
-	unsigned short em = _face->units_per_EM;
-	return Glyph(_face->glyph, em);
-}
-
-unsigned Font::Ascend(unsigned size) const {
-	FT_Set_Pixel_Sizes(_face, 0, size);
-	return (unsigned) std::ceil(_face->size->metrics.ascender / 64.0f);
-}
-
-unsigned Font::Descend(unsigned size) const {
-	FT_Set_Pixel_Sizes(_face, 0, size);
-	return (unsigned) std::ceil(_face->size->metrics.descender / -64.0f);
-}
-
-unsigned Font::CharacterWidth(char character, unsigned size) const {
-	return CharacterWidth((char32_t) character, size);
-}
-
-unsigned Font::CharacterWidth(char32_t character, unsigned size) const {
-	if (FT_Load_Char(_face, character, FT_LOAD_NO_SCALE | FT_LOAD_ADVANCE_ONLY)) {
-		std::string ch = Encoding::CodePointToUtf8(character);
-
-		if (ch.empty()) {
-			Log::Error() << "Invalid code point: " << (uint32_t) character << " (0x" << std::hex << (uint32_t) character << ")" << std::endl;
-			abort();
-		}
-
-		Log::Error() << "Could not load character '" << ch << "'." << std::endl;
-		abort();
+	for (char32_t charcode = 0; charcode < 0x110000; charcode++) {
+		_glyph_index[charcode] = FT_Get_Char_Index(face, charcode);
 	}
 
-	return size * (_face->glyph->advance.x / float(_face->units_per_EM));
+	// TODO: calculate these
+	_ascend = 0.0f;
+	_descend = 0.0f;
 }
 
-unsigned Font::StringWidth(const char* str, unsigned size) const {
+float Font::Ascend() const {
+	return _ascend;
+}
+
+float Font::Descend() const {
+	return _descend;
+}
+
+float Font::CharacterWidth(char32_t character) const {
+	return _glyphs[_glyph_index[character]].Advance();
+}
+
+float Font::StringWidth(const char* str) const {
 	unsigned width = 0;
 
 	while (*str != 0) {
-		width += CharacterWidth(*str, size);
-		str++;
+		char32_t c = Encoding::ReadUtf8(&str);
+		width += CharacterWidth(c);
 	}
 
 	return width;
 }
 
-unsigned Font::StringWidth(const std::string& str, unsigned size) const {
-	return StringWidth(str.c_str(), size);
+float Font::StringWidth(const std::string& str) const {
+	return StringWidth(str.c_str());
+}
+
+std::pair<unsigned int, unsigned int> Font::LoadGlyph_(const std::vector<Glyph::Triangle>& triangles, const std::vector<Glyph::Triangle>& beziers) {
+	size_t startIndex = _glyph_indices.size();
+	size_t offset = _glyph_vertices.size();
+
+	// common point for the triangles
+	if (triangles.size() > 0) {
+		_glyph_vertices.push_back(triangles[0][0]);
+	}
+
+	// other points for triangles
+	for (size_t i = 0; i < triangles.size(); i++) {
+		_glyph_vertices.push_back(triangles[i][1]);
+		_glyph_vertices.push_back(triangles[i][2]);
+
+		_glyph_indices.push_back(offset);
+		_glyph_indices.push_back(offset + i * 2 + 1);
+		_glyph_indices.push_back(offset + i * 2 + 2);
+	}
+
+	offset = _glyph_vertices.size();
+
+	// bezier curves
+	for (const auto& triangle : beziers) {
+		_glyph_vertices.push_back(triangle[0]);
+		_glyph_vertices.push_back(triangle[1]);
+		_glyph_vertices.push_back(triangle[2]);
+
+		_glyph_indices.push_back(offset++);
+		_glyph_indices.push_back(offset++);
+		_glyph_indices.push_back(offset++);
+	}
+
+	size_t indexCount = _glyph_indices.size() - startIndex;
+	return std::make_pair(startIndex, indexCount);
 }
 
 void Font::Initialize() {
@@ -111,6 +134,7 @@ void Font::RegisterFont(const std::string& filename, const std::string& name) {
 	}
 
 	_registered_fonts.emplace(name, face);
+	FT_Done_Face(face);
 }
 
 Font& Font::GetFont(const std::string& name) {

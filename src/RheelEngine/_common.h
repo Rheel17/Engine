@@ -5,9 +5,21 @@
 #define RHEELENGINE__COMMON_H
 
 #ifdef BUILDING_RHEELENGINE_DLL
+#if defined(_WIN32)
 #define RE_API __declspec(dllexport)
+#elif defined(__linux__)
+#define RE_API __attribute__((visibility("default")))
 #else
+#error "Platform not supported"
+#endif
+#else
+#if defined(_WIN32)
 #define RE_API __declspec(dllimport)
+#elif defined(__linux__)
+#define RE_API
+#else
+#error "Platform not supported"
+#endif
 #endif
 
 #include "Util/Math.h"

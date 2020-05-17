@@ -13,9 +13,9 @@ TextElement::TextElement(const std::string& text, unsigned int size, const Color
 		size(size),
 		_font(font) {
 
-	_font_ascend = _font.Ascend(size);
-	_font_descend = _font.Descend(size);
-	SetDefaultSize(_font.StringWidth(text, size), _font_ascend + _font_descend);
+	_font_ascend = _font.Ascend();
+	_font_descend = _font.Descend();
+	SetDefaultSize(_font.StringWidth(text) * size, size * (_font_ascend + _font_descend));
 }
 
 TextElement::TextElement(std::string&& text, unsigned int size, const Color& color, Font& font) :
@@ -24,9 +24,9 @@ TextElement::TextElement(std::string&& text, unsigned int size, const Color& col
 		size(size),
 		_font(font) {
 
-	_font_ascend = _font.Ascend(size) / float(size);
-	_font_descend = _font.Descend(size) / float(size);
-	SetDefaultSize(_font.StringWidth(text, size), size * (_font_ascend + _font_descend));
+	_font_ascend = _font.Ascend();
+	_font_descend = _font.Descend();
+	SetDefaultSize(_font.StringWidth(text) * size, size * (_font_ascend + _font_descend));
 }
 
 void TextElement::DoDraw(float time, float dt) const {
