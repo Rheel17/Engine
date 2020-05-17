@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.13.2)
 # Build options
 option(BUILD_SANDBOX "Build the Sandbox sample project" ON)
 option(BUILD_TEST "Build the googletest unit test" ON)
+option(COPY_LIB "Copy the contents of the lib directory to the binary directory" OFF)
 set(EXTERNAL_INCLUDE_DIRECTORY "" CACHE STRING "Include directory for external libraries")
 set(EXTERNAL_LIBRARY_DIRECTORY "" CACHE STRING "Library directory for external libraries")
 
@@ -41,10 +42,12 @@ add_custom_target(Header
 add_library(RheelEngine SHARED)
 target_compile_definitions(RheelEngine PRIVATE BUILDING_RHEELENGINE_DLL RE_DEBUG)
 
-# Copy shared libraries
-add_custom_command(
-		TARGET RheelEngine POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR})
+if(COPY_LIB)
+	# Copy shared libraries
+	add_custom_command(
+			TARGET RheelEngine POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 # Add resources to the library
 add_dependencies(RheelEngine Resources)
