@@ -5,7 +5,7 @@
 #define RHEELENGINE_ENUMS_H
 #include "../../_common.h"
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 namespace rheel::gl {
 
