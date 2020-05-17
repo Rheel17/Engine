@@ -3,6 +3,8 @@
  */
 #include "ColladaLoader.h"
 
+#include <cstring>
+
 namespace rheel {
 
 static void transformUp(vec3& vector, char up) {
