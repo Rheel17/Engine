@@ -26,16 +26,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Build resources
 set(RESOURCE_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/_res.h" "${CMAKE_CURRENT_BINARY_DIR}/_res.cpp")
 add_custom_target(Resources
-        COMMAND python build_res.py ${RESOURCE_OUTPUT}
-        WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
-        COMMENT "Building Resources")
+		COMMAND python build_res.py ${RESOURCE_OUTPUT}
+		WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
+		COMMENT "Building Resources")
 
 # Generate RheelEngine.h header
 set(RHEELENGINE_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/RheelEngine.h")
 add_custom_target(Header
-        COMMAND python include_headers_gen.py
-        WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
-        COMMENT "Generating RheelEngine.h")
+		COMMAND python include_headers_gen.py
+		WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
+		COMMENT "Generating RheelEngine.h")
 
 # Create the library
 add_library(RheelEngine SHARED)
@@ -43,8 +43,8 @@ target_compile_definitions(RheelEngine PRIVATE BUILDING_RHEELENGINE_DLL RE_DEBUG
 
 # Copy shared libraries
 add_custom_command(
-        TARGET RheelEngine POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR})
+		TARGET RheelEngine POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR})
 
 # Add resources to the library
 add_dependencies(RheelEngine Resources)
@@ -63,17 +63,36 @@ add_subdirectory(src)
 target_include_directories(RheelEngine PUBLIC ${EXTERNAL_INCLUDE_DIRECTORY})
 target_link_directories(RheelEngine PUBLIC ${EXTERNAL_LIBRARY_DIRECTORY})
 
-target_link_libraries(RheelEngine PRIVATE glfw3)
-target_link_libraries(RheelEngine PRIVATE gdi32)
-target_link_libraries(RheelEngine PUBLIC glew)
-target_link_libraries(RheelEngine PUBLIC opengl32)
+if(WIN32)
+	target_link_libraries(RheelEngine PRIVATE glfw3)
+	target_link_libraries(RheelEngine PRIVATE gdi32)
+	target_link_libraries(RheelEngine PUBLIC glew)
+	target_link_libraries(RheelEngine PUBLIC opengl32)
+else()
+	target_link_libraries(RheelEngine PRIVATE glfw)
+	target_link_libraries(RheelEngine PUBLIC GLEW)
+	target_link_libraries(RheelEngine PUBLIC GL)
+endif(WIN32)
+
 target_link_libraries(RheelEngine PRIVATE png16)
-target_link_libraries(RheelEngine PRIVATE zlibstatic)
+
+if (WIN32)
+	target_link_libraries(RheelEngine PRIVATE zlibstatic)
+else()
+	target_link_libraries(RheelEngine PRIVATE z)
+endif()
+
 target_link_libraries(RheelEngine PRIVATE freetype)
-target_link_libraries(RheelEngine PRIVATE vhacd)
 target_link_libraries(RheelEngine PUBLIC BulletDynamics)
 target_link_libraries(RheelEngine PUBLIC BulletCollision)
 target_link_libraries(RheelEngine PUBLIC LinearMath)
-target_link_libraries(RheelEngine PRIVATE libOpenAL32.dll.a)
+
+if (WIN32)
+	target_link_libraries(RheelEngine PRIVATE libOpenAL32.dll.a)
+else()
+	target_link_libraries(RheelEngine PRIVATE openal)
+endif()
+
 target_link_libraries(RheelEngine PRIVATE alut)
 target_compile_definitions(RheelEngine PUBLIC GLEW_STATIC)
+
