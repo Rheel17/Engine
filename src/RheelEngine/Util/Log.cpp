@@ -3,8 +3,6 @@
  */
 #include "../_common.h"
 
-#include <string_format.h>
-
 namespace rheel {
 
 std::ostream& Log::Info(const SourceLoc& loc) {
