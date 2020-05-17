@@ -26,14 +26,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Build resources
 set(RESOURCE_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/_res.h" "${CMAKE_CURRENT_BINARY_DIR}/_res.cpp")
 add_custom_target(Resources
-		COMMAND python build_res.py ${RESOURCE_OUTPUT}
+		COMMAND python3 build_res.py ${RESOURCE_OUTPUT}
 		WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
 		COMMENT "Building Resources")
 
 # Generate RheelEngine.h header
 set(RHEELENGINE_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/RheelEngine.h")
 add_custom_target(Header
-		COMMAND python include_headers_gen.py
+		COMMAND python3 include_headers_gen.py
 		WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
 		COMMENT "Generating RheelEngine.h")
 
