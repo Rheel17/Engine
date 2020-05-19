@@ -26,10 +26,13 @@ void Buffer::SetAllocationPolicy(AllocationPolicy policy) {
 	_allocation_policy = policy;
 }
 
+void Buffer::InvalidateData() {
+	glInvalidateBufferData(GetName());
+}
+
 void Buffer::SetDataEmpty(Usage usage) {
 	Bind();
 	glBufferData(GLenum(_target), 0, nullptr, GLenum(usage));
-	glFinish();
 
 	_byte_size = 0;
 }

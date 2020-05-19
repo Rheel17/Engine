@@ -85,6 +85,12 @@ public:
 	void SetAllocationPolicy(AllocationPolicy policy);
 
 	/**
+	 * Invalidates the buffer data, to tell OpenGL that we won't use the data
+	 * currently in the buffer any more.
+	 */
+	void InvalidateData();
+
+	/**
 	 * Resets the contents of the buffer. Use the usage parameter to specify
 	 * usage hits to OpenGL. Default is STATIC_DRAW. See
 	 * https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferData.xhtml
@@ -122,7 +128,6 @@ public:
 
 		if (_allocation_policy == AllocationPolicy::REALLOCATE || byteCount > _byte_size) {
 			glBufferData(GLenum(_target), byteCount, data, GLenum(usage));
-			glFinish();
 			_byte_size = byteCount;
 		} else if (_allocation_policy == AllocationPolicy::KEEP_BIGGER) {
 			glBufferSubData(GLenum(_target), 0, byteCount, data);
