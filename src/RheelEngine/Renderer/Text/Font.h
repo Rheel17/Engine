@@ -89,8 +89,8 @@ public:
 
 	static void Initialize();
 	static void RegisterFont(const std::string& filename, const std::string& name);
-	static Font& GetFont(const std::string& name);
-	static Font& GetDefaultFont();
+	static const Font& GetFont(const std::string& name);
+	static const Font& GetDefaultFont();
 
 private:
 	static void InitializeFreeType_();

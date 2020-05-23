@@ -14,9 +14,9 @@ namespace rheel {
 class RE_API TextElement : public Element {
 
 public:
-	TextElement(const std::string& text, unsigned size, const Color& color, Font& font = Font::GetDefaultFont());
+	TextElement(const std::string& text, unsigned size, const Color& color, const Font& font = Font::GetDefaultFont());
 
-	TextElement(std::string&& text, unsigned size, const Color& color, Font& font = Font::GetDefaultFont());
+	TextElement(std::string&& text, unsigned size, const Color& color, const Font& font = Font::GetDefaultFont());
 
 	void DoDraw(float time, float dt) const override;
 
@@ -25,7 +25,7 @@ public:
 	unsigned size;
 
 private:
-	Font& _font;
+	const Font& _font;
 	float _font_ascend;
 	float _font_descend;
 

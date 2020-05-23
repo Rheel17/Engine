@@ -149,7 +149,7 @@ void Font::RegisterFont(const std::string& filename, const std::string& name) {
 	FT_Done_Face(face);
 }
 
-Font& Font::GetFont(const std::string& name) {
+const Font& Font::GetFont(const std::string& name) {
 	auto iter = _registered_fonts.find(name);
 	if (iter == _registered_fonts.end()) {
 		Log::Error() << "Font '" << name << "' not found. Is it registered?" << std::endl;
@@ -159,7 +159,7 @@ Font& Font::GetFont(const std::string& name) {
 	return iter->second;
 }
 
-Font& Font::GetDefaultFont() {
+const Font& Font::GetDefaultFont() {
 	return GetFont(DEFAULT_FONT);
 }
 

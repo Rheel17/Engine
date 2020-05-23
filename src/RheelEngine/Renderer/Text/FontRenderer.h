@@ -45,10 +45,10 @@ public:
 	static constexpr inline unsigned SAMPLE_COUNT = 4;
 
 private:
-	FontRenderer(Font& font);
+	FontRenderer(const Font& font);
 	void ResizeBuffer_(unsigned width, unsigned height);
 
-	Font& _font;
+	const Font& _font;
 
 	unsigned _size = 12;
 	Color _color = 0xFFFFFF;
@@ -57,9 +57,9 @@ private:
 	gl::Buffer _glyph_buffer{ gl::Buffer::Target::ARRAY };
 
 private:
-	static FontRenderer& Get_(Font& font);
+	static FontRenderer& Get_(const Font& font);
 
-	static Cache<Font*, FontRenderer> _renderers;
+	static Cache<const Font*, FontRenderer> _renderers;
 
 };
 

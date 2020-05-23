@@ -7,7 +7,7 @@
 
 namespace rheel {
 
-TextElement::TextElement(const std::string& text, unsigned int size, const Color& color, Font& font) :
+TextElement::TextElement(const std::string& text, unsigned size, const Color& color, const Font& font) :
 		text(text),
 		color(color),
 		size(size),
@@ -18,7 +18,7 @@ TextElement::TextElement(const std::string& text, unsigned int size, const Color
 	SetDefaultSize(_font.StringWidth(text) * size, size * (_font_ascend + _font_descend));
 }
 
-TextElement::TextElement(std::string&& text, unsigned int size, const Color& color, Font& font) :
+TextElement::TextElement(std::string&& text, unsigned size, const Color& color, const Font& font) :
 		text(std::move(text)),
 		color(color),
 		size(size),

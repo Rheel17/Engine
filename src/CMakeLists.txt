@@ -107,6 +107,7 @@ target_sources(RheelEngine PRIVATE
 		RheelEngine/Renderer/Text/FontRenderer.cpp RheelEngine/Renderer/Text/FontRenderer.h 
 		RheelEngine/Renderer/Text/Glyph.cpp RheelEngine/Renderer/Text/Glyph.h 
 		RheelEngine/Renderer/Text/PreparedText.cpp RheelEngine/Renderer/Text/PreparedText.h 
+		RheelEngine/Renderer/Text/TextAlign.h 
 		RheelEngine/Renderer/Text/TextRenderer.cpp RheelEngine/Renderer/Text/TextRenderer.h 
 		RheelEngine/UI/Constraint.cpp RheelEngine/UI/Constraint.h 
 		RheelEngine/UI/Container.cpp RheelEngine/UI/Container.h 

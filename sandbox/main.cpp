@@ -77,7 +77,7 @@ protected:
 				0, 20, 1920,
 				Font::GetDefaultFont(), 12,
 				0xFFFFFF,
-				TextRenderer::TextAlign::LEFT);
+				TextAlign::LEFT);
 	}
 
 };

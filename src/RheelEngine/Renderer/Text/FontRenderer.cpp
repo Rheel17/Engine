@@ -12,7 +12,7 @@ namespace rheel {
 // This text rendering system is based on the amazing blog post by Evan Wallace:
 // https://medium.com/@evanwallace/easy-scalable-text-rendering-on-the-gpu-c3f4d782c5ac
 
-Cache<Font*, FontRenderer> FontRenderer::_renderers;
+Cache<const Font*, FontRenderer> FontRenderer::_renderers;
 
 FontRenderer::static_data::static_data() :
 		text_buffer(1920, 1080),
@@ -37,7 +37,7 @@ FontRenderer::static_data::static_data() :
 	resolve_vao.SetVertexAttributes<vec2>(resolve_vbo);
 }
 
-FontRenderer::FontRenderer(Font& font) :
+FontRenderer::FontRenderer(const Font& font) :
 		_font(font) {
 
 	_glyph_buffer.SetData(font._glyph_vertices);
@@ -167,8 +167,8 @@ void FontRenderer::ResizeBuffer_(unsigned width, unsigned height) {
 	}
 }
 
-FontRenderer& FontRenderer::Get_(Font& font) {
-	return _renderers.Get(&font, [](Font* font) {
+FontRenderer& FontRenderer::Get_(const Font& font) {
+	return _renderers.Get(&font, [](const Font* font) {
 		return FontRenderer(*font);
 	});
 }

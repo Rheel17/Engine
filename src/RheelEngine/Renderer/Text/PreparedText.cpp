@@ -3,12 +3,16 @@
  */
 #include "PreparedText.h"
 
+#include "FontRenderer.h"
+
 namespace rheel {
 
 std::vector<vec2> PreparedText::_transforms;
 std::vector<PreparedText::DrawCommand> PreparedText::_commands;
 
-PreparedText::PreparedText(const PreparedText::prepare_text_input& input) {
+PreparedText::PreparedText(const PreparedText::prepare_text_input& input) :
+		_font(input.font) {
+
 	FontRenderer& fontRenderer = FontRenderer::Get_(input.font);
 
 	_vao.SetVertexAttributes<vec3>(fontRenderer.GetGlyphBuffer());
@@ -16,6 +20,10 @@ PreparedText::PreparedText(const PreparedText::prepare_text_input& input) {
 	_vao.SetIndexBuffer(fontRenderer.GetCharacterVAO().GetIndexBuffer());
 
 	Prepare(input, _transform_buffer, _indirect_buffer);
+}
+
+const Font& PreparedText::GetFont() const {
+	return _font;
 }
 
 void PreparedText::Prepare(const prepare_text_input& input, gl::Buffer& transformBuffer, gl::DrawElementsIndirectBuffer& indirectBuffer) {

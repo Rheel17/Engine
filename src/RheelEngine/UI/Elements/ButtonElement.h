@@ -54,7 +54,7 @@ protected:
 
 public:
 	std::string text;
-	Font& font = Font::GetDefaultFont();
+	const Font& font = Font::GetDefaultFont();
 
 	Color color_foreground = 0x1d1d1e;
 	Color color_foreground_rollover = 0x444851;

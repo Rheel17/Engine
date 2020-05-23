@@ -6,27 +6,24 @@
 #include "../../_common.h"
 
 #include "FontRenderer.h"
+#include "PreparedText.h"
 
 namespace rheel {
 
 class RE_API TextRenderer {
 
 public:
-	enum class TextAlign {
-		LEFT, CENTER, RIGHT
-	};
+	/**
+	 * Draws the text with the given parameters. The text will be drawn in a
+	 * single line.
+	 */
+	void DrawText(const std::string& text, int x, int y, const Font& font, unsigned size, const Color& color);
 
 	/**
 	 * Draws the text with the given parameters. The text will be drawn in a
 	 * single line.
 	 */
-	void DrawText(const std::string& text, int x, int y, Font& font, unsigned size, const Color& color);
-
-	/**
-	 * Draws the text with the given parameters. The text will be drawn in a
-	 * single line.
-	 */
-	void DrawText(const char* text, int x, int y, Font& font, unsigned size, const Color& color);
+	void DrawText(const char* text, int x, int y, const Font& font, unsigned size, const Color& color);
 
 	/**
 	 * Draws the text as a paragraph. Newline characters ('\n', u+000a) will be
@@ -43,7 +40,7 @@ public:
 	 * The text will be rendered between x and x+width horizontally, with the
 	 * first line's baseline as y.
 	 */
-	void DrawParagraph(const std::string& text, int x, int y, unsigned width, Font& font, unsigned size, const Color& color, TextAlign align);
+	void DrawParagraph(const std::string& text, int x, int y, unsigned width, const Font& font, unsigned size, const Color& color, TextAlign align);
 
 	/**
 	 * Draws the text as a paragraph. Newline characters ('\n', u+000a) will be
@@ -60,7 +57,12 @@ public:
 	 * The text will be rendered between x and x+width horizontally, with the
 	 * first line's baseline as y.
 	 */
-	void DrawParagraph(const char* text, int x, int y, unsigned width, Font& font, unsigned size, const Color& color, TextAlign align);
+	void DrawParagraph(const char* text, int x, int y, unsigned width, const Font& font, unsigned size, const Color& color, TextAlign align);
+
+	/**
+	 * Draws the prepared text.
+	 */
+	void Draw(const PreparedText& text, unsigned size);
 
 private:
 	// pointer will be freed when the textrenderer gets destructed. This is to

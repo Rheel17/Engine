@@ -6,7 +6,7 @@
 #include "../../_common.h"
 
 #include "Font.h"
-#include "TextRenderer.h"
+#include "TextAlign.h"
 #include "../OpenGL/VertexArray.h"
 
 namespace rheel {
@@ -21,10 +21,10 @@ public:
 
 		/* Text alignment */
 		float width;
-		TextRenderer::TextAlign align{ TextRenderer::TextAlign::LEFT };
+		TextAlign align{ TextAlign::LEFT };
 
 		/* Font */
-		Font& font = Font::GetDefaultFont();
+		const Font& font = Font::GetDefaultFont();
 
 		/* Tab width relative to the width of a single space. */
 		float tab_width = 4.0f;
@@ -36,7 +36,11 @@ public:
 public:
 	PreparedText(const prepare_text_input& input);
 
+	const Font& GetFont() const;
+
 private:
+	const Font& _font;
+
 	gl::VertexArray _vao;
 	gl::Buffer _transform_buffer{ gl::Buffer::Target::ARRAY };
 	gl::DrawElementsIndirectBuffer _indirect_buffer;
