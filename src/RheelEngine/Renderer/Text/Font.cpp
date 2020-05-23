@@ -69,6 +69,18 @@ float Font::StringWidth(const std::string& str) const {
 	return StringWidth(str.c_str());
 }
 
+size_t Font::GetGlyphIndex(char32_t c) const {
+	return _glyph_index[c];
+}
+
+const Glyph& Font::GetGlyph(size_t glyphIndex) const {
+	return _glyphs[glyphIndex];
+}
+
+const std::pair<unsigned, unsigned>& Font::GetGlyphOffset(size_t glyph) const {
+	return _glyph_offsets[glyph];
+}
+
 std::pair<unsigned int, unsigned int> Font::LoadGlyph_(const std::vector<Glyph::Triangle>& triangles, const std::vector<Glyph::Triangle>& beziers) {
 	size_t startIndex = _glyph_indices.size();
 	size_t offset = _glyph_vertices.size();

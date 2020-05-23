@@ -331,6 +331,21 @@ public:
 	}
 
 	/**
+	 * Clears the cache.
+	 *
+	 * TODO: create this for the multithreaded cache
+	 * TODO: test
+	 */
+	void Clear() {
+		_size = 0;
+
+		_key_set.clear();
+		_cache.clear();
+
+		_policy = Policy();
+	}
+
+	/**
 	 * Returns the value for the given key. If the key is not in this cache,
 	 * this causes undefined behaviour.
 	 */

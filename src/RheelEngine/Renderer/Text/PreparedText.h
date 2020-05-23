@@ -19,17 +19,12 @@ public:
 		const char32_t* text;
 		size_t char_count;
 
-		/* Text (partial) bounding box */
-		unsigned x;
-		unsigned y;
-		unsigned width;
-
-		/* Text alignment in the bounding box */
+		/* Text alignment */
+		float width;
 		TextRenderer::TextAlign align{ TextRenderer::TextAlign::LEFT };
 
-		/* Font properties */
+		/* Font */
 		Font& font = Font::GetDefaultFont();
-		unsigned font_size;
 
 		/* Tab width relative to the width of a single space. */
 		float tab_width = 4.0f;
@@ -39,9 +34,7 @@ public:
 	};
 
 public:
-	PreparedText() {
-
-	}
+	PreparedText(const prepare_text_input& input);
 
 private:
 	gl::VertexArray _vao;
@@ -49,8 +42,15 @@ private:
 	gl::DrawElementsIndirectBuffer _indirect_buffer;
 
 public:
+	using DrawCommand = gl::DrawElementsIndirectBuffer::Command;
+
 	static void Prepare(const prepare_text_input& input, gl::Buffer& transformBuffer, gl::DrawElementsIndirectBuffer& indirectBuffer);
-	static void PrepareLine(const prepare_text_input& input, size_t count, gl::Buffer& transformBuffer, gl::DrawElementsIndirectBuffer& indirectBuffer);
+
+private:
+	static void Prepare_(const prepare_text_input& input);
+
+	static std::vector<vec2> _transforms;
+	static std::vector<DrawCommand> _commands;
 
 };
 

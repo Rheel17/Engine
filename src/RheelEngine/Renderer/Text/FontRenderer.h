@@ -14,6 +14,10 @@
 namespace rheel {
 
 class RE_API FontRenderer {
+	friend class TextRenderer;
+	friend class PreparedText;
+	friend class Game;
+
 	struct static_data {
 		static_data();
 
@@ -29,17 +33,19 @@ class RE_API FontRenderer {
 	pseudo_static_pointer<static_data> _static_data;
 
 public:
-	FontRenderer(Font& font);
-
 	void SetSize(unsigned size);
 	void SetColor(Color color);
 
-	int Render(const char32_t** text, size_t count, int x, int y);
+	const gl::VertexArray& GetCharacterVAO() const;
+	const gl::Buffer& GetGlyphBuffer() const;
+
+	// int Render(const char32_t** text, size_t count, int x, int y);
 
 public:
-	static constexpr inline size_t MAX_CHARS = 256;
+	static constexpr inline unsigned SAMPLE_COUNT = 4;
 
 private:
+	FontRenderer(Font& font);
 	void ResizeBuffer_(unsigned width, unsigned height);
 
 	Font& _font;
@@ -49,11 +55,11 @@ private:
 
 	gl::VertexArray _character_vao;
 	gl::Buffer _glyph_buffer{ gl::Buffer::Target::ARRAY };
-	gl::Buffer _transform_buffer{ gl::Buffer::Target::ARRAY };
-	gl::DrawElementsIndirectBuffer _indirect_buffer;
 
-	std::array<vec4, MAX_CHARS> _transforms;
-	std::array<gl::DrawElementsIndirectBuffer::Command, MAX_CHARS> _commands;
+private:
+	static FontRenderer& Get_(Font& font);
+
+	static Cache<Font*, FontRenderer> _renderers;
 
 };
 

@@ -18,10 +18,19 @@ OPENGL_DELETE_FUNCTION(glDeleteVertexArrays, delete_vertex_arrays_);
 
 class RE_API VertexArray : public Object<gen_vertex_arrays_, delete_vertex_arrays_> {
 
-private:
-	class ElementArrayBuffer : public Object<gen_buffers_, delete_buffers_> {};
-
 public:
+	class ElementArrayBuffer : public Object<gen_buffers_, delete_buffers_> {
+		friend class VertexArray;
+
+	private:
+		ElementArrayBuffer() = default;
+
+		unsigned _index_count = 0;
+		unsigned _index_capacity = 0;
+		Type _index_type;
+
+	};
+
 	class VertexAttribute {
 		friend class VertexArray;
 
@@ -126,6 +135,19 @@ public:
 	void SetVertexIndices(const std::vector<GLuint>& indices);
 
 	/**
+	 * Sets the vertex index buffer of this VAO. Note that any call to
+	 * SetVertexIndices after this method is called will revert back to this
+	 * VAO's own index buffer. The specified buffer will never be modified by
+	 * this VAO.
+	 */
+	void SetIndexBuffer(const ElementArrayBuffer& buffer);
+
+	/**
+	 * Returns the index buffer of this VAO.
+	 */
+	const ElementArrayBuffer& GetIndexBuffer() const;
+
+	/**
 	 * Draws the contents of the VAO using glDrawArrays or
 	 * glDrawArraysInstanced, depending on the number of indices. Make sure that
 	 * the VAO is complete, i.e. it has vertex data. The index buffer will not
@@ -163,19 +185,20 @@ public:
 
 private:
 	template<typename T>
-	void SetIndices_(const std::vector<T>& indices, GLenum type) {
+	void SetIndices_(const std::vector<T>& indices, Type type) {
 		Bind();
+		SetIndexBuffer(_index_buffer);
 
-		_index_type = type;
-		_index_count = indices.size();
+		_index_buffer._index_type = type;
+		_index_buffer._index_count = indices.size();
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _index_buffer.GetName());
 
-		if (_index_capacity < _index_count) {
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index_count * sizeof(T), indices.data(), GL_STATIC_DRAW);
-			_index_capacity = _index_count;
+		if (_index_buffer._index_capacity < _index_buffer._index_count) {
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index_buffer._index_count * sizeof(T), indices.data(), GL_STATIC_DRAW);
+			_index_buffer._index_capacity = _index_buffer._index_count;
 		} else {
-			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, _index_count * sizeof(T), indices.data());
+			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, _index_buffer._index_count * sizeof(T), indices.data());
 		}
 	}
 
@@ -183,9 +206,7 @@ private:
 	GLuint FirstUnusedIndex_(GLuint consecutive = 1);
 
 	ElementArrayBuffer _index_buffer;
-	unsigned _index_count = 0;
-	unsigned _index_capacity = 0;
-	GLenum _index_type;
+	mutable const ElementArrayBuffer* _bound_index_buffer = nullptr;
 
 	bool _has_initialized_unused_attribute_indices = false;
 	std::set<GLuint> _unused_attribute_indices;

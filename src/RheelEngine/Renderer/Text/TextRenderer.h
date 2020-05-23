@@ -67,16 +67,6 @@ private:
 	// re-use its memory. Under the hood, it uses a std::vector.
 	const char32_t* GetUnicodeArray_(const char* text);
 
-	void DrawParagraphLine_(
-			const char32_t* text, size_t count,
-			int x, int y, unsigned width,
-			Font& font, unsigned size, const Color& color,
-			TextAlign align, unsigned textWidth);
-	int DrawChars_(const char32_t** text, size_t count, int x, int y, Font& font, unsigned size, const Color& color);
-
-	Cache<Font*, std::unique_ptr<FontRenderer>> _renderers;
-	unsigned _tab_boundary = 4;
-
 	std::vector<char32_t> _unicode_array;
 
 };

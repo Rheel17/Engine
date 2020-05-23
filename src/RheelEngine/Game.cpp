@@ -55,6 +55,7 @@ Game::~Game() {
 	delete _thread_pool;
 
 	// destroy the window and its contents
+	FontRenderer::_renderers.Clear();
 	delete _ui;
 	delete _renderer;
 	delete _window;

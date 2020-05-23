@@ -109,15 +109,27 @@ void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<Ve
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLubyte>& indices) {
-	SetIndices_(indices, GL_UNSIGNED_BYTE);
+	SetIndices_(indices, Type::UNSIGNED_BYTE);
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLushort>& indices) {
-	SetIndices_(indices, GL_UNSIGNED_SHORT);
+	SetIndices_(indices, Type::UNSIGNED_SHORT);
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLuint>& indices) {
-	SetIndices_(indices, GL_UNSIGNED_INT);
+	SetIndices_(indices, Type::UNSIGNED_INT);
+}
+
+void VertexArray::SetIndexBuffer(const VertexArray::ElementArrayBuffer& buffer) {
+	if (_bound_index_buffer != &buffer) {
+		Bind();
+		_bound_index_buffer = &buffer;
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.GetName());
+	}
+}
+
+const VertexArray::ElementArrayBuffer& VertexArray::GetIndexBuffer() const {
+	return _index_buffer;
 }
 
 void VertexArray::DrawArrays(Mode mode, int first, unsigned count, unsigned int instances) const {
@@ -130,26 +142,26 @@ void VertexArray::DrawArrays(Mode mode, int first, unsigned count, unsigned int 
 	}
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wint-to-void-pointer-cast"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-
 void VertexArray::DrawElements(Mode mode, unsigned count, unsigned offset, unsigned instances) const {
 	Bind();
 
+	if (_bound_index_buffer == nullptr) {
+		_bound_index_buffer = &_index_buffer;
+	}
+
 	if (instances != 1) {
-		glDrawElementsInstanced(GLenum(mode), count, _index_type, (const void*) (offset), instances);
+		glDrawElementsInstanced(GLenum(mode), count, GLenum(_bound_index_buffer->_index_type), reinterpret_cast<const void*>(offset), instances);
 	} else {
-		glDrawElements(GLenum(mode), count, _index_type, (const void*) (offset));
+		glDrawElements(GLenum(mode), count, GLenum(_bound_index_buffer->_index_type), reinterpret_cast<const void*>(offset));
 	}
 }
 
-#pragma GCC diagnostic pop
-#pragma clang diagnostic pop
-
 void VertexArray::DrawElements(VertexArray::Mode mode, unsigned instances) const {
-	DrawElements(mode, _index_count, 0, instances);
+	if (_bound_index_buffer == nullptr) {
+		_bound_index_buffer = &_index_buffer;
+	}
+
+	DrawElements(mode, _bound_index_buffer->_index_count, 0, instances);
 }
 
 void VertexArray::DrawArraysIndirect(VertexArray::Mode mode, const DrawArraysIndirectBuffer& indirect, size_t count) const {
@@ -167,10 +179,14 @@ void VertexArray::DrawElementsIndirect(VertexArray::Mode mode, const DrawElement
 	Bind();
 	indirect.Bind();
 
+	if (_bound_index_buffer == nullptr) {
+		_bound_index_buffer = &_index_buffer;
+	}
+
 	if (count == 1) {
-		glDrawElementsIndirect(GLenum(mode), _index_type, nullptr);
+		glDrawElementsIndirect(GLenum(mode), GLenum(_bound_index_buffer->_index_type), nullptr);
 	} else {
-		glMultiDrawElementsIndirect(GLenum(mode), _index_type, nullptr, count, 0);
+		glMultiDrawElementsIndirect(GLenum(mode), GLenum(_bound_index_buffer->_index_type), nullptr, count, 0);
 	}
 }
 

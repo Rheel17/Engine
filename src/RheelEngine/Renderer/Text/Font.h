@@ -9,6 +9,7 @@
 
 #include "Glyph.h"
 #include "../../Util/Cache.h"
+#include "../OpenGL/VertexArray.h"
 
 namespace rheel {
 
@@ -50,6 +51,25 @@ public:
 	 * @return
 	 */
 	float StringWidth(const std::string& str) const;
+
+	/**
+	 * Returns the glyph index for the input character.
+	 */
+	size_t GetGlyphIndex(char32_t c) const;
+
+	/**
+	 * Returns the glyph with the given index. Use GetGlyphIndex(char32_t) to
+	 * get the glyph index for a character.
+	 */
+	const Glyph& GetGlyph(size_t glyphIndex) const;
+
+	/**
+	 * Returns the offset and size in the index buffer for the input glyph. Note
+	 * that the input is not a character but a glyph, and that a character value
+	 * does not necessarily equal the glyph index. Use GetGlyphIndex(char32_t)
+	 * to get the glyph index for a character.
+	 */
+	const std::pair<unsigned, unsigned>& GetGlyphOffset(size_t glyph) const;
 
 private:
 	std::pair<unsigned int, unsigned int> LoadGlyph_(const std::vector<Glyph::Triangle>& triangles, const std::vector<Glyph::Triangle>& beziers);
