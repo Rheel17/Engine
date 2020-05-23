@@ -34,8 +34,8 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 # Set project name
 project(Test)
 
-# Use C++17
-set(CMAKE_CXX_STANDARD 17)
+# Use C++20
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Create the executable

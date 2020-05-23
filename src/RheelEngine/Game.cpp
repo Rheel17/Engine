@@ -104,7 +104,7 @@ ThreadPool& Game::GetThreadPool() {
 }
 
 std::future<void> Game::PreloadTexture(const std::string& path, ImageTexture::WrapType type, bool linear) {
-	return GetThreadPool().AddTask<void>([=](){
+	return GetThreadPool().AddTask<void>([=, this](){
 		ImageTexture::Get(GetAssetLoader().png.Load(path), type, linear);
 	});
 }
