@@ -21,12 +21,27 @@ void TextRenderer::DrawParagraph(const std::string& text, int x, int y, unsigned
 
 void TextRenderer::DrawParagraph(const char* text, int x, int y, unsigned width, const Font& font, unsigned size, const Color& color, TextAlign align) {
 	FontRenderer& fontRenderer = FontRenderer::Get_(font);
+	fontRenderer.SetSize(size);
+	fontRenderer.SetColor(color);
 
 	const char32_t* chars = GetUnicodeArray_(text);
+	fontRenderer.Render(chars);
 }
 
-void TextRenderer::Draw(const PreparedText& text, unsigned int size) {
+PreparedText TextRenderer::PrepareText(const Prepare& prepare) {
+	PreparedText::prepare_text_input input{
+		.text = GetUnicodeArray_(prepare._text),
+		.width = prepare._width,
+		.align = prepare._align,
+		.font = prepare._font
+	};
+
+	return PreparedText(input);
+}
+
+void TextRenderer::DrawPrepared(const PreparedText& text, unsigned size) {
 	FontRenderer& fontRenderer = FontRenderer::Get_(text.GetFont());
+
 }
 
 const char32_t* TextRenderer::GetUnicodeArray_(const char* text) {

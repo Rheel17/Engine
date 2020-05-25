@@ -76,11 +76,36 @@ GLsizei VertexArray::VertexAttribute::ByteSize_() const {
 }
 #pragma clang diagnostic pop
 
-void VertexArray::Bind() const {
-	if (GetName() == 3) {
-		std::cout << "";
+VertexArray::VertexArray(VertexArray&& vao) :
+		Object(std::move(vao)),
+		_index_buffer(std::move(vao._index_buffer)),
+		_has_initialized_unused_attribute_indices(vao._has_initialized_unused_attribute_indices),
+		_unused_attribute_indices(std::move(vao._unused_attribute_indices)) {
+
+	if (vao._bound_index_buffer == &vao._index_buffer) {
+		SetIndexBuffer(_index_buffer);
+	} else if (vao._bound_index_buffer != nullptr) {
+		SetIndexBuffer(*vao._bound_index_buffer);
+	}
+}
+
+VertexArray& VertexArray::operator=(VertexArray&& vao) {
+	Object::operator=(std::move(vao));
+
+	_index_buffer = std::move(vao._index_buffer);
+	_has_initialized_unused_attribute_indices = vao._has_initialized_unused_attribute_indices;
+	_unused_attribute_indices = std::move(vao._unused_attribute_indices);
+
+	if (vao._bound_index_buffer == &vao._index_buffer) {
+		SetIndexBuffer(_index_buffer);
+	} else if (vao._bound_index_buffer != nullptr) {
+		SetIndexBuffer(*vao._bound_index_buffer);
 	}
 
+	return *this;
+}
+
+void VertexArray::Bind() const {
 	Context::Current().BindVertexArray(*this);
 }
 

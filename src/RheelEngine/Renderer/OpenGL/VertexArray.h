@@ -79,6 +79,12 @@ public:
 	};
 
 public:
+	VertexArray() = default;
+	~VertexArray() = default;
+
+	VertexArray(VertexArray&& vao);
+	VertexArray& operator=(VertexArray&& vao);
+
 	void Bind() const;
 
 	/**

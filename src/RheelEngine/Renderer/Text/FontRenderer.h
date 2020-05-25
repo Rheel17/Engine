@@ -6,6 +6,7 @@
 #include "../../_common.h"
 
 #include "Font.h"
+#include "PreparedText.h"
 #include "../OpenGL/Framebuffer.h"
 #include "../OpenGL/VertexArray.h"
 #include "../OpenGL/Program.h"
@@ -39,13 +40,15 @@ public:
 	const gl::VertexArray& GetCharacterVAO() const;
 	const gl::Buffer& GetGlyphBuffer() const;
 
-	// int Render(const char32_t** text, size_t count, int x, int y);
+	void Render(const char32_t* text);
+	void Render(const PreparedText& preparedText);
 
 public:
 	static constexpr inline unsigned SAMPLE_COUNT = 4;
 
 private:
 	FontRenderer(const Font& font);
+	void Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer, const vec4& bounds, unsigned count);
 	void ResizeBuffer_(unsigned width, unsigned height);
 
 	const Font& _font;
@@ -55,6 +58,8 @@ private:
 
 	gl::VertexArray _character_vao;
 	gl::Buffer _glyph_buffer{ gl::Buffer::Target::ARRAY };
+	gl::Buffer _transform_buffer{ gl::Buffer::Target::ARRAY };
+	gl::DrawElementsIndirectBuffer _indirect_buffer;
 
 private:
 	static FontRenderer& Get_(const Font& font);

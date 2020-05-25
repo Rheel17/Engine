@@ -60,9 +60,16 @@ public:
 	void DrawParagraph(const char* text, int x, int y, unsigned width, const Font& font, unsigned size, const Color& color, TextAlign align);
 
 	/**
+	 * Prepares the rendering of a paragraph. This is a method to avoid the CPU
+	 * work in rendering big paragraphs. Use this if the text doesn't change
+	 * often. Call DrawPrepared() to draw the results.
+	 */
+	PreparedText PrepareText(const Prepare& prepare);
+
+	/**
 	 * Draws the prepared text.
 	 */
-	void Draw(const PreparedText& text, unsigned size);
+	void DrawPrepared(const PreparedText& text, unsigned size);
 
 private:
 	// pointer will be freed when the textrenderer gets destructed. This is to

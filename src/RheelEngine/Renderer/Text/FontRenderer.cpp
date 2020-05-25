@@ -42,6 +42,7 @@ FontRenderer::FontRenderer(const Font& font) :
 
 	_glyph_buffer.SetData(font._glyph_vertices);
 	_character_vao.SetVertexAttributes<vec3>(_glyph_buffer);
+	_character_vao.SetVertexAttributes<vec2>(_transform_buffer, 0, SAMPLE_COUNT);
 	_character_vao.SetVertexIndices(font._glyph_indices);
 }
 
@@ -63,6 +64,58 @@ const gl::VertexArray& FontRenderer::GetCharacterVAO() const {
 
 const gl::Buffer& FontRenderer::GetGlyphBuffer() const {
 	return _glyph_buffer;
+}
+
+void FontRenderer::Render(const char32_t* text) {
+	vec4 bounds;
+
+	unsigned count = PreparedText::Prepare(PreparedText::prepare_text_input{
+		.text = text,
+		.font = std::ref(_font)
+	}, _transform_buffer, _indirect_buffer, bounds);
+
+	Render_(_character_vao, _indirect_buffer, bounds, count);
+}
+
+void FontRenderer::Render(const PreparedText& preparedText) {
+
+}
+
+void FontRenderer::Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer, const vec4& bounds, unsigned count) {
+	auto screen = DisplayConfiguration::Get().resolution;
+	ResizeBuffer_(screen.x, screen.y);
+
+	{
+		gl::ContextScope cs1;
+		_static_data->text_buffer.BindForDrawing();
+
+		// clear the text buffer
+		{
+			gl::ContextScope cs2;
+			gl::Context::Current().Enable(gl::Capability::SCISSOR_TEST);
+			gl::Context::Current().SetScissorTest(
+					(0.5f + 0.5f * bounds.x) * screen.x - 4,
+					(0.5f + 0.5f * bounds.y) * screen.y - 4,
+					((bounds.z - bounds.x) * 0.5f) * screen.x + 8,
+					((bounds.w - bounds.y) * 0.5f) * screen.y + 8
+			);
+
+			_static_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
+		}
+
+		gl::Context::Current().Disable(gl::Capability::BLEND);
+		gl::Context::Current().Enable(gl::Capability::COLOR_LOGIC_OP);
+		gl::Context::Current().SetLogicOp(gl::LogicOp::XOR);
+
+		// draw the characters
+		_static_data->draw_program.Use();
+		_character_vao.DrawElementsIndirect(gl::VertexArray::Mode::TRIANGLES, _indirect_buffer, count);
+	}
+
+	// resolve to the main framebuffer
+	_static_data->text_buffer.GetTextureAttachment(0).Bind(0);
+	_static_data->resolve_program["bounds"] = bounds;
+	_static_data->resolve_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
 }
 
 // int FontRenderer::Render(const char32_t** text, size_t count, int x, int y) {
