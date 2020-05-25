@@ -16,7 +16,10 @@ std::unordered_map<std::string, Font> Font::_registered_fonts;
 // TODO: let the user decide before initializing what character range they want,
 //  so unicode/ascii/etc. Load only the necessary glyphs.
 
-Font::Font(FT_Face face) {
+Font::Font(FT_Face face) :
+		_ascend(static_cast<float>(face->ascender) / static_cast<float>(face->units_per_EM)),
+		_descend(static_cast<float>(face->descender) / static_cast<float>(face->units_per_EM)) {
+
 	_glyph_index.reserve(0x110000);
 	_glyphs.reserve(face->num_glyphs);
 	_glyph_offsets.reserve(face->num_glyphs);
@@ -36,10 +39,6 @@ Font::Font(FT_Face face) {
 	for (char32_t charcode = 0; charcode < 0x110000; charcode++) {
 		_glyph_index[charcode] = FT_Get_Char_Index(face, charcode);
 	}
-
-	// TODO: calculate these
-	_ascend = 0.0f;
-	_descend = 0.0f;
 }
 
 float Font::Ascend() const {

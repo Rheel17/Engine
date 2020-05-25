@@ -7,41 +7,16 @@ class FpsUpdater : public ComponentBase {
 public:
 	void SetElement(TextElement* element) {
 		_element = element;
-		_element->text = "";
 	}
 
 	void Update() override {
 		if (_element) {
-			// _element->text = std::to_string(int(std::round(1.0 / GetTimeDelta()))) + " FPS";
+			_element->text = std::to_string(int(std::round(1.0 / GetTimeDelta()))) + " FPS";
 		}
 	}
 
 private:
 	TextElement* _element = nullptr;
-
-};
-
-class LoremElement : public Element {
-
-protected:
-	virtual void DoDraw(float time, float dt) const override {
-		GetTextRenderer().DrawParagraph(R"(#include <iostream>
-
-int main() {
-	if (1 == 1) { /* always true */
-// 		this prints Hello, World!
-		std::cout << "Hello, World!" << std::endl;
-	}
-	return 0;
-//	end of the program
-}
-)",
-
-				100, 40, GetBounds().width - 200,
-				Font::GetDefaultFont(), 20,
-				0xFFFFFF,
-				TextAlign::LEFT);
-	}
 
 };
 
@@ -156,11 +131,7 @@ public:
 		auto buttonElement = ui.InsertElement(ButtonElement([this](){ Stop(); }));
 		ui.AddConstraint(buttonElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT,  100);
 		ui.AddConstraint(buttonElement, Constraint::TOP_LEFT, buttonElement, Constraint::BOTTOM_RIGHT, -100);
-
-		auto loremElement = ui.InsertElement(LoremElement());
-		ui.AddConstraint(loremElement, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
-		ui.AddConstraint(loremElement, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
-
+		
 		GetUI().SetContainer(std::move(ui));
 		GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fpsElement);
 	}
