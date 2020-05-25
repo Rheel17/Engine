@@ -11,13 +11,13 @@ This project uses the following external dependencies:
 * [GLFW 3.3.2](https://www.glfw.org/)
 * [GLEW 2.1.0](http://glew.sourceforge.net/)
 * [RapidXml](http://rapidxml.sourceforge.net/)
-* [freealut 1.10](https://github.com/vancegroup/freealut) (windows) [alut](https://svn.ict.usc.edu/svn_vh_public/trunk/lib/vhcl/openal/docs/alut.html) (linux)
+* [freealut 1.10](https://github.com/vancegroup/freealut) (Windows) [alut](https://svn.ict.usc.edu/svn_vh_public/trunk/lib/vhcl/openal/docs/alut.html) (Linux)
 * [FreeType](https://www.freetype.org/)
 * [Bullet3 2.89](https://github.com/bulletphysics/bullet3)
 * [libpng 1.6.37](http://www.libpng.org/pub/png/libpng.html)
 
 ## Build
-To build, CMake and Python 3.x are needed. Tested to work with MinGW.
+To build, CMake and Python 3.x are needed. Tested to work with MinGW (Windows) and GCC 10.1 (Linux).
 
 1. Create a build directory:
 	* `mkdir build`
