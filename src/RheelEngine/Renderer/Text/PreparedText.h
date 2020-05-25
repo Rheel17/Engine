@@ -38,11 +38,13 @@ public:
 	static unsigned Prepare(const prepare_text_input& input, gl::Buffer& transformBuffer, gl::DrawElementsIndirectBuffer& indirectBuffer, vec4& bounds);
 
 private:
-	static unsigned Prepare_(const prepare_text_input& input, vec4& bounds);
+	static unsigned Prepare_(const prepare_text_input& input);
 	static void AlignLine_(size_t lineStart, size_t lineEnd, float space, TextAlign align);
+	static vec4 CombineBounds_();
 
 	static std::vector<vec2> _transforms;
 	static std::vector<DrawCommand> _commands;
+	static std::vector<vec4> _bounds;
 
 };
 

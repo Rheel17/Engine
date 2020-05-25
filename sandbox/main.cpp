@@ -25,20 +25,22 @@ class LoremElement : public Element {
 
 protected:
 	virtual void DoDraw(float time, float dt) const override {
-		GetTextRenderer().DrawParagraph(
-				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu ut velit faucibus, eget tristique turpis volutpat. Quisque semper arcu ante, ut vestibulum leo ultrices et. Donec fringilla dictum sodales. Nullam semper mauris vel tristique vestibulum. Sed pulvinar aliquet commodo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce ornare augue et odio maximus viverra. Proin auctor in elit quis ultricies. Fusce auctor libero est, nec laoreet erat euismod iaculis.\n"
-				"\n"
-				"Pellentesque sagittis facilisis varius. Suspendisse in ornare augue. Etiam dictum vulputate velit in accumsan. Donec eget efficitur nulla. Etiam a scelerisque tellus. Fusce eget massa lectus. Donec facilisis scelerisque nisl, sit amet tristique est fermentum at. Pellentesque non nulla nec lorem blandit iaculis nec nec velit. Praesent ut malesuada ipsum. In hac habitasse platea dictumst. Nulla nec eros vulputate, sollicitudin neque euismod, tincidunt massa. Sed sapien nulla, ornare vel mauris sed, facilisis placerat magna.\n"
-				"\n"
-				"Nam et justo eu ante maximus tincidunt tempor non enim. Vestibulum quis facilisis metus. Etiam vitae velit magna. Vestibulum sit amet facilisis eros, in maximus elit. Phasellus a ipsum in lorem sagittis interdum nec at ante. Donec enim leo, feugiat lobortis mattis sit amet, hendrerit at lacus. Donec id ipsum id nisl feugiat sollicitudin. Ut at eros faucibus, condimentum nisl non, euismod ipsum. Vivamus efficitur mollis diam non eleifend. Maecenas non odio sed felis lacinia dignissim. Nullam malesuada suscipit sapien ut auctor. In dui ipsum, semper ut orci ut, luctus interdum metus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Pellentesque luctus dolor quis turpis dapibus pretium.\n"
-				"\n"
-				"Nam iaculis consequat dui, id ultrices ex elementum et. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam fringilla metus eu iaculis mattis. Fusce venenatis purus diam, nec tincidunt erat volutpat non. Mauris sit amet urna bibendum, tincidunt ligula sed, pharetra ipsum. Integer rutrum, purus a viverra dictum, urna enim aliquet dui, sit amet accumsan tortor orci in nisl. Pellentesque id nibh odio. Etiam nec est sed enim porttitor congue. Mauris fringilla nec dui et tincidunt. Fusce augue mi, porta sed odio et, aliquam venenatis dui. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer maximus pharetra quam, id efficitur dui tincidunt eget.\n"
-				"\n"
-				"Duis pellentesque odio in turpis mollis aliquet. Nam mollis ipsum et eros hendrerit, et sodales mi viverra. Ut iaculis velit quis ligula accumsan, ut mollis nisl luctus. Curabitur non lorem non dolor vehicula iaculis eu et lectus. Nullam vel interdum erat. Pellentesque vel elit porttitor, congue neque ut, convallis felis. Maecenas posuere justo id diam faucibus, eget eleifend augue placerat.",
+		GetTextRenderer().DrawParagraph(R"(#include <iostream>
+
+int main() {
+	if (1 == 1) { /* always true */
+// 		this prints Hello, World!
+		std::cout << "Hello, World!" << std::endl;
+	}
+	return 0;
+//	end of the program
+}
+)",
+
 				100, 40, GetBounds().width - 200,
 				Font::GetDefaultFont(), 20,
 				0xFFFFFF,
-				TextAlign::RIGHT);
+				TextAlign::LEFT);
 	}
 
 };

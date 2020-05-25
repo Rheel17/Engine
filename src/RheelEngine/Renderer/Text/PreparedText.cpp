@@ -9,35 +9,30 @@ namespace rheel {
 
 std::vector<vec2> PreparedText::_transforms;
 std::vector<PreparedText::DrawCommand> PreparedText::_commands;
+std::vector<vec4> PreparedText::_bounds;
 
 unsigned PreparedText::Prepare(const prepare_text_input& input, gl::Buffer& transformBuffer, gl::DrawElementsIndirectBuffer& indirectBuffer, vec4& bounds) {
 	// prepare the internal buffers
 	_transforms.clear();
 	_commands.clear();
+	_bounds.clear();
 
 	// do the preparations
-	unsigned count = Prepare_(input, bounds);
+	unsigned count = Prepare_(input);
+	bounds = CombineBounds_();
 
 	// upload the results to the OpenGL buffers
 	transformBuffer.SetData(_transforms);
 	indirectBuffer.SetData(_commands);
 
-	// add a border to the bounds
-	bounds.x -= 0.1f;
-	bounds.y -= 0.1f;
-	bounds.z += 0.1f;
-	bounds.w += 0.1f;
-
 	return count;
 }
 
-unsigned PreparedText::Prepare_(const prepare_text_input& input, vec4& bounds) {
+unsigned PreparedText::Prepare_(const prepare_text_input& input) {
 	const char32_t* text = input.text;
 	char32_t c;
 
-	constexpr float fmin = std::numeric_limits<float>::lowest();
-	constexpr float fmax = std::numeric_limits<float>::max();
-	bounds = { fmax, fmax, fmin, fmin };
+
 
 	float spaceWidth = input.font.get().CharacterWidth(U' ');
 
@@ -70,7 +65,7 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input, vec4& bounds) {
 		}
 
 		if (c == U'\t') {
-			// TODO: handle tab
+			px = (std::floor(px / (spaceWidth * input.tab_width)) + 1.0f) * (spaceWidth * input.tab_width);
 			wordBoundary = drawIndex;
 			wordBoundaryPx = px; // TOOD: set this to the first non-space non-tab character
 			continue;
@@ -109,11 +104,7 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input, vec4& bounds) {
 			.base_instance = drawIndex++
 		});
 
-		const vec4& glyphBounds = glyph.Bounds();
-		bounds.x = std::min(bounds.x, glyphBounds.x + px);
-		bounds.y = std::min(bounds.y, glyphBounds.y + py);
-		bounds.z = std::max(bounds.z, glyphBounds.z + px);
-		bounds.w = std::max(bounds.w, glyphBounds.w + py);
+		_bounds.push_back(glyph.Bounds());
 
 		px += advance;
 	}
@@ -140,6 +131,33 @@ void PreparedText::AlignLine_(size_t lineStart, size_t lineEnd, float space, Tex
 	for (size_t i = lineStart; i < lineEnd; i++) {
 		_transforms[i].x += shift;
 	}
+}
+
+vec4 PreparedText::CombineBounds_() {
+	if (_bounds.empty()) {
+		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	constexpr float fmin = std::numeric_limits<float>::lowest();
+	constexpr float fmax = std::numeric_limits<float>::max();
+	vec4 bounds = { fmax, fmax, fmin, fmin };
+
+	for (size_t i = 0; i < _bounds.size(); i++) {
+		const vec4& b = _bounds[i];
+		const vec2& p = _transforms[i];
+
+		bounds.x = std::min(bounds.x, b.x + p.x);
+		bounds.y = std::min(bounds.y, b.y + p.y);
+		bounds.z = std::max(bounds.z, b.z + p.x);
+		bounds.w = std::max(bounds.w, b.w + p.y);
+	}
+
+	bounds.x -= 0.1f;
+	bounds.y -= 0.1f;
+	bounds.z += 0.1f;
+	bounds.w += 0.1f;
+
+	return bounds;
 }
 
 }
