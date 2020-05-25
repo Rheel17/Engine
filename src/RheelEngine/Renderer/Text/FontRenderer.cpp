@@ -66,7 +66,7 @@ const gl::Buffer& FontRenderer::GetGlyphBuffer() const {
 	return _glyph_buffer;
 }
 
-void FontRenderer::Render(const char32_t* text) {
+void FontRenderer::Render(const char32_t* text, int x, int y) {
 	vec4 bounds;
 
 	unsigned count = PreparedText::Prepare(PreparedText::prepare_text_input{
@@ -74,14 +74,28 @@ void FontRenderer::Render(const char32_t* text) {
 		.font = std::ref(_font)
 	}, _transform_buffer, _indirect_buffer, bounds);
 
-	Render_(_character_vao, _indirect_buffer, bounds, count);
+	auto screen = DisplayConfiguration::Get().resolution;
+	float sx = static_cast<float>(2 * _size) / static_cast<float>(screen.x);
+	float sy = static_cast<float>(2 * _size) / static_cast<float>(screen.y);
+	float tx = (static_cast<float>(x) / static_cast<float>(screen.x)) * 2.0f - 1.0f;
+	float ty = (static_cast<float>(y) / static_cast<float>(screen.y)) * -2.0f + 1.0f;
+
+	mat3 transform(
+			sx,   0.0f, 0.0f,
+			0.0f, sy,   0.0f,
+			tx,   ty,   1.0f
+	);
+
+	Render_(_character_vao, _indirect_buffer, bounds, count, transform);
 }
 
 void FontRenderer::Render(const PreparedText& preparedText) {
 
 }
 
-void FontRenderer::Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer, const vec4& bounds, unsigned count) {
+void FontRenderer::Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer,
+		const vec4& bounds, unsigned count, const mat3& transform) {
+
 	auto screen = DisplayConfiguration::Get().resolution;
 	ResizeBuffer_(screen.x, screen.y);
 
@@ -91,13 +105,16 @@ void FontRenderer::Render_(const gl::VertexArray& vao, const gl::DrawElementsInd
 
 		// clear the text buffer
 		{
+			vec3 transformedBoundsXY = transform * vec3(bounds.x, bounds.y, 1.0f);
+			vec3 transformedBoundsZW = transform * vec3(bounds.z, bounds.w, 1.0f);
+
 			gl::ContextScope cs2;
 			gl::Context::Current().Enable(gl::Capability::SCISSOR_TEST);
 			gl::Context::Current().SetScissorTest(
-					(0.5f + 0.5f * bounds.x) * screen.x - 4,
-					(0.5f + 0.5f * bounds.y) * screen.y - 4,
-					((bounds.z - bounds.x) * 0.5f) * screen.x + 8,
-					((bounds.w - bounds.y) * 0.5f) * screen.y + 8
+					(0.5f + 0.5f * transformedBoundsXY.x) * screen.x - 4,
+					(0.5f + 0.5f * transformedBoundsXY.y) * screen.y - 4,
+					((transformedBoundsZW.x - transformedBoundsXY.x) * 0.5f) * screen.x + 8,
+					((transformedBoundsZW.y - transformedBoundsXY.y) * 0.5f) * screen.y + 8
 			);
 
 			_static_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
@@ -108,110 +125,16 @@ void FontRenderer::Render_(const gl::VertexArray& vao, const gl::DrawElementsInd
 		gl::Context::Current().SetLogicOp(gl::LogicOp::XOR);
 
 		// draw the characters
-		_static_data->draw_program.Use();
+		_static_data->draw_program["transform"] = transform;
 		_character_vao.DrawElementsIndirect(gl::VertexArray::Mode::TRIANGLES, _indirect_buffer, count);
 	}
 
 	// resolve to the main framebuffer
 	_static_data->text_buffer.GetTextureAttachment(0).Bind(0);
 	_static_data->resolve_program["bounds"] = bounds;
+	_static_data->resolve_program["transform"] = transform;
 	_static_data->resolve_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
 }
-
-// int FontRenderer::Render(const char32_t** text, size_t count, int x, int y) {
-// 	if (count == 0 || count > MAX_CHARS) {
-// 		count = MAX_CHARS;
-// 	}
-//
-// 	gl::ContextScope cs;
-//
-// 	// prepare the offscreen buffer
-// 	auto screen = DisplayConfiguration::Get().resolution;
-// 	ResizeBuffer_(screen.x, screen.y);
-//
-// 	// base transform
-// 	float px = float(x) / screen.x * 2.0f - 1.0f;
-// 	float py = float(y) / screen.y * -2.0f + 1.0f;
-// 	float sx = float(_size) / screen.x * 2.0f;
-// 	float sy = float(_size) / screen.y * 2.0f;
-//
-// 	// buffer space
-// 	float bx = 4.0f / screen.x;
-// 	float by = 4.0f / screen.y;
-//
-// 	// prepare the draw
-// 	vec4 bounds(1.0f, 1.0f, -1.0f, -1.0f);
-//
-// 	size_t numChars = 0;
-// 	for (unsigned i = 0; **text && i < count; i++) {
-// 		const auto&[offset, glyphSize] = _font._glyph_offsets[_font._glyph_index[**text]];
-//
-// 		// add the draw call
-// 		numChars++;
-// 		_commands[i] = {
-// 				glyphSize,  // count          (glyph size)
-// 				4,          // instance_count (samples)
-// 				offset,     // first_index    (glyph start)
-// 				0,          // base_vertex
-// 				i           // base_instance  (glyph index)
-// 		};
-//
-// 		// transform the glyph
-// 		_transforms[i] = { px, py, sx, sy };
-//
-// 		const auto& glyph = _font._glyphs[_font._glyph_index[**text]];
-//
-// 		// increase the bounds of the resolve quad to include this glyph
-// 		const vec4& glyphBounds = glyph.Bounds();
-// 		bounds.x = std::min(bounds.x, glyphBounds.x * sx + px - bx);
-// 		bounds.y = std::min(bounds.y, glyphBounds.y * sy + py - by);
-// 		bounds.z = std::max(bounds.z, glyphBounds.z * sx + px + bx);
-// 		bounds.w = std::max(bounds.w, glyphBounds.w * sy + py + by);
-//
-// 		// move to the next character
-// 		x += glyph.Advance() * _size;
-// 		px = float(x) / screen.x * 2.0f - 1.0f;
-// 		(*text)++;
-// 	}
-//
-// 	// upload the buffers
-// 	_transform_buffer.SetData(_transforms.data(), numChars, gl::Buffer::Usage::STREAM_DRAW);
-// 	_indirect_buffer.SetData(_commands.data(), numChars, gl::Buffer::Usage::STREAM_DRAW);
-//
-// 	{
-// 		gl::ContextScope cs1;
-// 		_static_data->text_buffer.BindForDrawing();
-//
-// 		// clear the text buffer
-// 		{
-// 			gl::ContextScope cs2;
-// 			gl::Context::Current().Enable(gl::Capability::SCISSOR_TEST);
-// 			gl::Context::Current().SetScissorTest(
-// 					(0.5f + 0.5f * bounds.x) * screen.x - 4,
-// 					(0.5f + 0.5f * bounds.y) * screen.y - 4,
-// 					((bounds.z - bounds.x) * 0.5f) * screen.x + 8,
-// 					((bounds.w - bounds.y) * 0.5f) * screen.y + 8
-// 			);
-//
-// 			_static_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
-// 		}
-//
-// 		gl::Context::Current().Disable(gl::Capability::BLEND);
-// 		gl::Context::Current().Enable(gl::Capability::COLOR_LOGIC_OP);
-// 		gl::Context::Current().SetLogicOp(gl::LogicOp::XOR);
-//
-// 		// draw the characters
-// 		_static_data->draw_program.Use();
-// 		_character_vao.DrawElementsIndirect(gl::VertexArray::Mode::TRIANGLES, _indirect_buffer, numChars);
-// 	}
-//
-// 	// resolve to the main framebuffer
-// 	_static_data->text_buffer.GetTextureAttachment(0).Bind(0);
-// 	_static_data->resolve_program["bounds"] = bounds;
-// 	_static_data->resolve_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
-//
-// 	return x;
-// }
 
 void FontRenderer::ResizeBuffer_(unsigned width, unsigned height) {
 	if (_static_data->text_buffer.GetViewportWidth() != width || _static_data->text_buffer.GetViewportHeight() != height) {

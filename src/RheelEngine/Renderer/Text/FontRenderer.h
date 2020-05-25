@@ -40,7 +40,7 @@ public:
 	const gl::VertexArray& GetCharacterVAO() const;
 	const gl::Buffer& GetGlyphBuffer() const;
 
-	void Render(const char32_t* text);
+	void Render(const char32_t* text, int x, int y);
 	void Render(const PreparedText& preparedText);
 
 public:
@@ -48,7 +48,7 @@ public:
 
 private:
 	FontRenderer(const Font& font);
-	void Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer, const vec4& bounds, unsigned count);
+	void Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer, const vec4& bounds, unsigned count, const mat3& transform);
 	void ResizeBuffer_(unsigned width, unsigned height);
 
 	const Font& _font;
