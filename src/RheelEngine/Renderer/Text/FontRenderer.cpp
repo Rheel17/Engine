@@ -95,10 +95,6 @@ void FontRenderer::Render(const char32_t* text, int x, int y, unsigned width, Te
 	Render_(_character_vao, _indirect_buffer, bounds, count, transform);
 }
 
-void FontRenderer::Render(const PreparedText& preparedText) {
-
-}
-
 void FontRenderer::Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer,
 		const vec4& bounds, unsigned count, const mat3& transform) {
 

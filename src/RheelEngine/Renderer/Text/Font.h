@@ -5,11 +5,7 @@
 #define RHEELENGINE_FONT_H
 #include "../../_common.h"
 
-#include <list>
-
 #include "Glyph.h"
-#include "../../Util/Cache.h"
-#include "../OpenGL/VertexArray.h"
 
 namespace rheel {
 

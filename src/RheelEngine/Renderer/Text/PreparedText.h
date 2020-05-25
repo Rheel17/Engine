@@ -7,28 +7,9 @@
 
 #include "Font.h"
 #include "TextAlign.h"
-#include "../OpenGL/VertexArray.h"
+#include "../OpenGL/DrawIndirectBuffer.h"
 
 namespace rheel {
-
-class RE_API Prepare {
-	friend class TextRenderer;
-
-public:
-	Prepare(const char* text);
-	Prepare(const std::string& text);
-
-	Prepare& SetWidth(float width);
-	Prepare& SetAlign(TextAlign align);
-	Prepare& SetFont(const Font& font);
-
-private:
-	const char* _text;
-	float _width = std::numeric_limits<float>::max();
-	TextAlign _align = TextAlign::LEFT;
-	std::reference_wrapper<const Font> _font = std::ref(Font::GetDefaultFont());
-
-};
 
 class RE_API PreparedText {
 
@@ -52,27 +33,13 @@ public:
 	};
 
 public:
-	PreparedText(const prepare_text_input& input);
-
-	const Font& GetFont() const;
-
-private:
-	const Font& _font;
-
-	gl::VertexArray _vao;
-	gl::Buffer _transform_buffer{ gl::Buffer::Target::ARRAY };
-	gl::DrawElementsIndirectBuffer _indirect_buffer;
-
-	unsigned _count;
-	vec4 _bounds;
-
-public:
 	using DrawCommand = gl::DrawElementsIndirectBuffer::Command;
 
 	static unsigned Prepare(const prepare_text_input& input, gl::Buffer& transformBuffer, gl::DrawElementsIndirectBuffer& indirectBuffer, vec4& bounds);
 
 private:
 	static unsigned Prepare_(const prepare_text_input& input, vec4& bounds);
+	static void AlignLine_(size_t lineStart, size_t lineEnd, float space, TextAlign align);
 
 	static std::vector<vec2> _transforms;
 	static std::vector<DrawCommand> _commands;

@@ -11,12 +11,12 @@
 #include "../OpenGL/VertexArray.h"
 #include "../OpenGL/Program.h"
 #include "../../Color.h"
+#include "../../Util/Cache.h"
 
 namespace rheel {
 
 class RE_API FontRenderer {
 	friend class TextRenderer;
-	friend class PreparedText;
 	friend class Game;
 
 	struct static_data {
@@ -41,7 +41,6 @@ public:
 	const gl::Buffer& GetGlyphBuffer() const;
 
 	void Render(const char32_t* text, int x, int y, unsigned width, TextAlign align);
-	void Render(const PreparedText& preparedText);
 
 public:
 	static constexpr inline unsigned SAMPLE_COUNT = 4;

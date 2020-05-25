@@ -28,22 +28,6 @@ void TextRenderer::DrawParagraph(const char* text, int x, int y, unsigned width,
 	fontRenderer.Render(chars, x, y, width, align);
 }
 
-PreparedText TextRenderer::PrepareText(const Prepare& prepare) {
-	PreparedText::prepare_text_input input{
-		.text = GetUnicodeArray_(prepare._text),
-		.width = prepare._width,
-		.align = prepare._align,
-		.font = prepare._font
-	};
-
-	return PreparedText(input);
-}
-
-void TextRenderer::DrawPrepared(const PreparedText& text, unsigned size) {
-	FontRenderer& fontRenderer = FontRenderer::Get_(text.GetFont());
-
-}
-
 const char32_t* TextRenderer::GetUnicodeArray_(const char* text) {
 	_unicode_array.clear();
 

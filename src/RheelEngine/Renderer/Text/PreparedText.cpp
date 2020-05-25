@@ -10,43 +10,6 @@ namespace rheel {
 std::vector<vec2> PreparedText::_transforms;
 std::vector<PreparedText::DrawCommand> PreparedText::_commands;
 
-Prepare::Prepare(const char* text) :
-		_text(text) {}
-
-Prepare::Prepare(const std::string& text) :
-		_text(text.c_str()) {}
-
-Prepare& Prepare::SetWidth(float width) {
-	_width = width;
-	return *this;
-}
-
-Prepare& Prepare::SetAlign(TextAlign align) {
-	_align = align;
-	return *this;
-}
-
-Prepare& Prepare::SetFont(const Font& font) {
-	_font = std::ref(font);
-	return *this;
-}
-
-PreparedText::PreparedText(const PreparedText::prepare_text_input& input) :
-		_font(input.font) {
-
-	FontRenderer& fontRenderer = FontRenderer::Get_(input.font);
-
-	_vao.SetVertexAttributes<vec3>(fontRenderer.GetGlyphBuffer());
-	_vao.SetVertexAttributes<vec2>(_transform_buffer, 0, FontRenderer::SAMPLE_COUNT);
-	_vao.SetIndexBuffer(fontRenderer.GetCharacterVAO().GetIndexBuffer());
-
-	_count = Prepare(input, _transform_buffer, _indirect_buffer, _bounds);
-}
-
-const Font& PreparedText::GetFont() const {
-	return _font;
-}
-
 unsigned PreparedText::Prepare(const prepare_text_input& input, gl::Buffer& transformBuffer, gl::DrawElementsIndirectBuffer& indirectBuffer, vec4& bounds) {
 	// prepare the internal buffers
 	_transforms.clear();
@@ -84,25 +47,32 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input, vec4& bounds) {
 	unsigned drawIndex = 0;
 	unsigned startLine = 0;
 	unsigned wordBoundary = 0;
+	float wordBoundaryPx = 0.0f;
 
 	while ((c = *(text++))) {
 		if (c == U'\n') {
-			px = 0.0f;
-			py -= input.line_height;
+			AlignLine_(startLine, drawIndex, input.width - px, input.align);
+
 			startLine = drawIndex;
 			wordBoundary = drawIndex;
+			wordBoundaryPx = px;
+
+			px = 0.0f;
+			py -= input.line_height;
 			continue;
 		}
 
 		if (c == U' ') {
 			px += spaceWidth;
 			wordBoundary = drawIndex;
+			wordBoundaryPx = px; // TOOD: set this to the first non-space non-tab character
 			continue;
 		}
 
 		if (c == U'\t') {
 			// TODO: handle tab
 			wordBoundary = drawIndex;
+			wordBoundaryPx = px; // TOOD: set this to the first non-space non-tab character
 			continue;
 		}
 
@@ -113,6 +83,8 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input, vec4& bounds) {
 		float advance = glyph.Advance();
 
 		if (px + advance > input.width && startLine != wordBoundary && drawIndex > wordBoundary) {
+			AlignLine_(startLine, wordBoundary, input.width - wordBoundaryPx, input.align);
+
 			px = 0.0f;
 			py -= input.line_height;
 
@@ -146,7 +118,28 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input, vec4& bounds) {
 		px += advance;
 	}
 
+	AlignLine_(startLine, drawIndex, input.width - px, input.align);
+
 	return drawIndex;
+}
+
+void PreparedText::AlignLine_(size_t lineStart, size_t lineEnd, float space, TextAlign align) {
+	float shift = 0.0f;
+
+	switch (align) {
+		case TextAlign::LEFT:
+			return;
+		case TextAlign::RIGHT:
+			shift = space;
+			break;
+		case TextAlign::CENTER:
+			shift = space / 2.0f;
+			break;
+	}
+
+	for (size_t i = lineStart; i < lineEnd; i++) {
+		_transforms[i].x += shift;
+	}
 }
 
 }
