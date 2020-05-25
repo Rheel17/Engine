@@ -76,25 +76,34 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input, vec4& bounds) {
 	constexpr float fmax = std::numeric_limits<float>::max();
 	bounds = { fmax, fmax, fmin, fmin };
 
+	float spaceWidth = input.font.get().CharacterWidth(U' ');
+
 	float px = 0.0f;
 	float py = 0.0f;
 
 	unsigned drawIndex = 0;
+	unsigned startLine = 0;
+	unsigned wordBoundary = 0;
 
 	while ((c = *(text++))) {
 		if (c == U'\n') {
-			// handle newline
-			// continue;
+			px = 0.0f;
+			py -= input.line_height;
+			startLine = drawIndex;
+			wordBoundary = drawIndex;
+			continue;
 		}
 
 		if (c == U' ') {
-			// handle space
-			// continue;
+			px += spaceWidth;
+			wordBoundary = drawIndex;
+			continue;
 		}
 
 		if (c == U'\t') {
-			// handle tab
-			// continue;
+			// TODO: handle tab
+			wordBoundary = drawIndex;
+			continue;
 		}
 
 		// handle normal character
@@ -102,6 +111,21 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input, vec4& bounds) {
 		const auto& glyph = input.font.get().GetGlyph(glyphIndex);
 		const auto& [glyphOffset, glyphSize] = input.font.get().GetGlyphOffset(glyphIndex);
 		float advance = glyph.Advance();
+
+		if (px + advance > input.width && startLine != wordBoundary && drawIndex > wordBoundary) {
+			px = 0.0f;
+			py -= input.line_height;
+
+			unsigned remove = drawIndex - wordBoundary;
+			drawIndex = wordBoundary;
+			startLine = wordBoundary;
+
+			_transforms.erase(_transforms.end() - remove, _transforms.end());
+			_commands.erase(_commands.end() - remove, _commands.end());
+			text -= (remove + 1);
+
+			continue;
+		}
 
 		_transforms.emplace_back(px, py);
 

@@ -25,7 +25,7 @@ void TextRenderer::DrawParagraph(const char* text, int x, int y, unsigned width,
 	fontRenderer.SetColor(color);
 
 	const char32_t* chars = GetUnicodeArray_(text);
-	fontRenderer.Render(chars, x, y);
+	fontRenderer.Render(chars, x, y, width, align);
 }
 
 PreparedText TextRenderer::PrepareText(const Prepare& prepare) {

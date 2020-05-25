@@ -66,19 +66,25 @@ const gl::Buffer& FontRenderer::GetGlyphBuffer() const {
 	return _glyph_buffer;
 }
 
-void FontRenderer::Render(const char32_t* text, int x, int y) {
+void FontRenderer::Render(const char32_t* text, int x, int y, unsigned width, TextAlign align) {
+	auto screen = DisplayConfiguration::Get().resolution;
 	vec4 bounds;
 
-	unsigned count = PreparedText::Prepare(PreparedText::prepare_text_input{
-		.text = text,
-		.font = std::ref(_font)
-	}, _transform_buffer, _indirect_buffer, bounds);
-
-	auto screen = DisplayConfiguration::Get().resolution;
 	float sx = static_cast<float>(2 * _size) / static_cast<float>(screen.x);
 	float sy = static_cast<float>(2 * _size) / static_cast<float>(screen.y);
 	float tx = (static_cast<float>(x) / static_cast<float>(screen.x)) * 2.0f - 1.0f;
 	float ty = (static_cast<float>(y) / static_cast<float>(screen.y)) * -2.0f + 1.0f;
+
+	float fwidth = width == std::numeric_limits<unsigned>::max()
+			? std::numeric_limits<float>::max()
+			: static_cast<float>(width) / static_cast<float>(_size);
+
+	unsigned count = PreparedText::Prepare(PreparedText::prepare_text_input{
+		.text = text,
+		.width = fwidth,
+		.align = align,
+		.font = std::ref(_font)
+	}, _transform_buffer, _indirect_buffer, bounds);
 
 	mat3 transform(
 			sx,   0.0f, 0.0f,
