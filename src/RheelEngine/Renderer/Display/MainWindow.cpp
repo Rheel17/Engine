@@ -86,7 +86,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::Loop() {
-	double time = 0.0;
+	float time = 0.0f;
 
 	while (!ShouldClose()) {
 		// handle all input events
@@ -94,12 +94,12 @@ void MainWindow::Loop() {
 
 		// calculate the time delta
 		float dt;
-		double newTime = glfwGetTime();
+		auto newTime = static_cast<float>(glfwGetTime());
 
 		if (time == 0.0) {
 			dt = 1.0f / 60.0f;
 		} else {
-			dt = static_cast<float>(newTime - time);
+			dt = newTime - time;
 		}
 
 		time = newTime;
@@ -168,32 +168,32 @@ window_hints MainWindow::CreateWindowHints_(const DisplayConfiguration& configur
 }
 
 void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods) {
-	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	auto window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
 	window->_game.GetUI().OnKey(static_cast<Input::Key>(key), scancode, static_cast<Input::Action>(action), mods);
 }
 
 void glfwCharCallback(GLFWwindow* glfwWindow, unsigned codepoint) {
-	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	auto window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
 	window->_game.GetUI().OnCharacter(codepoint);
 }
 
 void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos) {
-	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
-	window->_game.GetUI().OnMouseMove(xpos, ypos);
+	auto window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	window->_game.GetUI().OnMouseMove(static_cast<float>(xpos), static_cast<float>(ypos));
 }
 
 void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods) {
-	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	auto window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
 	window->_game.GetUI().OnMouseButton(static_cast<Input::MouseButton>(button), static_cast<Input::Action>(action), mods);
 }
 
 void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y) {
-	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	auto window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
 	window->_game.GetUI().OnScroll(x, y);
 }
 
 void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus) {
-	MainWindow* window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
+	auto window = static_cast<MainWindow*>(glfwGetWindowUserPointer(glfwWindow));
 	window->_game.GetUI().OnFocusChanged(focus);
 }
 

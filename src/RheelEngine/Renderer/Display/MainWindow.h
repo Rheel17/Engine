@@ -25,7 +25,7 @@ public:
 	 * reference to the game will be kept.
 	 */
 	MainWindow(DisplayConfiguration& configuration, const std::string& title, Game& game);
-	~MainWindow();
+	~MainWindow() override;
 
 	void Loop();
 
