@@ -5,7 +5,6 @@
 
 #include "Scene.h"
 #include "UI/UI.h"
-#include "Renderer/Text/Font.h"
 
 namespace rheel {
 

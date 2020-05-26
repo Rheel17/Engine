@@ -35,7 +35,7 @@ public:
 	virtual ~ButtonElement() = default;
 
 	ButtonElement(ButtonElement&&) = default;
-	ButtonElement& operator=(ButtonElement&&) = default;
+	ButtonElement& operator=(ButtonElement&& button) = default;
 
 	template<typename Action>
 	void SetAction(Action&& action) {
@@ -54,7 +54,7 @@ protected:
 
 public:
 	std::string text;
-	const Font& font = Font::GetDefaultFont();
+	std::reference_wrapper<const Font> font = Font::GetDefaultFont();
 
 	Color color_foreground = 0x1d1d1e;
 	Color color_foreground_rollover = 0x444851;

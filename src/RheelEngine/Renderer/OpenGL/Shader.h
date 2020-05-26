@@ -20,8 +20,8 @@ public:
 
 public:
 	/**
-	 * Creates and compiles a shader. Note: can only be called when an OpenGL context
-	 * is active!
+	 * Creates and compiles a shader. Note: can only be called when an OpenGL
+	 * context is active!
 	 */
 	Shader(ShaderType type, const std::string& source);
 	~Shader();

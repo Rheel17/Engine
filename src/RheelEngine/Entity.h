@@ -49,7 +49,7 @@ public:
 	 *
 	 * If no entity with the name given can be found, nullptr is returned.
 	 */
-	Entity* FindChild(const std::string& name, bool recursive = true);
+	Entity* FindChild(const std::string& childName, bool recursive = true);
 
 	/**
 	 * Returns true of the base entity is in the parent chain of this entity.
@@ -168,7 +168,6 @@ private:
 
 	void UpdateTime_(float time, float dt);
 
-	bool _alive = true;
 	float _time = 0.0f;
 	float _dt = 0.0f;
 

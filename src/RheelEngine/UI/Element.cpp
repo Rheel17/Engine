@@ -3,11 +3,9 @@
  */
 #include "Element.h"
 
-#include <utility>
 
 #include "UI.h"
 #include "../EngineResources.h"
-#include "../Renderer/ImageTexture.h"
 
 namespace rheel {
 

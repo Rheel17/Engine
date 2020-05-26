@@ -32,15 +32,13 @@ public:
 	}
 
 private:
-	template<typename T_ = T, std::enable_if_t<std::is_same_v<T_, void>, int> = 0>
 	void Run_() {
-		_task();
-		_result.set_value();
-	}
-
-	template<typename T_ = T, std::enable_if_t<!std::is_same_v<T_, void>, int> = 0>
-	void Run_() {
-		_result.set_value(_task());
+		if constexpr (std::is_same_v<T, void>) {
+			_task();
+			_result.set_value();
+		} else {
+			_result.set_value(_task());
+		}
 	}
 
 	std::function<T()> _task;

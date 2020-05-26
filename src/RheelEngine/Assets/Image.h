@@ -41,7 +41,7 @@ public:
 
 private:
 	Image() = default;
-	Image(std::nullptr_t null) :
+	Image(std::nullptr_t) :
 			Asset(nullptr) {}
 
 public:

@@ -4,8 +4,6 @@
 #include "ShadowMapDirectional.h"
 
 #include "../Components/DirectionalLight.h"
-#include "Display/DisplayConfiguration.h"
-#include "OpenGL/Context.h"
 
 namespace rheel {
 

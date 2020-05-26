@@ -2,7 +2,6 @@
  * Copyright (c) 2020 Levi van Rheenen
  */
 #include "Texture2DArray.h"
-#include "Enums.h"
 
 namespace rheel::gl {
 

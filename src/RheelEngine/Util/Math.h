@@ -8,7 +8,6 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "glm_debug.h"

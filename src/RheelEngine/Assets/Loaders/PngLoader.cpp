@@ -8,7 +8,6 @@
 #include <fstream>
 
 #define FLOAT(x) ((x) / 255.0f)
-#define BYTE(x) ((png_byte) ((x) * 255))
 
 namespace rheel {
 

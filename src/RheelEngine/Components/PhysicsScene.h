@@ -26,7 +26,7 @@ private:
 	};
 
 	struct collision_data_hash {
-		constexpr std::size_t operator()(const collision_data& data) const;
+		std::size_t operator()(const collision_data& data) const;
 	};
 
 public:

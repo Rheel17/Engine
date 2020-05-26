@@ -4,7 +4,6 @@
 #include "ModelRenderer.h"
 
 #include "OpenGL/Context.h"
-#include "../EngineResources.h"
 
 #include <array>
 

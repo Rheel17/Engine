@@ -57,8 +57,8 @@ std::array<Image, 6> Skybox::LoadImages_(const Image& image) {
 Image Skybox::LoadImage_(const Image& image, int part) {
 	// get the coordinates of the texture in the skybox
 	unsigned size = image.GetWidth() / 4;
-	unsigned x = 0;
-	unsigned y = 0;
+	unsigned x;
+	unsigned y;
 
 	switch (part) {
 		case 0:

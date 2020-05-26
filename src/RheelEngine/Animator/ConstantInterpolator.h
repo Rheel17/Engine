@@ -14,7 +14,7 @@ template<typename V>
 class ConstantInterpolator : public Interpolator<V> {
 
 protected:
-	V _GetValue(float t) const override {
+	V GetValue(float t) const override {
 		return (--this->points.end())->second;
 	}
 

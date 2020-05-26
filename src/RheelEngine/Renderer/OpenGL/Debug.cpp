@@ -5,7 +5,7 @@
 
 namespace rheel::gl {
 
-void callbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+void callbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void*) {
 	while (length > 0 && message[length - 1] == '\n') {
 		length--;
 	}

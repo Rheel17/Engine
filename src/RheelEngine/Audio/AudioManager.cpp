@@ -3,8 +3,6 @@
  */
 #include "AudioManager.h"
 
-#include <AL/alc.h>
-
 namespace rheel {
 
 AudioManager::AudioManager() {

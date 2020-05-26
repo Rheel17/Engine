@@ -24,7 +24,7 @@ private:
 
 	public:
 		std::optional<const ConstraintTreeNode*> GetNodeForAnchor(const Constraint::Anchor& anchor) const;
-		std::optional<ConstraintTreeNode*> GetNodeForAnchor(const Constraint::Anchor& anchor);
+		std::optional<ConstraintTreeNode*> GetNodeForAnchor(const Constraint::Anchor& anchr);
 
 		Constraint::Anchor anchor;
 		ConstraintTreeNode* parent;

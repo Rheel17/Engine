@@ -3,9 +3,6 @@
  */
 #include "VoxelImage.h"
 
-#include <fstream>
-#include <sstream>
-
 namespace rheel {
 
 VoxelImage::VoxelImage(unsigned width, unsigned height, unsigned depth) :

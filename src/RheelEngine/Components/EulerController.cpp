@@ -71,7 +71,7 @@ void EulerController::SetVelocity(float forwardsBackwardsVelocity, float sideVel
 	_velocity_x = sideVelocity;
 }
 
-void EulerController::Rotate_(float dt) {
+void EulerController::Rotate_(float) {
 	vec2 mouse = GetMouseDelta();
 
 	float yaw = glm::radians(mouse.x * _velocity_yaw / 100.0f);

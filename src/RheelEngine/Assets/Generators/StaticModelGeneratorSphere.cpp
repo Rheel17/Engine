@@ -12,17 +12,17 @@ StaticModelGeneratorSphere::StaticModelGeneratorSphere(float radius, unsigned in
 void StaticModelGeneratorSphere::DoGenerate() {
 	// add the vertices and indices
 	for (unsigned latIdx = 0; latIdx <= _subdivisions; latIdx++) {
-		float latitude = (M_PI * latIdx) / _subdivisions;
+		double latitude = (M_PI * latIdx) / _subdivisions;
 
-		float sinLat = std::sin(latitude);
-		float cosLat = std::cos(latitude);
+		auto sinLat = static_cast<float>(std::sin(latitude));
+		auto cosLat = static_cast<float>(std::cos(latitude));
 
 		for (unsigned lonIdx = 0; lonIdx < _subdivisions; lonIdx++) {
-			float longitude = (2 * M_PI * lonIdx) / _subdivisions;
+			double longitude = (2 * M_PI * lonIdx) / _subdivisions;
 
 			// calculate the vertex
-			float sinLon = std::sin(longitude);
-			float cosLon = std::cos(longitude);
+			auto sinLon = static_cast<float>(std::sin(longitude));
+			auto cosLon = static_cast<float>(std::cos(longitude));
 
 			vec3 v(sinLon * sinLat, cosLat, cosLon * sinLat);
 			vertices.push_back({ v * _radius, v, vec2() });

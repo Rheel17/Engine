@@ -3,20 +3,19 @@
  */
 #include "Container.h"
 
-#include <algorithm>
 #include <iostream>
 
 #include "UI.h"
 
 namespace rheel {
 
-std::optional<const Container::ConstraintTreeNode*> Container::ConstraintTreeNode::GetNodeForAnchor(const Constraint::Anchor& anchor) const {
-	if (this->anchor == anchor) {
+std::optional<const Container::ConstraintTreeNode*> Container::ConstraintTreeNode::GetNodeForAnchor(const Constraint::Anchor& anchr) const {
+	if (anchor == anchr) {
 		return this;
 	}
 
 	for (auto child : children) {
-		auto childResult = child.first->GetNodeForAnchor(anchor);
+		auto childResult = child.first->GetNodeForAnchor(anchr);
 		if (childResult) {
 			return childResult;
 		}
@@ -25,13 +24,13 @@ std::optional<const Container::ConstraintTreeNode*> Container::ConstraintTreeNod
 	return {};
 }
 
-std::optional<Container::ConstraintTreeNode*> Container::ConstraintTreeNode::GetNodeForAnchor(const Constraint::Anchor& anchor) {
-	if (this->anchor == anchor) {
+std::optional<Container::ConstraintTreeNode*> Container::ConstraintTreeNode::GetNodeForAnchor(const Constraint::Anchor& anchr) {
+	if (anchor == anchr) {
 		return this;
 	}
 
 	for (auto child : children) {
-		auto childResult = child.first->GetNodeForAnchor(anchor);
+		auto childResult = child.first->GetNodeForAnchor(anchr);
 		if (childResult) {
 			return childResult;
 		}

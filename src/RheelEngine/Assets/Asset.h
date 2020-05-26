@@ -48,7 +48,7 @@ protected:
 	explicit Asset(T&& t) :
 			_data(std::make_shared<T>(std::forward<T>(t))) {}
 
-	explicit Asset(std::nullptr_t null) :
+	explicit Asset(std::nullptr_t) :
 			_data(nullptr) {}
 
 	/*

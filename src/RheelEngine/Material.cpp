@@ -3,8 +3,6 @@
  */
 #include "Material.h"
 
-#include <utility>
-
 #include "Renderer/ImageTexture.h"
 
 namespace rheel {

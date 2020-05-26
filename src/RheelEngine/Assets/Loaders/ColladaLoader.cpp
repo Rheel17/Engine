@@ -37,7 +37,10 @@ ColladaLoader::Geometry::Geometry(XmlNode* geometry) {
 
 	std::vector<unsigned> vcountList = CreateVectorUnsigned_(vcount);
 	for (unsigned vcountData : vcountList) {
-		assert(vcountData == 3);
+		if (vcountData != 3) {
+			Log::Error() << "Error loading collada file" << std::endl;
+			abort();
+		}
 	}
 
 	// create a map from source ids to sources

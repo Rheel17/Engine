@@ -3,8 +3,6 @@
  */
 #include "Glyph.h"
 
-#include <algorithm>
-
 namespace rheel {
 
 Glyph::contour_point::operator vec2() const {

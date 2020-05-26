@@ -3,8 +3,6 @@
  */
 #include "Sound.h"
 
-#include <fstream>
-
 namespace rheel {
 
 Sound::Sound(std::vector<char> data, InternalSoundFormat format, int sampleFrequency) :

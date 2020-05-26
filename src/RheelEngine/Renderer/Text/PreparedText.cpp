@@ -32,8 +32,6 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input) {
 	const char32_t* text = input.text;
 	char32_t c;
 
-
-
 	float spaceWidth = input.font.get().CharacterWidth(U' ');
 
 	float px = 0.0f;

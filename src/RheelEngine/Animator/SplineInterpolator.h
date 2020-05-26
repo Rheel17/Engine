@@ -15,7 +15,7 @@ using SplineInterpolatedType = std::conditional_t<N == 1, Float, glm::vec<N, Flo
 template<typename Float, unsigned N = 1>
 class SplineInterpolator : public Interpolator<SplineInterpolatedType<Float, N>> {
 	static_assert(std::is_floating_point_v<Float>,
-			"Spline interpolation is only valid for floating point types. Use SplineIterpolator<type, N> to interpolate vectors.");
+	        "Spline interpolation is only valid for floating point types. Use SplineIterpolator<type, N> to interpolate vectors.");
 
 	using V = SplineInterpolatedType<Float, N>;
 
@@ -109,14 +109,13 @@ private:
 		std::vector<float> _t_values;
 
 	private:
-		template<typename InputIt, unsigned N_ = N, std::enable_if_t<N_ == 1, int> = 0>
+		template<typename InputIt>
 		static Float Get_(InputIt iterator, unsigned i) {
-			return iterator->second;
-		}
-
-		template<typename InputIt, unsigned N_ = N, std::enable_if_t<N_ != 1, int> = 0>
-		static Float Get_(InputIt iterator, unsigned i) {
-			return iterator->second[i];
+			if constexpr (N == 1) {
+				return iterator->second;
+			} else {
+				return iterator->second[i];
+			}
 		}
 
 		static std::vector<Float> GaussianElimination_(std::vector<std::vector<Float>>& augmentedMatrix, unsigned n) {
@@ -209,19 +208,17 @@ private:
 		}
 	}
 
-	// GetValue for floats
-	template<unsigned N_ = N, std::enable_if_t<N_ == 1, int> = 0>
 	V GetValue_(float t) const {
-		return _splines[0](t);
-	}
+		if constexpr (N == 1) {
+			// GetValue for floats
+			return _splines[0](t);
+		} else {
+			// GetValue for vectors
+			V v{};
 
-	// GetValue for vectors
-	template<unsigned N_ = N, std::enable_if_t<N_ != 1, int> = 0>
-	V GetValue_(float t) const {
-		V v{};
-
-		for (unsigned i = 0; i < N; i++) {
-			v[i] = _splines[i](t);
+			for (unsigned i = 0; i < N; i++) {
+				v[i] = _splines[i](t);
+			}
 		}
 	}
 

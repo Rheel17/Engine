@@ -90,9 +90,9 @@ void Entity::RemoveChild(Entity* entity) {
 	_children.erase(iter);
 }
 
-Entity* Entity::FindChild(const std::string& name, bool recursive) {
+Entity* Entity::FindChild(const std::string& childName, bool recursive) {
 	auto iter = std::find_if(_children.begin(), _children.end(),
-			[&name](const auto& ptr) { return ptr->name == name; });
+			[&childName](const auto& ptr) { return ptr->name == childName; });
 
 	if (iter != _children.end()) {
 		return iter->get();
@@ -103,7 +103,7 @@ Entity* Entity::FindChild(const std::string& name, bool recursive) {
 	}
 
 	for (const auto& ptr : _children) {
-		if (Entity* child = ptr->FindChild(name, true); child) {
+		if (Entity* child = ptr->FindChild(childName, true); child) {
 			return child;
 		}
 	}

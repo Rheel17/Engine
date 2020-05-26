@@ -11,7 +11,7 @@ bool PhysicsScene::collision_data::operator==(const collision_data& other) const
 	return other.cc_0 == cc_0 && other.cc_1 == cc_1;
 }
 
-constexpr std::size_t PhysicsScene::collision_data_hash::operator()(const collision_data& data) const {
+std::size_t PhysicsScene::collision_data_hash::operator()(const collision_data& data) const {
 	return std::size_t(data.cc_0) * std::size_t(data.cc_1) * 0x4e911fa1;
 }
 

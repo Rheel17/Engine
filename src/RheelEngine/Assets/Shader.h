@@ -22,7 +22,7 @@ public:
 
 private:
 	Shader() = default;
-	Shader(std::nullptr_t null) :
+	Shader(std::nullptr_t) :
 			Asset(nullptr) {}
 
 public:
