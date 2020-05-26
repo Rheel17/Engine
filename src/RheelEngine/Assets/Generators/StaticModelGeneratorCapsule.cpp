@@ -16,19 +16,19 @@ void StaticModelGeneratorCapsule::DoGenerate() {
 	unsigned latSplit = latDivisions / 2;
 
 	for (unsigned latIdx = 0; latIdx <= latDivisions; latIdx++) {
-		float latitude = (M_PI * (latIdx - (latIdx > latSplit))) / _subdivisions;
+		double latitude = (M_PI * (latIdx - (latIdx > latSplit))) / _subdivisions;
 
-		float sinLat = std::sin(latitude);
-		float cosLat = std::cos(latitude);
+		auto sinLat = static_cast<float>(std::sin(latitude));
+		auto cosLat = static_cast<float>(std::cos(latitude));
 
-		vec3 modifier(0.0f, (_straight_height / 2.0f) * (latIdx <= latSplit ? 1 : -1), 0.0f);
+		vec3 modifier(0.0f, (_straight_height / 2.0f) * static_cast<float>(latIdx <= latSplit ? 1 : -1), 0.0f);
 
 		for (unsigned lonIdx = 0; lonIdx < _subdivisions; lonIdx++) {
-			float longitude = (2 * M_PI * lonIdx) / _subdivisions;
+			double longitude = (2 * M_PI * lonIdx) / _subdivisions;
 
 			// calculate the vertex
-			float sinLon = std::sin(longitude);
-			float cosLon = std::cos(longitude);
+			auto sinLon = static_cast<float>(std::sin(longitude));
+			auto cosLon = static_cast<float>(std::cos(longitude));
 
 			vec3 v(sinLon * sinLat, cosLat, cosLon * sinLat);
 			vertices.push_back({ v * _radius + modifier, v, vec2() });

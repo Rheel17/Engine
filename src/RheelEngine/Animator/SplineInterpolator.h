@@ -174,23 +174,23 @@ private:
 public:
 	SplineInterpolator() = default;
 
-	virtual void AddPoint(float t, const V& value) override {
+	void AddPoint(float t, const V& value) override {
 		Interpolator<V>::AddPoint(t, value);
 		_dirty = true;
 	}
 
-	virtual void AddPoint(float t, V&& value) override {
+	void AddPoint(float t, V&& value) override {
 		Interpolator<V>::AddPoint(t, value);
 		_dirty = true;
 	}
 
-	virtual void RemovePoint(float t) override {
+	void RemovePoint(float t) override {
 		Interpolator<V>::RemovePoint(t);
 		_dirty = true;
 	}
 
 protected:
-	virtual V GetValue(float t) const override {
+	V GetValue(float t) const override {
 		if (_dirty) {
 			CalculateSpline_();
 			_dirty = false;
