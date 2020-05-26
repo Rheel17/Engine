@@ -22,8 +22,8 @@ unsigned PreparedText::Prepare(const prepare_text_input& input, gl::Buffer& tran
 	bounds = CombineBounds_();
 
 	// upload the results to the OpenGL buffers
-	transformBuffer.SetData(_transforms);
-	indirectBuffer.SetData(_commands);
+	transformBuffer.SetData(_transforms, gl::Buffer::Usage::STREAM_DRAW);
+	indirectBuffer.SetData(_commands, gl::Buffer::Usage::STREAM_DRAW);
 
 	return count;
 }

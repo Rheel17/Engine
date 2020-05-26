@@ -118,11 +118,15 @@ std::pair<unsigned int, unsigned int> Font::LoadGlyph_(const std::vector<Glyph::
 
 void Font::Initialize() {
 	std::vector<std::string> testDefaults = {
+#if defined(_WIN32)
 			"C:/Windows/Fonts/ARIALUNI.TTF",
 			"C:/Windows/Fonts/arial.ttf"
+#elif defined(__linux__)
+			"/usr/share/fonts/truetype/freefont/FreeSans.ttf"
+#endif
 	};
 
-	for (auto test : testDefaults) {
+	for (const auto& test : testDefaults) {
 		if (std::ifstream(test).good()) {
 			RegisterFont(test, DEFAULT_FONT);
 			break;

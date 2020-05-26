@@ -11,7 +11,8 @@ void main(void) {
 		float t = vf_BarycentricCoordinates.x;
 
 		if (!((s / 2.0 + t) * (s / 2.0 + t) < t)) {
-			discard;
+		    frag_Color = 0.0;
+			return;
 		}
 	}
 

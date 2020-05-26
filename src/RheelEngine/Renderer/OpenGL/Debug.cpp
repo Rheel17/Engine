@@ -8,6 +8,10 @@
 namespace rheel::gl {
 
 void callbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+	while (length > 0 && message[length - 1] == '\n') {
+		length--;
+	}
+
 	std::string msg(message, length);
 	Debug::_callback(id, Debug::Source(source), Debug::Type(type), Debug::Severity(severity), msg);
 }
