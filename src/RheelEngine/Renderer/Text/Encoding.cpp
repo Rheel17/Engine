@@ -3,6 +3,8 @@
  */
 #include "Encoding.h"
 
+#include <bit>
+
 namespace rheel {
 
 std::string Encoding::CodePointToUtf8(char32_t c) {
@@ -101,23 +103,9 @@ char32_t Encoding::Utf8ToCodePointHelper_(const char* c, size_t* shift) {
 		return -1;
 	}
 
-#if defined(__GNUC__)
-	// GCC compiler hack: very fast leading zero count.
-
-	// Count the number of leading zeros of the inverse, i.e. count the number
-	// of leading ones on the original. We need to convert back to uint8_t
-	// counts because __builtin_clz takes an unsigned int.
-	unsigned leadingOnes = __builtin_clz(inv) - 8 * sizeof(unsigned int) + 8;
-#else
-	unsigned leadingOnes = 0;
-	if ((b0 & 0b10000000u) == 0) { leadingOnes = 0; }
-	else if ((b0 & 0b01000000u) == 0) { leadingOnes = 1; }
-	else if ((b0 & 0b00100000u) == 0) { leadingOnes = 2; }
-	else if ((b0 & 0b00010000u) == 0) { leadingOnes = 3; }
-	else if ((b0 & 0b00001000u) == 0) { leadingOnes = 4; }
-	// other cases will never happen because they are caught by the inv-checking
-	// if statement
-#endif
+	// count the number of leading zeros to find out what character byte length
+	// we have.
+	unsigned leadingOnes = std::countl_one(b0);
 
 	// code point: aaaaa bbbbbbbb cccccccc
 
