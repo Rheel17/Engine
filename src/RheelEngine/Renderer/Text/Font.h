@@ -36,17 +36,9 @@ public:
 	float CharacterWidth(char32_t code) const;
 
 	/**
-	 * Returns the string width in pixels of the given unicode string. The
-	 * string must be UTF-8 encoded and null-terminated.
+	 * Returns the string width in pixels of the given unicode string.
 	 */
-	float StringWidth(const char* str) const;
-
-	/**
-	 * Returns the string width in pixels of the given unicode string. The
-	 * string must be UTF-8 encoded.
-	 * @return
-	 */
-	float StringWidth(const std::string& str) const;
+	float StringWidth(std::string_view str) const;
 
 	/**
 	 * Returns the glyph index for the input character.

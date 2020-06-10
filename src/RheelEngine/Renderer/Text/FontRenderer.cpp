@@ -66,7 +66,7 @@ const gl::Buffer& FontRenderer::GetGlyphBuffer() const {
 	return _glyph_buffer;
 }
 
-void FontRenderer::Render(const char32_t* text, int x, int y, unsigned width, TextAlign align) {
+void FontRenderer::Render(std::u32string_view text, int x, int y, unsigned width, TextAlign align) {
 	auto screen = DisplayConfiguration::Get().resolution;
 	vec4 bounds;
 

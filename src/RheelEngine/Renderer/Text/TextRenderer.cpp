@@ -7,32 +7,25 @@
 
 namespace rheel {
 
-void TextRenderer::DrawText(const std::string& text, int x, int y, const Font& font, unsigned size, const Color& color) {
-	DrawText(text.c_str(), x, y, font, size, color);
-}
-
-void TextRenderer::DrawText(const char* text, int x, int y, const Font& font, unsigned size, const Color& color) {
+void TextRenderer::DrawText(std::string_view text, int x, int y, const Font& font, unsigned size, const Color& color) {
 	DrawParagraph(text, x, y, std::numeric_limits<unsigned>::max(), font, size, color, TextAlign::LEFT);
 }
 
-void TextRenderer::DrawParagraph(const std::string& text, int x, int y, unsigned width, const Font& font, unsigned size, const Color& color, TextAlign align) {
-	DrawParagraph(text.c_str(), x, y, width, font, size, color, align);
-}
-
-void TextRenderer::DrawParagraph(const char* text, int x, int y, unsigned width, const Font& font, unsigned size, const Color& color, TextAlign align) {
+void TextRenderer::DrawParagraph(std::string_view text, int x, int y, unsigned width, const Font& font, unsigned size, const Color& color, TextAlign align) {
 	FontRenderer& fontRenderer = FontRenderer::Get_(font);
 	fontRenderer.SetSize(size);
 	fontRenderer.SetColor(color);
 
-	const char32_t* chars = GetUnicodeArray_(text);
+	std::u32string_view chars = GetUnicodeArray_(text);
 	fontRenderer.Render(chars, x, y, width, align);
 }
 
-const char32_t* TextRenderer::GetUnicodeArray_(const char* text) {
+std::u32string_view TextRenderer::GetUnicodeArray_(std::string_view text) {
 	_unicode_array.clear();
+	char32_t c;
 
-	while (*text) {
-		_unicode_array.push_back(Encoding::ReadUtf8(&text));
+	while ((c = Encoding::ReadUtf8(text)) != 0) {
+		_unicode_array.push_back(c);
 	}
 
 	_unicode_array.push_back(U'\0');

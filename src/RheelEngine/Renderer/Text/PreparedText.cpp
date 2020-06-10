@@ -29,8 +29,7 @@ unsigned PreparedText::Prepare(const prepare_text_input& input, gl::Buffer& tran
 }
 
 unsigned PreparedText::Prepare_(const prepare_text_input& input) {
-	const char32_t* text = input.text;
-	char32_t c;
+	std::u32string_view text = input.text;
 
 	float spaceWidth = input.font.get().CharacterWidth(U' ');
 
@@ -42,7 +41,9 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input) {
 	unsigned wordBoundary = 0;
 	float wordBoundaryPx = 0.0f;
 
-	while ((c = *(text++))) {
+	for (size_t i = 0; i < text.length(); i++) {
+		char32_t c = text[i];
+
 		if (c == U'\n') {
 			AlignLine_(startLine, drawIndex, input.width - px, input.align);
 
@@ -87,7 +88,7 @@ unsigned PreparedText::Prepare_(const prepare_text_input& input) {
 
 			_transforms.erase(_transforms.end() - remove, _transforms.end());
 			_commands.erase(_commands.end() - remove, _commands.end());
-			text -= (remove + 1);
+			i -= (remove + 1);
 
 			continue;
 		}

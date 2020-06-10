@@ -16,7 +16,7 @@ class RE_API PreparedText {
 public:
 	struct prepare_text_input {
 		/* Text input */
-		const char32_t* text;
+		std::u32string_view text;
 
 		/* Text alignment */
 		float width = std::numeric_limits<float>::max();

@@ -53,19 +53,15 @@ float Font::CharacterWidth(char32_t character) const {
 	return _glyphs[_glyph_index[character]].Advance();
 }
 
-float Font::StringWidth(const char* str) const {
+float Font::StringWidth(std::string_view str) const {
 	unsigned width = 0;
+	char32_t c;
 
-	while (*str != 0) {
-		char32_t c = Encoding::ReadUtf8(&str);
+	while ((c = Encoding::ReadUtf8(str)) != 0) {
 		width += CharacterWidth(c);
 	}
 
 	return width;
-}
-
-float Font::StringWidth(const std::string& str) const {
-	return StringWidth(str.c_str());
 }
 
 size_t Font::GetGlyphIndex(char32_t c) const {

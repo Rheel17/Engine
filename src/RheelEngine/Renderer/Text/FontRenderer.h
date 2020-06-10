@@ -40,7 +40,7 @@ public:
 	const gl::VertexArray& GetCharacterVAO() const;
 	const gl::Buffer& GetGlyphBuffer() const;
 
-	void Render(const char32_t* text, int x, int y, unsigned width, TextAlign align);
+	void Render(std::u32string_view text, int x, int y, unsigned width, TextAlign align);
 
 public:
 	static constexpr inline unsigned SAMPLE_COUNT = 4;
