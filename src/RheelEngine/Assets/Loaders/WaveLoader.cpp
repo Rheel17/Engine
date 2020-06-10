@@ -10,7 +10,7 @@ namespace rheel {
 Sound WaveLoader::Load(const std::string& path) const {
 	// copy the file name into a non-const ALbyte array for alut to handle
 	std::size_t len = path.length();
-	ALbyte file[len + 1];
+	std::vector<ALbyte> file(len + 1);
 
 	for (std::size_t i = 0; i <= len; i++) {
 		file[i] = path[i];
@@ -28,7 +28,7 @@ Sound WaveLoader::Load(const std::string& path) const {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
-	alutLoadWAVFile(file, &format, &rawData, &size, &frequency, &loop);
+	alutLoadWAVFile(&file[0], &format, &rawData, &size, &frequency, &loop);
 
 	// copy the data into a C++ vector
 	std::vector<char> data(reinterpret_cast<char*>(rawData), reinterpret_cast<char*>(rawData) + size);

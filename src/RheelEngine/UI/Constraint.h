@@ -9,6 +9,7 @@
 
 #include <exception>
 #include <optional>
+#include <variant>
 
 namespace rheel {
 
@@ -94,10 +95,7 @@ public:
 	};
 
 private:
-	union distance_union {
-		int _distance;
-		float _distance_relative;
-	};
+	using distance_union = std::variant<int, float>;
 
 	enum DistanceType {
 		ABSOLUTE, RELATIVE_TO_WIDTH, RELATIVE_TO_HEIGHT

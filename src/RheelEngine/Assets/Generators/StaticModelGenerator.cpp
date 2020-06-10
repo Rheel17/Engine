@@ -19,7 +19,7 @@ Model StaticModelGenerator::Generate() {
 	indices = {};
 
 	// return the model
-	return std::move(model);
+	return model;
 }
 
 }

@@ -57,24 +57,19 @@ std::optional<Constraint::Anchor> Constraint::Anchor::VerticalComponent() const 
 Constraint::Constraint(Element* movingElement, ConstraintLocation movingLocation, Element* fixedElement, ConstraintLocation fixedLocation, int distance) :
 		_moving(movingElement, movingLocation),
 		_fixed(fixedElement, fixedLocation),
-		_distance_type(ABSOLUTE),
-		_distance() {
-
-	_distance._distance = distance;
-}
+		_distance(distance),
+		_distance_type(ABSOLUTE) {}
 
 Constraint::Constraint(Element* movingElement,
 		ConstraintLocation movingLocation,
 		Element* fixedElement,
 		ConstraintLocation fixedLocation,
 		width_relative distance) :
+
 		_moving(movingElement, movingLocation),
 		_fixed(fixedElement, fixedLocation),
-		_distance_type(RELATIVE_TO_WIDTH),
-		_distance() {
-
-	_distance._distance_relative = distance.value;
-}
+		_distance(distance.value),
+		_distance_type(RELATIVE_TO_WIDTH) {}
 
 Constraint::Constraint(Element* movingElement,
 		ConstraintLocation movingLocation,
@@ -83,11 +78,8 @@ Constraint::Constraint(Element* movingElement,
 		height_relative distance) :
 		_moving(movingElement, movingLocation),
 		_fixed(fixedElement, fixedLocation),
-		_distance_type(RELATIVE_TO_HEIGHT),
-		_distance() {
-
-	_distance._distance_relative = distance.value;
-}
+		_distance(distance.value),
+		_distance_type(RELATIVE_TO_HEIGHT) {}
 
 Constraint Constraint::WithAnchors(const Anchor& moving, const Anchor& fixed) const {
 	return Constraint(moving, fixed, _distance, _distance_type);
@@ -104,11 +96,11 @@ const Constraint::Anchor& Constraint::FixedAnchor() const {
 int Constraint::Distance(unsigned width, unsigned height) const {
 	switch (_distance_type) {
 		case ABSOLUTE:
-			return _distance._distance;
+			return get<int>(_distance);
 		case RELATIVE_TO_WIDTH:
-			return width * _distance._distance_relative;
+			return width * get<float>(_distance);
 		case RELATIVE_TO_HEIGHT:
-			return height * _distance._distance_relative;
+			return height * get<float>(_distance);
 		default:
 			return 0;
 	}
@@ -119,7 +111,7 @@ bool Constraint::IsDistanceRelative() const {
 }
 
 bool Constraint::operator==(const Constraint& other) const {
-	return other._fixed == _fixed && other._moving == _moving && other._distance._distance == _distance._distance;
+	return other._fixed == _fixed && other._moving == _moving && other._distance == _distance;
 }
 
 Constraint::Constraint(const Anchor& moving, const Anchor& fixed, distance_union distance, DistanceType distanceType) :
@@ -158,7 +150,7 @@ std::optional<Constraint> Constraint::VerticalConstraint() const {
 }
 
 std::ostream& operator<<(std::ostream& stream, const rheel::Constraint& constraint) {
-	static const char* location_strings[] = {
+	static std::array<std::string_view, 8> location_strings = {
 			"NORTH_WEST", "NORTH", "NORTH_EAST", "WEST", "EAST", "SOUTH_WEST", "SOUTH", "SOUTH_EAST"
 	};
 
@@ -175,5 +167,3 @@ std::ostream& operator<<(std::ostream& stream, const rheel::Constraint& constrai
 			<< constraint.Distance()
 			<< " }";
 }
-
-

@@ -6,19 +6,15 @@
 namespace rheel {
 
 std::string Encoding::CodePointToUtf8(char32_t c) {
-	if (c < 0) {
-		return "";
-	}
-
 	// code point: aaaaa bbbbbbbb cccccccc
 
 	if (c < 0x80) {
 		// 0ccccccc
-		return std::string(1, (char) c);
+		return std::string(1, static_cast<char>(c));
 	}
 
-	uint8_t b0 = static_cast<uint8_t>(c & 0xff);
-	uint8_t b1 = static_cast<uint8_t>((c >> 8) & 0xff);
+	auto b0 = static_cast<uint8_t>(c & 0xffu);
+	auto b1 = static_cast<uint8_t>((c >> 8u) & 0xffu);
 
 	std::string result;
 
@@ -26,25 +22,25 @@ std::string Encoding::CodePointToUtf8(char32_t c) {
 		// 110bbbcc 10cccccc
 
 		result.reserve(2);
-		result.push_back(0b110'00000 | ((b1 & 0b00000111) << 2) | (b0 >> 6));
-		result.push_back(0b10'000000 | (b0 & 0b00111111));
+		result.push_back(0b11000000u | ((b1 & 0b00000111u) << 2u) | (b0 >> 6u));
+		result.push_back(0b10000000u | (b0 & 0b00111111u));
 	} else if (c < 0x10000) {
 		// 1110bbbb 10bbbbcc 10cccccc
 
 		result.reserve(3);
-		result.push_back(0b1110'0000 | (b1 >> 4));
-		result.push_back(0b10'000000 | ((b1 & 0b00001111) << 2) | (b0 >> 6));
-		result.push_back(0b10'000000 | (b0 & 0b00111111));
+		result.push_back(0b11100000u | (b1 >> 4u));
+		result.push_back(0b10000000u | ((b1 & 0b00001111u) << 2u) | (b0 >> 6u));
+		result.push_back(0b10000000u | (b0 & 0b00111111u));
 	} else if (c < 0x110000) {
 		// 11110aaa 10aabbbb 10bbbbcc 10cccccc
 
-		uint8_t b2 = static_cast<uint8_t>((c >> 16) & 0xff);
+		auto b2 = static_cast<uint8_t>((c >> 16u) & 0xffu);
 
 		result.reserve(4);
-		result.push_back(0b11110'000 | (b2 >> 2));
-		result.push_back(0b10'000000 | ((b2 & 0b00000011) << 4) | (b1 >> 4));
-		result.push_back(0b10'000000 | ((b1 & 0b00001111) << 2) | (b0 >> 6));
-		result.push_back(0b10'000000 | (b0 & 0b00111111));
+		result.push_back(0b11110000u | (b2 >> 2u));
+		result.push_back(0b10000000u | ((b2 & 0b00000011u) << 4u) | (b1 >> 4u));
+		result.push_back(0b10000000u | ((b1 & 0b00001111u) << 2u) | (b0 >> 6u));
+		result.push_back(0b10000000u | (b0 & 0b00111111u));
 	} else {
 		return "";
 	}
@@ -53,7 +49,7 @@ std::string Encoding::CodePointToUtf8(char32_t c) {
 }
 
 char32_t Encoding::Utf8ToCodePoint(const char* c) {
-	size_t shift;
+	size_t shift = 0;
 	return Utf8ToCodePointHelper_(c, &shift);
 }
 
@@ -69,10 +65,6 @@ char32_t Encoding::ReadUtf8(const char** c) {
 }
 
 size_t Encoding::Utf8Lenght(char32_t c) {
-	if (c < 0) {
-		return 0;
-	}
-
 	if (c < 0x80) {
 		return 1;
 	}
@@ -89,7 +81,7 @@ size_t Encoding::Utf8Lenght(char32_t c) {
 }
 
 char32_t Encoding::Utf8ToCodePointHelper_(const char* c, size_t* shift) {
-	uint8_t b0 = static_cast<uint8_t>(c[0]);
+	auto b0 = static_cast<uint8_t>(c[0]);
 
 	uint8_t inv = ~b0;
 
@@ -117,12 +109,12 @@ char32_t Encoding::Utf8ToCodePointHelper_(const char* c, size_t* shift) {
 	// counts because __builtin_clz takes an unsigned int.
 	unsigned leadingOnes = __builtin_clz(inv) - 8 * sizeof(unsigned int) + 8;
 #else
-	unsigned leadingOnes;
-	if ((b0 & 0b10000000) == 0) { leadingOnes = 0; }
-	else if ((b0 & 0b01000000) == 0) { leadingOnes = 1; }
-	else if ((b0 & 0b00100000) == 0) { leadingOnes = 2; }
-	else if ((b0 & 0b00010000) == 0) { leadingOnes = 3; }
-	else if ((b0 & 0b00001000) == 0) { leadingOnes = 4; }
+	unsigned leadingOnes = 0;
+	if ((b0 & 0b10000000u) == 0) { leadingOnes = 0; }
+	else if ((b0 & 0b01000000u) == 0) { leadingOnes = 1; }
+	else if ((b0 & 0b00100000u) == 0) { leadingOnes = 2; }
+	else if ((b0 & 0b00010000u) == 0) { leadingOnes = 3; }
+	else if ((b0 & 0b00001000u) == 0) { leadingOnes = 4; }
 	// other cases will never happen because they are caught by the inv-checking
 	// if statement
 #endif
@@ -135,8 +127,8 @@ char32_t Encoding::Utf8ToCodePointHelper_(const char* c, size_t* shift) {
 		return b0;
 	}
 
-	uint8_t b1 = static_cast<uint8_t>(c[1]);
-	if ((b1 & 0b11'000000) != 0b10'000000) {
+	auto b1 = static_cast<uint8_t>(c[1]);
+	if ((b1 & 0b11000000u) != 0b10000000) {
 		// not a valid continuation byte
 		return -1;
 	}
@@ -144,11 +136,11 @@ char32_t Encoding::Utf8ToCodePointHelper_(const char* c, size_t* shift) {
 	if (leadingOnes == 2) {
 		// 110bbbcc 10cccccc
 		*shift = 2;
-		return ((b0 & 0b00011111) << 6) | (b1 & 0b00111111);
+		return ((b0 & 0b00011111u) << 6u) | (b1 & 0b00111111u);
 	}
 
-	uint8_t b2 = static_cast<uint8_t>(c[2]);
-	if ((b2 & 0b11'000000) != 0b10'000000) {
+	auto b2 = static_cast<uint8_t>(c[2]);
+	if ((b2 & 0b11000000u) != 0b10000000u) {
 		// not a valid continuation byte
 		return -1;
 	}
@@ -156,11 +148,11 @@ char32_t Encoding::Utf8ToCodePointHelper_(const char* c, size_t* shift) {
 	if (leadingOnes == 3) {
 		// 1110bbbb 10bbbbcc 10cccccc
 		*shift = 3;
-		return ((b0 & 0b00001111) << 12) | ((b1 & 0b00111111) << 6) | (b2 & 0b00111111);
+		return ((b0 & 0b00001111u) << 12u) | ((b1 & 0b00111111u) << 6u) | (b2 & 0b00111111u);
 	}
 
-	uint8_t b3 = static_cast<uint8_t>(c[3]);
-	if ((b3 & 0b11'000000) != 0b10'000000) {
+	auto b3 = static_cast<uint8_t>(c[3]);
+	if ((b3 & 0b11000000u) != 0b10000000u) {
 		// not a valid continuation byte
 		return -1;
 	}
@@ -168,7 +160,7 @@ char32_t Encoding::Utf8ToCodePointHelper_(const char* c, size_t* shift) {
 	if (leadingOnes == 4) {
 		// 11110aaa 10aabbbb 10bbbbcc 10cccccc
 		*shift = 4;
-		return ((b0 & 0b00001111) << 18) | ((b1 & 0b00111111) << 12) | ((b2 & 0b00111111) << 6) | (b3 & 0b00111111);
+		return ((b0 & 0b00001111u) << 18u) | ((b1 & 0b00111111u) << 12u) | ((b2 & 0b00111111u) << 6u) | (b3 & 0b00111111u);
 	}
 
 	return -1;

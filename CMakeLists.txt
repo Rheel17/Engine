@@ -42,6 +42,11 @@ add_custom_target(Header
 add_library(RheelEngine SHARED)
 target_compile_definitions(RheelEngine PRIVATE BUILDING_RHEELENGINE_DLL RE_DEBUG)
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	target_compile_options(RheelEngine PUBLIC -Wall -Wextra -pedantic)
+	target_compile_options(RheelEngine PUBLIC -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter)
+endif()
+
 if(COPY_LIB)
 	# Copy shared libraries
 	add_custom_command(

@@ -9,9 +9,9 @@ namespace rheel::gl {
 
 Program::Program(Program&& p) noexcept :
 		Object(std::forward<Object&&>(p)),
+		_linked(p._linked),
 		_attached_shaders(std::move(p._attached_shaders)),
-		_uniforms(std::move(p._uniforms)),
-		_linked(p._linked) {}
+		_uniforms(std::move(p._uniforms)) {}
 
 Program& Program::operator=(Program&& p) noexcept {
 	Object::operator=(std::forward<Object&&>(p));
@@ -47,19 +47,19 @@ void Program::Link() {
 	glLinkProgram(GetHandle());
 
 	// check link status
-	GLint linked;
+	GLint linked = 0;
 	glGetProgramiv(GetHandle(), GL_LINK_STATUS, &linked);
 
 	if (!linked) {
 		// get compile log (errors)
-		GLint logSize;
+		GLint logSize = 0;
 		glGetProgramiv(GetHandle(), GL_INFO_LOG_LENGTH, &logSize);
 
-		GLchar log[logSize];
-		glGetProgramInfoLog(GetHandle(), logSize, &logSize, log);
+		std::vector<GLchar> log(logSize);
+		glGetProgramInfoLog(GetHandle(), logSize, &logSize, &log[0]);
 
 		// throw with compile errors
-		Log::Error() << "Failed to link shader program:\n" + std::string(log) << std::endl;
+		Log::Error() << "Failed to link shader program:\n" << std::string_view(log.begin(), log.end()) << std::endl;
 		abort();
 	}
 

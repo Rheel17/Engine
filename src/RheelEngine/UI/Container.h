@@ -17,7 +17,7 @@ class UI;
 class RE_API Container : public Element {
 	friend class UI;
 
-	RE_NO_COPY(Container)
+	RE_NO_COPY(Container);
 
 private:
 	class ConstraintTreeNode {

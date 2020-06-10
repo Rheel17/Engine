@@ -45,7 +45,7 @@ public:
 		friend class ModelRenderer;
 		friend class CustomShaderModelRenderer;
 
-		RE_NO_COPY(ObjectDataPtr)
+		RE_NO_COPY(ObjectDataPtr);
 
 	public:
 		ObjectDataPtr() = default;

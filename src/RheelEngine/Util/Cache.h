@@ -21,12 +21,12 @@ struct cache_policy {
 	/**
 	 * called when an element is accessed
 	 */
-	virtual void Access(uintptr_t k) const {}
+	virtual void Access(uintptr_t) const {}
 
 	/**
 	 * Called when an element is inserted
 	 */
-	virtual void Insert(uintptr_t k) {}
+	virtual void Insert(uintptr_t) {}
 
 	/**
 	 * Picks which element to remove

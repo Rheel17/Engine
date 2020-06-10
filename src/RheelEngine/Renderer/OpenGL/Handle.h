@@ -5,7 +5,7 @@
 #define RHEELENGINE_HANDLE_H
 #include "../../_common.h"
 
-#include <GL/glew.h>
+#include <GL/glwr.h>
 
 #define OPENGL_GEN_FUNCTION(func, structName)    \
 struct RE_API structName {                       \
@@ -29,7 +29,7 @@ namespace rheel::gl {
 
 template<typename Generator, typename Deleter>
 class RE_API Handle {
-	RE_NO_COPY(Handle)
+	RE_NO_COPY(Handle);
 
 public:
 	/**

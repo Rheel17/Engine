@@ -18,18 +18,18 @@ Shader::Shader(ShaderType type, const std::string& source) :
 	glCompileShader(_handle);
 
 	// check compile status
-	GLint compiled;
+	GLint compiled = 0;
 	glGetShaderiv(_handle, GL_COMPILE_STATUS, &compiled);
 
 	if (!compiled) {
-		GLint logSize;
+		GLint logSize = 0;
 		glGetShaderiv(_handle, GL_INFO_LOG_LENGTH, &logSize);
 
-		GLchar log[logSize];
-		glGetShaderInfoLog(_handle, logSize, &logSize, log);
+		std::vector<GLchar> log(logSize);
+		glGetShaderInfoLog(_handle, logSize, &logSize, &log[0]);
 
 		// throw with compile errors
-		Log::Error() << "Failed to compile shader:\n" << std::string(log) << std::endl;
+		Log::Error() << "Failed to compile shader:\n" << std::string_view(log.begin(), log.end()) << std::endl;
 		abort();
 	}
 }
@@ -41,8 +41,8 @@ Shader::~Shader() {
 }
 
 Shader::Shader(Shader&& s) noexcept :
-		_type(s._type),
-		_handle(s._handle) {
+		_handle(s._handle),
+		_type(s._type) {
 
 	s._handle = 0;
 }

@@ -5,7 +5,7 @@
 #define RHEELENGINE_DEBUG_H
 #include "../../_common.h"
 
-#include <GL/glew.h>
+#include <GL/glwr.h>
 
 namespace rheel::gl {
 

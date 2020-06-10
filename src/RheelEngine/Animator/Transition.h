@@ -8,8 +8,8 @@
 namespace rheel {
 
 class RE_API Transition {
-	RE_NO_COPY(Transition)
-	RE_NO_MOVE(Transition)
+	RE_NO_COPY(Transition);
+	RE_NO_MOVE(Transition);
 
 private:
 	typedef float (* TransitionFunction)(float t);

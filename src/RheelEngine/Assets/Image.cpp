@@ -42,7 +42,7 @@ Image Image::SubImage(unsigned x, unsigned y, unsigned width, unsigned height) c
 		}
 	}
 
-	return std::move(image);
+	return image;
 }
 
 const float* Image::GetRawColorData() const {

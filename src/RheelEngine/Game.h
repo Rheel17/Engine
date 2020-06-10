@@ -25,8 +25,8 @@ struct RE_API scene_deleter {
 using ScenePointer = std::unique_ptr<Scene, scene_deleter>;
 
 class RE_API Game {
-	RE_NO_COPY(Game)
-	RE_NO_MOVE(Game)
+	RE_NO_COPY(Game);
+	RE_NO_MOVE(Game);
 
 public:
 	Game(DisplayConfiguration displayConfiguration, const std::string& title = "Rheel Game Engine");
