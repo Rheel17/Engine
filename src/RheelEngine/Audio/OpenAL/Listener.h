@@ -20,6 +20,8 @@ class RE_API Listener {
 	friend class rheel::AudioManager;
 
 public:
+	~Listener() = default;
+
 	/**
 	 * Sets the gain of the OpenAL listener.
 	 */
@@ -36,7 +38,7 @@ public:
 	void SetVelocity(const vec3& velocity);
 
 	/**
-	 * Sets the orientation of the OpenAL listener
+	 * Sets the orientation of the OpenAL listenerstatic
 	 */
 	void SetOrientation(const vec3& forward, const vec3& up);
 

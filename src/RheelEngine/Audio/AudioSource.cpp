@@ -7,7 +7,7 @@
 
 namespace rheel {
 
-AudioSource::AudioSource(AudioManager* manager, const AudioClip& clip) :
+AudioSource::AudioSource(AudioManager& manager, const AudioClip& clip) :
 		_manager(manager) {
 
 	_source.SetBuffer(clip.Buffer());
@@ -24,7 +24,7 @@ void AudioSource::Loop() {
 }
 
 void AudioSource::Stop() {
-	_manager->Stop(this);
+	_manager.Stop(*this);
 }
 
 void AudioSource::SetGain(float gain) {

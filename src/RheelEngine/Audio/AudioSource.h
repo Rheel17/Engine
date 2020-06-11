@@ -19,6 +19,9 @@ class RE_API AudioSource {
 	friend class AudioManager;
 
 public:
+	AudioSource(AudioManager& manager, const AudioClip& clip);
+	~AudioSource() = default;
+
 	void Play();
 	void Loop();
 	void Stop();
@@ -40,11 +43,9 @@ public:
 	void SetVelocity(const vec3& velocity);
 
 private:
-	AudioSource(AudioManager* manager, const AudioClip& clip);
-
 	void Stop_();
 
-	AudioManager* _manager;
+	AudioManager& _manager;
 	al::Source _source;
 
 };

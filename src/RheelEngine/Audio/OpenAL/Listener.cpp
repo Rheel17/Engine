@@ -5,9 +5,6 @@
 
 namespace rheel::al {
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "MemberFunctionCanBeStatic"
-
 void Listener::SetGain(float gain) {
 	alListenerf(AL_GAIN, gain);
 }
@@ -21,15 +18,13 @@ void Listener::SetVelocity(const vec3& velocity) {
 }
 
 void Listener::SetOrientation(const vec3& forward, const vec3& up) {
-	float orientation[6]{ forward.x, forward.y, forward.z, up.x, up.y, up.z };
-	alListenerfv(AL_ORIENTATION, orientation);
+	std::array<float, 6> orientation{ forward.x, forward.y, forward.z, up.x, up.y, up.z };
+	alListenerfv(AL_ORIENTATION, orientation.data());
 }
 
 void Listener::SetOrientation(const quat& rotation) {
 	// TODO: look into this
 	SetOrientation(rotation * vec4(0, 0, -1, 0), rotation * vec4(0, 1, 0, 0));
 }
-
-#pragma clang diagnostic pop
 
 }

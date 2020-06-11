@@ -26,19 +26,19 @@ public:
 	 * Plays a sound. The returned AudioSource pointer can be used to control
 	 * the sound.
 	 */
-	AudioSource* Play(const Sound& sound);
+	AudioSource& Play(const Sound& sound);
 
 	/**
 	 * Plays a sound, looping when it reaches the end. The returned AudioSource
 	 * pointer can be used to control the sound.
 	 */
-	AudioSource* Loop(const Sound& sound);
+	AudioSource& Loop(const Sound& sound);
 
 	/**
 	 * Stops the sound. When calling this method, the audio source is deleted,
 	 * and the pointer is deleted.
 	 */
-	void Stop(AudioSource* source);
+	void Stop(AudioSource& source);
 
 	/**
 	 * Returns the global audio listener.

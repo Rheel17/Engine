@@ -34,35 +34,31 @@ AudioManager::~AudioManager() {
 	alcCloseDevice(_device);
 }
 
-AudioSource* AudioManager::Play(const Sound& sound) {
+AudioSource& AudioManager::Play(const Sound& sound) {
 	const AudioClip& clip = GetAudioClip_(sound);
 
-	auto src = new AudioSource(this, clip);
-	auto source = std::unique_ptr<AudioSource>(src);
-
+	auto source = std::make_unique<AudioSource>(*this, clip);
 	source->Play();
 
 	_sources.push_back(std::move(source));
-	return src;
+	return *_sources.back();
 }
 
-AudioSource* AudioManager::Loop(const Sound& sound) {
+AudioSource& AudioManager::Loop(const Sound& sound) {
 	const AudioClip& clip = GetAudioClip_(sound);
 
-	auto src = new AudioSource(this, clip);
-	auto source = std::unique_ptr<AudioSource>(src);
-
+	auto source = std::make_unique<AudioSource>(*this, clip);
 	source->Loop();
 
 	_sources.push_back(std::move(source));
-	return src;
+	return *_sources.back();
 }
 
-void AudioManager::Stop(AudioSource* source) {
-	source->Stop_();
+void AudioManager::Stop(AudioSource& source) {
+	source.Stop_();
 
 	auto iter = std::find_if(_sources.begin(), _sources.end(),
-			[source](const auto& ptr) { return ptr.get() == source; });
+			[&](const auto& ptr) { return ptr.get() == &source; });
 	_sources.erase(iter);
 }
 
