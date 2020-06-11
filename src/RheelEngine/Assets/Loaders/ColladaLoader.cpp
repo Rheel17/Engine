@@ -7,6 +7,8 @@
 
 namespace rheel {
 
+// TODO: we need a better collada loader
+
 static void transformUp(vec3& vector, char up) {
 	vec3 original = vector;
 
@@ -98,9 +100,9 @@ ColladaLoader::Geometry::Geometry(XmlNode* geometry) {
 	std::vector<float> normals = ReadSource_(sources[inputs["NORMAL"]]);
 	std::vector<float> texcoords = ReadSource_(sources[inputs["TEXCOORD"]]);
 
-	auto vPositions = reinterpret_cast<vec3*>(positions.data());
-	auto vNormals = reinterpret_cast<vec3*>(normals.data());
-	auto vTexcoords = reinterpret_cast<vec2*>(texcoords.data());
+	auto extractVec3 = [](const std::vector<float>& v, std::size_t i) {
+		return vec3(v[3 * i], v[3 * i + 1], v[3 * i + 2]);
+	};
 
 	unsigned positionOffset = offsets["VERTEX"];
 	unsigned normalOffset = offsets["NORMAL"];
@@ -111,7 +113,7 @@ ColladaLoader::Geometry::Geometry(XmlNode* geometry) {
 	assert(p);
 	auto pList = CreateVectorUnsigned_(p);
 
-	auto polylistCount = polylist->first_attribute("count");
+	auto* polylistCount = polylist->first_attribute("count");
 	assert(polylistCount);
 	unsigned count = strtoul(polylistCount->value(), nullptr, 10);
 
@@ -119,9 +121,9 @@ ColladaLoader::Geometry::Geometry(XmlNode* geometry) {
 	assert(pList.size() % stride == 0);
 
 	for (unsigned i = 0; i < pList.size(); i += stride) {
-		vec3 position = vPositions[pList[i + positionOffset]];
-		vec3 normal = vNormals[pList[i + normalOffset]];
-		vec2 texcoord = vTexcoords[pList[i + texcoordOffset]];
+		vec3 position = extractVec3(positions, pList[i + positionOffset]);
+		vec3 normal = extractVec3(normals, pList[i + normalOffset]);
+		vec2 texcoord = extractVec3(texcoords, pList[i + texcoordOffset]);
 
 		model_vertex vertex{ position, normal, texcoord };
 

@@ -13,8 +13,8 @@ namespace rheel {
 
 static bool validatePNG(std::istream& input) {
 	// read the signature
-	png_byte signature[8];
-	input.read((char*) signature, 8);
+	std::array<png_byte, 8> signature{};
+	input.read(reinterpret_cast<char*>(signature.data()), 8);
 
 	// check if reading went well
 	if (!input.good()) {
@@ -22,7 +22,7 @@ static bool validatePNG(std::istream& input) {
 	}
 
 	// compare the signature
-	return png_sig_cmp(signature, 0, 8) == 0;
+	return png_sig_cmp(signature.data(), 0, 8) == 0;
 }
 
 Image PngLoader::Load(const std::string& path) const {
@@ -58,7 +58,7 @@ Image PngLoader::LoadPng_(std::istream& input) {
 
 	// jump here if something goes wrong in the parsing.
 	if (setjmp(png_jmpbuf(pngPtr))) {
-		png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) nullptr);
+		png_destroy_read_struct(&pngPtr, &infoPtr, nullptr);
 		delete[] rows;
 		delete[] data;
 		throw std::runtime_error("An error occurred while reading the PNG file.");
@@ -68,8 +68,8 @@ Image PngLoader::LoadPng_(std::istream& input) {
 	png_set_read_fn(pngPtr, static_cast<png_voidp>(&input),
 			[](png_structp pngPtr, png_bytep data, png_size_t length) {
 
-				auto stream = static_cast<std::istream*>(png_get_io_ptr(pngPtr));
-				stream->read((char*) data, length);
+				auto* stream = static_cast<std::istream*>(png_get_io_ptr(pngPtr));
+				stream->read(reinterpret_cast<char*>(data), length);
 			});
 
 	// we've already read the header, so skip the first 8 bytes
@@ -117,12 +117,16 @@ Image PngLoader::LoadPng_(std::istream& input) {
 
 	png_read_update_info(pngPtr, infoPtr);
 
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-pro-bounds-pointer-arithmetic"
+
 	size_t stride = png_get_rowbytes(pngPtr, infoPtr);
 	rows = new png_bytep[height];
 	data = new unsigned char[height * stride];
 
 	for (unsigned i = 0; i < height; i++) {
-		rows[i] = (png_bytep) data + stride * i;
+		rows[i] = static_cast<png_bytep>(data) + stride * i;
 	}
 
 	// read the image
@@ -142,8 +146,10 @@ Image PngLoader::LoadPng_(std::istream& input) {
 		};
 	}
 
+#pragma clang diagnostic pop
+
 	// delete the png handle and the temporary buffers
-	png_destroy_read_struct(&pngPtr, &infoPtr, (png_infopp) nullptr);
+	png_destroy_read_struct(&pngPtr, &infoPtr, nullptr);
 	delete[] rows;
 	delete[] data;
 

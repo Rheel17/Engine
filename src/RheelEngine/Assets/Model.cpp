@@ -3,8 +3,6 @@
  */
 #include "Model.h"
 
-#include <utility>
-
 namespace rheel {
 
 Model::Model(std::vector<model_vertex> vertices, std::vector<unsigned> indices) :

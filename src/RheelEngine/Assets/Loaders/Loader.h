@@ -31,6 +31,8 @@ private:
 	Loader() = default;
 
 public:
+	~Loader() = default;
+
 	/**
 	 * Loads an asset from the given path. The loader will ensure that the asset
 	 * is only loaded from disk once. This method is thread-safe.

@@ -27,12 +27,12 @@ unsigned VoxelImage::GetDepth() const {
 }
 
 const Color& VoxelImage::At(unsigned x, unsigned y, unsigned z) const {
-	auto data = GetRaw();
+	const auto* data = GetRaw();
 	return data->voxels[x + y * data->width + z * data->width * data->height];
 }
 
 Color& VoxelImage::At(unsigned x, unsigned y, unsigned z) {
-	auto data = GetRaw();
+	auto* data = GetRaw();
 	return data->voxels[x + y * data->width + z * data->width * data->height];
 }
 
