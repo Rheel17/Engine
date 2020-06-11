@@ -11,18 +11,20 @@ class RE_API Transition {
 	RE_NO_COPY(Transition);
 	RE_NO_MOVE(Transition);
 
+public:
+	~Transition() = default;
+
+	template<typename V>
+	V operator()(float t, float tMin, float tMax, V vMin, V vMax) const {
+		return _function((t - tMin) / (tMax - tMin)) * (vMax - vMin) + vMin;
+	}
+
 private:
 	typedef float (* TransitionFunction)(float t);
 
 	explicit Transition(TransitionFunction function);
 
 	TransitionFunction _function;
-
-public:
-	template<typename V>
-	V operator()(float t, float tMin, float tMax, V vMin, V vMax) const {
-		return _function((t - tMin) / (tMax - tMin)) * (vMax - vMin) + vMin;
-	}
 
 public:
 	static const Transition LINEAR;

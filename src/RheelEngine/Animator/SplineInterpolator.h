@@ -41,7 +41,7 @@ private:
 				float t = iter->first;
 				_t_values.push_back(t);
 
-				float powers[4] = { 1.0f, t, t * t, t * t * t };
+				std::array<float, 4> powers = { 1.0f, t, t * t, t * t * t };
 
 				// function values should equal the input at the correct times
 				if (index > 0) {
@@ -122,7 +122,7 @@ private:
 			// Source:
 			// https://martin-thoma.com/solving-linear-equations-with-gaussian-elimination/
 
-			for (int i = 0; i < n; i++) {
+			for (unsigned i = 0; i < n; i++) {
 				// Search for maximum in this column
 				Float maxEl = abs(augmentedMatrix[i][i]);
 				unsigned maxRow = i;

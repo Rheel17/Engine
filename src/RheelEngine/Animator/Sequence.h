@@ -13,7 +13,7 @@ template<typename V>
 class ReferenceSetter {
 
 public:
-	ReferenceSetter(V& reference) :
+	explicit ReferenceSetter(V& reference) :
 			_reference(reference) {}
 
 	void operator()(const V& v) {
