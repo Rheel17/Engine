@@ -20,7 +20,8 @@ public:
 
 };
 
-template<typename T, typename LoaderImpl, std::enable_if_t<std::is_base_of_v<AbstractLoader<T>, LoaderImpl>, int> = 0>
+template<typename T, typename LoaderImpl>
+		requires std::is_base_of_v<AbstractLoader<T>, LoaderImpl>
 class RE_API Loader {
 	RE_NO_MOVE(Loader);
 	RE_NO_COPY(Loader);
