@@ -25,7 +25,7 @@ struct RE_API draw_elements_indirect_command {
 };
 
 template<class CommandType>
-class RE_API DrawIndirectBuffer : public Buffer {
+class DrawIndirectBuffer : public Buffer {
 	static_assert(std::is_same_v<CommandType, draw_arrays_indirect_command> || std::is_same_v<CommandType, draw_elements_indirect_command>,
 			"Command must be either draw_arrays_indirect_command or draw_elements_indirect_command");
 

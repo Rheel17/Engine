@@ -8,7 +8,7 @@
 #include <GL/glwr.h>
 
 #define OPENGL_GEN_FUNCTION(func, structName)    \
-struct RE_API structName {                       \
+struct structName {                              \
     static constexpr auto glfn = #func;          \
     GLuint operator()() const {                  \
         GLuint name;                             \
@@ -18,7 +18,7 @@ struct RE_API structName {                       \
 }
 
 #define OPENGL_DELETE_FUNCTION(func, structName) \
-struct RE_API structName {                       \
+struct structName {                              \
     static constexpr auto glfn = #func;          \
     void operator()(GLuint name) const {         \
         func(1, &name);                          \
@@ -28,7 +28,7 @@ struct RE_API structName {                       \
 namespace rheel::gl {
 
 template<typename Generator, typename Deleter>
-class RE_API Handle {
+class Handle {
 	RE_NO_COPY(Handle);
 
 public:
@@ -36,7 +36,7 @@ public:
 	 * Generate the handle.
 	 */
 	Handle() :
-			_name(_generator()) {}
+			_name(Generator{}()) {}
 
 	/**
 	 * Uses the raw OpenGL name as handle.
@@ -49,7 +49,7 @@ public:
 	 */
 	~Handle() {
 		if (_name != 0) {
-			_deleter(_name);
+			Deleter{}(_name);
 		}
 	}
 
@@ -67,7 +67,7 @@ public:
 	Handle& operator=(Handle&& h) noexcept {
 		// delete the current handle
 		if (_name != 0) {
-			_deleter(_name);
+			Deleter{}(_name);
 		}
 
 		_generated = h._generated;
@@ -88,9 +88,6 @@ public:
 	}
 
 private:
-	static inline Generator _generator;
-	static inline Deleter _deleter;
-
 	mutable bool _generated = false;
 	mutable GLuint _name = 0;
 

@@ -94,7 +94,7 @@ private:
 };
 
 template<typename K, typename V, typename Policy = keep_policy, bool threadsafe = false>
-class RE_API Cache;
+class Cache;
 
 /**
  * Thread-safe cache implementation with several policies. Because of the
@@ -102,7 +102,7 @@ class RE_API Cache;
  * trivially-copyable.
  */
 template<typename K, typename V, typename Policy>
-class RE_API Cache<K, V, Policy, true> {
+class Cache<K, V, Policy, true> {
 
 public:
 	using SizeType = size_t;
@@ -290,7 +290,7 @@ private:
  * Non-thread-safe cache implementation
  */
 template<typename K, typename V, typename Policy>
-class RE_API Cache<K, V, Policy, false> {
+class Cache<K, V, Policy, false> {
 
 public:
 	using SizeType = size_t;

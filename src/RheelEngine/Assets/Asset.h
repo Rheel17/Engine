@@ -7,10 +7,10 @@
 
 namespace rheel {
 
-class RE_API AssetBase {};
+class AssetBase {};
 
 template<typename T>
-class RE_API Asset : public AssetBase {
+class Asset : public AssetBase {
 
 public:
 	virtual ~Asset() = default;

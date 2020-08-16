@@ -233,7 +233,7 @@ private:
  * or RigidComponent as actual base classes for custom components.
  */
 template<typename T>
-class RE_API TransformedComponent : public ComponentBase {
+class TransformedComponent : public ComponentBase {
 	static_assert(std::is_base_of_v<RigidTransform, T>, "Component transform must extend RigidTransform");
 
 public:

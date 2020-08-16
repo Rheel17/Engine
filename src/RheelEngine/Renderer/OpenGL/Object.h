@@ -10,7 +10,7 @@
 namespace rheel::gl {
 
 template<typename Generator, typename Deleter>
-class RE_API Object {
+class Object {
 
 public:
 	GLuint GetName() const {

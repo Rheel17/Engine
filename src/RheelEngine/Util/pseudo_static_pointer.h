@@ -23,7 +23,7 @@ namespace rheel {
  * default-constructed again.
  */
 template<typename T>
-struct RE_API pseudo_static_pointer {
+struct pseudo_static_pointer {
 
 public:
 	using reference = T&;
