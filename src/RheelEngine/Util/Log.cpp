@@ -22,7 +22,7 @@ std::ostream& Log::Log_(const SourceLoc& loc, Level level) {
 	auto millis = int(std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000);
 	std::time_t tm = std::chrono::system_clock::to_time_t(now);
 	std::stringstream ss;
-	ss << std::put_time(std::gmtime(&tm), "%Y-%m-%d %H:%M:%S.");
+	ss << std::put_time(std::localtime(&tm), "%Y-%m-%d %H:%M:%S.");
 
 	if (millis / 100 == 0) {
 		ss << '0';

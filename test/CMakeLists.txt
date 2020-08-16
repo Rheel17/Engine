@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.13.2)
 ##############
 
 # Download and unpack googletest at configure time
-configure_file(test/CMakeLists.txt.in googletest-download/CMakeLists.txt)
+configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
 		RESULT_VARIABLE result
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
@@ -39,8 +39,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Create the executable
-add_executable(Test test/test.cpp test/test_SplineInterpolator.cpp test/test_Transform.cpp test/test_Cache.cpp
-		test/test_Encoding.cpp test/test_Color.cpp)
+add_executable(Test test.cpp test_SplineInterpolator.cpp test_Transform.cpp test_Cache.cpp
+		test_Encoding.cpp test_Color.cpp)
 
 # Add googletest
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

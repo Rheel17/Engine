@@ -2,19 +2,16 @@ cmake_minimum_required(VERSION 3.13.2)
 
 # Build options
 option(BUILD_SANDBOX "Build the Sandbox sample project" ON)
-option(BUILD_TEST "Build the googletest unit test" ON)
-option(COPY_LIB "Copy the contents of the lib directory to the binary directory" OFF)
-set(EXTERNAL_INCLUDE_DIRECTORY "" CACHE STRING "Include directory for external libraries")
-set(EXTERNAL_LIBRARY_DIRECTORY "" CACHE STRING "Library directory for external libraries")
+option(BUILD_TEST "Build the googletest unit test" OFF)
 
 # Build the sandbox, if required.
 if (BUILD_SANDBOX)
-	include(sandbox/CMakeLists.txt)
+	add_subdirectory(sandbox)
 endif()
 
 # Add the test, if required
 if (BUILD_TEST)
-	include(test/CMakeLists.txt)
+	add_subdirectory(test)
 endif()
 
 # Set project name
@@ -24,6 +21,19 @@ project(Engine)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Packages
+find_package(Python3 COMPONENTS Interpreter)
+find_package(OpenGL REQUIRED)
+find_package(OpenAL REQUIRED)
+find_package(glwr REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(GLM REQUIRED)
+find_package(Freetype REQUIRED)
+find_package(Bullet REQUIRED)
+find_package(PNG REQUIRED)
+find_package(PUGIXML REQUIRED)
+
 # Build resources
 set(RESOURCE_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/_res.h" "${CMAKE_CURRENT_BINARY_DIR}/_res.cpp")
 add_custom_target(Resources
@@ -32,7 +42,7 @@ add_custom_target(Resources
 		COMMENT "Building Resources")
 
 # Generate RheelEngine.h header
-set(RHEELENGINE_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/RheelEngine.h")
+set(RHEELENGINE_HEADER "src/RheelEngine.h")
 add_custom_target(Header
 		COMMAND python3 include_headers_gen.py
 		WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
@@ -41,18 +51,6 @@ add_custom_target(Header
 # Create the library
 add_library(RheelEngine SHARED)
 target_compile_definitions(RheelEngine PRIVATE BUILDING_RHEELENGINE_DLL RE_DEBUG)
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	target_compile_options(RheelEngine PUBLIC -Wall -Wextra -pedantic)
-	target_compile_options(RheelEngine PUBLIC -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter)
-endif()
-
-if(COPY_LIB)
-	# Copy shared libraries
-	add_custom_command(
-			TARGET RheelEngine POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR})
-endif()
 
 # Add resources to the library
 add_dependencies(RheelEngine Resources)
@@ -64,43 +62,29 @@ target_include_directories(RheelEngine PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 add_dependencies(RheelEngine Header)
 
 # Add sources to the library
-target_sources(RheelEngine PUBLIC src/RheelEngine.h PRIVATE src/RheelEngine/_common.h)
+target_sources(RheelEngine PRIVATE src/RheelEngine.h src/RheelEngine/_common.h)
 add_subdirectory(src)
 
 # Add external libraries
-target_include_directories(RheelEngine PUBLIC ${EXTERNAL_INCLUDE_DIRECTORY})
-target_link_directories(RheelEngine PUBLIC ${EXTERNAL_LIBRARY_DIRECTORY})
+target_include_directories(RheelEngine PUBLIC ${FREETYPE_INCLUDE_DIRS})
+target_include_directories(RheelEngine PUBLIC ${BULLET_INCLUDE_DIRS})
 
-if(WIN32)
-	target_link_libraries(RheelEngine PRIVATE glfw3)
-	target_link_libraries(RheelEngine PRIVATE gdi32)
-	target_link_libraries(RheelEngine PUBLIC glew)
-	target_link_libraries(RheelEngine PUBLIC opengl32)
-else()
-	target_link_libraries(RheelEngine PRIVATE glfw)
-	target_link_libraries(RheelEngine PUBLIC GLEW)
-	target_link_libraries(RheelEngine PUBLIC GL)
-endif(WIN32)
+target_link_libraries(RheelEngine PUBLIC ${OPENGL_LIBRARIES})
+target_link_libraries(RheelEngine PUBLIC ${OPENAL_LIBRARY})
+target_link_libraries(RheelEngine PUBLIC ${FREETYPE_LIBRARIES})
+target_link_libraries(RheelEngine PUBLIC ${BULLET_LIBRARIES})
+target_link_libraries(RheelEngine PUBLIC ${PNG_LIBRARY})
+target_link_libraries(RheelEngine PUBLIC glew32 glfw3 pugixml alut)
 
-target_link_libraries(RheelEngine PRIVATE png16)
+# Installation
+include(GNUInstallDirs)
 
-if (WIN32)
-	target_link_libraries(RheelEngine PRIVATE zlibstatic)
-else()
-	target_link_libraries(RheelEngine PRIVATE z)
-endif()
+install(TARGETS RheelEngine
+		EXPORT RheelEngineConfig
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(DIRECTORY src/
+		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+		FILES_MATCHING PATTERN "*.h")
 
-target_link_libraries(RheelEngine PRIVATE freetype)
-target_link_libraries(RheelEngine PUBLIC BulletDynamics)
-target_link_libraries(RheelEngine PUBLIC BulletCollision)
-target_link_libraries(RheelEngine PUBLIC LinearMath)
-
-if (WIN32)
-	target_link_libraries(RheelEngine PRIVATE libOpenAL32.dll.a)
-else()
-	target_link_libraries(RheelEngine PRIVATE openal)
-endif()
-
-target_link_libraries(RheelEngine PRIVATE alut)
-target_compile_definitions(RheelEngine PUBLIC GLEW_STATIC)
-
+install(EXPORT RheelEngineConfig DESTINATION share/RheelEngine/cmake)
+export(TARGETS RheelEngine FILE RheelEngineConfig.cmake)

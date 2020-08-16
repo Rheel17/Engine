@@ -5,7 +5,7 @@
 #define RHEELENGINE_GLYPH_H
 #include "../../_common.h"
 
-#include <ft2build.h>
+#include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 
 #include <array>

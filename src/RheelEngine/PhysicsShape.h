@@ -5,7 +5,7 @@
 #define RHEELENGINE_PHYSICSSHAPE_H
 #include "_common.h"
 
-#include <btBulletDynamicsCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
 
 namespace rheel {
 

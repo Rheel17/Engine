@@ -5,7 +5,7 @@
 #define RHEELENGINE_COLLADALOADER_H
 #include "../../_common.h"
 
-#include <rapidxml/rapidxml_utils.hpp>
+#include <pugixml.hpp>
 
 #include "Loader.h"
 #include "../../Util/Hashes.h"
@@ -16,10 +16,9 @@ namespace rheel {
 class RE_API ColladaLoader : public AbstractLoader<Model> {
 	friend class AssetLoader;
 
-	using XmlFile = rapidxml::file<>;
-	using XmlDocument = rapidxml::xml_document<>;
-	using XmlNode = rapidxml::xml_node<>;
-	using XmlAttribute = rapidxml::xml_attribute<>;
+	using XmlDocument = pugi::xml_document;
+	using XmlNode = pugi::xml_node;
+	using XmlAttribute = pugi::xml_attribute;
 
 private:
 	class Geometry {
@@ -27,7 +26,7 @@ private:
 
 	public:
 		Geometry() = default;
-		explicit Geometry(XmlNode* type);
+		explicit Geometry(XmlNode type);
 
 	private:
 		struct vertex_hash {
@@ -47,7 +46,7 @@ private:
 		std::vector<unsigned> _indices{};
 
 	private:
-		static std::vector<float> ReadSource_(XmlNode* source);
+		static std::vector<float> ReadSource_(XmlNode source);
 
 	};
 
@@ -56,13 +55,12 @@ public:
 
 private:
 	void ParseCollada_() const;
-	void ParseGeometry_(XmlNode* geometry) const;
-	void ParseScene_(XmlNode* scene) const;
+	void ParseGeometry_(XmlNode geometry) const;
+	void ParseScene_(XmlNode scene) const;
 
 	void AddGeometry_(const Geometry& geometry, const mat4& transform) const;
 
 	// TODO: clean up mutable mess
-	mutable std::unique_ptr<XmlFile> _xml_file;
 	mutable std::unique_ptr<XmlDocument> _xml_document;
 
 	mutable std::unordered_map<std::string, Geometry> _geometries;
@@ -72,9 +70,9 @@ private:
 	mutable char _up = 'y';
 
 private:
-	static std::vector<unsigned> CreateVectorUnsigned_(XmlNode* node, int size = -1);
-	static std::vector<float> CreateVectorFloat_(XmlNode* node, int size = -1);
-	static mat4 CreateMatrix_(XmlNode* node);
+	static std::vector<unsigned> CreateVectorUnsigned_(XmlNode node, int size = -1);
+	static std::vector<float> CreateVectorFloat_(XmlNode node, int size = -1);
+	static mat4 CreateMatrix_(XmlNode node);
 
 };
 
