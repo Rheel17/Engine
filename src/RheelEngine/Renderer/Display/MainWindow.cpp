@@ -159,6 +159,7 @@ window_hints MainWindow::CreateWindowHints_(const DisplayConfiguration& configur
 	hints.visible = false;
 	hints.resizable = false;
 	hints.doublebuffer = configuration.vsync;
+	hints.decorated = configuration.window_mode != DisplayConfiguration::BORDERLESS_WINDOW;
 
 #ifdef RE_DEBUG
 	hints.opengl_debug_context = true;

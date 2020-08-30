@@ -14,7 +14,7 @@ class RE_API DisplayConfiguration {
 	friend class Game;
 
 public:
-	enum WindowMode { FULLSCREEN, WINDOWED_UNRESIZABLE };
+	enum WindowMode { FULLSCREEN, WINDOWED_UNRESIZABLE, BORDERLESS_WINDOW };
 	enum AntiAliasing { AA_OFF, MSAA_4, MSAA_8, MSAA_16 };
 	enum ShadowQuality { SHADOW_OFF, SHADOW_LOW, SHADOW_MEDIUM, SHADOW_HIGH };
 

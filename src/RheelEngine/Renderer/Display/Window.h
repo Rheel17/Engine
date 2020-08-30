@@ -28,6 +28,7 @@ struct window_hints {
 	bool resizable = true;
 	bool visible = true;
 	bool doublebuffer = true;
+	bool decorated = true;
 
 	uint8_t context_version_major = 4;
 	uint8_t context_version_minor = 3;

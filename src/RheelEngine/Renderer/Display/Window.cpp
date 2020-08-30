@@ -10,6 +10,7 @@ void window_hints::Set() const {
 	glfwWindowHint(GLFW_RESIZABLE, resizable);
 	glfwWindowHint(GLFW_VISIBLE, visible);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, doublebuffer);
+	glfwWindowHint(GLFW_DECORATED, decorated);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, context_version_major);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, context_version_minor);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, opengl_profile);
