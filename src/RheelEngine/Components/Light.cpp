@@ -13,12 +13,6 @@ Light::Light(const Color& color, float shadowDistance) :
 		_color(color),
 		_shadow_distance(shadowDistance) {}
 
-Light::~Light() {}
-
-void Light::Activate() {
-	GetParent()->scene->_lights.push_back(this);
-}
-
 void Light::SetColor(const Color& color) {
 	_color = color;
 }

@@ -40,38 +40,38 @@ SkyboxRenderer::SkyboxRenderer(SceneRenderManager* manager) :
 	_textures = CreateTexture_(1, 1);
 }
 
-void SkyboxRenderer::Render(Camera* camera, unsigned width, unsigned height) const {
-	auto skybox = _manager->GetScene()->GetSkybox();
-	if (skybox == nullptr) {
+void SkyboxRenderer::Render(const Camera* camera, unsigned width, unsigned height) const {
+	// auto skybox = _manager->GetScene()->GetSkybox();
+	// if (skybox == nullptr) {
 		return;
-	}
-
-	// render the skybox
-	_vao.Bind();
-
-	_shader["projectionMatrix"] = camera->GetProjectionMatrix(width, height);
-	_shader["rotationMatrix"] = camera->GetRotationMatrix();
-	_shader["renderDistance"] = camera->GetSkyboxDistance();
-	_shader["scale"] = skybox->GetScale();
-
-	const auto& images = skybox->GetImages();
-	bool changed = false;
-
-	for (int i = 0; i < 6; i++) {
-		if (_current_images[i].GetAddress() != images[i].GetAddress()) {
-			// changed skybox
-			LoadImage_(images[i], i);
-			_current_images[i] = images[i];
-			changed = true;
-		}
-	}
-
-	if (changed) {
-		_textures.GenerateMipmap();
-	}
-
-	_textures.Bind(0);
-	_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, 36);
+	// }
+	//
+	// // render the skybox
+	// _vao.Bind();
+	//
+	// _shader["projectionMatrix"] = camera->GetProjectionMatrix(width, height);
+	// _shader["rotationMatrix"] = camera->GetRotationMatrix();
+	// _shader["renderDistance"] = camera->GetSkyboxDistance();
+	// _shader["scale"] = skybox->GetScale();
+	//
+	// const auto& images = skybox->GetImages();
+	// bool changed = false;
+	//
+	// for (int i = 0; i < 6; i++) {
+	// 	if (_current_images[i].GetAddress() != images[i].GetAddress()) {
+	// 		// changed skybox
+	// 		LoadImage_(images[i], i);
+	// 		_current_images[i] = images[i];
+	// 		changed = true;
+	// 	}
+	// }
+	//
+	// if (changed) {
+	// 	_textures.GenerateMipmap();
+	// }
+	//
+	// _textures.Bind(0);
+	// _vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, 36);
 }
 
 void SkyboxRenderer::LoadImage_(Image image, unsigned layer) const {

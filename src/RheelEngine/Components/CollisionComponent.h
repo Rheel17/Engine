@@ -14,11 +14,16 @@ namespace rheel {
  * work, a RigidBodyComponent must be added before this component. Only
  * collisions with other objects having a CollisionComponent will be detected.
  */
-class RE_API CollisionComponent : public ComponentBase {
+class RE_API CollisionComponent : public Component {
 
 public:
+	// gen_component_id
+
 	CollisionComponent() = default;
 	~CollisionComponent() override = default;
+
+	RE_NO_COPY(CollisionComponent);
+	RE_DEFAULT_MOVE(CollisionComponent);
 
 	virtual void OnCollisionStart(CollisionComponent& other) {}
 	virtual void OnCollisionEnd(CollisionComponent& other) {}

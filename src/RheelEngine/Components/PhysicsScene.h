@@ -13,7 +13,7 @@ namespace rheel {
 
 class CollisionComponent;
 
-class RE_API PhysicsScene : public ComponentBase {
+class RE_API PhysicsScene : public Component {
 	friend class RigidBody;
 
 private:
@@ -30,10 +30,18 @@ private:
 	};
 
 public:
+	// gen_component_id
+
 	PhysicsScene() = default;
+	~PhysicsScene() = default;
 
-	void Activate() override;
+	RE_NO_COPY(PhysicsScene);
+	RE_DEFAULT_MOVE(PhysicsScene);
 
+protected:
+	void OnActivate() override;
+
+public:
 	void Update() override;
 
 	void SetGravity(vec3 gravity);
@@ -51,8 +59,6 @@ private:
 	void AddBody_(btRigidBody* body);
 	void RemoveBody_(btRigidBody* body, CollisionComponent* cc);
 	void HandleCollisions_();
-
-	PhysicsScene(const PhysicsScene& script);
 
 	vec3 _gravity = vec3(0.0f, -9.81f, 0.0f);
 

@@ -12,19 +12,10 @@
 
 namespace rheel {
 
-class RE_API Camera : public RigidComponent {
+class RE_API Camera : public Component {
 
 public:
-	/**
-	 * Creates a camera object with a starting position and rotation.
-	 */
-	explicit Camera(std::string name);
-
-	void TransformChanged() override;
-
-	void Activate() override;
-
-	void Deactivate() override;
+	// gen_component_id
 
 	/**
 	 * Returns the skybox distance
@@ -71,8 +62,6 @@ public:
 	vec3 RayDirection(unsigned width, unsigned height, const vec2& pixel) const;
 
 private:
-	std::string _name;
-
 	mutable mat4 _view_matrix{};
 	mutable bool _has_view_matrix = false;
 

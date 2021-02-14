@@ -5,123 +5,74 @@
 #define RHEELENGINE_SCENE_H
 #include "_common.h"
 
-#include "Entity.h"
 #include "Game.h"
 #include "Assets/Image.h"
+#include "Registry/Registry.h"
 
 namespace rheel {
 
-class Camera;
-class Light;
-class Skybox;
-class ComponentInputProxy;
-
 class RE_API Scene {
 	friend class Game;
-	friend class Camera;
-	friend class Light;
-	friend class Skybox;
-	friend class ComponentInputProxy;
+
+public:
+	~Scene() = default;
 
 	RE_NO_MOVE(Scene);
 	RE_NO_COPY(Scene);
-
-public:
-	~Scene();
 
 	/**
 	 * Returns the game of this scene.
 	 */
 	Game& GetGame();
 
-	/**
-	 * Adds an empty entity to the scene. This function returns a pointer to the
-	 * created entity.
-	 */
-	Entity* AddEntity(std::string name, RigidTransform transform = RigidTransform());
+	Registry& GetRegistry();
+	const Registry& GetRegistry() const;
 
 	/**
-	 * Creates a unique entity name with the given prefix
+	 * Adds an empty entity to the scene. This function returns a handle to the
+	 * created entity.
 	 */
-	std::string UniqueEntityName(const std::string& prefix);
+	Entity& AddEntity(EntityId id, const Transform& transform = Transform());
+
+	/**
+	 * Adds an empty entity to the scene. This function returns a handle to the
+	 * created entity.
+	 */
+	Entity& AddEntity(const Transform& transform = Transform());
 
 	/**
 	 * Removes an entity from the scene. If it is still active, it will be
 	 * killed first. If the entity is a child of another entity, the entity will
 	 * be removed from its parent.
 	 */
-	void RemoveEntity(Entity* entity);
+	void RemoveEntity(EntityId entity);
 
-	/**
-	 * Finds and returns the first found entity with the given name. The
-	 * 'recursive' parameter (default: true) can be specified to turn on or off
-	 * recursive search. With recursive search, the root entities are first
-	 * searched in order of their creation. If no entity of that name is found,
-	 * the children of the entities are searched.
-	 *
-	 * If no entity with the name given can be found, nullptr is returned.
-	 */
-	Entity* FindEntity(const std::string& name, bool recursive = true);
+	template<typename C>
+	C* GetRootComponent() {
+		return _registry.GetRootEntity()->GetComponent<C>();
+	}
 
-	/**
-	 * Returns a vector of all root-level entities in the scene. No child
-	 * entities are returned.
-	 */
-	const std::vector<Entity*>& GetEntities() const;
+	template<typename C>
+	const C* GetRootComponent() const {
+		return _registry.GetRootEntity()->GetComponent<C>();
+	}
 
 	/**
 	 * Adds a component to the scene root, instead of a specific object in the
 	 * scene. Use this only for scene-wide components.
 	 */
-	template<typename T, typename... Args>
-	T* AddRootComponent(Args&& ... args) {
-		return _root_entity->AddComponent<T>(args...);
+	template<typename C, typename... Args>
+	C& AddRootComponent(Args&&... args) {
+		return _registry.GetRootEntity()->AddComponent<C>(std::forward<Args>(args)...);
 	}
 
 	/**
 	 * Removes a component from the scene root.
 	 */
-	void RemoveRootComponent(ComponentBase* component);
-
-	/**
-	 * Returns the root component of the given type, if this scene has one
-	 * attached. If multiple components of the same type are present in the
-	 * scene, the first one added is returned. If no component is found, nullptr
-	 * is returned.
-	 */
-	template<typename T>
-	T* GetRootComponent() {
-		return _root_entity->GetComponent<T>();
+	template<typename C>
+	void RemoveRootComponent() {
+		_registry.GetRootEntity()->RemoveComponent<C>();
 	}
-
-	/**
-	 * Returns all root components of the given type.
-	 */
-	template<typename T>
-	std::vector<T*> GetAllRootComponentsOfType() {
-		return _root_entity->GetAllComponentsOfType<T>();
-	}
-
-	/**
-	 * Returns the camera of the given name. If no camera exists with that name,
-	 * nullptr is returned.
-	 */
-	Camera* GetCamera(const std::string& name);
-
-	/**
-	 * Returns a vector of all lights in the scene.
-	 */
-	const std::vector<Light*>& GetLights();
-
-	/**
-	 * Returns the skybox for this scene.
-	 */
-	Skybox* GetSkybox();
-
-	/**
-	 * Returns the components registered to receive input events
-	 */
-	const std::vector<ComponentInputProxy*>& GetInputComponents() const;
 
 	/**
 	 * Updates the scene and all its entities.
@@ -132,16 +83,7 @@ private:
 	explicit Scene(Game& game);
 
 	Game& _game;
-
-	Entity* _root_entity;
-
-	std::unordered_map<std::string, Camera*> _cameras;
-	std::vector<Light*> _lights;
-	Skybox* _skybox = nullptr;
-
-	std::vector<Entity*> _entities;
-	std::vector<ComponentInputProxy*> _input_components;
-
+	Registry _registry;
 };
 
 }

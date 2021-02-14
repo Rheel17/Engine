@@ -17,23 +17,23 @@ class RE_API ShadowMap {
 public:
 	virtual ~ShadowMap() = default;
 
-	virtual void Update(Camera* camera, unsigned width, unsigned height) = 0;
+	virtual void Update(const Camera* camera, unsigned width, unsigned height) = 0;
 
 protected:
-	ShadowMap(SceneRenderManager* manager, Light* light);
+	ShadowMap(SceneRenderManager* manager, const Light& light);
 
 	SceneRenderManager* GetManager() const;
 
 	template<typename T>
-	T* GetLight() const {
-		return dynamic_cast<T*>(_light);
+	const T& GetLight() const {
+		return dynamic_cast<const T&>(_light);
 	}
 
-	Light* GetLight() const;
+	const Light& GetLight() const;
 
 private:
 	SceneRenderManager* _manager;
-	Light* _light;
+	const Light& _light;
 
 };
 

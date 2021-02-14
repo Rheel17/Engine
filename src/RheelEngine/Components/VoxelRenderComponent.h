@@ -13,11 +13,9 @@ namespace rheel {
 class RE_API VoxelRenderComponent : public Component {
 
 public:
-	explicit VoxelRenderComponent(VoxelImage model);
+	// gen_component_id
 
-	void Activate() override;
-	void Render() override;
-	void Deactivate() override;
+	explicit VoxelRenderComponent(VoxelImage model);
 
 private:
 	VoxelImage _model;

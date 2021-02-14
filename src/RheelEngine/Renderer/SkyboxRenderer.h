@@ -26,7 +26,7 @@ private:
 public:
 	explicit SkyboxRenderer(SceneRenderManager* manager);
 
-	void Render(Camera* camera, unsigned width, unsigned height) const;
+	void Render(const Camera* camera, unsigned width, unsigned height) const;
 
 private:
 	void LoadImage_(Image image, unsigned layer) const;

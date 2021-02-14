@@ -8,16 +8,4 @@ namespace rheel {
 VoxelRenderComponent::VoxelRenderComponent(VoxelImage model) :
 		_model(std::move(model)) {}
 
-void VoxelRenderComponent::Activate() {
-
-}
-
-void VoxelRenderComponent::Render() {
-
-}
-
-void VoxelRenderComponent::Deactivate() {
-
-}
-
 }

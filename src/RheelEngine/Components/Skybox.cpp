@@ -23,18 +23,6 @@ Skybox::Skybox(std::array<Image, 6> images, float scale) :
 Skybox::Skybox(const Image& image, float scale) :
 		Skybox(LoadImages_(image), scale) {}
 
-void Skybox::Activate() {
-	if (GetParent()->scene->_skybox != nullptr) {
-		Log::Error() << "Scene already has a skybox" << std::endl;
-	} else {
-		GetParent()->scene->_skybox = this;
-	}
-}
-
-void Skybox::Deactivate() {
-	GetParent()->scene->_skybox = nullptr;
-}
-
 const std::array<Image, 6>& Skybox::GetImages() const {
 	return _images;
 }
@@ -45,12 +33,12 @@ float Skybox::GetScale() const {
 
 std::array<Image, 6> Skybox::LoadImages_(const Image& image) {
 	return std::array<Image, 6>{
-		LoadImage_(image, 0),
-		LoadImage_(image, 1),
-		LoadImage_(image, 2),
-		LoadImage_(image, 3),
-		LoadImage_(image, 4),
-		LoadImage_(image, 5)
+			LoadImage_(image, 0),
+			LoadImage_(image, 1),
+			LoadImage_(image, 2),
+			LoadImage_(image, 3),
+			LoadImage_(image, 4),
+			LoadImage_(image, 5)
 	};
 }
 

@@ -65,9 +65,21 @@ ModelRenderer::ObjectDataPtr::operator bool() const {
 	return _data != nullptr;
 }
 
+ModelRenderer::ObjectDataPtr::ObjectDataPtr(ModelRenderer::ObjectDataPtr&& ptr) noexcept :
+		_data(ptr._data) {
+
+	if (_data) {
+		_data->_ptr = this;
+	}
+}
+
 ModelRenderer::ObjectDataPtr& ModelRenderer::ObjectDataPtr::operator=(ObjectDataPtr&& ptr) noexcept {
 	_data = ptr._data;
-	_data->_ptr = this;
+
+	if (_data) {
+		_data->_ptr = this;
+	}
+
 	return *this;
 }
 

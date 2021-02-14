@@ -10,12 +10,10 @@
 
 namespace rheel {
 
-class RE_API Light : public ComponentBase {
+class RE_API Light : public Component {
 
 public:
-	virtual ~Light();
-
-	void Activate() override;
+	// gen_component_id
 
 	void SetColor(const Color& color);
 	const Color& GetColor() const;
@@ -25,7 +23,7 @@ public:
 	bool CastsShadows() const;
 
 protected:
-	Light(const Color& color);
+	explicit Light(const Color& color);
 	Light(const Color& color, float shadowDistance);
 
 private:

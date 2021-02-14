@@ -5,9 +5,9 @@
 
 namespace rheel {
 
-SceneRenderer::SceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount, bool depthComponent) :
+SceneRenderer::SceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned sampleCount, bool depthComponent) :
 		_manager(manager),
-		_camera_name(std::move(cameraName)),
+		_camera_entity(camera_entity),
 		_width(width),
 		_height(height),
 		_result_buffer(width, height) {
@@ -46,7 +46,7 @@ const gl::Framebuffer& SceneRenderer::ResultBuffer() const {
 }
 
 void SceneRenderer::RenderShadowMaps() {
-	Camera* camera = GetCamera();
+	const Camera* camera = GetCamera();
 	if (!camera || !_manager->ShouldDrawShadows()) {
 		return;
 	}
@@ -66,14 +66,8 @@ SceneRenderManager* SceneRenderer::GetManager() const {
 	return _manager;
 }
 
-Camera* SceneRenderer::GetCamera() const {
-	Camera* camera = _manager->GetScene()->GetCamera(_camera_name);
-
-	if (camera == nullptr) {
-		Log::Error() << "Camera '" << _camera_name << "' not found" << std::endl;
-	}
-
-	return camera;
+const Camera* SceneRenderer::GetCamera() const {
+	return _manager->GetScene()->GetRegistry().GetEntity(_camera_entity)->GetComponent<Camera>();
 }
 
 unsigned SceneRenderer::Width() const {
@@ -84,29 +78,29 @@ unsigned SceneRenderer::Height() const {
 	return _height;
 }
 
-const std::unordered_map<Light*, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
+const std::map<const Light*, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowMaps() const {
 	return _shadow_maps;
 }
 
 void SceneRenderer::CorrectShadowMapList_() {
-	std::unordered_set<Light*> lights;
+	std::unordered_set<const Light*> lights;
 	for (const auto& pair : _shadow_maps) {
 		lights.insert(pair.first);
 	}
 
-	for (Light* light : _manager->GetScene()->GetLights()) {
-		if (!light->CastsShadows()) {
-			continue;
+	_manager->GetScene()->GetRegistry().ForAll<Light>([this, &lights](const Light& light){
+		if (!light.CastsShadows()) {
+			return;
 		}
 
-		lights.erase(light);
+		lights.erase(&light);
 
-		if (_shadow_maps.find(light) == _shadow_maps.end()) {
-			_shadow_maps.insert({ light, _manager->CreateShadowMap(light) });
+		if (_shadow_maps.find(&light) == _shadow_maps.end()) {
+			_shadow_maps.insert({ &light, _manager->CreateShadowMap(light) });
 		}
-	}
+	});
 
-	for (Light* light : lights) {
+	for (const Light* light : lights) {
 		_shadow_maps.erase(light);
 	}
 }

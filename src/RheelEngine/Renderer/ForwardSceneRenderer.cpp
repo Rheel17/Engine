@@ -15,12 +15,12 @@ ForwardSceneRenderer::empty_shadow_map::empty_shadow_map() {
 	texture.SetCompareFunction(gl::CompareFunction::LEQUAL);
 }
 
-ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned sampleCount) :
-		SceneRenderer(manager, std::move(cameraName), width, height, sampleCount, true) {}
+ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned sampleCount) :
+		SceneRenderer(manager, camera_entity, width, height, sampleCount, true) {}
 
 void ForwardSceneRenderer::Render(float dt) {
 	// get the camera
-	Camera* camera = GetCamera();
+	const Camera* camera = GetCamera();
 
 	// if no camera with the given name was found: don't render anything
 	// new to the buffer.
@@ -53,7 +53,7 @@ void ForwardSceneRenderer::Render(float dt) {
 			modelShader["_cameraMatrix"] = camera->CreateMatrix(Width(), Height());
 
 			if (modelShader.HasUniform("_cameraPosition")) {
-				modelShader["_cameraPosition"] = camera->CalculateAbsoluteTransform().GetTranslation();
+				modelShader["_cameraPosition"] = camera->GetEntity().AbsoluteTransform().GetTranslation();
 			}
 		}
 
@@ -103,11 +103,6 @@ void ForwardSceneRenderer::Render(float dt) {
 		// textures bound to sampler2DShadow uniforms.
 		for (int i = shadowMapCount; i < 4; i++) {
 			_empty_shadow_map->texture.Bind(textureUnit++);
-		}
-
-		// render all objects
-		for (const auto entity : GetManager()->GetScene()->GetEntities()) {
-			entity->Render();
 		}
 
 		// render all the models

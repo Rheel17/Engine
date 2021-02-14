@@ -18,7 +18,13 @@ namespace rheel {
 class RE_API ModelRenderComponent : public Component {
 
 public:
+	// gen_component_id
+
 	ModelRenderComponent(Model model, Material material);
+	~ModelRenderComponent() = default;
+
+	RE_NO_COPY(ModelRenderComponent);
+	RE_DEFAULT_MOVE(ModelRenderComponent);
 
 	/**
 	 * Sets the material to use when rendering.
@@ -30,9 +36,10 @@ public:
 	 */
 	const Material& GetMaterial() const;
 
-	void Activate() override;
-	void Render() override;
-	void Deactivate() override;
+protected:
+	void OnActivate() override;
+	void OnDeactivate() override;
+	void Update() override;
 
 private:
 	Model _model;

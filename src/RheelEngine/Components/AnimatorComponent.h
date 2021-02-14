@@ -10,9 +10,11 @@
 
 namespace rheel {
 
-class RE_API AnimatorComponent : public Animator, public ComponentBase {
+class RE_API AnimatorComponent : public Animator, public Component {
 
 public:
+	// gen_component_id
+
 	void Update() override;
 
 };

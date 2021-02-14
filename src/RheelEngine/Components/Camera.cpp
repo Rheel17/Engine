@@ -5,35 +5,12 @@
 
 namespace rheel {
 
-Camera::Camera(std::string name) :
-		_name(std::move(name)) {}
-
-void Camera::TransformChanged() {
-	_has_view_matrix = false;
-}
-
-void Camera::Activate() {
-	const auto& [iter, insert] = GetParent()->scene->_cameras.insert({ _name, this });
-	if (!insert) {
-		Log::Error() << "Camera with name already exists: " << _name << std::endl;
-	}
-}
-
-void Camera::Deactivate() {
-	GetParent()->scene->_cameras.erase(_name);
-}
-
 mat4 Camera::GetViewMatrix() const {
-	if (!_has_view_matrix) {
-		_view_matrix = glm::inverse(CalculateAbsoluteTransformationMatrix());
-		_has_view_matrix = true;
-	}
-
-	return _view_matrix;
+	return GetEntity().AbsoluteTransform().AsMatrix();
 }
 
 mat4 Camera::GetRotationMatrix() const {
-	return glm::mat4_cast(CalculateAbsoluteTransform().GetRotation());
+	return glm::mat4_cast(GetEntity().AbsoluteTransform().GetRotation());
 }
 
 mat4 Camera::CreateMatrix(unsigned width, unsigned height) const {

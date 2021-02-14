@@ -24,7 +24,7 @@ public:
 	virtual void Render(float dt) = 0;
 
 protected:
-	SceneRenderer(SceneRenderManager* manager, std::string cameraName, unsigned width, unsigned height, unsigned samples, bool depthComponent);
+	SceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned samples, bool depthComponent);
 
 	void RenderShadowMaps();
 
@@ -32,13 +32,13 @@ protected:
 
 	SceneRenderManager* GetManager() const;
 
-	Camera* GetCamera() const;
+	const Camera* GetCamera() const;
 
 	unsigned Width() const;
 
 	unsigned Height() const;
 
-	const std::unordered_map<Light*, std::unique_ptr<ShadowMap>>& ShadowMaps() const;
+	const std::map<const Light*, std::unique_ptr<ShadowMap>>& ShadowMaps() const;
 
 	virtual void Resize(unsigned width, unsigned height) = 0;
 
@@ -46,13 +46,13 @@ private:
 	void CorrectShadowMapList_();
 
 	SceneRenderManager* _manager;
-	std::string _camera_name;
+	ConstEntityId _camera_entity;
 	unsigned _width;
 	unsigned _height;
 
 	gl::Framebuffer _result_buffer;
 
-	std::unordered_map<Light*, std::unique_ptr<ShadowMap>> _shadow_maps;
+	std::map<const Light*, std::unique_ptr<ShadowMap>> _shadow_maps;
 
 };
 

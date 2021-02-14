@@ -6,19 +6,18 @@
 #include "../_common.h"
 
 #include "../Component.h"
+#include "../Assets/Image.h"
 
 namespace rheel {
 
-class RE_API Skybox : public ComponentBase {
+class RE_API Skybox : public Component {
 
 public:
+	// gen_component_id
+
 	explicit Skybox(std::array<Image, 6> images, float scale = 1.0f);
 
-	explicit Skybox(const Image& image, float scale  = 1.0f);
-
-	void Activate() override;
-
-	void Deactivate() override;
+	explicit Skybox(const Image& image, float scale = 1.0f);
 
 	const std::array<Image, 6>& GetImages() const;
 

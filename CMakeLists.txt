@@ -48,9 +48,15 @@ add_custom_target(Header
 		WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
 		COMMENT "Generating RheelEngine.h")
 
+# Generate internal component ids
+add_custom_target(ComponentIdGen
+		COMMAND python3 auto_component_id.py
+		WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
+		COMMENT "Generating Component Ids")
+
 # Create the library
 add_library(RheelEngine SHARED)
-target_compile_definitions(RheelEngine PRIVATE BUILDING_RHEELENGINE_DLL RE_DEBUG)
+target_compile_definitions(RheelEngine PRIVATE RE_BUILDING_LIBRARY RE_DEBUG)
 
 # Add resources to the library
 add_dependencies(RheelEngine Resources)
@@ -58,8 +64,8 @@ set_source_files_properties(${RESOURCE_OUTPUT} PROPERTIES GENERATED 1)
 target_sources(RheelEngine PRIVATE ${RESOURCE_OUTPUT})
 target_include_directories(RheelEngine PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-# Add dependency to the header generator
-add_dependencies(RheelEngine Header)
+# Add dependency to the header and component id generator
+add_dependencies(RheelEngine Header ComponentIdGen)
 
 # Add sources to the library
 target_sources(RheelEngine PRIVATE src/RheelEngine.h src/RheelEngine/_common.h)
@@ -74,7 +80,7 @@ target_link_libraries(RheelEngine PUBLIC ${OPENAL_LIBRARY})
 target_link_libraries(RheelEngine PUBLIC ${FREETYPE_LIBRARIES})
 target_link_libraries(RheelEngine PUBLIC ${BULLET_LIBRARIES})
 target_link_libraries(RheelEngine PUBLIC ${PNG_LIBRARY})
-target_link_libraries(RheelEngine PUBLIC glew32 glfw3 pugixml alut)
+target_link_libraries(RheelEngine PUBLIC glew32 glfw3 pugixml alut llvm)
 
 # Installation
 include(GNUInstallDirs)

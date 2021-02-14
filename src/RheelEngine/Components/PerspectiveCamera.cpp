@@ -5,14 +5,13 @@
 
 namespace rheel {
 
-PerspectiveCamera::PerspectiveCamera(std::string name, float fov, float near, float far) :
-		Camera(std::move(name)),
+PerspectiveCamera::PerspectiveCamera(float fov, float near, float far) :
 		_fov(glm::radians(fov)),
 		_near(near),
 		_far(far) {}
 
 float PerspectiveCamera::GetSkyboxDistance() const {
-	return _far / sqrt(3);
+	return _far / std::sqrt(3.0f);
 }
 
 mat4 PerspectiveCamera::GetProjectionMatrix(unsigned width, unsigned height) const {
@@ -24,8 +23,8 @@ mat4 PerspectiveCamera::GetProjectionMatrix(unsigned width, unsigned height) con
 }
 
 std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned height, float near, float far) const {
-	Transform absoluteTransform = CalculateAbsoluteTransform();
-	const quat& rotation = absoluteTransform.GetRotation();
+	Transform absolute_transform = GetEntity().AbsoluteTransform();
+	const quat& rotation = absolute_transform.GetRotation();
 
 	vec3 forward = rotation * vec4(0, 0, -1, 0);
 	vec3 up = rotation * vec4(0, 1, 0, 0);
@@ -37,13 +36,13 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	float tanfov = std::tan(_fov * 0.5f);
 	float aspectRatio = float(width) / float(height);
 
-	const auto position = [absoluteTransform, forward, up, right, tanfov, aspectRatio](const vec2& ndc, float t) {
+	const auto position = [absolute_transform, forward, up, right, tanfov, aspectRatio](const vec2& ndc, float t) {
 		vec3 direction = glm::normalize(
 				ndc.x * right * tanfov * aspectRatio +
 						ndc.y * up * tanfov +
 						forward);
 
-		return absoluteTransform.GetTranslation() + t * direction;
+		return absolute_transform.GetTranslation() + t * direction;
 	};
 
 	return std::array<vec3, 8>{ {
@@ -58,15 +57,15 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	} };
 }
 
-vec3 PerspectiveCamera::RayDirection(const vec2& ndc, float aspectRatio) const {
-	const quat& rotation = transform.GetRotation();
+vec3 PerspectiveCamera::RayDirection(const vec2& ndc, float aspect_ratio) const {
+	const quat& rotation = GetEntity().transform.GetRotation();
 
 	vec3 forward = rotation * vec4(0, 0, -1, 0);
 	vec3 up = rotation * vec4(0, 1, 0, 0);
 	vec3 right = glm::cross(forward, up);
 	float tanfov = std::tan(_fov * 0.5f);
 
-	return glm::normalize(ndc.x * right * tanfov * aspectRatio + ndc.y * up * tanfov + forward);
+	return glm::normalize(ndc.x * right * tanfov * aspect_ratio + ndc.y * up * tanfov + forward);
 }
 
 }

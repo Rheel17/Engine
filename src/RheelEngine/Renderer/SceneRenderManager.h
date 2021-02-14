@@ -1,7 +1,6 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-
 #ifndef RHEELENGINE_SCENERENDERMANAGER_H
 #define RHEELENGINE_SCENERENDERMANAGER_H
 #include "../_common.h"
@@ -10,6 +9,7 @@
 #include "SkyboxRenderer.h"
 #include "OpenGL/Framebuffer.h"
 #include "../Assets/Model.h"
+#include "../Registry/EntityId.h"
 
 namespace rheel {
 
@@ -59,12 +59,12 @@ public:
 	/**
 	 * Creates and returns a SceneRenderer managed by this manager.
 	 */
-	std::unique_ptr<SceneRenderer> CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height);
+	std::unique_ptr<SceneRenderer> CreateSceneRenderer(ConstEntityId camera_entity, unsigned width, unsigned height);
 
 	/**
 	 * Creates and returns a shadow map for the given light.
 	 */
-	std::unique_ptr<ShadowMap> CreateShadowMap(Light* light);
+	std::unique_ptr<ShadowMap> CreateShadowMap(const Light& light);
 
 	/**
 	 * Returns the scene of this render manager.

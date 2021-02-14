@@ -26,14 +26,14 @@ public:
 	 * switches to that scene automatically, looking for a camera with the given
 	 * name.
 	 */
-	SceneElement(std::string cameraName);
+	explicit SceneElement(ConstEntityId camera_entity);
 
 	/**
 	 * Creates a UI element that displays the camera output of the given scene.
 	 * This does not automatically switch when the current active scene
 	 * switches.
 	 */
-	SceneElement(Scene* scene, std::string cameraName);
+	SceneElement(Scene* scene, ConstEntityId camera_entity);
 
 	/**
 	 * Sets whether this element should grab the mouse on focus. Its default
@@ -71,7 +71,7 @@ private:
 
 	bool _use_active_scene;
 	mutable Scene* _scene;
-	std::string _camera_name;
+	ConstEntityId _camera_entity;
 
 	bool _grab_on_focus = true;
 

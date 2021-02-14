@@ -4,6 +4,7 @@
 #include "PhysicsScene.h"
 
 #include "../Components/CollisionComponent.h"
+#include "../Registry/Registry.h"
 
 namespace rheel {
 
@@ -15,10 +16,7 @@ std::size_t PhysicsScene::collision_data_hash::operator()(const collision_data& 
 	return std::size_t(data.cc_0) * std::size_t(data.cc_1) * 0x4e911fa1;
 }
 
-PhysicsScene::PhysicsScene(const PhysicsScene& script) :
-		_gravity(script._gravity) {}
-
-void PhysicsScene::Activate() {
+void PhysicsScene::OnActivate() {
 	_collision_configuration = std::make_unique<btDefaultCollisionConfiguration>();
 	_dispatcher = std::make_unique<btCollisionDispatcher>(_collision_configuration.get());
 	_broadphase = std::make_unique<btDbvtBroadphase>();
@@ -29,12 +27,14 @@ void PhysicsScene::Activate() {
 }
 
 void PhysicsScene::Update() {
-	_world->stepSimulation(GetTimeDelta());
-	HandleCollisions_();
+	if (_world) {
+		_world->stepSimulation(dt);
+		HandleCollisions_();
+	}
 }
 
 void PhysicsScene::SetGravity(vec3 gravity) {
-	_gravity = std::move(gravity);
+	_gravity = gravity;
 
 	if (_world) {
 		_world->setGravity({ _gravity.x, _gravity.y, _gravity.z });
@@ -73,7 +73,7 @@ void PhysicsScene::AddBody_(btRigidBody* body) {
 
 void PhysicsScene::RemoveBody_(btRigidBody* body, CollisionComponent* cc) {
 	// handle current collisions
-	std::vector<collision_data> toRemove;
+	std::vector<collision_data> to_remove;
 
 	for (const auto& collision : _collisions) {
 		bool remove = true;
@@ -87,11 +87,11 @@ void PhysicsScene::RemoveBody_(btRigidBody* body, CollisionComponent* cc) {
 		}
 
 		if (remove) {
-			toRemove.push_back(collision);
+			to_remove.push_back(collision);
 		}
 	}
 
-	for (const collision_data& data : toRemove) {
+	for (const collision_data& data : to_remove) {
 		_collisions.erase(data);
 	}
 
@@ -101,40 +101,40 @@ void PhysicsScene::RemoveBody_(btRigidBody* body, CollisionComponent* cc) {
 
 void PhysicsScene::HandleCollisions_() {
 	for (int i = 0; i < _world->getDispatcher()->getNumManifolds(); i++) {
-		auto manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);
+		auto* manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);
 
 		if (manifold->getNumContacts() == 0) {
 			continue;
 		}
 
-		auto body0 = static_cast<RigidBody*>(manifold->getBody0()->getUserPointer());
-		auto body1 = static_cast<RigidBody*>(manifold->getBody1()->getUserPointer());
+		auto* body_0 = static_cast<RigidBody*>(manifold->getBody0()->getUserPointer());
+		auto* body_1 = static_cast<RigidBody*>(manifold->getBody1()->getUserPointer());
 
 		// TODO: notify all CollisionComponents?
-		auto cc0 = body0->GetParent()->GetComponent<CollisionComponent>();
-		if (!cc0) {
+		auto* cc_0 = body_0->GetEntity().GetComponent<CollisionComponent>();
+		if (!cc_0) {
 			continue;
 		}
 
-		auto cc1 = body1->GetParent()->GetComponent<CollisionComponent>();
-		if (!cc1) {
+		auto* cc_1 = body_1->GetEntity().GetComponent<CollisionComponent>();
+		if (!cc_1) {
 			continue;
 		}
 
-		auto iter = _collisions.insert({ cc0, cc1, false });
+		auto iter = _collisions.insert({ cc_0, cc_1, false });
 		iter.first->has_collision = true;
 
 		if (iter.second) {
-			cc0->OnCollisionStart(*cc1);
-			cc1->OnCollisionStart(*cc0);
+			cc_0->OnCollisionStart(*cc_1);
+			cc_1->OnCollisionStart(*cc_0);
 		}
 	}
 
-	std::vector<collision_data> toRemove;
+	std::vector<collision_data> to_remove;
 
 	for (const collision_data& data : _collisions) {
 		if (!data.has_collision) {
-			toRemove.push_back(data);
+			to_remove.push_back(data);
 			data.cc_0->OnCollisionEnd(*data.cc_1);
 			data.cc_1->OnCollisionEnd(*data.cc_0);
 		} else {
@@ -142,7 +142,7 @@ void PhysicsScene::HandleCollisions_() {
 		}
 	}
 
-	for (const collision_data& data : toRemove) {
+	for (const collision_data& data : to_remove) {
 		_collisions.erase(data);
 	}
 }

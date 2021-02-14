@@ -14,7 +14,7 @@
 #error "Platform not supported"
 #endif
 
-#ifdef BUILDING_RHEELENGINE_DLL
+#ifdef RE_BUILDING_LIBRARY
 #define RE_API RE_API_EXPORT
 #else
 #define RE_API RE_API_IMPORT
@@ -27,8 +27,11 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <set>
+#include <map>
 #include <unordered_set>
 #include <unordered_map>
+#include <type_traits>
 
 #define RE_NO_CONSTRUCT(X)                \
     X() = delete
@@ -40,5 +43,13 @@
 #define RE_NO_MOVE(X)                     \
     X(X&&) = delete;                      \
     X& operator=(X&&) = delete
+
+#define RE_DEFAULT_COPY(X)                \
+    X(const X&) = default;                \
+    X& operator=(const X&) = delete
+
+#define RE_DEFAULT_MOVE(X)                \
+    X(X&&) noexcept = default;            \
+    X& operator=(X&&) noexcept = default
 
 #endif

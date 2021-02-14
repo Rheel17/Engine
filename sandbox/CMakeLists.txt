@@ -9,7 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Create the executable
 add_executable(Sandbox)
-target_sources(Sandbox PRIVATE main.cpp)
+target_sources(Sandbox PRIVATE
+        main.cpp)
 target_include_directories(Sandbox PRIVATE ../src)
 target_link_directories(Sandbox PRIVATE RheelEngine)
 target_link_libraries(Sandbox RheelEngine)

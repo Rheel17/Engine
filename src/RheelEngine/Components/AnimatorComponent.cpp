@@ -6,7 +6,7 @@
 namespace rheel {
 
 void AnimatorComponent::Update() {
-	Animator::Update(GetTimeDelta());
+	Animator::Update(dt);
 }
 
 }

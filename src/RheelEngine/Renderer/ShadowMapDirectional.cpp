@@ -7,7 +7,7 @@
 
 namespace rheel {
 
-ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, Light* light) :
+ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, const Light& light) :
 		ShadowMap(manager, light) {
 
 	unsigned textureSize = 1024;
@@ -64,7 +64,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, Light* l
 
 ShadowMapDirectional::~ShadowMapDirectional() = default;
 
-void ShadowMapDirectional::Update(Camera* camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::Update(const Camera* camera, unsigned width, unsigned height) {
 	gl::ContextScope cs;
 
 	// set the lightspace matrices
@@ -107,9 +107,9 @@ float ShadowMapDirectional::Bias() const {
 	return _bias;
 }
 
-void ShadowMapDirectional::CalculateViewProjectionMatrices_(Camera* camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::CalculateViewProjectionMatrices_(const Camera* camera, unsigned width, unsigned height) {
 	// calculate the light coordinate system axis
-	vec3 zplus = -GetLight<DirectionalLight>()->Direction();
+	vec3 zplus = -GetLight<DirectionalLight>().Direction();
 	vec3 xplus;
 
 	if (zplus.x == 0 && zplus.z == 0) {
@@ -127,8 +127,8 @@ void ShadowMapDirectional::CalculateViewProjectionMatrices_(Camera* camera, unsi
 		// calculate the AABB of the camera frustum in light space
 		auto corners = camera->ViewspaceCorners(
 				width, height,
-				_csm_borders[i] * GetLight()->ShadowDistance(),
-				_csm_borders[i + 1] * GetLight()->ShadowDistance());
+				_csm_borders[i] * GetLight().ShadowDistance(),
+				_csm_borders[i + 1] * GetLight().ShadowDistance());
 
 		float min = std::numeric_limits<float>::lowest();
 		float max = std::numeric_limits<float>::max();

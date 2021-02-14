@@ -15,6 +15,9 @@ class Asset : public AssetBase {
 public:
 	virtual ~Asset() = default;
 
+	RE_DEFAULT_COPY(Asset);
+	RE_DEFAULT_MOVE(Asset);
+
 	/*
 	 * Checks whether this asset is empty (null)
 	 */

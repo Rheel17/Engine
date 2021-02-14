@@ -12,6 +12,8 @@ namespace rheel {
 class RE_API SpotLight : public Light {
 
 public:
+	// gen_component_id
+
 	SpotLight(Color color, vec3 position, vec3 direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
 	~SpotLight();
 

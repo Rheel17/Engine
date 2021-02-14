@@ -8,19 +8,19 @@
 
 namespace rheel {
 
-SceneElement::SceneElement(std::string cameraName) :
+SceneElement::SceneElement(ConstEntityId camera_entity) :
 		_use_active_scene(true),
 		_scene(nullptr),
-		_camera_name(cameraName),
+		_camera_entity(camera_entity),
 		_post_processing_stack(std::make_shared<PostProcessingStack>()) {
 
 	SetFocusable(true);
 }
 
-SceneElement::SceneElement(Scene* scene, std::string cameraName) :
+SceneElement::SceneElement(Scene* scene, ConstEntityId camera_entity) :
 		_use_active_scene(false),
 		_scene(scene),
-		_camera_name(cameraName),
+		_camera_entity(camera_entity),
 		_post_processing_stack(std::make_shared<PostProcessingStack>()) {
 
 	SetFocusable(true);
@@ -64,10 +64,10 @@ void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::M
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnKeyPress_(key, scancode, mods);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnKeyPress_(key, scancode, mods);
+	// }
 }
 
 void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
@@ -75,10 +75,10 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnKeyRelease_(key, scancode, mods);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnKeyRelease_(key, scancode, mods);
+	// }
 }
 
 void SceneElement::OnCharacterInput(Input::Unicode character) {
@@ -86,10 +86,10 @@ void SceneElement::OnCharacterInput(Input::Unicode character) {
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnCharacterInput_(character);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnCharacterInput_(character);
+	// }
 }
 
 void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
@@ -97,10 +97,10 @@ void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifier
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnMouseButtonPress_(button, mods);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnMouseButtonPress_(button, mods);
+	// }
 }
 
 void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
@@ -108,10 +108,10 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnMouseButtonRelease_(button, mods);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnMouseButtonRelease_(button, mods);
+	// }
 }
 
 void SceneElement::OnMouseMove(const vec2& position) {
@@ -119,10 +119,10 @@ void SceneElement::OnMouseMove(const vec2& position) {
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnMouseMove_(position);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnMouseMove_(position);
+	// }
 }
 
 void SceneElement::OnMouseJump(const vec2& position) {
@@ -130,10 +130,10 @@ void SceneElement::OnMouseJump(const vec2& position) {
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnMouseJump_(position);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnMouseJump_(position);
+	// }
 }
 
 void SceneElement::OnMouseDrag(const vec2& origin, const vec2& position) {
@@ -141,10 +141,10 @@ void SceneElement::OnMouseDrag(const vec2& origin, const vec2& position) {
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnMouseDrag_(origin, position);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnMouseDrag_(origin, position);
+	// }
 }
 
 void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
@@ -152,10 +152,10 @@ void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
 		return;
 	}
 
-	for (auto inputComponent : _scene->GetInputComponents()) {
-		inputComponent->_source = this;
-		inputComponent->OnMouseScroll_(scrollComponents);
-	}
+	// for (auto inputComponent : _scene->GetInputComponents()) {
+	// 	inputComponent->_source = this;
+	// 	inputComponent->OnMouseScroll_(scrollComponents);
+	// }
 }
 
 void SceneElement::InitializeRenderer_(const Bounds& bounds) const {
@@ -176,7 +176,7 @@ void SceneElement::InitializeRenderer_(const Bounds& bounds) const {
 		return;
 	}
 
-	auto renderer = game.GetRenderer().GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_name, bounds.width, bounds.height);
+	auto renderer = game.GetRenderer().GetSceneRenderManager(_scene).CreateSceneRenderer(_camera_entity, bounds.width, bounds.height);
 	SceneRenderer* ptr = renderer.release();
 	_scene_renderer = std::shared_ptr<SceneRenderer>(ptr);
 }

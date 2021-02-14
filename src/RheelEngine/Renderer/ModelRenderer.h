@@ -40,23 +40,27 @@ public:
 
 	};
 
-	class ObjectDataPtr {
+	class RE_API ObjectDataPtr {
 		friend class ObjectData;
 		friend class ModelRenderer;
 		friend class CustomShaderModelRenderer;
 
-		RE_NO_COPY(ObjectDataPtr);
-
 	public:
 		ObjectDataPtr() = default;
 		explicit ObjectDataPtr(ObjectData* data);
+
+		~ObjectDataPtr() = default;
+
+		RE_NO_COPY(ObjectDataPtr);
+
+		ObjectDataPtr(ObjectDataPtr&& ptr) noexcept;
+		ObjectDataPtr& operator=(ObjectDataPtr&& ptr) noexcept;
 
 		void SetMatrix(mat4 matrix);
 		void SetMaterialVector(vec4 materialVector);
 		void SetMaterialColor(vec4 materialColor);
 
 		explicit operator bool() const;
-		ObjectDataPtr& operator=(ObjectDataPtr&& ptr) noexcept;
 
 	private:
 		ObjectData* _data = nullptr;

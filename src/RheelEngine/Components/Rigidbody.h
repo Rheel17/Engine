@@ -14,15 +14,19 @@ namespace rheel {
  * A component for Rigid Bodies. This component is required for the
  * built-in physics engine.
  */
-class RE_API RigidBody : public RigidComponent {
+class RE_API RigidBody : public Component {
 
 public:
-	RigidBody(PhysicsShape shape, float mass = 0.0f, float bounciness = 0.5f);
+	// gen_component_id
 
-	void TransformChanged() override;
-	void Activate() override;
+	explicit RigidBody(PhysicsShape shape, float mass = 0.0f, float bounciness = 0.5f);
+
+protected:
+	void OnActivate() override;
+	void OnDeactivate() override;
+
+public:
 	void Update() override;
-	void Deactivate() override;
 
 	void SetShape(PhysicsShape shape);
 
@@ -38,7 +42,7 @@ private:
 	std::unique_ptr<btMotionState> _motion_state;
 	std::unique_ptr<btRigidBody> _body;
 
-	btTransform _last_transform_update;
+	std::unique_ptr<btTransform> _last_transform_update;
 
 	PhysicsShape _shape;
 	float _mass = 0.0f;

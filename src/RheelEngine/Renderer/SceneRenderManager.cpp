@@ -47,29 +47,29 @@ void SceneRenderManager::Update() {
 	_lights_attenuation.clear();
 	_lights_spot_attenuation.clear();
 
-	for (Light* light : _scene->GetLights()) {
-		_lights_color.push_back(light->GetColor());
+	_scene->GetRegistry().ForAll<Light>([this](const Light& light) {
+		_lights_color.push_back(light.GetColor());
 
-		if (auto pointLight = dynamic_cast<PointLight*>(light)) {
+		if (const auto* point_light = dynamic_cast<const PointLight*>(&light)) {
 			_lights_type.push_back(0);
-			_lights_position.push_back(pointLight->Position());
+			_lights_position.push_back(point_light->Position());
 			_lights_direction.emplace_back();
-			_lights_attenuation.push_back(pointLight->Attenuation());
+			_lights_attenuation.push_back(point_light->Attenuation());
 			_lights_spot_attenuation.push_back(0.0f);
-		} else if (auto spotLight = dynamic_cast<SpotLight*>(light)) {
+		} else if (const auto* spot_light = dynamic_cast<const SpotLight*>(&light)) {
 			_lights_type.push_back(1);
-			_lights_position.push_back(spotLight->Position());
-			_lights_direction.push_back(spotLight->Direction());
-			_lights_attenuation.push_back(spotLight->Attenuation());
-			_lights_spot_attenuation.push_back(spotLight->SpotAttenuation());
-		} else if (auto directionalLight = dynamic_cast<DirectionalLight*>(light)) {
+			_lights_position.push_back(spot_light->Position());
+			_lights_direction.push_back(spot_light->Direction());
+			_lights_attenuation.push_back(spot_light->Attenuation());
+			_lights_spot_attenuation.push_back(spot_light->SpotAttenuation());
+		} else if (const auto* directional_light = dynamic_cast<const DirectionalLight*>(&light)) {
 			_lights_type.push_back(2);
 			_lights_position.emplace_back();
-			_lights_direction.push_back(directionalLight->Direction());
+			_lights_direction.push_back(directional_light->Direction());
 			_lights_attenuation.push_back(0.0f);
 			_lights_spot_attenuation.push_back(0.0f);
 		}
-	}
+	});
 
 	_shadow_level = ShadowLevel_();
 }
@@ -94,17 +94,17 @@ CustomShaderModelRenderer& SceneRenderManager::GetModelRendererForCustomShader(c
 	return iter->second;
 }
 
-std::unique_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(std::string cameraName, unsigned width, unsigned height) {
+std::unique_ptr<SceneRenderer> SceneRenderManager::CreateSceneRenderer(ConstEntityId camera_entity, unsigned width, unsigned height) {
 	return std::unique_ptr<ForwardSceneRenderer>(
-			new ForwardSceneRenderer(this, std::move(cameraName), width, height, DisplayConfiguration::Get().SampleCount()));
+			new ForwardSceneRenderer(this, camera_entity, width, height, DisplayConfiguration::Get().SampleCount()));
 }
 
-std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(Light* light) {
-	if (dynamic_cast<PointLight*>(light)) {
+std::unique_ptr<ShadowMap> SceneRenderManager::CreateShadowMap(const Light& light) {
+	if (dynamic_cast<const PointLight*>(&light)) {
 
-	} else if (dynamic_cast<SpotLight*>(light)) {
+	} else if (dynamic_cast<const SpotLight*>(&light)) {
 
-	} else if (dynamic_cast<DirectionalLight*>(light)) {
+	} else if (dynamic_cast<const DirectionalLight*>(&light)) {
 		return std::unique_ptr<ShadowMapDirectional>(new ShadowMapDirectional(this, light));
 	}
 
@@ -180,13 +180,20 @@ gl::Program& SceneRenderManager::GetOpaqueShader() {
 }
 
 int SceneRenderManager::ShadowLevel_() {
-	for (Light* light : _scene->GetLights()) {
-		if (light->CastsShadows()) {
+	static const auto get = [](const Light& light) -> std::optional<int> {
+		if (light.CastsShadows()) {
 			return DisplayConfiguration::Get().shadow_quality;
 		}
+
+		return std::nullopt;
+	};
+
+	auto opt = _scene->GetRegistry().ForAll<Light>(get);
+	if (opt) {
+		return 0;
 	}
 
-	return 0;
+	return opt.value();
 }
 
 }

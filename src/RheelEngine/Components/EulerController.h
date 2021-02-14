@@ -9,12 +9,10 @@
 
 namespace rheel {
 
-class RE_API EulerController : public ComponentBase {
+class RE_API EulerController : public Component {
 
 public:
-	void Activate() override;
-
-	void Deactivate() override;
+	// gen_component_id
 
 	void Update() override;
 
