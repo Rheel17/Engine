@@ -14,6 +14,8 @@ class RE_API Skybox : public Component {
 
 public:
 	// gen_component_id
+	static constexpr const ComponentId id = 10;
+	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	explicit Skybox(std::array<Image, 6> images, float scale = 1.0f);
 

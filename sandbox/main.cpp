@@ -2,9 +2,11 @@
 
 using namespace rheel;
 
-class FpsUpdater : public Component<rheel::user_component + 0> {
+class FpsUpdater : public Component {
 
 public:
+	static constexpr const ComponentId id = 0;
+
 	void SetElement(TextElement* element) {
 		_element = element;
 	}
@@ -144,3 +146,5 @@ public:
 };
 
 RHEEL_ENGINE_ENTRY(SandboxGame)
+
+static_assert(rheel::ComponentWithFlag<ModelRenderComponent, rheel::ComponentFlags::BUILTIN>);

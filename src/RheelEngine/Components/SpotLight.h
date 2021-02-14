@@ -13,6 +13,8 @@ class RE_API SpotLight : public Light {
 
 public:
 	// gen_component_id
+	static constexpr const ComponentId id = 11;
+	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	SpotLight(Color color, vec3 position, vec3 direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
 	~SpotLight();

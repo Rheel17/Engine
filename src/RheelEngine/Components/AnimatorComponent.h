@@ -14,6 +14,8 @@ class RE_API AnimatorComponent : public Animator, public Component {
 
 public:
 	// gen_component_id
+	static constexpr const ComponentId id = 0;
+	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	void Update() override;
 

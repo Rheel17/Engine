@@ -40,10 +40,10 @@ public:
 	template<typename C, typename... Args>
 	C& AddComponent(Args&&... args);
 
-	template<ComponentClass C>
+	template<ComponentBaseClass C>
 	C* GetComponent();
 
-	template<ComponentClass C>
+	template<ComponentBaseClass C>
 	const C* GetComponent() const;
 
 	template<typename C>
@@ -192,7 +192,7 @@ private:
 	Entity* _root;
 };
 
-template<ComponentClass C>
+template<ComponentBaseClass C>
 C* Entity::GetComponent() {
 	for (auto* component : _components) {
 		if (auto* c = dynamic_cast<C*>(component)) {
@@ -203,7 +203,7 @@ C* Entity::GetComponent() {
 	return nullptr;
 }
 
-template<ComponentClass C>
+template<ComponentBaseClass C>
 const C* Entity::GetComponent() const {
 	for (auto* component : _components) {
 		if (const auto* c = dynamic_cast<const C*>(component)) {

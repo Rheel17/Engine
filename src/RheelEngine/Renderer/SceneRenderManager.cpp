@@ -189,7 +189,7 @@ int SceneRenderManager::ShadowLevel_() {
 	};
 
 	auto opt = _scene->GetRegistry().ForAll<Light>(get);
-	if (opt) {
+	if (!opt) {
 		return 0;
 	}
 

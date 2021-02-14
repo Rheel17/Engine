@@ -15,7 +15,6 @@ namespace rheel {
 class RE_API Camera : public Component {
 
 public:
-	// gen_component_id
 
 	/**
 	 * Returns the skybox distance

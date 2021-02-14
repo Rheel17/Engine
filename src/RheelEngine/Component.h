@@ -15,10 +15,14 @@ enum class ComponentFlags : std::uint64_t {
 	BUILTIN = 1
 };
 
-inline ComponentFlags operator|(ComponentFlags a, ComponentFlags b) {
+inline constexpr ComponentFlags operator|(ComponentFlags a, ComponentFlags b) {
 	return static_cast<ComponentFlags>(
 			static_cast<std::underlying_type_t<ComponentFlags>>(a) | static_cast<std::underlying_type_t<ComponentFlags>>(b)
 	);
+}
+
+inline constexpr bool operator&(ComponentFlags a, ComponentFlags b) {
+	return static_cast<std::underlying_type_t<ComponentFlags>>(a) & static_cast<std::underlying_type_t<ComponentFlags>>(b);
 }
 
 /**
@@ -91,15 +95,18 @@ private:
 
 template<typename C>
 concept HasComponentId = requires {
-	{ C::id } -> std::same_as<ComponentId>;
+	{ C::id } -> std::convertible_to<ComponentId>;
 };
 
 template<typename C>
-concept ComponentClass = std::is_base_of_v<Component, C> && std::is_nothrow_move_constructible_v<C> && HasComponentId<C>;
+concept ComponentBaseClass = std::is_base_of_v<Component, C>;
+
+template<typename C>
+concept ComponentClass = ComponentBaseClass<C> && std::is_nothrow_move_constructible_v<C> && HasComponentId<C>;
 
 template<typename C>
 concept FlaggedComponent = ComponentClass<C> && requires {
-	{ C::flags } -> std::same_as<ComponentFlags>;
+	{ C::flags } -> std::convertible_to<ComponentFlags>;
 };
 
 template<typename C, ComponentFlags Flag>

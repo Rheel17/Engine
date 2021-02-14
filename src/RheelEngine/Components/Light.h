@@ -14,6 +14,8 @@ class RE_API Light : public Component {
 
 public:
 	// gen_component_id
+	static constexpr const ComponentId id = 4;
+	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	void SetColor(const Color& color);
 	const Color& GetColor() const;

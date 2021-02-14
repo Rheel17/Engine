@@ -19,6 +19,8 @@ class RE_API ModelRenderComponent : public Component {
 
 public:
 	// gen_component_id
+	static constexpr const ComponentId id = 5;
+	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	ModelRenderComponent(Model model, Material material);
 	~ModelRenderComponent() = default;

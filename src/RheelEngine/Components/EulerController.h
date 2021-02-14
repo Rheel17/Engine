@@ -13,6 +13,8 @@ class RE_API EulerController : public Component {
 
 public:
 	// gen_component_id
+	static constexpr const ComponentId id = 3;
+	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	void Update() override;
 
