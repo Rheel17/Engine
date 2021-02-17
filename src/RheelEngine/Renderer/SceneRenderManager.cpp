@@ -49,26 +49,29 @@ void SceneRenderManager::Update() {
 	_lights_attenuation.clear();
 	_lights_spot_attenuation.clear();
 
-	for (auto point_lights = _scene->GetRegistry().GetComponents<PointLight>(); const auto& point_light : point_lights) {
+	for (const auto& point_light : _scene->GetRegistry().GetComponents<PointLight>()) {
 		_lights_type.push_back(0);
 		_lights_position.push_back(point_light.Position());
 		_lights_direction.emplace_back();
+		_lights_color.push_back(point_light.GetColor());
 		_lights_attenuation.push_back(point_light.Attenuation());
 		_lights_spot_attenuation.push_back(0.0f);
 	}
 
-	for (auto spot_lights = _scene->GetRegistry().GetComponents<SpotLight>(); const auto& spot_light : spot_lights) {
+	for (const auto& spot_light : _scene->GetRegistry().GetComponents<SpotLight>()) {
 		_lights_type.push_back(1);
 		_lights_position.push_back(spot_light.Position());
 		_lights_direction.push_back(spot_light.Direction());
+		_lights_color.push_back(spot_light.GetColor());
 		_lights_attenuation.push_back(spot_light.Attenuation());
 		_lights_spot_attenuation.push_back(spot_light.SpotAttenuation());
 	}
 
-	for (auto directional_lights = _scene->GetRegistry().GetComponents<DirectionalLight>(); const auto& directional_light : directional_lights) {
+	for (const auto& directional_light : _scene->GetRegistry().GetComponents<DirectionalLight>()) {
 		_lights_type.push_back(2);
 		_lights_position.emplace_back();
 		_lights_direction.push_back(directional_light.Direction());
+		_lights_color.push_back(directional_light.GetColor());
 		_lights_attenuation.push_back(0.0f);
 		_lights_spot_attenuation.push_back(0.0f);
 	}
