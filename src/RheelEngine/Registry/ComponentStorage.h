@@ -7,12 +7,11 @@
 
 #include "../Component.h"
 
+#include <span>
+
 namespace rheel {
 
 namespace detail {
-
-template<typename F, typename Arg>
-concept invocable_or_const_invocable = std::is_invocable_v<F, Arg> || std::is_invocable_v<F, const Arg>;
 
 template<typename F, typename Arg>
 concept opt_function = requires(std::invoke_result_t<F, Arg> r) {
@@ -38,7 +37,7 @@ public:
 			c.~Component();
 		};
 
-		ForAllGeneric(deleter);
+		ForAll(deleter);
 
 		// delete storage
 		free(_storage); // NOLINT (malloc used, so need to free)
@@ -59,30 +58,24 @@ public:
 
 	ComponentStorage& operator=(ComponentStorage&&) noexcept = delete;
 
-	template<typename C>
-	C* Index(std::size_t index) {
-		auto* c_storage = static_cast<C*>(_storage);
-		return c_storage + index;
-	}
-
 	template<std::invocable<Component&> F>
-	detail::forall_return<F, Component&> ForAllGeneric(F f) {
+	detail::forall_return<F, Component&> ForAll(F f) {
 		return _for_all<Component, ComponentStorage>(*this, f);
 	}
 
 	template<std::invocable<const Component&> F>
-	detail::forall_return<F, const Component&> ForAllGeneric(F f) const {
+	detail::forall_return<F, const Component&> ForAll(F f) const {
 		return _for_all<const Component, const ComponentStorage>(*this, f);
 	}
 
-	template<typename C, std::invocable<C&> F>
-	detail::forall_return<F, C&> ForAll(F f) {
-		return _for_all<C, ComponentStorage>(*this, f);
+	template<typename C>
+	std::span<C> View() {
+		return std::span<C>(static_cast<C*>(_storage), _size);
 	}
 
-	template<typename C, std::invocable<const C&> F>
-	detail::forall_return<F, const C&> ForAll(F f) const {
-		return _for_all<const C, const ComponentStorage>(*this, f);
+	template<typename C>
+	std::span<const C> View() const {
+		return std::span<C>(static_cast<const C*>(_storage), _size);
 	}
 
 	template<typename C, typename... Args>

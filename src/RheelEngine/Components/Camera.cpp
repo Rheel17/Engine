@@ -6,7 +6,7 @@
 namespace rheel {
 
 mat4 Camera::GetViewMatrix() const {
-	return GetEntity().AbsoluteTransform().AsMatrix();
+	return glm::inverse(GetEntity().AbsoluteTransform().AsMatrix());
 }
 
 mat4 Camera::GetRotationMatrix() const {

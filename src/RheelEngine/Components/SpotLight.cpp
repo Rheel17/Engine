@@ -12,8 +12,6 @@ SpotLight::SpotLight(Color color, vec3 position, vec3 direction, float spotAtten
 		_spot_attenuation(spotAttenuation),
 		_attenuation(attenuation) {}
 
-SpotLight::~SpotLight() {}
-
 void SpotLight::SetPosition(const vec3& position) {
 	_position = position;
 }

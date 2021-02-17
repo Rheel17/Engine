@@ -22,6 +22,9 @@ namespace rheel {
 class Registry;
 class Scene;
 
+template<bool, typename...>
+class MultiComponentView;
+
 class Entity {
 	friend class ComponentStorage;
 	friend class Registry;
@@ -124,25 +127,35 @@ public:
 		entity._components.erase(entity._components.begin() + index_in_entity);
 	}
 
-	template<ComponentClass C, typename F>
-	auto ForAll(F f) {
-		return _component_storage<C>().template ForAll<C>(f);
-	}
-
-	template<ComponentClass C, typename F>
-	auto ForAll(F f) const {
-		return _component_storage<C>().template ForAll<C>(f);
-	}
-
 	template<typename F>
 	void ForAllComponents(F f) {
 		for (auto& components : _builtin_components) {
-			components.ForAllGeneric(f);
+			components.ForAll(f);
 		}
 
 		for (auto& components : _user_components) {
-			components.ForAllGeneric(f);
+			components.ForAll(f);
 		}
+	}
+
+	template<ComponentClass C>
+	auto GetComponents() {
+		return _component_storage<C>().template View<C>();
+	}
+
+	template<ComponentClass C>
+	auto GetComponents() const {
+		return _component_storage<C>().template View<C>();
+	}
+
+	template<ComponentClass C1, ComponentClass C2, ComponentClass... Cn>
+	auto GetComponents() {
+		return MultiComponentView<false, C1, C2, Cn...>(this);
+	}
+
+	template<ComponentClass C1, ComponentClass C2, ComponentClass... Cn>
+	auto GetComponents() const {
+		return MultiComponentView<true, C1, C2, Cn...>(this);
 	}
 
 private:
@@ -169,20 +182,14 @@ private:
 
 	// entities and their components
 	EntityStorage<Entity> _entities;
-	std::vector<ComponentStorage> _builtin_components;
-	std::vector<ComponentStorage> _user_components;
+	std::vector<ComponentStorage> _builtin_components{ 256 };
+	std::vector<ComponentStorage> _user_components{ 65536 };
 
 	template<ComponentClass C>
 	ComponentStorage& _component_storage() {
 		if constexpr (ComponentWithFlag<C, ComponentFlags::BUILTIN>) {
 			return _builtin_components[C::id];
 		} else {
-			if constexpr (C::id >= _user_components_reserve_size) {
-				if (_user_components.size() <= C::id) {
-					_user_components.resize(C::id + 1);
-				}
-			}
-
 			return _user_components[C::id];
 		}
 	}
@@ -227,4 +234,5 @@ void Entity::RemoveComponent() {
 
 }
 
+#include "MultiComponentView.inc"
 #endif

@@ -9,10 +9,7 @@ Transform::Transform(const vec3& translation, const quat& rotation, const vec3& 
 		_translation(translation),
 		_rotation(rotation),
 		_scale(scale),
-		_matrix() {
-
-	CalculateMatrix();
-}
+		_matrix(CalculateMatrix()) {}
 
 Transform::Transform(const mat4& matrix) :
 		_translation(matrix[3][0], matrix[3][1], matrix[3][2]),

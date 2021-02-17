@@ -18,8 +18,6 @@ public:
 
 	PointLight(Color color, vec3 position, float attenuation = 0.0f);
 
-	~PointLight();
-
 	void SetPosition(const vec3& position);
 	const vec3& Position() const;
 

@@ -3,9 +3,19 @@
  */
 #include "SceneRenderer.h"
 
+#include "../Components/PointLight.h"
+#include "../Components/SpotLight.h"
+#include "../Components/DirectionalLight.h"
+
 namespace rheel {
 
-SceneRenderer::SceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned sampleCount, bool depthComponent) :
+SceneRenderer::SceneRenderer(
+		SceneRenderManager* manager,
+		ConstEntityId camera_entity,
+		unsigned width,
+		unsigned height,
+		unsigned sampleCount,
+		bool depthComponent) :
 		_manager(manager),
 		_camera_entity(camera_entity),
 		_width(width),
@@ -88,7 +98,8 @@ void SceneRenderer::CorrectShadowMapList_() {
 		lights.insert(pair.first);
 	}
 
-	_manager->GetScene()->GetRegistry().ForAll<Light>([this, &lights](const Light& light){
+	auto all_lights = _manager->GetScene()->GetRegistry().GetComponents<PointLight, SpotLight, DirectionalLight>().As<Light>();
+	for (const auto& light : all_lights) {
 		if (!light.CastsShadows()) {
 			return;
 		}
@@ -98,7 +109,7 @@ void SceneRenderer::CorrectShadowMapList_() {
 		if (_shadow_maps.find(&light) == _shadow_maps.end()) {
 			_shadow_maps.insert({ &light, _manager->CreateShadowMap(light) });
 		}
-	});
+	}
 
 	for (const Light* light : lights) {
 		_shadow_maps.erase(light);

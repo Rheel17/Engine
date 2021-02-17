@@ -10,6 +10,8 @@
 #include "../Components/PointLight.h"
 #include "../Components/SpotLight.h"
 
+#include <algorithm>
+
 namespace rheel {
 
 SceneRenderManager::model_shaders::model_shaders() {
@@ -47,29 +49,29 @@ void SceneRenderManager::Update() {
 	_lights_attenuation.clear();
 	_lights_spot_attenuation.clear();
 
-	_scene->GetRegistry().ForAll<Light>([this](const Light& light) {
-		_lights_color.push_back(light.GetColor());
+	for (auto point_lights = _scene->GetRegistry().GetComponents<PointLight>(); const auto& point_light : point_lights) {
+		_lights_type.push_back(0);
+		_lights_position.push_back(point_light.Position());
+		_lights_direction.emplace_back();
+		_lights_attenuation.push_back(point_light.Attenuation());
+		_lights_spot_attenuation.push_back(0.0f);
+	}
 
-		if (const auto* point_light = dynamic_cast<const PointLight*>(&light)) {
-			_lights_type.push_back(0);
-			_lights_position.push_back(point_light->Position());
-			_lights_direction.emplace_back();
-			_lights_attenuation.push_back(point_light->Attenuation());
-			_lights_spot_attenuation.push_back(0.0f);
-		} else if (const auto* spot_light = dynamic_cast<const SpotLight*>(&light)) {
-			_lights_type.push_back(1);
-			_lights_position.push_back(spot_light->Position());
-			_lights_direction.push_back(spot_light->Direction());
-			_lights_attenuation.push_back(spot_light->Attenuation());
-			_lights_spot_attenuation.push_back(spot_light->SpotAttenuation());
-		} else if (const auto* directional_light = dynamic_cast<const DirectionalLight*>(&light)) {
-			_lights_type.push_back(2);
-			_lights_position.emplace_back();
-			_lights_direction.push_back(directional_light->Direction());
-			_lights_attenuation.push_back(0.0f);
-			_lights_spot_attenuation.push_back(0.0f);
-		}
-	});
+	for (auto spot_lights = _scene->GetRegistry().GetComponents<SpotLight>(); const auto& spot_light : spot_lights) {
+		_lights_type.push_back(1);
+		_lights_position.push_back(spot_light.Position());
+		_lights_direction.push_back(spot_light.Direction());
+		_lights_attenuation.push_back(spot_light.Attenuation());
+		_lights_spot_attenuation.push_back(spot_light.SpotAttenuation());
+	}
+
+	for (auto directional_lights = _scene->GetRegistry().GetComponents<DirectionalLight>(); const auto& directional_light : directional_lights) {
+		_lights_type.push_back(2);
+		_lights_position.emplace_back();
+		_lights_direction.push_back(directional_light.Direction());
+		_lights_attenuation.push_back(0.0f);
+		_lights_spot_attenuation.push_back(0.0f);
+	}
 
 	_shadow_level = ShadowLevel_();
 }
@@ -180,20 +182,12 @@ gl::Program& SceneRenderManager::GetOpaqueShader() {
 }
 
 int SceneRenderManager::ShadowLevel_() {
-	static const auto get = [](const Light& light) -> std::optional<int> {
-		if (light.CastsShadows()) {
-			return DisplayConfiguration::Get().shadow_quality;
-		}
-
-		return std::nullopt;
-	};
-
-	auto opt = _scene->GetRegistry().ForAll<Light>(get);
-	if (!opt) {
-		return 0;
+	if (std::ranges::any_of(_scene->GetRegistry().GetComponents<PointLight, SpotLight, DirectionalLight>().As<Light>(),
+			[](const Light& light) { return light.CastsShadows(); })) {
+		return DisplayConfiguration::Get().shadow_quality;
 	}
 
-	return opt.value();
+	return 0;
 }
 
 }
