@@ -32,8 +32,6 @@ const Scene& Entity::GetScene() const {
 
 Registry::Registry(Scene* scene) :
 		_scene(scene),
-		_builtin_components(256),
-		_user_components(_user_components_reserve_size),
 		_root(&AddChildEntity(nullptr, EntityId::Root(), Transform())) {}
 
 Entity& Registry::AddEntity(EntityId id, const Transform& transform) {
@@ -79,6 +77,28 @@ Entity* Registry::GetRootEntity() {
 
 const Entity* Registry::GetRootEntity() const {
 	return _root;
+}
+
+void Registry::UpdateComponents(float time, float dt) {
+	for (std::size_t i = _builtin_start; i < _builtin_end; i++) {
+		for (auto& component : ComponentView<Component>(_components[i])) {
+			component._time = time;
+			component._dt = dt;
+			component.Update();
+		}
+	}
+
+	for (std::size_t i = _user_defined_start; i < _user_defined_end; i++) {
+		for (auto& component : ComponentView<Component>(_components[i])) {
+			component._time = time;
+			component._dt = dt;
+			component.Update();
+		}
+	}
+}
+
+std::span<InputComponent*> Registry::GetInputComponents() {
+	return _input_components;
 }
 
 }

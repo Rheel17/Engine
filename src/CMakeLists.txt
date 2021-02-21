@@ -50,6 +50,7 @@ target_sources(RheelEngine PRIVATE
         RheelEngine/Components/CollisionComponent.h
         RheelEngine/Components/DirectionalLight.cpp RheelEngine/Components/DirectionalLight.h
         RheelEngine/Components/EulerController.cpp RheelEngine/Components/EulerController.h
+        RheelEngine/Components/InputComponent.cpp RheelEngine/Components/InputComponent.h
         RheelEngine/Components/Light.cpp RheelEngine/Components/Light.h
         RheelEngine/Components/ListenerFollow.cpp RheelEngine/Components/ListenerFollow.h
         RheelEngine/Components/ModelRenderComponent.cpp RheelEngine/Components/ModelRenderComponent.h
@@ -60,7 +61,7 @@ target_sources(RheelEngine PRIVATE
         RheelEngine/Components/Skybox.cpp RheelEngine/Components/Skybox.h
         RheelEngine/Components/SpotLight.cpp RheelEngine/Components/SpotLight.h
         RheelEngine/Components/VoxelRenderComponent.cpp RheelEngine/Components/VoxelRenderComponent.h
-        RheelEngine/Registry/ComponentStorage.h
+        RheelEngine/Registry/ComponentStorage.cpp RheelEngine/Registry/ComponentStorage.h
         RheelEngine/Registry/EntityId.h
         RheelEngine/Registry/EntityStorage.h
         RheelEngine/Registry/Registry.cpp RheelEngine/Registry/Registry.h

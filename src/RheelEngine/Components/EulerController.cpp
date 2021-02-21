@@ -3,6 +3,8 @@
  */
 #include "EulerController.h"
 
+#include "../Registry/Registry.h"
+
 namespace rheel {
 
 // modify the glm::eulerAngles(quat) formula to always return Euler angles that
@@ -63,69 +65,67 @@ void EulerController::SetVelocity(float forwardsBackwardsVelocity, float sideVel
 }
 
 void EulerController::Rotate_(float) {
-	// vec2 mouse = GetMouseDelta();
-	//
-	// float yaw = glm::radians(mouse.x * _velocity_yaw / 100.0f);
-	// float pitch = glm::radians(mouse.y * _velocity_pitch / 100.0f);
-	//
-	// if (yaw == 0 && pitch == 0) {
-	// 	return;
-	// }
-	//
-	// vec3 angles = euler(GetParent()->transform.GetRotation());
-	//
-	// angles.x -= pitch;
-	// angles.y -= yaw;
-	// angles.z = 0.0f;
-	//
-	// // prevent more than 90 degrees look up/down
-	// if (angles.x >= 0.499f * M_PI) {
-	// 	angles.x = 0.499f * M_PI;
-	// }
-	//
-	// if (angles.x <= -0.499f * M_PI) {
-	// 	angles.x = -0.499f * M_PI;
-	// }
-	//
-	// // get the yaw in the [-pi, pi] range
-	// angles.y = std::fmod(std::fmod(angles.y, 2 * M_PI) + 3 * M_PI, 2 * M_PI) - M_PI;
-	//
-	// GetParent()->transform.SetRotation(angles);
-	// TODO: input
+	vec2 mouse = GetMouseDelta();
+
+	float yaw = glm::radians(mouse.x * _velocity_yaw / 100.0f);
+	float pitch = glm::radians(mouse.y * _velocity_pitch / 100.0f);
+
+	if (yaw == 0 && pitch == 0) {
+		return;
+	}
+
+	vec3 angles = euler(GetEntity().transform.GetRotation());
+
+	angles.x -= pitch;
+	angles.y -= yaw;
+	angles.z = 0.0f;
+
+	// prevent more than 90 degrees look up/down
+	if (angles.x >= 0.499f * M_PI) {
+		angles.x = 0.499f * M_PI;
+	}
+
+	if (angles.x <= -0.499f * M_PI) {
+		angles.x = -0.499f * M_PI;
+	}
+
+	// get the yaw in the [-pi, pi] range
+	angles.y = std::fmod(std::fmod(angles.y, 2 * M_PI) + 3 * M_PI, 2 * M_PI) - M_PI;
+
+	GetEntity().transform.SetRotation(angles);
 }
 
 void EulerController::Move_(float dt) {
-	// // get the movement
-	// vec4 movement = vec4();
-	// bool hasMovement = false;
-	//
-	// if (IsKeyPressed(Input::Key::KEY_W)) {
-	// 	movement.z -= _velocity_z;
-	// 	hasMovement = true;
-	// }
-	//
-	// if (IsKeyPressed(Input::Key::KEY_S)) {
-	// 	movement.z += _velocity_z;
-	// 	hasMovement = true;
-	// }
-	//
-	// if (IsKeyPressed(Input::Key::KEY_A)) {
-	// 	movement.x -= _velocity_x;
-	// 	hasMovement = true;
-	// }
-	//
-	// if (IsKeyPressed(Input::Key::KEY_D)) {
-	// 	movement.x += _velocity_x;
-	// 	hasMovement = true;
-	// }
-	//
-	// if (hasMovement) {
-	// 	// rotate the movement vector so that it is pointed in the direction
-	// 	// the camera is facing
-	// 	movement = GetParent()->transform.GetRotation() * movement;
-	// 	GetParent()->transform.Move(movement * dt);
-	// }
-	// TODO: input
+	// get the movement
+	vec4 movement = vec4();
+	bool hasMovement = false;
+
+	if (IsKeyPressed(Input::Key::KEY_W)) {
+		movement.z -= _velocity_z;
+		hasMovement = true;
+	}
+
+	if (IsKeyPressed(Input::Key::KEY_S)) {
+		movement.z += _velocity_z;
+		hasMovement = true;
+	}
+
+	if (IsKeyPressed(Input::Key::KEY_A)) {
+		movement.x -= _velocity_x;
+		hasMovement = true;
+	}
+
+	if (IsKeyPressed(Input::Key::KEY_D)) {
+		movement.x += _velocity_x;
+		hasMovement = true;
+	}
+
+	if (hasMovement) {
+		// rotate the movement vector so that it is pointed in the direction
+		// the camera is facing
+		movement = GetEntity().transform.GetRotation() * movement;
+		GetEntity().transform.Move(movement * dt);
+	}
 }
 
 }

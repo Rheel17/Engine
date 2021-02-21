@@ -13,73 +13,28 @@ namespace rheel {
 
 namespace detail {
 
-template<typename F, typename Arg>
-concept opt_function = requires(std::invoke_result_t<F, Arg> r) {
-	{ r == std::nullopt } -> std::convertible_to<bool>;
-	{ std::invoke_result_t<F, Arg>{ std::nullopt } };
-};
-
-template<typename F, typename Arg>
-concept void_function = std::is_same_v<std::invoke_result_t<F, Arg>, void>;
-
-template<typename F, typename Arg>
-using forall_return = std::conditional_t<opt_function<F, Arg>, std::invoke_result_t<F, Arg>, void>;
+template<typename Base, typename Derived>
+concept HasBase = std::is_base_of_v<Base, Derived>;
 
 }
 
 class ComponentStorage {
+	template<typename>
+	friend
+	class ComponentView;
 
 public:
 	ComponentStorage() = default;
-	~ComponentStorage() {
-		// delete all components in use
-		static const auto deleter = [](Component& c) {
-			c.~Component();
-		};
-
-		ForAll(deleter);
-
-		// delete storage
-		free(_storage); // NOLINT (malloc used, so need to free)
-	}
+	~ComponentStorage();
 
 	ComponentStorage(const ComponentStorage&) = delete;
 	ComponentStorage& operator=(const ComponentStorage&) = delete;
 
-	ComponentStorage(ComponentStorage&& cs) noexcept:
-			_storage(cs._storage),
-			_byte_capacity(cs._byte_capacity),
-			_size(cs._size) {
-
-		cs._storage = nullptr;
-		cs._byte_capacity = 0;
-		cs._size = 0;
-	}
-
+	ComponentStorage(ComponentStorage&& cs) noexcept;
 	ComponentStorage& operator=(ComponentStorage&&) noexcept = delete;
 
-	template<std::invocable<Component&> F>
-	detail::forall_return<F, Component&> ForAll(F f) {
-		return _for_all<Component, ComponentStorage>(*this, f);
-	}
-
-	template<std::invocable<const Component&> F>
-	detail::forall_return<F, const Component&> ForAll(F f) const {
-		return _for_all<const Component, const ComponentStorage>(*this, f);
-	}
-
-	template<typename C>
-	std::span<C> View() {
-		return std::span<C>(static_cast<C*>(_storage), _size);
-	}
-
-	template<typename C>
-	std::span<const C> View() const {
-		return std::span<C>(static_cast<const C*>(_storage), _size);
-	}
-
 	template<typename C, typename... Args>
-	C* NewInstance(Args&&... args) {
+	C* NewInstance(Args&& ... args) {
 		// prepare the storage pointer
 		_ensure_add_storage<C>();
 		auto* c_storage = static_cast<C*>(_storage);
@@ -169,41 +124,163 @@ private:
 		_storage = new_storage;
 	}
 
-	template<typename C, typename Self, typename F>
-		requires (detail::opt_function<F, C&> || detail::void_function<F, C&>)
-	static detail::forall_return<F, C&> _for_all(Self& self, F f) {
-		constexpr static bool is_const = std::is_const_v<Self>;
-
-		using buffer_t = std::conditional_t<is_const, const char*, char*>;
-		buffer_t ptr = static_cast<buffer_t>(self._storage);
-
-		for (std::size_t i = 0; i < self._size; i++) {
-			C* component = reinterpret_cast<C*>(ptr); // NOLINT (safe conversion)
-			ptr += component->_size;
-
-			if constexpr (detail::opt_function<F, C&>) {
-				auto result = f(*component);
-				if (result == std::nullopt) {
-					continue;
-				}
-
-				return result;
-			} else {
-				f(*component);
-			}
-		}
-
-		if constexpr (detail::opt_function<F, C&>) {
-			return detail::forall_return<F, C&>{ std::nullopt };
-		}
-	}
-
 	void* _storage = nullptr;
 	std::size_t _byte_capacity = 0;
 	std::size_t _size = 0;
 
 };
 
+template<typename C>
+class ComponentIterator {
+
+public:
+	using data_ptr = std::conditional_t<std::is_const_v<C>, const char*, char*>;
+	using iterator_category = std::random_access_iterator_tag;
+	using difference_type = std::ptrdiff_t;
+	using value_type = C;
+	using pointer = value_type*;
+	using reference = value_type&;
+	using const_pointer = std::add_const_t<pointer>;
+	using const_reference = std::add_const_t<reference>;
+
+	ComponentIterator() = default;
+	ComponentIterator(data_ptr data, std::size_t size) noexcept:
+			_data(static_cast<data_ptr>(data)),
+			_elem_sz(size) {}
+
+	auto operator<=>(const ComponentIterator& iter) const noexcept {
+		return _data <=> iter._data;
+	}
+
+	bool operator==(const ComponentIterator& iter) const noexcept = default;
+	bool operator!=(const ComponentIterator& iter) const noexcept = default;
+
+	reference operator*() { return *reinterpret_cast<pointer>(_data); }
+	const_reference operator*() const { return *reinterpret_cast<const_pointer>(_data); }
+
+	pointer operator->() { return reinterpret_cast<pointer>(_data); }
+	const_pointer operator->() const { return reinterpret_cast<const_pointer>(_data); }
+
+	ComponentIterator& operator++() noexcept {
+		_data += _elem_sz;
+		return *this;
+	}
+
+	ComponentIterator operator++(int) noexcept {
+		ComponentIterator copy(*this);
+		++(*this);
+		return copy;
+	}
+
+	ComponentIterator& operator--() noexcept {
+		_data -= _elem_sz;
+		return *this;
+	}
+
+	ComponentIterator operator--(int) noexcept {
+		ComponentIterator copy(*this);
+		--(*this);
+		return copy;
+	}
+
+	ComponentIterator& operator+=(difference_type n) noexcept {
+		_data += _elem_sz * n;
+		return *this;
+	}
+
+	ComponentIterator& operator-=(difference_type n) noexcept {
+		_data -= _elem_sz * n;
+		return *this;
+	}
+
+	ComponentIterator operator+(difference_type n) const noexcept {
+		ComponentIterator copy(*this);
+		copy += n;
+		return copy;
+	}
+
+	friend ComponentIterator operator+(difference_type n, const ComponentIterator& iter) noexcept {
+		return iter + n;
+	}
+
+	ComponentIterator operator-(difference_type n) const noexcept {
+		ComponentIterator copy(*this);
+		copy -= n;
+		return copy;
+	}
+
+	difference_type operator-(ComponentIterator iter) const noexcept {
+		return (_data - iter._data) / _elem_sz;
+	}
+
+	reference operator[](difference_type n) {
+		return *reinterpret_cast<pointer>(_data + n * _elem_sz);
+	}
+
+	const_reference operator[](difference_type n) const {
+		return *reinterpret_cast<const_pointer>(_data + n * _elem_sz);
+	}
+
+private:
+	data_ptr _data;
+	std::size_t _elem_sz;
+
+};
+
+template<typename C>
+class ComponentView {
+	using data_ptr = typename ComponentIterator<C>::data_ptr;
+	using storage_t = std::conditional_t<std::is_const_v<C>, const ComponentStorage, ComponentStorage>;
+
+	template<typename>
+	friend class ComponentView;
+
+public:
+	ComponentView() = default;
+	ComponentView(storage_t& storage) :
+			_data(static_cast<data_ptr>(storage._storage)),
+			_element_count(storage._size),
+			_element_size(_element_count == 0
+					? 1
+					: static_cast<std::conditional_t<std::is_const_v<C>, const Component*, Component*>>(storage._storage)->_size) {}
+
+	template<detail::HasBase<C> NewC>
+	operator ComponentView<NewC>() requires (!std::is_const_v<C>) {
+		return ComponentView<NewC>(_data, _element_count, _element_size);
+	}
+
+	template<detail::HasBase<C> NewC>
+	operator ComponentView<const NewC>() const {
+		return ComponentView(_data, _element_count, _element_size);
+	}
+
+	ComponentIterator<C> begin() const {
+		return ComponentIterator<C>(_data, _element_size);
+	}
+
+	ComponentIterator<C> end() const {
+		return ComponentIterator<C>(_data + _element_count * _element_size, _element_size);
+	}
+
+	std::size_t size() const {
+		return _element_count;
+	}
+
+private:
+	ComponentView(data_ptr data, std::size_t cnt, std::size_t sz) :
+			_data(data),
+			_element_count(cnt),
+			_element_size(sz) {}
+
+	data_ptr _data{};
+	std::size_t _element_count{};
+	std::size_t _element_size{};
+
+};
+
 }
+
+template<typename C>
+[[maybe_unused]] constexpr const bool std::ranges::enable_borrowed_range<rheel::ComponentView<C>> = true;
 
 #endif

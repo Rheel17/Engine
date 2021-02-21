@@ -34,11 +34,7 @@ void Scene::RemoveEntity(EntityId entity) {
 }
 
 void Scene::Update(float time, float dt) {
-	_registry.ForAllComponents([time, dt](Component& c) {
-		c._time = time;
-		c._dt = dt;
-		c.Update();
-	});
+	_registry.UpdateComponents(time, dt);
 }
 
 }

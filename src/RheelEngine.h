@@ -21,6 +21,7 @@
 #include "RheelEngine/Components/CollisionComponent.h"
 #include "RheelEngine/Components/DirectionalLight.h"
 #include "RheelEngine/Components/EulerController.h"
+#include "RheelEngine/Components/InputComponent.h"
 #include "RheelEngine/Components/ListenerFollow.h"
 #include "RheelEngine/Components/ModelRenderComponent.h"
 #include "RheelEngine/Components/PerspectiveCamera.h"

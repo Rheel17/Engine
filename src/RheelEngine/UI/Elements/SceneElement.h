@@ -64,7 +64,7 @@ public:
 	void OnMouseMove(const vec2& position) override;
 	void OnMouseJump(const vec2& position) override;
 	void OnMouseDrag(const vec2& origin, const vec2& position) override;
-	void OnMouseScroll(const vec2& scrollComponents) override;
+	void OnMouseScroll(const vec2& scroll_components) override;
 
 private:
 	void InitializeRenderer_(const Bounds& bounds) const;

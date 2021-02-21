@@ -64,10 +64,11 @@ void SceneElement::OnKeyPress(Input::Key key, Input::Scancode scancode, Input::M
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnKeyPress_(key, scancode, mods);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		input_component->_pressed_keys.insert(key);
+		input_component->_pressed_scancodes.insert(scancode);
+		input_component->OnKeyPress(key, scancode, mods);
+	}
 }
 
 void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
@@ -75,10 +76,11 @@ void SceneElement::OnKeyRelease(Input::Key key, Input::Scancode scancode, Input:
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnKeyRelease_(key, scancode, mods);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		input_component->_pressed_keys.erase(key);
+		input_component->_pressed_scancodes.erase(scancode);
+		input_component->OnKeyRelease(key, scancode, mods);
+	}
 }
 
 void SceneElement::OnCharacterInput(Input::Unicode character) {
@@ -86,10 +88,9 @@ void SceneElement::OnCharacterInput(Input::Unicode character) {
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnCharacterInput_(character);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		input_component->OnCharacterInput(character);
+	}
 }
 
 void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
@@ -97,10 +98,9 @@ void SceneElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifier
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnMouseButtonPress_(button, mods);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		input_component->OnMouseButtonPress(button, mods);
+	}
 }
 
 void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifiers mods) {
@@ -108,10 +108,9 @@ void SceneElement::OnMouseButtonRelease(Input::MouseButton button, Input::Modifi
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnMouseButtonRelease_(button, mods);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		input_component->OnMouseButtonRelease(button, mods);
+	}
 }
 
 void SceneElement::OnMouseMove(const vec2& position) {
@@ -119,10 +118,15 @@ void SceneElement::OnMouseMove(const vec2& position) {
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnMouseMove_(position);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		if (input_component->_got_mouse) {
+			input_component->_mouse_delta = position - input_component->_mouse_position;
+		}
+
+		input_component->_mouse_position = position;
+		input_component->_got_mouse = true;
+		input_component->OnMouseMove(position);
+	}
 }
 
 void SceneElement::OnMouseJump(const vec2& position) {
@@ -130,10 +134,12 @@ void SceneElement::OnMouseJump(const vec2& position) {
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnMouseJump_(position);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		input_component->_mouse_delta = vec2{};
+		input_component->_mouse_position = position;
+		input_component->_got_mouse = true;
+		input_component->OnMouseMove(position);
+	}
 }
 
 void SceneElement::OnMouseDrag(const vec2& origin, const vec2& position) {
@@ -141,21 +147,27 @@ void SceneElement::OnMouseDrag(const vec2& origin, const vec2& position) {
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnMouseDrag_(origin, position);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		if (input_component->_got_mouse) {
+			input_component->_mouse_delta = position - input_component->_mouse_position;
+		}
+
+		input_component->_mouse_position = position;
+		input_component->_got_mouse = true;
+
+		input_component->OnMouseDrag(origin, position);
+	}
 }
 
-void SceneElement::OnMouseScroll(const vec2& scrollComponents) {
+void SceneElement::OnMouseScroll(const vec2& scroll_components) {
 	if (!_scene || !HasFocus()) {
 		return;
 	}
 
-	// for (auto inputComponent : _scene->GetInputComponents()) {
-	// 	inputComponent->_source = this;
-	// 	inputComponent->OnMouseScroll_(scrollComponents);
-	// }
+	for (auto* input_component : _scene->GetRegistry().GetInputComponents()) {
+		input_component->_mouse_scroll = scroll_components;
+		input_component->OnMouseMove(scroll_components);
+	}
 }
 
 void SceneElement::InitializeRenderer_(const Bounds& bounds) const {

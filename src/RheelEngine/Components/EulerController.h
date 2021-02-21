@@ -5,15 +5,15 @@
 #define RHEELENGINE_EULERCONTROLLER_H
 #include "../_common.h"
 
-#include "../Component.h"
+#include "InputComponent.h"
 
 namespace rheel {
 
-class RE_API EulerController : public Component {
+class RE_API EulerController : public InputComponent {
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 3;
+	static constexpr const ComponentId id = 65283;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	void Update() override;

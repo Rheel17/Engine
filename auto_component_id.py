@@ -1,7 +1,7 @@
 import os
 import re
 
-new_id = 0
+new_id = 65280
 
 
 def handle_lines(header_lines):

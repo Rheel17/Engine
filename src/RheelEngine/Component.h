@@ -29,6 +29,9 @@ inline constexpr bool operator&(ComponentFlags a, ComponentFlags b) {
  * Base class of all components.
  */
 class RE_API Component {
+	template<typename>
+	friend class ComponentView;
+
 	friend class Entity;
 	friend class ComponentStorage;
 	friend class Registry;

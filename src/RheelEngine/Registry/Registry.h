@@ -9,6 +9,7 @@
 #include "EntityStorage.h"
 #include "EntityId.h"
 #include "../Transform.h"
+#include "../Components/InputComponent.h"
 
 #if NDEBUG
 #include <llvm/ADT/DenseMap.h>
@@ -22,63 +23,13 @@ namespace rheel {
 class Registry;
 class Scene;
 
-template<bool, typename...>
+template<typename, typename...>
 class MultiComponentView;
 
-class Entity {
-	friend class ComponentStorage;
-	friend class Registry;
-
-public:
-	Entity(Entity* parent, Registry* registry, const Transform& transform) :
-			transform(transform),
-			_parent(parent),
-			_registry(registry) {}
-
-	~Entity() = default;
-
-	RE_NO_COPY(Entity);
-	RE_NO_MOVE(Entity);
-
-	template<typename C, typename... Args>
-	C& AddComponent(Args&&... args);
-
-	template<ComponentBaseClass C>
-	C* GetComponent();
-
-	template<ComponentBaseClass C>
-	const C* GetComponent() const;
-
-	template<typename C>
-	void RemoveComponent();
-
-	Transform transform;
-	Transform AbsoluteTransform() const;
-
-	Entity* GetParent();
-	const Entity* GetParent() const;
-
-	Scene& GetScene();
-	const Scene& GetScene() const;
-
-private:
-	Entity* _parent;
-	Registry* _registry;
-
-	// In release mode, we can probably win some performance by allocating small
-	// entities completely on the stack. Small entities: <= 4 components.
-#if NDEBUG
-	llvm::SmallVector<Component*, 4> _components{};
-#else
-	std::vector<Component*> _components{};
-#endif
-
-};
+#include "Entity.inc"
 
 class RE_API Registry {
 	friend class Entity;
-
-	static constexpr std::size_t _user_components_reserve_size = 256;
 
 public:
 	explicit Registry(Scene* scene);
@@ -107,8 +58,10 @@ public:
 
 	template<ComponentClass C, typename... Args>
 	C& AddComponent(Entity* entity, Args&&... args) {
+		constexpr ComponentId id = C::id;
+
 		// create the component
-		C* component = _component_storage<C>().template NewInstance<C>(args...);
+		C* component = _components[id].template NewInstance<C>(args...);
 		component->_entity = entity;
 		component->_index_in_entity = static_cast<std::uint16_t>(entity->_components.size());
 		entity->_components.push_back(component);
@@ -116,47 +69,61 @@ public:
 		// activate the component
 		static_cast<Component*>(component)->OnActivate();
 
+		// If the component is an input component, add it to the input
+		// components
+		if constexpr (std::is_base_of_v<InputComponent, C>) {
+			_input_components.push_back(component);
+		}
+
+		// update the ranges
+		if constexpr (ComponentWithFlag<C, ComponentFlags::BUILTIN>) {
+			_builtin_start = std::min(_builtin_start, id);
+			_builtin_end = std::max(_builtin_end, static_cast<ComponentId>(id + 1));
+		} else {
+			_user_defined_start = std::min(_user_defined_start, id);
+			_user_defined_end = std::max(_user_defined_end, static_cast<ComponentId>(id + 1));
+		}
+
 		return *component;
 	}
 
 	template<ComponentClass C>
 	void RemoveComponent(std::size_t instance) {
-		auto[entity_index, index_in_entity] = _component_storage<C>().template RemoveInstance<C>(_entities, instance);
+		// If the component is an input component, remove it from the input
+		// components
+		if constexpr (std::is_base_of_v<InputComponent, C>) {
+			std::erase(_input_components, _components[C::id][instance]);
+		}
+
+		auto[entity_index, index_in_entity] = _components[C::id].template RemoveInstance<C>(_entities, instance);
 
 		auto& entity = _entities[entity_index];
 		entity._components.erase(entity._components.begin() + index_in_entity);
 	}
 
-	template<typename F>
-	void ForAllComponents(F f) {
-		for (auto& components : _builtin_components) {
-			components.ForAll(f);
-		}
-
-		for (auto& components : _user_components) {
-			components.ForAll(f);
-		}
-	}
+	void UpdateComponents(float time, float dt);
 
 	template<ComponentClass C>
 	auto GetComponents() {
-		return _component_storage<C>().template View<C>();
+		return ComponentView<C>(_components[C::id]);
 	}
 
 	template<ComponentClass C>
 	auto GetComponents() const {
-		return _component_storage<C>().template View<C>();
+		return ComponentView<C>(_components[C::id]);
 	}
 
 	template<ComponentClass C1, ComponentClass C2, ComponentClass... Cn>
 	auto GetComponents() {
-		return MultiComponentView<false, C1, C2, Cn...>(this);
+		return MultiComponentView<Registry, C1, C2, Cn...>(this);
 	}
 
 	template<ComponentClass C1, ComponentClass C2, ComponentClass... Cn>
 	auto GetComponents() const {
-		return MultiComponentView<true, C1, C2, Cn...>(this);
+		return MultiComponentView<const Registry, C1, C2, Cn...>(this);
 	}
+
+	std::span<InputComponent*> GetInputComponents();
 
 private:
 	// mapping Entity Ids to indices for this registry
@@ -182,57 +149,26 @@ private:
 
 	// entities and their components
 	EntityStorage<Entity> _entities;
-	std::vector<ComponentStorage> _builtin_components{ 256 };
-	std::vector<ComponentStorage> _user_components{ 65536 };
+	std::vector<ComponentStorage> _components{ 65536 };
 
-	template<ComponentClass C>
-	ComponentStorage& _component_storage() {
-		if constexpr (ComponentWithFlag<C, ComponentFlags::BUILTIN>) {
-			return _builtin_components[C::id];
-		} else {
-			return _user_components[C::id];
-		}
-	}
+	// input components
+	std::vector<InputComponent*> _input_components{};
 
 	// the parent scene
 	Scene* _scene;
 	Entity* _root;
+
+	// update range
+	ComponentId _user_defined_start = 0;
+	ComponentId _user_defined_end = _user_defined_start;
+	ComponentId _builtin_start = 65536 - 256;
+	ComponentId _builtin_end = _builtin_start;
+
 };
 
-template<ComponentBaseClass C>
-C* Entity::GetComponent() {
-	for (auto* component : _components) {
-		if (auto* c = dynamic_cast<C*>(component)) {
-			return c;
-		}
-	}
-
-	return nullptr;
 }
 
-template<ComponentBaseClass C>
-const C* Entity::GetComponent() const {
-	for (auto* component : _components) {
-		if (const auto* c = dynamic_cast<const C*>(component)) {
-			return c;
-		}
-	}
-
-	return nullptr;
-}
-
-template<typename C, typename... Args>
-C& Entity::AddComponent(Args&&... args) {
-	return _registry->AddComponent<C>(this, std::forward<Args>(args)...);
-}
-
-template<typename C>
-void Entity::RemoveComponent() {
-	auto* instance = GetComponent<C>();
-	_registry->RemoveComponent<C>(instance->_index);
-}
-
-}
-
+#include "EntityImpl.inc"
 #include "MultiComponentView.inc"
+
 #endif

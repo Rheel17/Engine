@@ -18,7 +18,7 @@ class RE_API CollisionComponent : public Component {
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 1;
+	static constexpr const ComponentId id = 65281;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	CollisionComponent() = default;
