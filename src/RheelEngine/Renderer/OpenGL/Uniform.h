@@ -16,7 +16,7 @@ class RE_API Uniform {
 	RE_NO_MOVE(Uniform);
 
 public:
-	Uniform(GLuint programHandle, const std::string& name, bool checkWarning);
+	Uniform(GLuint program_handle, const std::string& name, bool check_warning);
 
 	bool IsValid() const;
 
@@ -111,13 +111,13 @@ public:
 	Uniform& operator=(const std::vector<dmat4x3>& value);
 
 private:
-	bool Init_() const;
+	bool _init() const;
 
 	GLuint _program_handle;
 	GLint _location;
 
 public:
-	static GLint GetUniformLocation(GLuint programHandle, const std::string& name);
+	static GLint GetUniformLocation(GLuint program_handle, const std::string& name);
 
 };
 

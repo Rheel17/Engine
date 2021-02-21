@@ -32,21 +32,21 @@ void ButtonElement::PerformAction() const {
 
 void ButtonElement::DoDraw(float time, float dt) const {
 	if (!_enabled) {
-		DrawStandardButton_(color_foreground_disabled, color_background_disabled);
+		_draw_standard_button(color_foreground_disabled, color_background_disabled);
 		return;
 	}
 
 	if (_active) {
-		DrawStandardButton_(color_foreground_active, color_background_active);
+		_draw_standard_button(color_foreground_active, color_background_active);
 		return;
 	}
 
 	if (_rollover) {
-		DrawStandardButton_(color_foreground_rollover, color_background_rollover);
+		_draw_standard_button(color_foreground_rollover, color_background_rollover);
 		return;
 	}
 
-	DrawStandardButton_(color_foreground, color_background);
+	_draw_standard_button(color_foreground, color_background);
 }
 
 void ButtonElement::OnMouseButtonPress(Input::MouseButton button, Input::Modifiers mods) {
@@ -68,7 +68,7 @@ void ButtonElement::OnMouseExit(const vec2& position) {
 	_active = false;
 }
 
-void ButtonElement::DrawStandardButton_(Color foreground, Color background) const {
+void ButtonElement::_draw_standard_button(Color foreground, Color background) const {
 	DrawColoredQuad(GetBounds(), background);
 }
 

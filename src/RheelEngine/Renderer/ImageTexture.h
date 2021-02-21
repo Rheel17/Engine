@@ -22,7 +22,7 @@ private:
 	using CacheTuple = std::tuple<uintptr_t, WrapType, bool>;
 
 public:
-	void Bind(unsigned textureUnit) const;
+	void Bind(unsigned texture_unit) const;
 
 private:
 	ImageTexture(const Image& image, WrapType type, bool linear);

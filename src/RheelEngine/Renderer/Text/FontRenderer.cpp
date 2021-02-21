@@ -42,7 +42,7 @@ FontRenderer::FontRenderer(const Font& font) :
 
 	_glyph_buffer.SetData(font._glyph_vertices);
 	_character_vao.SetVertexAttributes<vec3>(_glyph_buffer);
-	_character_vao.SetVertexAttributes<vec2>(_transform_buffer, 0, SAMPLE_COUNT);
+	_character_vao.SetVertexAttributes<vec2>(_transform_buffer, 0, sample_count);
 	_character_vao.SetVertexIndices(font._glyph_indices);
 }
 
@@ -58,7 +58,7 @@ void FontRenderer::SetColor(Color color) {
 	}
 }
 
-const gl::VertexArray& FontRenderer::GetCharacterVAO() const {
+const gl::VertexArray& FontRenderer::GetCharacterVao() const {
 	return _character_vao;
 }
 
@@ -92,31 +92,31 @@ void FontRenderer::Render(std::u32string_view text, int x, int y, unsigned width
 			tx,   ty,   1.0f
 	);
 
-	Render_(_character_vao, _indirect_buffer, bounds, count, transform);
+	_render(_character_vao, _indirect_buffer, bounds, count, transform);
 }
 
-void FontRenderer::Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer,
+void FontRenderer::_render(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirect_buffer,
 		const vec4& bounds, unsigned count, const mat3& transform) {
 
 	auto screen = DisplayConfiguration::Get().resolution;
-	ResizeBuffer_(screen.x, screen.y);
+	_resize_buffer(screen.x, screen.y);
 
 	{
-		gl::ContextScope cs1;
+		gl::ContextScope cs_1;
 		_static_data->text_buffer.BindForDrawing();
 
 		// clear the text buffer
 		{
-			vec3 transformedBoundsXY = transform * vec3(bounds.x, bounds.y, 1.0f);
-			vec3 transformedBoundsZW = transform * vec3(bounds.z, bounds.w, 1.0f);
+			vec3 transformed_bounds_xy = transform * vec3(bounds.x, bounds.y, 1.0f);
+			vec3 transformed_bounds_zw = transform * vec3(bounds.z, bounds.w, 1.0f);
 
-			gl::ContextScope cs2;
+			gl::ContextScope cs_2;
 			gl::Context::Current().Enable(gl::Capability::SCISSOR_TEST);
 			gl::Context::Current().SetScissorTest(
-					(0.5f + 0.5f * transformedBoundsXY.x) * screen.x - 4,
-					(0.5f + 0.5f * transformedBoundsXY.y) * screen.y - 4,
-					((transformedBoundsZW.x - transformedBoundsXY.x) * 0.5f) * screen.x + 8,
-					((transformedBoundsZW.y - transformedBoundsXY.y) * 0.5f) * screen.y + 8
+					(0.5f + 0.5f * transformed_bounds_xy.x) * screen.x - 4,
+					(0.5f + 0.5f * transformed_bounds_xy.y) * screen.y - 4,
+					((transformed_bounds_zw.x - transformed_bounds_xy.x) * 0.5f) * screen.x + 8,
+					((transformed_bounds_zw.y - transformed_bounds_xy.y) * 0.5f) * screen.y + 8
 			);
 
 			_static_data->text_buffer.Clear(gl::Framebuffer::BitField::COLOR);
@@ -138,14 +138,14 @@ void FontRenderer::Render_(const gl::VertexArray& vao, const gl::DrawElementsInd
 	_static_data->resolve_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, 6);
 }
 
-void FontRenderer::ResizeBuffer_(unsigned width, unsigned height) {
+void FontRenderer::_resize_buffer(unsigned width, unsigned height) {
 	if (_static_data->text_buffer.GetViewportWidth() != width || _static_data->text_buffer.GetViewportHeight() != height) {
 		_static_data->text_buffer = gl::Framebuffer(_static_data->text_buffer, width, height);
 		_static_data->draw_program["bufferSize"] = vec2(width, height);
 	}
 }
 
-FontRenderer& FontRenderer::Get_(const Font& font) {
+FontRenderer& FontRenderer::_get(const Font& font) {
 	return _renderers.Get(&font, [](const Font* font) {
 		return FontRenderer(*font);
 	});

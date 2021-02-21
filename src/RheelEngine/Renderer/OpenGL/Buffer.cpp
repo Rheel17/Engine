@@ -37,12 +37,12 @@ void Buffer::SetDataEmpty(Usage usage) {
 	_byte_size = 0;
 }
 
-void Buffer::SetDataEmptySize(size_t byteCount, Buffer::Usage usage) {
+void Buffer::SetDataEmptySize(size_t byte_count, Buffer::Usage usage) {
 	Bind();
 
-	if (_allocation_policy == AllocationPolicy::REALLOCATE || byteCount > _byte_size) {
-		glBufferData(GLenum(_target), byteCount, nullptr, GLenum(usage));
-		_byte_size = byteCount;
+	if (_allocation_policy == AllocationPolicy::REALLOCATE || byte_count > _byte_size) {
+		glBufferData(GLenum(_target), byte_count, nullptr, GLenum(usage));
+		_byte_size = byte_count;
 	}
 }
 

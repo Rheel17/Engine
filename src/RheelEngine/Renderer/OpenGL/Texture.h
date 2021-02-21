@@ -48,7 +48,7 @@ public:
 public:
 	explicit Texture(Target target);
 
-	void Bind(unsigned int textureUnit = 0) const;
+	void Bind(unsigned int texture_unit = 0) const;
 
 	Target GetTarget() const;
 

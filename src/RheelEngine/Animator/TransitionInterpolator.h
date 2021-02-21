@@ -14,8 +14,6 @@ template<typename V>
 class TransitionInterpolator : public Interpolator<V> {
 
 public:
-	virtual ~TransitionInterpolator() = default;
-
 	explicit TransitionInterpolator(const Transition& transition) :
 			_transition(transition) {}
 
@@ -28,7 +26,7 @@ protected:
 	}
 
 private:
-	const Transition& _transition;
+	Transition _transition;
 
 };
 

@@ -14,7 +14,7 @@ class LinearInterpolator : public TransitionInterpolator<V> {
 
 public:
 	LinearInterpolator() :
-			TransitionInterpolator<V>(Transition::LINEAR) {}
+			TransitionInterpolator<V>(Transition::linear) {}
 
 };
 

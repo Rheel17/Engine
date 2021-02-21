@@ -23,7 +23,7 @@ Program& Program::operator=(Program&& p) noexcept {
 }
 
 void Program::Use() const {
-	EnsureLinked_();
+	_ensure_linked();
 	Context::Current().UseProgram(*this);
 }
 
@@ -36,13 +36,13 @@ void Program::AttachShader(Shader::ShaderType type, const std::string& source) {
 }
 
 void Program::AttachShader(const Shader& shader) {
-	EnsureNotLinked_();
+	_ensure_not_linked();
 	glAttachShader(GetHandle(), shader.GetHandle());
 	_attached_shaders.push_back(shader.GetHandle());
 }
 
 void Program::Link() {
-	EnsureNotLinked_();
+	_ensure_not_linked();
 
 	glLinkProgram(GetHandle());
 
@@ -72,7 +72,7 @@ void Program::Link() {
 }
 
 Uniform& Program::GetUniform(const std::string& name) const {
-	return GetUniform_(name, true);
+	return _get_uniform(name, true);
 }
 
 Uniform& Program::operator[](const std::string& name) const {
@@ -80,30 +80,30 @@ Uniform& Program::operator[](const std::string& name) const {
 }
 
 bool Program::HasUniform(const std::string& name) const {
-	return GetUniform_(name, false).IsValid();
+	return _get_uniform(name, false).IsValid();
 }
 
-void Program::EnsureLinked_() const {
+void Program::_ensure_linked() const {
 	if (!_linked) {
 		Log::Error() << "Shader not linked" << std::endl;
 		abort();
 	}
 }
 
-void Program::EnsureNotLinked_() const {
+void Program::_ensure_not_linked() const {
 	if (_linked) {
 		Log::Error() << "Operation not allowed on a linked shader" << std::endl;
 		abort();
 	}
 }
 
-Uniform& Program::GetUniform_(const std::string& name, bool checkWarning) const {
+Uniform& Program::_get_uniform(const std::string& name, bool check_warning) const {
 	auto iter = _uniforms.find(name);
 	if (iter == _uniforms.end()) {
 		iter = _uniforms.emplace(
 				std::piecewise_construct,
 				std::forward_as_tuple(name),
-				std::forward_as_tuple(GetHandle(), name, checkWarning)).first;
+				std::forward_as_tuple(GetHandle(), name, check_warning)).first;
 	}
 
 	return iter->second;

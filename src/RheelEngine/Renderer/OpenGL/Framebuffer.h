@@ -49,7 +49,7 @@ public:
 private:
 	struct texture_attachment {
 		Texture2D texture;
-		InternalFormat internalFormat;
+		InternalFormat internal_format;
 		Format format;
 	};
 
@@ -71,19 +71,19 @@ private:
 	};
 
 public:
-	Framebuffer(unsigned viewportWidth, unsigned viewportHeight);
-	Framebuffer(const Framebuffer& original, unsigned newWidth, unsigned newHeight);
+	Framebuffer(unsigned viewport_width, unsigned viewport_height);
+	Framebuffer(const Framebuffer& original, unsigned new_width, unsigned new_height);
 
 	void BindForDrawing() const;
 	void BindForReading() const;
 
-	void Clear(BitField buffersToClear) const;
+	void Clear(BitField buffers_to_clear) const;
 
 	/**
 	 * Blits the contents of this framebuffer to the currently draw-bound framebuffer.
 	 * bounds format: { x, y, width, height }
 	 */
-	void Blit(ivec4 inBounds, ivec4 outBounds, BitField buffers, bool linear = false) const;
+	void Blit(ivec4 in_bounds, ivec4 out_bounds, BitField buffers, bool linear = false) const;
 
 	unsigned GetViewportWidth() const;
 	unsigned GetViewportHeight() const;
@@ -92,61 +92,61 @@ public:
 	 * Creates a texture attachment and attaches it to the specified color attachment.
 	 * Retrieve the texture using GetTextureAttachment(colorAttachment).
 	 */
-	void AttachTexture(InternalFormat internalFormat, Format format, unsigned colorAttachment);
+	void AttachTexture(InternalFormat internal_format, Format format, unsigned color_attachment);
 
 	/**
 	 * Creates a texture attachment and attaches it to the specified attachment.
 	 * Retrieve the texture using GetTextureAttachment(attachment).
 	 */
-	void AttachTexture(InternalFormat internalFormat, Format format, Attachment attachment);
+	void AttachTexture(InternalFormat internal_format, Format format, Attachment attachment);
 
 	/**
 	 * Creates a texture attachment and attaches it to the specified color attachment.
 	 * Retrieve the texture using GetTextureMultisampleAttachment(colorAttachment).
 	 */
-	void AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, unsigned colorAttachment);
+	void AttachTextureMultisample(InternalFormat internal_format, unsigned samples, unsigned color_attachment);
 
 	/**
 	 * Creates a texture attachment and attaches it to the specified attachment.
 	 * Retrieve the texture using GetTextureMultisampleAttachment(attachment).
 	 */
-	void AttachTextureMultisample(InternalFormat internalFormat, unsigned samples, Attachment attachment);
+	void AttachTextureMultisample(InternalFormat internal_format, unsigned samples, Attachment attachment);
 
 	/**
 	 * Creates a renderbuffer and attaches it to the specified color attachment.
 	 * Retrieve the buffer using GetRenderbuffer(colorAttachment).
 	 */
-	void AttachRenderbuffer(InternalFormat internalFormat, unsigned colorAttachment);
+	void AttachRenderbuffer(InternalFormat internal_format, unsigned color_attachment);
 
 	/**
 	 * Creates a renderbuffer and attaches it to the specified attachment.
 	 * Retrieve the buffer using GetRenderbuffer(attachment).
 	 */
-	void AttachRenderbuffer(InternalFormat internalFormat, Attachment attachment);
+	void AttachRenderbuffer(InternalFormat internal_format, Attachment attachment);
 
 	/**
 	 * Creates a renderbuffer attachment and attaches it to the specified attachment.
 	 * Retrieve the buffer using GetRenderbufferMultisampleAttachment(colorAttachment).
 	 */
-	void AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, unsigned colorAttachment);
+	void AttachRenderbufferMultisample(InternalFormat internal_format, unsigned samples, unsigned color_attachment);
 
 	/**
 	 * Creates a renderbuffer attachment and attaches it to the specified attachment.
 	 * Retrieve the buffer using GetRenderbufferMultisampleAttachment(attachment).
 	 */
-	void AttachRenderbufferMultisample(InternalFormat internalFormat, unsigned samples, Attachment attachment);
+	void AttachRenderbufferMultisample(InternalFormat internal_format, unsigned samples, Attachment attachment);
 
 	/**
 	 * Returns a reference to the texture attachment at the specified color
 	 * attachment
 	 */
-	Texture2D& GetTextureAttachment(unsigned colorAttachment);
+	Texture2D& GetTextureAttachment(unsigned color_attachment);
 
 	/**
 	 * Returns a reference to the texture attachment at the specified color
 	 * attachment
 	 */
-	const Texture2D& GetTextureAttachment(unsigned colorAttachment) const;
+	const Texture2D& GetTextureAttachment(unsigned color_attachment) const;
 
 	/**
 	 * Returns a reference to the texture attachment at the specified attachment
@@ -162,13 +162,13 @@ public:
 	 * Returns a reference to the texture attachment at the specified color
 	 * attachment
 	 */
-	Texture2DMultisample& GetTextureMultisampleAttachment(unsigned colorAttachment);
+	Texture2DMultisample& GetTextureMultisampleAttachment(unsigned color_attachment);
 
 	/**
 	 * Returns a reference to the texture attachment at the specified color
 	 * attachment
 	 */
-	const Texture2DMultisample& GetTextureMultisampleAttachment(unsigned colorAttachment) const;
+	const Texture2DMultisample& GetTextureMultisampleAttachment(unsigned color_attachment) const;
 
 	/**
 	 * Returns a reference to the texture attachment at the specified attachment
@@ -184,13 +184,13 @@ public:
 	 * Returns a reference to the renderbuffer attachment at the specified
 	 * color attachment
 	 */
-	Renderbuffer& GetRenderbufferAttachment(unsigned colorAttachment);
+	Renderbuffer& GetRenderbufferAttachment(unsigned color_attachment);
 
 	/**
 	 * Returns a reference to the renderbuffer attachment at the specified
 	 * color attachment
 	 */
-	const Renderbuffer& GetRenderbufferAttachment(unsigned colorAttachment) const;
+	const Renderbuffer& GetRenderbufferAttachment(unsigned color_attachment) const;
 
 	/**
 	 * Returns a reference to the renderbuffer attachment at the specified
@@ -208,13 +208,13 @@ public:
 	 * Returns a reference to the renderbuffer attachment at the specified
 	 * color attachment
 	 */
-	Renderbuffer& GetRenderbufferMultisampleAttachment(unsigned colorAttachment);
+	Renderbuffer& GetRenderbufferMultisampleAttachment(unsigned color_attachment);
 
 	/**
 	 * Returns a reference to the renderbuffer attachment at the specified
 	 * color attachment
 	 */
-	const Renderbuffer& GetRenderbufferMultisampleAttachment(unsigned colorAttachment) const;
+	const Renderbuffer& GetRenderbufferMultisampleAttachment(unsigned color_attachment) const;
 
 	/**
 	 * Returns a reference to the renderbuffer attachment at the specified
@@ -232,7 +232,7 @@ public:
 	 * Returns the type of attachment attached to the specified color
 	 * attachment
 	 */
-	AttachmentType GetAttachmentType(unsigned colorAttachment) const;
+	AttachmentType GetAttachmentType(unsigned color_attachment) const;
 
 	/**
 	 * Returns the type of attachment attached to the specified attachment.
@@ -243,19 +243,19 @@ public:
 	 * Set which color attachments can be drawn to. These color attachments
 	 * must have either a texture or a renderbuffer attached to them.
 	 */
-	void SetDrawBuffers(std::vector<unsigned> colorAttachments);
+	void SetDrawBuffers(std::vector<unsigned> color_attachments);
 
 private:
 	// constructor for the default framebuffer
 	Framebuffer();
 
-	void AttachTexture_(InternalFormat internalFormat, Format format, GLenum attachment);
-	void AttachTextureMultisample_(InternalFormat internalFormat, unsigned samples, GLenum attachment);
-	void AttachRenderbuffer_(InternalFormat internalFormat, GLenum attachment);
-	void AttachRenderbufferMultisample_(InternalFormat internalFormat, unsigned samples, GLenum attachment);
+	void _attach_texture(InternalFormat internal_format, Format format, GLenum attachment);
+	void _attach_texture_multisample(InternalFormat internal_format, unsigned samples, GLenum attachment);
+	void _attach_renderbuffer(InternalFormat internal_format, GLenum attachment);
+	void _attach_renderbuffer_multisample(InternalFormat internal_format, unsigned samples, GLenum attachment);
 
 	template<typename T>
-	const T& GetAttachment_(const std::unordered_map<GLenum, T>& attachments, GLenum attachment) const {
+	const T& _get_attachment(const std::unordered_map<GLenum, T>& attachments, GLenum attachment) const {
 		auto iter = attachments.find(attachment);
 		if (iter == attachments.end()) {
 			Log::Error() << "Nothing attached to attachment or getting the wrong type" << std::endl;
@@ -266,7 +266,7 @@ private:
 	}
 
 	template<typename T>
-	T& GetAttachment_(std::unordered_map<GLenum, T>& attachments, GLenum attachment) {
+	T& _get_attachment(std::unordered_map<GLenum, T>& attachments, GLenum attachment) {
 		auto iter = attachments.find(attachment);
 		if (iter == attachments.end()) {
 			Log::Error() << "Nothing attached to attachment or getting the wrong type" << std::endl;
@@ -276,8 +276,8 @@ private:
 		return iter->second;
 	}
 
-	void CheckStatus_() const;
-	bool HasAttachment_(GLenum attachment) const;
+	void _check_status() const;
+	bool _has_attachment(GLenum attachment) const;
 
 	unsigned _viewport_width;
 	unsigned _viewport_height;

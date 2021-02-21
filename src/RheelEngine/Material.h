@@ -31,7 +31,7 @@ public:
 	 * values will be clamped between 0.0 and 1.0. Ambient will be calculated
 	 * using 1.0f - diffuse.
 	 */
-	Material(Color color, float diffuse, float specular, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(Color color, float diffuse, float specular, float specular_exponent = default_specular_exponent);
 
 	/**
 	 * Creates a simple textured material with the given texture. Additionally,
@@ -39,28 +39,28 @@ public:
 	 * specular values will be clamped between 0.0 and 1.0. Ambient will be
 	 * calculated using 1.0f - diffuse.
 	 */
-	Material(const Image& texture, float diffuse, float specular, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(const Image& texture, float diffuse, float specular, float specular_exponent = default_specular_exponent);
 
 	/**
 	 * Creates a fully-textured material, with separate textures for the
 	 * ambient, diffuse, and specular components.
 	 */
-	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture,
-			float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(Image ambient_texture, Image diffuse_texture, Image specular_texture,
+			float specular_exponent = default_specular_exponent);
 
 	/**
 	 * Creates a fully-textured material, with separate textures for the
 	 * ambient, diffuse, and specular components. This constructor also allows
 	 * a factor to be set for each of these textures.
 	 */
-	Material(Image ambientTexture, Image diffuseTexture, Image specularTexture, float ambientFactor,
-			float diffuseFactor, float specularFactor, float specularExponent = DEFAULT_SPECULAR_EXPONENT);
+	Material(Image ambient_texture, Image diffuse_texture, Image specular_texture, float ambient_factor,
+			float diffuse_factor, float specular_factor, float specular_exponent = default_specular_exponent);
 
 	/**
 	 * Creates a material with custom fragment shader. The shader type must be
 	 * a fragment shader.
 	 */
-	explicit Material(Shader fragmentShader);
+	explicit Material(Shader fragment_shader);
 
 	/**
 	 * Returns the type of this material.
@@ -135,12 +135,12 @@ private:
 	float _ambient_factor = 0.0f;
 	float _diffuse_factor = 0.0f;
 	float _specular_factor = 0.0f;
-	float _specular_exponent = DEFAULT_SPECULAR_EXPONENT;
+	float _specular_exponent = default_specular_exponent;
 
 	Shader _custom_shader = Shader::Null();
 
 public:
-	static constexpr float DEFAULT_SPECULAR_EXPONENT = 50.0f;
+	static constexpr float default_specular_exponent = 50.0f;
 
 };
 

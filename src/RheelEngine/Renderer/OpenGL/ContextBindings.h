@@ -28,15 +28,15 @@ public:
 	void ResetChanges();
 
 private:
-	GLuint GetBuffer_(Buffer::Target target) const;
-	GLuint GetFramebuffer_(Framebuffer::Target target) const;
-	GLuint GetRenderbuffer_() const;
-	GLuint GetTexture_(unsigned unit, Texture::Target target) const;
-	GLuint GetVertexArray_() const;
-	GLuint GetProgram_() const;
+	GLuint _get_buffer(Buffer::Target target) const;
+	GLuint _get_framebuffer(Framebuffer::Target target) const;
+	GLuint _get_renderbuffer() const;
+	GLuint _get_texture(unsigned unit, Texture::Target target) const;
+	GLuint _get_vertex_array() const;
+	GLuint _get_program() const;
 
-	void SetViewport_(uvec2 dim);
-	uvec2 GetViewport_() const;
+	void _set_viewport(uvec2 dim);
+	uvec2 _get_viewport() const;
 
 	Context& _context;
 

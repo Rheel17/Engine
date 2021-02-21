@@ -20,7 +20,7 @@ Sound WaveLoader::Load(const std::string& path) const {
 	ALsizei size;
 	ALsizei frequency;
 	ALboolean loop;
-	ALvoid* rawData;
+	ALvoid* raw_data;
 
 	// TODO: look into other .wav parsing libraries that are not deprecated
 #pragma GCC diagnostic push
@@ -28,13 +28,13 @@ Sound WaveLoader::Load(const std::string& path) const {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
-	alutLoadWAVFile(&file[0], &format, &rawData, &size, &frequency, &loop);
+	alutLoadWAVFile(&file[0], &format, &raw_data, &size, &frequency, &loop);
 
 	// copy the data into a C++ vector
-	std::vector<char> data(reinterpret_cast<char*>(rawData), reinterpret_cast<char*>(rawData) + size);
+	std::vector<char> data(reinterpret_cast<char*>(raw_data), reinterpret_cast<char*>(raw_data) + size);
 
 	// destroy the alut buffer again
-	alutUnloadWAV(format, rawData, size, frequency);
+	alutUnloadWAV(format, raw_data, size, frequency);
 
 #pragma clang diagnostic pop
 #pragma GCC diagnostic pop

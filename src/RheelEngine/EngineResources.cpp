@@ -9,27 +9,27 @@
 
 namespace rheel {
 
-std::string EngineResources::AsString(const std::string& resourceName) {
-	return ___res___::Get(resourceName);
+std::string EngineResources::AsString(const std::string& resource_name) {
+	return ___res___::Get(resource_name);
 }
 
-std::string EngineResources::PreprocessShader(const std::string& resourceName) {
-	std::unordered_set<std::string> includedShaders;
-	return PreprocessShader_(resourceName, includedShaders);
+std::string EngineResources::PreprocessShader(const std::string& resource_name) {
+	std::unordered_set<std::string> included_shaders;
+	return _preprocess_shader(resource_name, included_shaders);
 }
 
-std::string EngineResources::PreprocessShader_(const std::string& resourceName, std::unordered_set<std::string>& includedResources) {
-	includedResources.insert(resourceName);
+std::string EngineResources::_preprocess_shader(const std::string& resource_name, std::unordered_set<std::string>& included_resources) {
+	included_resources.insert(resource_name);
 
-	std::stringstream reader(AsString(resourceName));
+	std::stringstream reader(AsString(resource_name));
 	std::stringstream builder;
 	std::string line;
-	std::string includeResource;
+	std::string include_resource;
 
 	while (std::getline(reader, line, '\n')) {
-		if (IsShaderIncludeLine_(line, includeResource)) {
-			if (includedResources.find(includeResource) == includedResources.end()) {
-				builder << PreprocessShader_(includeResource, includedResources);
+		if (_is_shader_include_line(line, include_resource)) {
+			if (included_resources.find(include_resource) == included_resources.end()) {
+				builder << _preprocess_shader(include_resource, included_resources);
 			}
 		} else {
 			builder << line << '\n';
@@ -39,14 +39,14 @@ std::string EngineResources::PreprocessShader_(const std::string& resourceName, 
 	return builder.str();
 }
 
-bool EngineResources::IsShaderIncludeLine_(const std::string& line, std::string& resource) {
-	std::stringstream lineInput(line);
+bool EngineResources::_is_shader_include_line(const std::string& line, std::string& resource) {
+	std::stringstream line_input(line);
 	std::string word;
 	int state = 0;
 
 	while (state <= 3) {
 		word.clear();
-		lineInput >> word;
+		line_input >> word;
 
 		if (word.empty()) {
 			return false;

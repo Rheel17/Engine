@@ -54,7 +54,7 @@ VertexArray::VertexAttribute::VertexAttribute() :
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-branch-clone"
-GLsizei VertexArray::VertexAttribute::ByteSize_() const {
+GLsizei VertexArray::VertexAttribute::_byte_size() const {
 	switch (_type) {
 		case Type::BYTE:                         return _size;
 		case Type::UNSIGNED_BYTE:                return _size == GL_RGBA ? 4 : _size;
@@ -76,7 +76,7 @@ GLsizei VertexArray::VertexAttribute::ByteSize_() const {
 }
 #pragma clang diagnostic pop
 
-VertexArray::VertexArray(VertexArray&& vao) :
+VertexArray::VertexArray(VertexArray&& vao) noexcept :
 		Object(std::move(vao)),
 		_index_buffer(std::move(vao._index_buffer)),
 		_has_initialized_unused_attribute_indices(vao._has_initialized_unused_attribute_indices),
@@ -89,7 +89,7 @@ VertexArray::VertexArray(VertexArray&& vao) :
 	}
 }
 
-VertexArray& VertexArray::operator=(VertexArray&& vao) {
+VertexArray& VertexArray::operator=(VertexArray&& vao) noexcept {
 	Object::operator=(std::move(vao));
 
 	_index_buffer = std::move(vao._index_buffer);
@@ -109,7 +109,7 @@ void VertexArray::Bind() const {
 	Context::Current().BindVertexArray(*this);
 }
 
-void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, unsigned instanceDivisor) {
+void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, unsigned instance_divisor) {
 	if (buffer.GetTarget() != Buffer::Target::ARRAY) {
 		throw std::invalid_argument("buffer must have target ARRAY");
 	}
@@ -127,22 +127,22 @@ void VertexArray::SetVertexAttributes(const Buffer& buffer, const std::vector<Ve
 				attribute._stride,
 				(GLvoid*) attribute._offset);
 
-		if (instanceDivisor > 0) {
-			glVertexAttribDivisor(attribute._index, instanceDivisor);
+		if (instance_divisor > 0) {
+			glVertexAttribDivisor(attribute._index, instance_divisor);
 		}
 	}
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLubyte>& indices) {
-	SetIndices_(indices, Type::UNSIGNED_BYTE);
+	_set_indices(indices, Type::UNSIGNED_BYTE);
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLushort>& indices) {
-	SetIndices_(indices, Type::UNSIGNED_SHORT);
+	_set_indices(indices, Type::UNSIGNED_SHORT);
 }
 
 void VertexArray::SetVertexIndices(const std::vector<GLuint>& indices) {
-	SetIndices_(indices, Type::UNSIGNED_INT);
+	_set_indices(indices, Type::UNSIGNED_INT);
 }
 
 void VertexArray::SetIndexBuffer(const VertexArray::ElementArrayBuffer& buffer) {
@@ -215,14 +215,14 @@ void VertexArray::DrawElementsIndirect(VertexArray::Mode mode, const DrawElement
 	}
 }
 
-void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, unsigned instanceDivisor) {
+void VertexArray::_set_vertex_attributes(const Buffer& buffer, const std::vector<std::type_index>& attribute_types, GLsizei stride, unsigned instance_divisor) {
 	std::vector<VertexAttribute> attributes;
 
 	GLsizeiptr offset = 0;
 
-	for (auto t : attributeTypes) {
+	for (auto t : attribute_types) {
 		VertexAttribute attribute;
-		GLuint index = FirstUnusedIndex_();
+		GLuint index = _first_unused_index();
 
 		if (t == typeid(float) || t == typeid(vec1)) {
 			attribute = VertexAttribute(index, 1, Type::FLOAT, 0, offset);
@@ -233,19 +233,19 @@ void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<s
 		} else if (t == typeid(vec4) || t == typeid(quat)) {
 			attribute = VertexAttribute(index, 4, Type::FLOAT, 0, offset);
 		} else if (t == typeid(mat4)) {
-			index = FirstUnusedIndex_(4);
+			index = _first_unused_index(4);
 
 			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset);
 			_unused_attribute_indices.erase(attribute._index);
 
-			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset + attribute.ByteSize_());
+			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset + attribute._byte_size());
 			_unused_attribute_indices.erase(attribute._index);
 
-			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset + attribute.ByteSize_() * 2);
+			attribute = attributes.emplace_back(index++, 4, Type::FLOAT, 0, offset + attribute._byte_size() * 2);
 			_unused_attribute_indices.erase(attribute._index);
 
-			attribute = VertexAttribute(index, 4, Type::FLOAT, 0, offset + attribute.ByteSize_() * 3);
-			offset += attribute.ByteSize_() * 3;
+			attribute = VertexAttribute(index, 4, Type::FLOAT, 0, offset + attribute._byte_size() * 3);
+			offset += attribute._byte_size() * 3;
 		} else if (t == typeid(int) || t == typeid(ivec1)) {
 			attribute = VertexAttribute(index, 1, Type::INT, 0, offset);
 		} else if (t == typeid(ivec2)) {
@@ -259,24 +259,24 @@ void VertexArray::SetVertexAttributes_(const Buffer& buffer, const std::vector<s
 		}
 
 		attributes.push_back(attribute);
-		offset += attribute.ByteSize_();
+		offset += attribute._byte_size();
 		_unused_attribute_indices.erase(attribute._index);
 	}
 
-	GLsizei attributeStride = stride == 0 ? offset : stride;
+	GLsizei attribute_stride = stride == 0 ? offset : stride;
 
 	for (auto& attribute : attributes) {
-		attribute._stride = attributeStride;
+		attribute._stride = attribute_stride;
 	}
 
-	SetVertexAttributes(buffer, attributes, instanceDivisor);
+	SetVertexAttributes(buffer, attributes, instance_divisor);
 }
 
-GLuint VertexArray::FirstUnusedIndex_(GLuint consecutive) {
+GLuint VertexArray::_first_unused_index(GLuint consecutive) {
 	if (!_has_initialized_unused_attribute_indices) {
-		int maxVertexAttribs = Capabilities::GetMaxVertexAttribs();
+		int max_vertex_attribs = Capabilities::GetMaxVertexAttribs();
 
-		for (int i = 0; i < maxVertexAttribs; i++) {
+		for (int i = 0; i < max_vertex_attribs; i++) {
 			_unused_attribute_indices.insert(GLuint(i));
 		}
 
@@ -284,23 +284,23 @@ GLuint VertexArray::FirstUnusedIndex_(GLuint consecutive) {
 	}
 
 	GLuint count = 0;
-	GLuint startIndex = 0;
+	GLuint start_index = 0;
 
-	for (unsigned int _unused_attribute_index : _unused_attribute_indices) {
+	for (unsigned int unused_attribute_index : _unused_attribute_indices) {
 		if (count != 0) {
-			if (_unused_attribute_index == startIndex + count) {
+			if (unused_attribute_index == start_index + count) {
 				count++;
 			} else {
 				count = 1;
-				startIndex = _unused_attribute_index;
+				start_index = unused_attribute_index;
 			}
 		} else {
 			count = 1;
-			startIndex = _unused_attribute_index;
+			start_index = unused_attribute_index;
 		}
 
 		if (count == consecutive) {
-			return startIndex;
+			return start_index;
 		}
 	}
 

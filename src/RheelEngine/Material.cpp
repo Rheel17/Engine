@@ -10,52 +10,52 @@ namespace rheel {
 Material::Material() :
 		Material(Color{ 1.0f, 1.0f, 1.0f, 1.0f }, 0.9f, 0.3f) {}
 
-Material::Material(Color color, float diffuse, float specular, float specularExponent) :
+Material::Material(Color color, float diffuse, float specular, float specular_exponent) :
 		_type(COLORED),
 		_color(color),
-		_specular_exponent(specularExponent) {
+		_specular_exponent(specular_exponent) {
 
 	_diffuse_factor = std::min(1.0f, std::max(0.0f, diffuse));
 	_ambient_factor = 1.0f - _diffuse_factor;
 	_specular_factor = std::min(1.0f, std::max(0.0f, specular));
 }
 
-Material::Material(const Image& texture, float diffuse, float specular, float specularExponent) :
+Material::Material(const Image& texture, float diffuse, float specular, float specular_exponent) :
 		_type(TEXTURED),
 		_color({ 0.0f, 0.0f, 0.0f, -1.0f }),
 		_ambient_texture(texture),
 		_diffuse_texture(texture),
 		_specular_texture(texture),
-		_specular_exponent(specularExponent) {
+		_specular_exponent(specular_exponent) {
 
 	_diffuse_factor = std::min(1.0f, std::max(0.0f, diffuse));
 	_ambient_factor = 1.0f - _diffuse_factor;
 	_specular_factor = std::min(1.0f, std::max(0.0f, specular));
 }
 
-Material::Material(Image ambientTexture, Image diffuseTexture, Image specularTexture, float specularExponent) :
-		Material(std::move(ambientTexture), std::move(diffuseTexture), std::move(specularTexture), 1.0f, 1.0f, 1.0f, specularExponent) {}
+Material::Material(Image ambient_texture, Image diffuse_texture, Image specular_texture, float specular_exponent) :
+		Material(std::move(ambient_texture), std::move(diffuse_texture), std::move(specular_texture), 1.0f, 1.0f, 1.0f, specular_exponent) {}
 
-Material::Material(Image ambientTexture,
-		Image diffuseTexture,
-		Image specularTexture,
-		float ambientFactor,
-		float diffuseFactor,
-		float specularFactor,
-		float specularExponent) :
+Material::Material(Image ambient_texture,
+		Image diffuse_texture,
+		Image specular_texture,
+		float ambient_factor,
+		float diffuse_factor,
+		float specular_factor,
+		float specular_exponent) :
 		_type(TEXTURED),
 		_color({ 0.0f, 0.0f, 0.0f, -1.0f }),
-		_ambient_texture(std::move(ambientTexture)),
-		_diffuse_texture(std::move(diffuseTexture)),
-		_specular_texture(std::move(specularTexture)),
-		_ambient_factor(ambientFactor),
-		_diffuse_factor(diffuseFactor),
-		_specular_factor(specularFactor),
-		_specular_exponent(specularExponent) {}
+		_ambient_texture(std::move(ambient_texture)),
+		_diffuse_texture(std::move(diffuse_texture)),
+		_specular_texture(std::move(specular_texture)),
+		_ambient_factor(ambient_factor),
+		_diffuse_factor(diffuse_factor),
+		_specular_factor(specular_factor),
+		_specular_exponent(specular_exponent) {}
 
-Material::Material(Shader fragmentShader) :
+Material::Material(Shader fragment_shader) :
 		_type(CUSTOM_SHADER),
-		_custom_shader(std::move(fragmentShader)) {}
+		_custom_shader(std::move(fragment_shader)) {}
 
 Material::MaterialType Material::Type() const {
 	return _type;

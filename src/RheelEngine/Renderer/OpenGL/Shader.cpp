@@ -22,11 +22,11 @@ Shader::Shader(ShaderType type, const std::string& source) :
 	glGetShaderiv(_handle, GL_COMPILE_STATUS, &compiled);
 
 	if (!compiled) {
-		GLint logSize = 0;
-		glGetShaderiv(_handle, GL_INFO_LOG_LENGTH, &logSize);
+		GLint log_size = 0;
+		glGetShaderiv(_handle, GL_INFO_LOG_LENGTH, &log_size);
 
-		std::vector<GLchar> log(logSize);
-		glGetShaderInfoLog(_handle, logSize, &logSize, &log[0]);
+		std::vector<GLchar> log(log_size);
+		glGetShaderInfoLog(_handle, log_size, &log_size, &log[0]);
 
 		// throw with compile errors
 		Log::Error() << "Failed to compile shader:\n" << std::string_view(log.begin(), log.end()) << std::endl;

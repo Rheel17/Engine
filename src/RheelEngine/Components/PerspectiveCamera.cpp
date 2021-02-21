@@ -34,11 +34,11 @@ std::array<vec3, 8> PerspectiveCamera::ViewspaceCorners(unsigned width, unsigned
 	far = std::min(far, _far);
 
 	float tanfov = std::tan(_fov * 0.5f);
-	float aspectRatio = float(width) / float(height);
+	float aspect_ratio = float(width) / float(height);
 
-	const auto position = [absolute_transform, forward, up, right, tanfov, aspectRatio](const vec2& ndc, float t) {
+	const auto position = [absolute_transform, forward, up, right, tanfov, aspect_ratio](const vec2& ndc, float t) {
 		vec3 direction = glm::normalize(
-				ndc.x * right * tanfov * aspectRatio +
+				ndc.x * right * tanfov * aspect_ratio +
 						ndc.y * up * tanfov +
 						forward);
 

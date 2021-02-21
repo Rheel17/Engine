@@ -17,7 +17,7 @@ class RE_API VignetteElement : public Element {
 	pseudo_static_pointer<vignette_shader> _shader;
 
 public:
-	VignetteElement(Color color, float innerRadius, float outerRadius, float curvature = 1.0f);
+	VignetteElement(Color color, float inner_radius, float outer_radius, float curvature = 1.0f);
 
 public:
 	bool IsOpaque() override;

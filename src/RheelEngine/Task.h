@@ -24,7 +24,7 @@ public:
 			_task(std::forward<Callable>(task)) {}
 
 	void operator()() override {
-		Run_();
+		_run();
 	}
 
 	std::future<T> GetFuture() {
@@ -32,7 +32,7 @@ public:
 	}
 
 private:
-	void Run_() {
+	void _run() {
 		if constexpr (std::is_same_v<T, void>) {
 			_task();
 			_result.set_value();

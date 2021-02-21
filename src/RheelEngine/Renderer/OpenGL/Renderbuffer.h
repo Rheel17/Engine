@@ -20,9 +20,9 @@ public:
 
 	void Bind() const;
 
-	void SetStorage(InternalFormat internalFormat, unsigned width, unsigned height);
+	void SetStorage(InternalFormat internal_format, unsigned width, unsigned height);
 
-	void SetStorageMultisample(InternalFormat internalFormat, unsigned width, unsigned height, unsigned samples);
+	void SetStorageMultisample(InternalFormat internal_format, unsigned width, unsigned height, unsigned samples);
 
 };
 

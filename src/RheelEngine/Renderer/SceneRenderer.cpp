@@ -14,24 +14,24 @@ SceneRenderer::SceneRenderer(
 		ConstEntityId camera_entity,
 		unsigned width,
 		unsigned height,
-		unsigned sampleCount,
-		bool depthComponent) :
+		unsigned sample_count,
+		bool depth_component) :
 		_manager(manager),
 		_camera_entity(camera_entity),
 		_width(width),
 		_height(height),
 		_result_buffer(width, height) {
 
-	if (sampleCount > 1) {
-		_result_buffer.AttachTextureMultisample(gl::InternalFormat::RGB8, sampleCount, 0);
+	if (sample_count > 1) {
+		_result_buffer.AttachTextureMultisample(gl::InternalFormat::RGB8, sample_count, 0);
 
-		if (depthComponent) {
-			_result_buffer.AttachRenderbufferMultisample(gl::InternalFormat::DEPTH_COMPONENT_32F, sampleCount, gl::Framebuffer::Attachment::DEPTH);
+		if (depth_component) {
+			_result_buffer.AttachRenderbufferMultisample(gl::InternalFormat::DEPTH_COMPONENT_32F, sample_count, gl::Framebuffer::Attachment::DEPTH);
 		}
 	} else {
 		_result_buffer.AttachTexture(gl::InternalFormat::RGB8, gl::Format::RGB, 0);
 
-		if (depthComponent) {
+		if (depth_component) {
 			_result_buffer.AttachRenderbuffer(gl::InternalFormat::DEPTH_COMPONENT_32F, gl::Framebuffer::Attachment::DEPTH);
 		}
 	}
@@ -61,7 +61,7 @@ void SceneRenderer::RenderShadowMaps() {
 		return;
 	}
 
-	CorrectShadowMapList_();
+	_correct_shadow_map_list();
 
 	for (auto& iter : _shadow_maps) {
 		iter.second->Update(camera, _width, _height);
@@ -92,7 +92,7 @@ const std::map<const Light*, std::unique_ptr<ShadowMap>>& SceneRenderer::ShadowM
 	return _shadow_maps;
 }
 
-void SceneRenderer::CorrectShadowMapList_() {
+void SceneRenderer::_correct_shadow_map_list() {
 	std::unordered_set<const Light*> lights;
 	for (const auto& pair : _shadow_maps) {
 		lights.insert(pair.first);

@@ -29,20 +29,20 @@ void RigidBody::OnActivate() {
 		throw std::runtime_error("no model set");
 	}
 
-	auto* physicsScene = GetEntity().GetScene().GetRootComponent<PhysicsScene>();
-	if (!physicsScene) {
+	auto* physics_scene = GetEntity().GetScene().GetRootComponent<PhysicsScene>();
+	if (!physics_scene) {
 		return;
 	}
 
 	btVector3 inertia(0, 0, 0);
 
 	if (_mass > 0) {
-		_shape.Pointer_()->calculateLocalInertia(_mass, inertia);
+		_shape._pointer()->calculateLocalInertia(_mass, inertia);
 	}
 
 	_motion_state = std::make_unique<btDefaultMotionState>();
 
-	btRigidBody::btRigidBodyConstructionInfo cinfo(_mass, _motion_state.get(), _shape.Pointer_(), inertia);
+	btRigidBody::btRigidBodyConstructionInfo cinfo(_mass, _motion_state.get(), _shape._pointer(), inertia);
 	cinfo.m_restitution = _bounciness;
 
 	auto matrix = GetEntity().AbsoluteTransform().AsMatrix();
@@ -54,7 +54,7 @@ void RigidBody::OnActivate() {
 	_body->setWorldTransform(*_last_transform_update);
 	_body->setFriction(0.5f);
 
-	physicsScene->AddBody_(_body.get());
+	physics_scene->_add_body(_body.get());
 }
 
 void RigidBody::OnDeactivate() {
@@ -63,7 +63,7 @@ void RigidBody::OnDeactivate() {
 		return;
 	}
 
-	physics_scene->RemoveBody_(_body.get(), GetEntity().GetComponent<CollisionComponent>());
+	physics_scene->_remove_body(_body.get(), GetEntity().GetComponent<CollisionComponent>());
 }
 
 void RigidBody::Update() {
@@ -71,22 +71,22 @@ void RigidBody::Update() {
 		return;
 	}
 
-	mat4 mPrime, pInv, cInv;
+	mat4 m_prime, p_inv, c_inv;
 	*_last_transform_update = _body->getWorldTransform();
-	_last_transform_update->getOpenGLMatrix(&mPrime[0][0]);
+	_last_transform_update->getOpenGLMatrix(&m_prime[0][0]);
 
 	if (GetEntity().GetParent() == nullptr) {
-		pInv = glm::identity<mat4>();
+		p_inv = glm::identity<mat4>();
 	} else {
-		pInv = glm::inverse(GetEntity().GetParent()->AbsoluteTransform().AsMatrix());
+		p_inv = glm::inverse(GetEntity().GetParent()->AbsoluteTransform().AsMatrix());
 	}
 
-	cInv = glm::inverse(GetEntity().AbsoluteTransform().AsMatrix());
+	c_inv = glm::inverse(GetEntity().AbsoluteTransform().AsMatrix());
 
-	mat4 oPrime = pInv * mPrime * cInv;
+	mat4 o_prime = p_inv * m_prime * c_inv;
 
 	_transform_event_from_update = true;
-	GetEntity().transform = Transform(oPrime);
+	GetEntity().transform = Transform(o_prime);
 	_transform_event_from_update = false;
 }
 

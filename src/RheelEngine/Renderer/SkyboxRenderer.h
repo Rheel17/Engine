@@ -29,7 +29,7 @@ public:
 	void Render(const Camera* camera, unsigned width, unsigned height) const;
 
 private:
-	void LoadImage_(Image image, unsigned layer) const;
+	void _load_image(Image image, unsigned layer) const;
 
 	SceneRenderManager* _manager;
 
@@ -47,9 +47,9 @@ private:
 	mutable unsigned _current_height = 1;
 
 private:
-	static gl::Texture2DArray CreateTexture_(unsigned width, unsigned height);
-	static std::vector<vertex> CreateSkyboxVertices_();
-	static std::vector<unsigned> CreateSkyboxIndices_();
+	static gl::Texture2DArray _create_texture(unsigned width, unsigned height);
+	static std::vector<vertex> _create_skybox_vertices();
+	static std::vector<unsigned> _create_skybox_indices();
 
 };
 

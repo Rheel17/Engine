@@ -53,12 +53,12 @@ void ModelRenderer::ObjectDataPtr::SetMatrix(mat4 matrix) {
 	_data->_normal_model_matrix = glm::transpose(glm::inverse(mat3(_data->_model_matrix)));
 }
 
-void ModelRenderer::ObjectDataPtr::SetMaterialVector(vec4 materialVector) {
-	_data->_material_vector = materialVector;
+void ModelRenderer::ObjectDataPtr::SetMaterialVector(vec4 material_vector) {
+	_data->_material_vector = material_vector;
 }
 
-void ModelRenderer::ObjectDataPtr::SetMaterialColor(vec4 materialColor) {
-	_data->_material_color = materialColor;
+void ModelRenderer::ObjectDataPtr::SetMaterialColor(vec4 material_color) {
+	_data->_material_color = material_color;
 }
 
 ModelRenderer::ObjectDataPtr::operator bool() const {
@@ -83,22 +83,22 @@ ModelRenderer::ObjectDataPtr& ModelRenderer::ObjectDataPtr::operator=(ObjectData
 	return *this;
 }
 
-bool ModelRenderer::material_texture_compare::operator()(const Material& mat1, const Material& mat2) const {
-	std::array<std::uintptr_t, 3> mat1Addresses = {
+bool ModelRenderer::material_texture_compare::operator()(const Material& mat_1, const Material& mat_2) const {
+	std::array<std::uintptr_t, 3> mat_1_addresses = {
 			{
-					mat1.GetAmbientTexture().GetAddress(),
-					mat1.GetDiffuseTexture().GetAddress(),
-					mat1.GetSpecularTexture().GetAddress()
+					mat_1.GetAmbientTexture().GetAddress(),
+					mat_1.GetDiffuseTexture().GetAddress(),
+					mat_1.GetSpecularTexture().GetAddress()
 			}
 	};
-	std::array<std::uintptr_t, 3> mat2Addresses = {
+	std::array<std::uintptr_t, 3> mat_2_addresses = {
 			{
-					mat2.GetAmbientTexture().GetAddress(),
-					mat2.GetDiffuseTexture().GetAddress(),
-					mat2.GetSpecularTexture().GetAddress()
+					mat_2.GetAmbientTexture().GetAddress(),
+					mat_2.GetDiffuseTexture().GetAddress(),
+					mat_2.GetSpecularTexture().GetAddress()
 			}
 	};
-	return std::tie(mat1Addresses[0], mat1Addresses[1], mat1Addresses[2]) < std::tie(mat2Addresses[0], mat2Addresses[1], mat2Addresses[2]);
+	return std::tie(mat_1_addresses[0], mat_1_addresses[1], mat_1_addresses[2]) < std::tie(mat_2_addresses[0], mat_2_addresses[1], mat_2_addresses[2]);
 }
 
 ModelRenderer::ModelRenderer(const Model& model) :
@@ -116,19 +116,19 @@ ModelRenderer::ModelRenderer(const Model& model) :
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddObject() {
-	return Add_(_objects);
+	return _add(_objects);
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::AddTexturedObject(const Material& material) {
-	return Add_(_textured_objects[material]);
+	return _add(_textured_objects[material]);
 }
 
 void ModelRenderer::RemoveObject(ObjectDataPtr&& object) {
-	Remove_(_objects, std::forward<ObjectDataPtr>(object));
+	_remove(_objects, std::forward<ObjectDataPtr>(object));
 }
 
 void ModelRenderer::RemoveTexturedObject(const Material& material, ObjectDataPtr&& object) {
-	Remove_(_textured_objects[material], std::forward<ObjectDataPtr>(object));
+	_remove(_textured_objects[material], std::forward<ObjectDataPtr>(object));
 }
 
 void ModelRenderer::RenderObjects() const {
@@ -147,11 +147,11 @@ void ModelRenderer::RenderObjects() const {
 	}
 }
 
-ModelRenderer::ObjectDataPtr ModelRenderer::Add_(ObjectDataVector& objects) {
+ModelRenderer::ObjectDataPtr ModelRenderer::_add(ObjectDataVector& objects) {
 	return ObjectDataPtr(&objects.emplace_back());
 }
 
-void ModelRenderer::Remove_(ObjectDataVector& objects, ObjectDataPtr&& data) {
+void ModelRenderer::_remove(ObjectDataVector& objects, ObjectDataPtr&& data) {
 	size_t index = (((size_t) data._data) - ((size_t) &objects.front())) / sizeof(ObjectData);
 
 	if (index >= objects.size()) {

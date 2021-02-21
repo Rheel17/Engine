@@ -22,7 +22,7 @@ void ContextFunctions::SetClearColor(float red, float green, float blue, float a
 	auto color = std::make_tuple(red, green, blue, alpha);
 
 	// check if a state change is necessary
-	if (GetClearColor_() == color) {
+	if (_get_clear_color() == color) {
 		return;
 	}
 
@@ -30,7 +30,7 @@ void ContextFunctions::SetClearColor(float red, float green, float blue, float a
 	glClearColor(red, green, blue, alpha);
 
 	// store the state change
-	if (_parent == nullptr ? (color == _default_clear_color) : (color == _parent->GetClearColor_())) {
+	if (_parent == nullptr ? (color == _default_clear_color) : (color == _parent->_get_clear_color())) {
 		_clear_color.reset();
 	} else {
 		_clear_color = color;
@@ -41,19 +41,19 @@ void ContextFunctions::SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor
 	SetBlendFunction(sfactor, dfactor, sfactor, dfactor);
 }
 
-void ContextFunctions::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha) {
-	auto function = std::make_tuple(srcRGB, dstRGB, srcAlpha, dstAlpha);
+void ContextFunctions::SetBlendFunction(BlendFactor src_rgb, BlendFactor dst_rgb, BlendFactor src_alpha, BlendFactor dst_alpha) {
+	auto function = std::make_tuple(src_rgb, dst_rgb, src_alpha, dst_alpha);
 
 	// check if a state change is necessary
-	if (GetBlendFunction_() == function) {
+	if (_get_blend_function() == function) {
 		return;
 	}
 
 	// perform the state change
-	glBlendFuncSeparate(GLenum(srcRGB), GLenum(dstRGB), GLenum(srcAlpha), GLenum(dstAlpha));
+	glBlendFuncSeparate(GLenum(src_rgb), GLenum(dst_rgb), GLenum(src_alpha), GLenum(dst_alpha));
 
 	// store the state change
-	if (_parent == nullptr ? (function == _default_blending_factors) : (function == _parent->GetBlendFunction_())) {
+	if (_parent == nullptr ? (function == _default_blending_factors) : (function == _parent->_get_blend_function())) {
 		_blending_factors.reset();
 	} else {
 		_blending_factors = function;
@@ -62,7 +62,7 @@ void ContextFunctions::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, 
 
 void ContextFunctions::SetLogicOp(LogicOp opcode) {
 	// check if a state change is necessary
-	if (GetLogicOp_() == opcode) {
+	if (_get_logic_op() == opcode) {
 		return;
 	}
 
@@ -70,7 +70,7 @@ void ContextFunctions::SetLogicOp(LogicOp opcode) {
 	glLogicOp(GLenum(opcode));
 
 	// store the state change
-	if (_parent == nullptr ? (opcode == _default_logic_op) : (opcode == _parent->GetLogicOp_())) {
+	if (_parent == nullptr ? (opcode == _default_logic_op) : (opcode == _parent->_get_logic_op())) {
 		_logic_op.reset();
 	} else {
 		_logic_op = opcode;
@@ -79,7 +79,7 @@ void ContextFunctions::SetLogicOp(LogicOp opcode) {
 
 void ContextFunctions::SetDepthFunction(CompareFunction func) {
 	// check if a state change is necessary
-	if (GetDepthFunction_() == func) {
+	if (_get_depth_function() == func) {
 		return;
 	}
 
@@ -87,7 +87,7 @@ void ContextFunctions::SetDepthFunction(CompareFunction func) {
 	glDepthFunc(GLenum(func));
 
 	// store the state change
-	if (_parent == nullptr ? (func == _default_depth_function) : (func == _parent->GetDepthFunction_())) {
+	if (_parent == nullptr ? (func == _default_depth_function) : (func == _parent->_get_depth_function())) {
 		_depth_function.reset();
 	} else {
 		_depth_function = func;
@@ -96,7 +96,7 @@ void ContextFunctions::SetDepthFunction(CompareFunction func) {
 
 void ContextFunctions::SetCullFace(CullFace mode) {
 	// check if a state change is necessary
-	if (GetCullFace_() == mode) {
+	if (_get_cull_face() == mode) {
 		return;
 	}
 
@@ -104,7 +104,7 @@ void ContextFunctions::SetCullFace(CullFace mode) {
 	glDepthFunc(GLenum(mode));
 
 	// store the state change
-	if (_parent == nullptr ? (mode == _default_cull_face) : (mode == _parent->GetCullFace_())) {
+	if (_parent == nullptr ? (mode == _default_cull_face) : (mode == _parent->_get_cull_face())) {
 		_cull_face.reset();
 	} else {
 		_cull_face = mode;
@@ -115,7 +115,7 @@ void ContextFunctions::SetColorMask(bool red, bool green, bool blue, bool alpha)
 	auto mask = std::make_tuple(red, green, blue, alpha);
 
 	// check if a state change is necessary
-	if (GetColorMask_() == mask) {
+	if (_get_color_mask() == mask) {
 		return;
 	}
 
@@ -123,7 +123,7 @@ void ContextFunctions::SetColorMask(bool red, bool green, bool blue, bool alpha)
 	glColorMask(red, green, blue, alpha);
 
 	// store the state change
-	if (_parent == nullptr ? (mask == _default_color_mask) : (mask == _parent->GetColorMask_())) {
+	if (_parent == nullptr ? (mask == _default_color_mask) : (mask == _parent->_get_color_mask())) {
 		_color_mask.reset();
 	} else {
 		_color_mask = mask;
@@ -132,7 +132,7 @@ void ContextFunctions::SetColorMask(bool red, bool green, bool blue, bool alpha)
 
 void ContextFunctions::SetDepthMask(bool mask) {
 	// check if a state change is necessary
-	if (GetDepthMask_() == mask) {
+	if (_get_depth_mask() == mask) {
 		return;
 	}
 
@@ -140,7 +140,7 @@ void ContextFunctions::SetDepthMask(bool mask) {
 	glDepthMask(mask);
 
 	// store the state change
-	if (_parent == nullptr ? (mask == _default_depth_mask) : (mask == _parent->GetDepthMask_())) {
+	if (_parent == nullptr ? (mask == _default_depth_mask) : (mask == _parent->_get_depth_mask())) {
 		_depth_mask.reset();
 	} else {
 		_depth_mask = mask;
@@ -151,7 +151,7 @@ void ContextFunctions::SetStencilFunc(CompareFunction func, uint8_t reference, u
 	auto function = std::make_tuple(func, reference, mask);
 
 	// check if a state change is necessary
-	if (GetStencilFunc_() == function) {
+	if (_get_stencil_func() == function) {
 		return;
 	}
 
@@ -159,7 +159,7 @@ void ContextFunctions::SetStencilFunc(CompareFunction func, uint8_t reference, u
 	glStencilFunc(GLenum(func), reference, mask);
 
 	// store the state change
-	if (_parent == nullptr ? (function == _default_stencil_func) : (function == _parent->GetStencilFunc_())) {
+	if (_parent == nullptr ? (function == _default_stencil_func) : (function == _parent->_get_stencil_func())) {
 		_stencil_func.reset();
 	} else {
 		_stencil_func = function;
@@ -168,7 +168,7 @@ void ContextFunctions::SetStencilFunc(CompareFunction func, uint8_t reference, u
 
 void ContextFunctions::SetStencilMask(uint8_t mask) {
 	// check if a state change is necessary
-	if (GetStencilMask_() == mask) {
+	if (_get_stencil_mask() == mask) {
 		return;
 	}
 
@@ -176,7 +176,7 @@ void ContextFunctions::SetStencilMask(uint8_t mask) {
 	glStencilMask(mask);
 
 	// store the state change
-	if (_parent == nullptr ? (mask == _default_stencil_mask) : (mask == _parent->GetStencilMask_())) {
+	if (_parent == nullptr ? (mask == _default_stencil_mask) : (mask == _parent->_get_stencil_mask())) {
 		_stencil_mask.reset();
 	} else {
 		_stencil_mask = mask;
@@ -187,7 +187,7 @@ void ContextFunctions::SetStencilOp(StencilFunction sfail, StencilFunction dpfai
 	auto op = std::make_tuple(sfail, dpfail, dppass);
 
 	// check if a state change is necessary
-	if (GetStencilOp_() == op) {
+	if (_get_stencil_op() == op) {
 		return;
 	}
 
@@ -195,7 +195,7 @@ void ContextFunctions::SetStencilOp(StencilFunction sfail, StencilFunction dpfai
 	glStencilOp(GLenum(sfail), GLenum(dpfail), GLenum(dppass));
 
 	// store the state change
-	if (_parent == nullptr ? (op == _default_stencil_op) : (op == _parent->GetStencilOp_())) {
+	if (_parent == nullptr ? (op == _default_stencil_op) : (op == _parent->_get_stencil_op())) {
 		_stencil_op.reset();
 	} else {
 		_stencil_op = op;
@@ -206,7 +206,7 @@ void ContextFunctions::SetScissorTest(int x, int y, unsigned width, unsigned hei
 	auto test = std::make_tuple(x, y, width, height);
 
 	// check if a state change is necessary
-	if (GetScissorTest_() == test) {
+	if (_get_scissor_test() == test) {
 		return;
 	}
 
@@ -214,7 +214,7 @@ void ContextFunctions::SetScissorTest(int x, int y, unsigned width, unsigned hei
 	glScissor(x, y, width, height);
 
 	// store the state change
-	if (_parent == nullptr ? (test == GetDefaultScissorTest_()) : (test == _parent->GetScissorTest_())) {
+	if (_parent == nullptr ? (test == _get_default_scissor_test()) : (test == _parent->_get_scissor_test())) {
 		_scissor_test.reset();
 	} else {
 		_scissor_test = test;
@@ -225,57 +225,57 @@ void ContextFunctions::SetScissorTest(int x, int y, unsigned width, unsigned hei
 
 void ContextFunctions::ResetChanges() {
 	if (_clear_color.has_value()) {
-		const auto& [red, green, blue, alpha] = _parent == nullptr ? _default_clear_color : _parent->GetClearColor_();
+		const auto& [red, green, blue, alpha] = _parent == nullptr ? _default_clear_color : _parent->_get_clear_color();
 		glClearColor(red, green, blue, alpha);
 	}
 
 	if (_blending_factors.has_value()) {
-		const auto& [srcRGB, dstRGB, srcAlpha, dstAlpha] = _parent == nullptr ? _default_blending_factors : _parent->GetBlendFunction_();
-		glBlendFuncSeparate(GLenum(srcRGB), GLenum(dstRGB), GLenum(srcAlpha), GLenum(dstAlpha));
+		const auto& [src_rgb, dst_rgb, src_alpha, dst_alpha] = _parent == nullptr ? _default_blending_factors : _parent->_get_blend_function();
+		glBlendFuncSeparate(GLenum(src_rgb), GLenum(dst_rgb), GLenum(src_alpha), GLenum(dst_alpha));
 	}
 
 	if (_logic_op.has_value()) {
-		const auto& opcode = _parent == nullptr ? _default_logic_op : _parent->GetLogicOp_();
+		const auto& opcode = _parent == nullptr ? _default_logic_op : _parent->_get_logic_op();
 		glLogicOp(GLenum(opcode));
 	}
 
 	if (_depth_function.has_value()) {
-		const auto& func = _parent == nullptr ? _default_depth_function : _parent->GetDepthFunction_();
+		const auto& func = _parent == nullptr ? _default_depth_function : _parent->_get_depth_function();
 		glDepthFunc(GLenum(func));
 	}
 
 	if (_cull_face.has_value()) {
-		const auto& cullFace = _parent == nullptr ? _default_cull_face : _parent->GetCullFace_();
-		glCullFace(GLenum(cullFace));
+		const auto& cull_face = _parent == nullptr ? _default_cull_face : _parent->_get_cull_face();
+		glCullFace(GLenum(cull_face));
 	}
 
 	if (_color_mask.has_value()) {
-		const auto& [red, green, blue, alpha] = _parent == nullptr ? _default_color_mask : _parent->GetColorMask_();
+		const auto& [red, green, blue, alpha] = _parent == nullptr ? _default_color_mask : _parent->_get_color_mask();
 		glColorMask(red, green, blue, alpha);
 	}
 
 	if (_depth_mask.has_value()) {
-		const auto& depthMask = _parent == nullptr ? _default_depth_mask : _parent->GetDepthMask_();
-		glDepthMask(depthMask);
+		const auto& depth_mask = _parent == nullptr ? _default_depth_mask : _parent->_get_depth_mask();
+		glDepthMask(depth_mask);
 	}
 
 	if (_stencil_func.has_value()) {
-		const auto& [func, ref, mask] = _parent == nullptr ? _default_stencil_func : _parent->GetStencilFunc_();
+		const auto& [func, ref, mask] = _parent == nullptr ? _default_stencil_func : _parent->_get_stencil_func();
 		glStencilFunc(GLenum(func), ref, mask);
 	}
 
 	if (_stencil_mask.has_value()) {
-		const auto& mask = _parent == nullptr ? _default_stencil_mask : _parent->GetStencilMask_();
+		const auto& mask = _parent == nullptr ? _default_stencil_mask : _parent->_get_stencil_mask();
 		glStencilMask(mask);
 	}
 
 	if (_stencil_op.has_value()) {
-		const auto& [sfail, dpfail, dppass] = _parent == nullptr ? _default_stencil_op : _parent->GetStencilOp_();
+		const auto& [sfail, dpfail, dppass] = _parent == nullptr ? _default_stencil_op : _parent->_get_stencil_op();
 		glStencilOp(GLenum(sfail), GLenum(dpfail), GLenum(dppass));
 	}
 
 	if (_scissor_test.has_value()) {
-		const auto& [x, y, width, height] = _parent == nullptr ? GetDefaultScissorTest_() : _parent->GetScissorTest_();
+		const auto& [x, y, width, height] = _parent == nullptr ? _get_default_scissor_test() : _parent->_get_scissor_test();
 		glScissor(x, y, width, height);
 	}
 
@@ -291,7 +291,7 @@ void ContextFunctions::ResetChanges() {
 	_scissor_test.reset();
 }
 
-std::tuple<float, float, float, float> ContextFunctions::GetClearColor_() const {
+std::tuple<float, float, float, float> ContextFunctions::_get_clear_color() const {
 	// check the current instance
 	if (_clear_color.has_value()) {
 		return *_clear_color;
@@ -299,14 +299,14 @@ std::tuple<float, float, float, float> ContextFunctions::GetClearColor_() const 
 
 	// check parent
 	if (_parent != nullptr) {
-		return _parent->GetClearColor_();
+		return _parent->_get_clear_color();
 	}
 
 	// default
 	return _default_clear_color;
 }
 
-std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> ContextFunctions::GetBlendFunction_() const {
+std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> ContextFunctions::_get_blend_function() const {
 	// check the current instance
 	if (_blending_factors.has_value()) {
 		return *_blending_factors;
@@ -314,14 +314,14 @@ std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> ContextFunctions:
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetBlendFunction_();
+		return _parent->_get_blend_function();
 	}
 
 	// default
 	return _default_blending_factors;
 }
 
-LogicOp ContextFunctions::GetLogicOp_() const {
+LogicOp ContextFunctions::_get_logic_op() const {
 	// check the current instance
 	if (_logic_op.has_value()) {
 		return *_logic_op;
@@ -329,14 +329,14 @@ LogicOp ContextFunctions::GetLogicOp_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetLogicOp_();
+		return _parent->_get_logic_op();
 	}
 
 	// default
 	return _default_logic_op;
 }
 
-CompareFunction ContextFunctions::GetDepthFunction_() const {
+CompareFunction ContextFunctions::_get_depth_function() const {
 	// check the current instance
 	if (_depth_function.has_value()) {
 		return *_depth_function;
@@ -344,14 +344,14 @@ CompareFunction ContextFunctions::GetDepthFunction_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetDepthFunction_();
+		return _parent->_get_depth_function();
 	}
 
 	// default
 	return _default_depth_function;
 }
 
-CullFace ContextFunctions::GetCullFace_() const {
+CullFace ContextFunctions::_get_cull_face() const {
 	// check the current instance
 	if (_cull_face.has_value()) {
 		return *_cull_face;
@@ -359,14 +359,14 @@ CullFace ContextFunctions::GetCullFace_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetCullFace_();
+		return _parent->_get_cull_face();
 	}
 
 	// default
 	return _default_cull_face;
 }
 
-std::tuple<bool, bool, bool, bool> ContextFunctions::GetColorMask_() const {
+std::tuple<bool, bool, bool, bool> ContextFunctions::_get_color_mask() const {
 	// check the current instance
 	if (_color_mask.has_value()) {
 		return *_color_mask;
@@ -374,14 +374,14 @@ std::tuple<bool, bool, bool, bool> ContextFunctions::GetColorMask_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetColorMask_();
+		return _parent->_get_color_mask();
 	}
 
 	// default
 	return _default_color_mask;
 }
 
-bool ContextFunctions::GetDepthMask_() const {
+bool ContextFunctions::_get_depth_mask() const {
 	// check the current instance
 	if (_depth_mask.has_value()) {
 		return *_depth_mask;
@@ -389,14 +389,14 @@ bool ContextFunctions::GetDepthMask_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetDepthMask_();
+		return _parent->_get_depth_mask();
 	}
 
 	// default
 	return _default_depth_mask;
 }
 
-std::tuple<CompareFunction, uint8_t, uint8_t> ContextFunctions::GetStencilFunc_() const {
+std::tuple<CompareFunction, uint8_t, uint8_t> ContextFunctions::_get_stencil_func() const {
 	// check the current instance
 	if (_stencil_func.has_value()) {
 		return *_stencil_func;
@@ -404,14 +404,14 @@ std::tuple<CompareFunction, uint8_t, uint8_t> ContextFunctions::GetStencilFunc_(
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetStencilFunc_();
+		return _parent->_get_stencil_func();
 	}
 
 	// default
 	return _default_stencil_func;
 }
 
-uint8_t ContextFunctions::GetStencilMask_() const {
+uint8_t ContextFunctions::_get_stencil_mask() const {
 	// check the current instance
 	if (_stencil_mask.has_value()) {
 		return *_stencil_mask;
@@ -419,14 +419,14 @@ uint8_t ContextFunctions::GetStencilMask_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetStencilMask_();
+		return _parent->_get_stencil_mask();
 	}
 
 	// default
 	return _default_stencil_mask;
 }
 
-std::tuple<StencilFunction, StencilFunction, StencilFunction> ContextFunctions::GetStencilOp_() const {
+std::tuple<StencilFunction, StencilFunction, StencilFunction> ContextFunctions::_get_stencil_op() const {
 	// check the current instance
 	if (_stencil_op.has_value()) {
 		return *_stencil_op;
@@ -434,14 +434,14 @@ std::tuple<StencilFunction, StencilFunction, StencilFunction> ContextFunctions::
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetStencilOp_();
+		return _parent->_get_stencil_op();
 	}
 
 	// default
 	return _default_stencil_op;
 }
 
-std::tuple<int, int, unsigned, unsigned> ContextFunctions::GetScissorTest_() const {
+std::tuple<int, int, unsigned, unsigned> ContextFunctions::_get_scissor_test() const {
 	// check the current instance
 	if (_scissor_test.has_value()) {
 		return *_scissor_test;
@@ -449,14 +449,14 @@ std::tuple<int, int, unsigned, unsigned> ContextFunctions::GetScissorTest_() con
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetScissorTest_();
+		return _parent->_get_scissor_test();
 	}
 
 	// default
-	return GetDefaultScissorTest_();
+	return _get_default_scissor_test();
 }
 
-std::tuple<int, int, unsigned, unsigned> ContextFunctions::GetDefaultScissorTest_() const {
+std::tuple<int, int, unsigned, unsigned> ContextFunctions::_get_default_scissor_test() const {
 	uvec2 viewport = _context.GetDefaultViewport();
 	return std::make_tuple(0, 0, viewport.x, viewport.y);
 }

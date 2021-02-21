@@ -39,18 +39,18 @@ public:
 	/**
 	 * Clears the texture and sets the size.
 	 */
-	void SetEmpty(InternalFormat internalFormat, unsigned width, unsigned height, Format format);
+	void SetEmpty(InternalFormat internal_format, unsigned width, unsigned height, Format format);
 
 	/**
 	 * Sets the data of this texture. A raw data pointer is used. Make sure the type and
 	 * data type match up.
 	 */
-	void SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, Type type, const void* data);
+	void SetData(InternalFormat internal_format, unsigned width, unsigned height, Format format, Type type, const void* data);
 
 	/**
 	 * Sets the data of this texture using the float type.
 	 */
-	void SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, const float* data);
+	void SetData(InternalFormat internal_format, unsigned width, unsigned height, Format format, const float* data);
 
 };
 

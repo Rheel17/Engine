@@ -37,18 +37,18 @@ public:
 	void SetSize(unsigned size);
 	void SetColor(Color color);
 
-	const gl::VertexArray& GetCharacterVAO() const;
+	const gl::VertexArray& GetCharacterVao() const;
 	const gl::Buffer& GetGlyphBuffer() const;
 
 	void Render(std::u32string_view text, int x, int y, unsigned width, TextAlign align);
 
 public:
-	static constexpr inline unsigned SAMPLE_COUNT = 4;
+	static constexpr inline unsigned sample_count = 4;
 
 private:
 	FontRenderer(const Font& font);
-	void Render_(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirectBuffer, const vec4& bounds, unsigned count, const mat3& transform);
-	void ResizeBuffer_(unsigned width, unsigned height);
+	void _render(const gl::VertexArray& vao, const gl::DrawElementsIndirectBuffer& indirect_buffer, const vec4& bounds, unsigned count, const mat3& transform);
+	void _resize_buffer(unsigned width, unsigned height);
 
 	const Font& _font;
 
@@ -61,7 +61,7 @@ private:
 	gl::DrawElementsIndirectBuffer _indirect_buffer;
 
 private:
-	static FontRenderer& Get_(const Font& font);
+	static FontRenderer& _get(const Font& font);
 
 	static Cache<const Font*, FontRenderer> _renderers;
 

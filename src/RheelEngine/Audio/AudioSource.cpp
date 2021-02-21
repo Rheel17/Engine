@@ -39,7 +39,7 @@ void AudioSource::SetVelocity(const vec3& velocity) {
 	_source.SetVelocity(velocity);
 }
 
-void AudioSource::Stop_() {
+void AudioSource::_stop() {
 	_source.Stop();
 }
 

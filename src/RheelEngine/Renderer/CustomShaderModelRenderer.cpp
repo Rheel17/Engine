@@ -11,7 +11,7 @@ namespace rheel {
 CustomShaderModelRenderer::CustomShaderModelRenderer(const Model& model, const Shader& shader) :
 		_vertex_buffer_object(gl::Buffer::Target::ARRAY),
 		_object_data_buffer(gl::Buffer::Target::ARRAY),
-		_shader(GetCompiledShader_(shader)) {
+		_shader(_get_compiled_shader(shader)) {
 
 	_vertex_buffer_object.SetData(model.GetVertices());
 	_object_data_buffer.SetData(std::vector<ModelRenderer::ObjectData>());
@@ -54,39 +54,39 @@ gl::Program& CustomShaderModelRenderer::GetShaderProgram() {
 	return _shader;
 }
 
-gl::Program& CustomShaderModelRenderer::GetCompiledShader_(const Shader& shader) {
+gl::Program& CustomShaderModelRenderer::_get_compiled_shader(const Shader& shader) {
 	auto address = shader.GetAddress();
 
 	return _shader_cache->cache.Get(address, [shader](std::uintptr_t) {
 		gl::ContextScope cs;
 
-		std::string shaderSource = EngineResources::PreprocessShader("Shaders_modelshader_custom_header_frag_glsl");
-		shaderSource += "\n\n";
-		shaderSource += "#line 1\n";
-		shaderSource += shader.GetSource();
+		std::string shader_source = EngineResources::PreprocessShader("Shaders_modelshader_custom_header_frag_glsl");
+		shader_source += "\n\n";
+		shader_source += "#line 1\n";
+		shader_source += shader.GetSource();
 
-		gl::Program shaderProgram;
-		shaderProgram.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
-		shaderProgram.AttachShader(gl::Shader::ShaderType::FRAGMENT, shaderSource);
-		shaderProgram.Link();
+		gl::Program shader_program;
+		shader_program.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_modelshader_vert_glsl"));
+		shader_program.AttachShader(gl::Shader::ShaderType::FRAGMENT, shader_source);
+		shader_program.Link();
 
-		if (shaderProgram.HasUniform("_shadowMap0")) {
-			shaderProgram["_shadowMap0"] = 3;
+		if (shader_program.HasUniform("_shadowMap0")) {
+			shader_program["_shadowMap0"] = 3;
 		}
 
-		if (shaderProgram.HasUniform("_shadowMap1")) {
-			shaderProgram["_shadowMap1"] = 4;
+		if (shader_program.HasUniform("_shadowMap1")) {
+			shader_program["_shadowMap1"] = 4;
 		}
 
-		if (shaderProgram.HasUniform("_shadowMap2")) {
-			shaderProgram["_shadowMap2"] = 5;
+		if (shader_program.HasUniform("_shadowMap2")) {
+			shader_program["_shadowMap2"] = 5;
 		}
 
-		if (shaderProgram.HasUniform("_shadowMap3")) {
-			shaderProgram["_shadowMap3"] = 6;
+		if (shader_program.HasUniform("_shadowMap3")) {
+			shader_program["_shadowMap3"] = 6;
 		}
 
-		return shaderProgram;
+		return shader_program;
 	});
 }
 

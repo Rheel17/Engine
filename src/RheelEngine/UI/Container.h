@@ -130,10 +130,10 @@ public:
 	 * destination anchor is already constraint, the constraint is a self-loop,
 	 * or if the elements are not in this container.
 	 */
-	void AddConstraint(Element* movingElement,
-			Constraint::ConstraintLocation movingLocation,
-			Element* fixedElement,
-			Constraint::ConstraintLocation fixedLocation,
+	void AddConstraint(Element* moving_element,
+			Constraint::ConstraintLocation moving_location,
+			Element* fixed_element,
+			Constraint::ConstraintLocation fixed_location,
 			int distance = 0);
 
 	/**
@@ -147,10 +147,10 @@ public:
 	 * destination anchor is already constraint, the constraint is a self-loop,
 	 * or if the elements are not in this container.
 	 */
-	void AddWidthRelativeConstraint(Element* movingElement,
-			Constraint::ConstraintLocation movingLocation,
-			Element* fixedElement,
-			Constraint::ConstraintLocation fixedLocation,
+	void AddWidthRelativeConstraint(Element* moving_element,
+			Constraint::ConstraintLocation moving_location,
+			Element* fixed_element,
+			Constraint::ConstraintLocation fixed_location,
 			float distance = 0);
 
 	/**
@@ -164,10 +164,10 @@ public:
 	 * destination anchor is already constraint, the constraint is a self-loop,
 	 * or if the elements are not in this container.
 	 */
-	void AddHeightRelativeConstraint(Element* movingElement,
-			Constraint::ConstraintLocation movingLocation,
-			Element* fixedElement,
-			Constraint::ConstraintLocation fixedLocation,
+	void AddHeightRelativeConstraint(Element* moving_element,
+			Constraint::ConstraintLocation moving_location,
+			Element* fixed_element,
+			Constraint::ConstraintLocation fixed_location,
 			float distance = 0);
 
 	/**
@@ -206,11 +206,11 @@ private:
 
 	explicit Container(UI* ui);
 
-	void CheckElement_(Element* element, std::string sourceOrDestination) const;
-	void DeleteConstraintTree_(ConstraintTreeNode* node);
+	void _check_element(Element* element, std::string source_or_destination) const;
+	void _delete_constraint_tree(ConstraintTreeNode* node);
 
-	void LayoutNode_(TempBoundsMap& boundsMap, ConstraintTreeNode* node);
-	void LayoutNode_(TempBoundsMap& boundsMap, const Constraint& constraint);
+	void _layout_node(TempBoundsMap& bounds_map, ConstraintTreeNode* node);
+	void _layout_node(TempBoundsMap& bounds_map, const Constraint& constraint);
 
 	std::vector<Element*> _elements;
 	ConstraintTreeNode* _constraint_tree;

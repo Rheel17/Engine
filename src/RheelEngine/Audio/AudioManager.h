@@ -46,8 +46,8 @@ public:
 	al::Listener& GetListener();
 
 private:
-	const AudioClip& GetAudioClip_(const Sound& sound);
-	void StopAll_();
+	const AudioClip& _get_audio_clip(const Sound& sound);
+	void _stop_all();
 
 	ALCdevice* _device;
 	ALCcontext* _context;

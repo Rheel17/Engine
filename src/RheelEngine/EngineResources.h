@@ -10,13 +10,13 @@ namespace rheel {
 class RE_API EngineResources {
 
 public:
-	static std::string AsString(const std::string& resourceName);
+	static std::string AsString(const std::string& resource_name);
 
-	static std::string PreprocessShader(const std::string& resourceName);
+	static std::string PreprocessShader(const std::string& resource_name);
 
 private:
-	static std::string PreprocessShader_(const std::string& resourceName, std::unordered_set<std::string>& includedResources);
-	static bool IsShaderIncludeLine_(const std::string& line, std::string& resource);
+	static std::string _preprocess_shader(const std::string& resource_name, std::unordered_set<std::string>& included_resources);
+	static bool _is_shader_include_line(const std::string& line, std::string& resource);
 
 };
 

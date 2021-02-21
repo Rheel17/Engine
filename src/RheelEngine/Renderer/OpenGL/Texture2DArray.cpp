@@ -18,18 +18,18 @@ void Texture2DArray::SetWrapParameterT(WrapParameter parameter) {
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GLint(parameter));
 }
 
-void Texture2DArray::Initialize(InternalFormat internalFormat, unsigned int width, unsigned int height, unsigned int layers) {
+void Texture2DArray::Initialize(InternalFormat internal_format, unsigned int width, unsigned int height, unsigned int layers) {
 	Bind();
-	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GLenum(internalFormat), width, height, layers);
+	glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GLenum(internal_format), width, height, layers);
 }
 
-void Texture2DArray::SetData(InternalFormat internalFormat, unsigned width, unsigned height, unsigned layers, Format format, Type type, const void* data) {
+void Texture2DArray::SetData(InternalFormat internal_format, unsigned width, unsigned height, unsigned layers, Format format, Type type, const void* data) {
 	Bind();
-	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GLenum(internalFormat), width, height, layers, 0, GLenum(format), GLenum(type), data);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GLenum(internal_format), width, height, layers, 0, GLenum(format), GLenum(type), data);
 }
 
-void Texture2DArray::SetData(InternalFormat internalFormat, unsigned width, unsigned height, unsigned layers, Format format, const float* data) {
-	SetData(internalFormat, width, height, layers, format, Type::FLOAT, data);
+void Texture2DArray::SetData(InternalFormat internal_format, unsigned width, unsigned height, unsigned layers, Format format, const float* data) {
+	SetData(internal_format, width, height, layers, format, Type::FLOAT, data);
 }
 
 void Texture2DArray::SetLayerData(unsigned int width, unsigned int height, unsigned int layer, Format format, Type type, const void* data) {

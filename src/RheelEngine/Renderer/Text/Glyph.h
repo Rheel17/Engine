@@ -36,7 +36,7 @@ public:
 private:
 	template<typename Alloc>
 	Glyph(const FT_GlyphSlot& glyph, unsigned short em, std::vector<Glyph::Triangle, Alloc>& triangles, std::vector<Glyph::Triangle, Alloc>& beziers) {
-		LoadTriangles_(glyph->outline, float(em), triangles, beziers);
+		_load_triangles(glyph->outline, float(em), triangles, beziers);
 		_advance = glyph->advance.x / float(em);
 		_bounds = vec4(
 				glyph->metrics.horiBearingX,
@@ -47,32 +47,32 @@ private:
 	}
 
 	template<typename Alloc>
-	void LoadTriangles_(const FT_Outline& outline, float em, std::vector<Glyph::Triangle, Alloc>& triangles, std::vector<Glyph::Triangle, Alloc>& beziers) {
+	void _load_triangles(const FT_Outline& outline, float em, std::vector<Glyph::Triangle, Alloc>& triangles, std::vector<Glyph::Triangle, Alloc>& beziers) {
 		if (outline.n_contours == 0 || outline.n_points == 0) {
 			return;
 		}
 
 		// calculate a common point to the bottom-left of all control points
-		FT_Pos xMin = outline.points[0].x;
-		FT_Pos yMin = outline.points[0].y;
+		FT_Pos x_min = outline.points[0].x;
+		FT_Pos y_min = outline.points[0].y;
 
 		for (short i = 0; i < outline.n_points; i++) {
-			xMin = std::min(xMin, outline.points[i].x);
-			yMin = std::min(yMin, outline.points[i].y);
+			x_min = std::min(x_min, outline.points[i].x);
+			y_min = std::min(y_min, outline.points[i].y);
 		}
 
-		vec2 common = { (xMin - 512) / em, (yMin - 512) / em };
+		vec2 common = { (x_min - 512) / em, (y_min - 512) / em };
 
 		// add the contours
-		unsigned contourStart = 0;
-		unsigned contourEnd;
+		unsigned contour_start = 0;
+		unsigned contour_end;
 
 		for (short i = 0; i < outline.n_contours; i++) {
-			contourEnd = outline.contours[i] + 1;
+			contour_end = outline.contours[i] + 1;
 			Contour contour;
 
 			// add contour points
-			for (unsigned j = contourStart; j < contourEnd; j++) {
+			for (unsigned j = contour_start; j < contour_end; j++) {
 				contour_point point{};
 				point.x = outline.points[j].x;
 				point.y = outline.points[j].y;
@@ -117,37 +117,37 @@ private:
 			// add the first point to the back to close the contour
 			contour.push_back(contour.front());
 
-			AddContour_(contour, common, em, triangles, beziers);
-			contourStart = contourEnd;
+			_add_contour(contour, common, em, triangles, beziers);
+			contour_start = contour_end;
 		}
 	}
 
 	template<typename Alloc>
-	void AddContour_(const Contour& contour, vec2 common, float em, std::vector<Glyph::Triangle, Alloc>& triangles, std::vector<Glyph::Triangle, Alloc>& beziers) {
+	void _add_contour(const Contour& contour, vec2 common, float em, std::vector<Glyph::Triangle, Alloc>& triangles, std::vector<Glyph::Triangle, Alloc>& beziers) {
 		// add the contour
-		unsigned startIndex = 0;
+		unsigned start_index = 0;
 
 		for (unsigned i = 1; i < contour.size(); i++) {
 			if (contour[i].on) {
-				vec2 v1 = (vec2) contour[startIndex] / em;
-				vec2 v2 = (vec2) contour[i] / em;
+				vec2 v_1 = (vec2) contour[start_index] / em;
+				vec2 v_2 = (vec2) contour[i] / em;
 
-				triangles.push_back(CreateTriangle_(common, v1, v2));
+				triangles.push_back(_create_triangle(common, v_1, v_2));
 
 				// if the previous was more than 1 less than this, we had an 'off'
 				// point in between, so add the Bézier curve.
-				if (i - startIndex > 1) {
-					beziers.push_back(CreateBezier_(v1, (vec2) contour[i - 1] / em, v2));
+				if (i - start_index > 1) {
+					beziers.push_back(_create_bezier(v_1, (vec2) contour[i - 1] / em, v_2));
 				}
 
 				// start the new triangle/curve at the current 'on' point.
-				startIndex = i;
+				start_index = i;
 			}
 		}
 	}
 
-	static Triangle CreateTriangle_(const vec2& v1, const vec2& v2, const vec2& v3);
-	static Triangle CreateBezier_(const vec2& v1, const vec2& v2, const vec2& v3);
+	static Triangle _create_triangle(const vec2& v_1, const vec2& v_2, const vec2& v_3);
+	static Triangle _create_bezier(const vec2& v_1, const vec2& v_2, const vec2& v_3);
 
 	float _advance;
 	vec4 _bounds;

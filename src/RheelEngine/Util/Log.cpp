@@ -6,18 +6,18 @@
 namespace rheel {
 
 std::ostream& Log::Info(const SourceLoc& loc) {
-	return Log_(loc, Level::INFO);
+	return _log(loc, Level::INFO);
 }
 
 std::ostream& Log::Warning(const SourceLoc& loc) {
-	return Log_(loc, Level::WARNING);
+	return _log(loc, Level::WARNING);
 }
 
 std::ostream& Log::Error(const SourceLoc& loc) {
-	return Log_(loc, Level::ERROR);
+	return _log(loc, Level::ERROR);
 }
 
-std::ostream& Log::Log_(const SourceLoc& loc, Level level) {
+std::ostream& Log::_log(const SourceLoc& loc, Level level) {
 	auto now = std::chrono::system_clock::now();
 	auto millis = int(std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000);
 	std::time_t tm = std::chrono::system_clock::to_time_t(now);

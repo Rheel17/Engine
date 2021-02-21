@@ -41,7 +41,7 @@ private:
 	ModelRenderer::ObjectDataVector _objects;
 
 private:
-	gl::Program& GetCompiledShader_(const Shader& shader);
+	gl::Program& _get_compiled_shader(const Shader& shader);
 
 };
 

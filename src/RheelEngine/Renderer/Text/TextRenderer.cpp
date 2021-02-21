@@ -12,15 +12,15 @@ void TextRenderer::DrawText(std::string_view text, int x, int y, const Font& fon
 }
 
 void TextRenderer::DrawParagraph(std::string_view text, int x, int y, unsigned width, const Font& font, unsigned size, const Color& color, TextAlign align) {
-	FontRenderer& fontRenderer = FontRenderer::Get_(font);
-	fontRenderer.SetSize(size);
-	fontRenderer.SetColor(color);
+	FontRenderer& font_renderer = FontRenderer::_get(font);
+	font_renderer.SetSize(size);
+	font_renderer.SetColor(color);
 
-	std::u32string_view chars = GetUnicodeArray_(text);
-	fontRenderer.Render(chars, x, y, width, align);
+	std::u32string_view chars = _get_unicode_array(text);
+	font_renderer.Render(chars, x, y, width, align);
 }
 
-std::u32string_view TextRenderer::GetUnicodeArray_(std::string_view text) {
+std::u32string_view TextRenderer::_get_unicode_array(std::string_view text) {
 	_unicode_array.clear();
 	char32_t c;
 

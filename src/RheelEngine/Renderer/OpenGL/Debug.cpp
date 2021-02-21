@@ -5,7 +5,7 @@
 
 namespace rheel::gl {
 
-void callbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void*) {
+void callback_function(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void*) {
 	while (length > 0 && message[length - 1] == '\n') {
 		length--;
 	}
@@ -58,13 +58,13 @@ void Debug::SetDebugCallback(Callback callback) {
 	_callback = std::move(callback);
 
 	if (!_initialized_opengl_callback) {
-		GLint debugFlags;
-		glGetIntegerv(GL_CONTEXT_FLAGS, &debugFlags);
+		GLint debug_flags;
+		glGetIntegerv(GL_CONTEXT_FLAGS, &debug_flags);
 
-		if (debugFlags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+		if (debug_flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
 			glEnable(GL_DEBUG_OUTPUT);
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-			glDebugMessageCallback(callbackFunction, nullptr);
+			glDebugMessageCallback(callback_function, nullptr);
 			glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 		}
 

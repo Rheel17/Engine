@@ -57,8 +57,8 @@ public:
 		ObjectDataPtr& operator=(ObjectDataPtr&& ptr) noexcept;
 
 		void SetMatrix(mat4 matrix);
-		void SetMaterialVector(vec4 materialVector);
-		void SetMaterialColor(vec4 materialColor);
+		void SetMaterialVector(vec4 material_vector);
+		void SetMaterialColor(vec4 material_color);
 
 		explicit operator bool() const;
 
@@ -71,7 +71,7 @@ private:
 	using ObjectDataVector = std::vector<ObjectData>;
 
 	struct material_texture_compare {
-		bool operator()(const Material& mat1, const Material& mat2) const;
+		bool operator()(const Material& mat_1, const Material& mat_2) const;
 	};
 
 public:
@@ -86,8 +86,8 @@ public:
 	void RenderObjects() const;
 
 private:
-	static ObjectDataPtr Add_(ObjectDataVector& objects);
-	static void Remove_(ObjectDataVector& objects, ObjectDataPtr&& data);
+	static ObjectDataPtr _add(ObjectDataVector& objects);
+	static void _remove(ObjectDataVector& objects, ObjectDataPtr&& data);
 
 	gl::VertexArray _vao;
 	gl::Buffer _vertex_buffer_object;

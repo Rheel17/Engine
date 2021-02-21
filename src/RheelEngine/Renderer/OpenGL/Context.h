@@ -60,7 +60,7 @@ public:
 	void BindFramebuffer(Framebuffer::Target target, const Framebuffer& framebuffer);
 	void BindRenderbuffer(const Renderbuffer& renderbuffer);
 	void BindTexture(unsigned unit, const Texture& texture);
-	void BindVertexArray(const VertexArray& vertexArray);
+	void BindVertexArray(const VertexArray& vertex_array);
 	void UseProgram(const Program& program);
 
 	void ClearTexture(unsigned unit, Texture::Target target);
@@ -68,7 +68,7 @@ public:
 
 	void SetClearColor(float red, float green, float blue, float alpha);
 	void SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor);
-	void SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha);
+	void SetBlendFunction(BlendFactor src_rgb, BlendFactor dst_rgb, BlendFactor src_alpha, BlendFactor dst_alpha);
 	void SetLogicOp(LogicOp opcode);
 	void SetDepthFunction(CompareFunction func);
 	void SetCullFace(CullFace mode);
@@ -80,12 +80,12 @@ public:
 	void SetScissorTest(int x, int y, unsigned width, unsigned height);
 
 private:
-	explicit Context(uvec2 defaultViewport);
+	explicit Context(uvec2 default_viewport);
 
 	/* Used by uniforms to set their program */
-	void UseProgram_(GLuint handle);
+	void _use_program(GLuint handle);
 
-	void SetActiveTextureUnit_(unsigned unit);
+	void _set_active_texture_unit(unsigned unit);
 
 	std::stack<std::unique_ptr<ContextImpl>> _context_stack;
 	uvec2 _default_viewport;

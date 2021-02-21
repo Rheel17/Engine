@@ -5,11 +5,11 @@
 
 namespace rheel {
 
-SpotLight::SpotLight(Color color, vec3 position, vec3 direction, float spotAttenuation, float attenuation) :
-		Light(std::move(color)),
-		_position(std::move(position)),
-		_direction(glm::normalize(std::move(direction))),
-		_spot_attenuation(spotAttenuation),
+SpotLight::SpotLight(const Color& color, const vec3& position, const vec3& direction, float spot_attenuation, float attenuation) :
+		Light(color),
+		_position(position),
+		_direction(glm::normalize(direction)),
+		_spot_attenuation(spot_attenuation),
 		_attenuation(attenuation) {}
 
 void SpotLight::SetPosition(const vec3& position) {
@@ -28,8 +28,8 @@ const vec3& SpotLight::Direction() const {
 	return _direction;
 }
 
-void SpotLight::SetSpotAttenuation(float spotAttenuation) {
-	_spot_attenuation = spotAttenuation;
+void SpotLight::SetSpotAttenuation(float spot_attenuation) {
+	_spot_attenuation = spot_attenuation;
 }
 
 float SpotLight::SpotAttenuation() const {

@@ -11,10 +11,10 @@
 
 namespace rheel {
 
-static bool validatePNG(std::istream& input) {
+static bool validate_png(std::istream& input) {
 	// read the signature
 	std::array<png_byte, 8> signature{};
-	input.read(reinterpret_cast<char*>(signature.data()), 8);
+	input.read(reinterpret_cast<char*>(signature.data()), 8); // NOLINT (safe)
 
 	// check if reading went well
 	if (!input.good()) {
@@ -32,23 +32,23 @@ Image PngLoader::Load(const std::string& path) const {
 		throw std::runtime_error("Error while reading image file: " + path);
 	}
 
-	return LoadPng_(f);
+	return _load_png(f);
 }
 
-Image PngLoader::LoadPng_(std::istream& input) {
-	if (!validatePNG(input)) {
+Image PngLoader::_load_png(std::istream& input) {
+	if (!validate_png(input)) {
 		throw std::runtime_error("An error occurred while reading PNG file: PNG signature not valid.");
 	}
 
 	// create the read struct
-	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-	if (!pngPtr) {
+	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+	if (!png_ptr) {
 		throw std::runtime_error("Failed to create png_read_struct.");
 	}
 
 	// create the info struct
-	png_infop infoPtr = png_create_info_struct(pngPtr);
-	if (!infoPtr) {
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	if (!info_ptr) {
 		throw std::runtime_error("Failed to create png_info_struct.");
 	}
 
@@ -57,71 +57,71 @@ Image PngLoader::LoadPng_(std::istream& input) {
 	unsigned char* data = nullptr;
 
 	// jump here if something goes wrong in the parsing.
-	if (setjmp(png_jmpbuf(pngPtr))) {
-		png_destroy_read_struct(&pngPtr, &infoPtr, nullptr);
+	if (setjmp(png_jmpbuf(png_ptr))) {
+		png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 		delete[] rows;
 		delete[] data;
 		throw std::runtime_error("An error occurred while reading the PNG file.");
 	}
 
 	// set the custom read function
-	png_set_read_fn(pngPtr, static_cast<png_voidp>(&input),
-			[](png_structp pngPtr, png_bytep data, png_size_t length) {
+	png_set_read_fn(png_ptr, static_cast<png_voidp>(&input),
+			[](png_structp png_ptr, png_bytep data, png_size_t length) {
 
-				auto* stream = static_cast<std::istream*>(png_get_io_ptr(pngPtr));
-				stream->read(reinterpret_cast<char*>(data), length);
+				auto* stream = static_cast<std::istream*>(png_get_io_ptr(png_ptr));
+				stream->read(reinterpret_cast<char*>(data), length); // NOLINT (safe)
 			});
 
 	// we've already read the header, so skip the first 8 bytes
-	png_set_sig_bytes(pngPtr, 8);
+	png_set_sig_bytes(png_ptr, 8);
 
 	// read the info
-	png_read_info(pngPtr, infoPtr);
+	png_read_info(png_ptr, info_ptr);
 
 	// parse the png info
-	auto width = png_get_image_width(pngPtr, infoPtr);
-	auto height = png_get_image_height(pngPtr, infoPtr);
+	auto width = png_get_image_width(png_ptr, info_ptr);
+	auto height = png_get_image_height(png_ptr, info_ptr);
 
-	auto bitDepth = png_get_bit_depth(pngPtr, infoPtr);
-	auto colorType = png_get_color_type(pngPtr, infoPtr);
+	auto bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	auto color_type = png_get_color_type(png_ptr, info_ptr);
 
 	// set the conversion to rgba with 8 bits per channel
-	if (bitDepth == 16) {
-		png_set_strip_16(pngPtr);
+	if (bit_depth == 16) {
+		png_set_strip_16(png_ptr);
 	}
 
-	switch (colorType) {
+	switch (color_type) {
 		case PNG_COLOR_TYPE_GRAY:
-			if (bitDepth < 8) {
-				png_set_expand_gray_1_2_4_to_8(pngPtr);
+			if (bit_depth < 8) {
+				png_set_expand_gray_1_2_4_to_8(png_ptr);
 			}
 			// Fallthrough
 		case PNG_COLOR_TYPE_GRAY_ALPHA:
-			png_set_gray_to_rgb(pngPtr);
+			png_set_gray_to_rgb(png_ptr);
 			break;
 		case PNG_COLOR_TYPE_PALETTE:
-			png_set_palette_to_rgb(pngPtr);
+			png_set_palette_to_rgb(png_ptr);
 			break;
 		default:
 			break;
 	}
 
-	if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
-		png_set_tRNS_to_alpha(pngPtr);
+	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
+		png_set_tRNS_to_alpha(png_ptr);
 	}
 
 	// no alpha channel supplied: fill with 0xFF
-	if (colorType == PNG_COLOR_TYPE_RGB || colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_PALETTE) {
-		png_set_filler(pngPtr, 0xFF, PNG_FILLER_AFTER);
+	if (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_PALETTE) {
+		png_set_filler(png_ptr, 0xFF, PNG_FILLER_AFTER);
 	}
 
-	png_read_update_info(pngPtr, infoPtr);
+	png_read_update_info(png_ptr, info_ptr);
 
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-bounds-pointer-arithmetic"
 
-	size_t stride = png_get_rowbytes(pngPtr, infoPtr);
+	size_t stride = png_get_rowbytes(png_ptr, info_ptr);
 	rows = new png_bytep[height];
 	data = new unsigned char[height * stride];
 
@@ -130,7 +130,7 @@ Image PngLoader::LoadPng_(std::istream& input) {
 	}
 
 	// read the image
-	png_read_image(pngPtr, rows);
+	png_read_image(png_ptr, rows);
 
 	// create the actual image class storage
 	std::vector<Color> pixels;
@@ -149,7 +149,7 @@ Image PngLoader::LoadPng_(std::istream& input) {
 #pragma clang diagnostic pop
 
 	// delete the png handle and the temporary buffers
-	png_destroy_read_struct(&pngPtr, &infoPtr, nullptr);
+	png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 	delete[] rows;
 	delete[] data;
 

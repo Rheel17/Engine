@@ -49,7 +49,7 @@ public:
 	 * Returns the glyph with the given index. Use GetGlyphIndex(char32_t) to
 	 * get the glyph index for a character.
 	 */
-	const Glyph& GetGlyph(size_t glyphIndex) const;
+	const Glyph& GetGlyph(size_t glyph_index) const;
 
 	/**
 	 * Returns the offset and size in the index buffer for the input glyph. Note
@@ -60,7 +60,7 @@ public:
 	const std::pair<unsigned, unsigned>& GetGlyphOffset(size_t glyph) const;
 
 private:
-	std::pair<unsigned int, unsigned int> LoadGlyph_(const std::vector<Glyph::Triangle>& triangles, const std::vector<Glyph::Triangle>& beziers);
+	std::pair<unsigned int, unsigned int> _load_glyph(const std::vector<Glyph::Triangle>& triangles, const std::vector<Glyph::Triangle>& beziers);
 
 	float _ascend;
 	float _descend;
@@ -73,7 +73,7 @@ private:
 	std::vector<unsigned> _glyph_indices;
 
 public:
-	static constexpr auto DEFAULT_FONT = "__default_font__";
+	static constexpr auto default_font = "__default_font__";
 
 	static void Initialize();
 	static void RegisterFont(const std::string& filename, const std::string& name);
@@ -81,7 +81,7 @@ public:
 	static const Font& GetDefaultFont();
 
 private:
-	static void InitializeFreeType_();
+	static void _initialize_free_type();
 
 	static std::unique_ptr<FT_Library, delete_free_type_library> _ft;
 	static std::unordered_map<std::string, Font> _registered_fonts;

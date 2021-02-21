@@ -14,8 +14,8 @@ Texture::Target rheel::gl::Texture::GetTarget() const {
 	return _target;
 }
 
-void Texture::Bind(unsigned int textureUnit) const {
-	Context::Current().BindTexture(textureUnit, *this);
+void Texture::Bind(unsigned int texture_unit) const {
+	Context::Current().BindTexture(texture_unit, *this);
 }
 
 std::ostream& operator<<(std::ostream& out, Texture::Target target) {

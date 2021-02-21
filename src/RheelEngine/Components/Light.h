@@ -20,13 +20,13 @@ public:
 	void SetColor(const Color& color);
 	const Color& GetColor() const;
 
-	void SetShadowDistance(float shadowDistance);
+	void SetShadowDistance(float shadow_distance);
 	float ShadowDistance() const;
 	bool CastsShadows() const;
 
 protected:
 	explicit Light(const Color& color);
-	Light(const Color& color, float shadowDistance);
+	Light(const Color& color, float shadow_distance);
 
 private:
 	Color _color;

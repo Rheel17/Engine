@@ -97,13 +97,13 @@ public:
 	/**
 	 * Initializes all lights in the shader program.
 	 */
-	void InitializeShaderLights(gl::Program& shaderProgram) const;
+	void InitializeShaderLights(gl::Program& shader_program) const;
 
 	gl::Program& GetForwardModelShader();
 	gl::Program& GetOpaqueShader();
 
 private:
-	int ShadowLevel_();
+	int _get_shadow_quality();
 
 	Scene* _scene;
 

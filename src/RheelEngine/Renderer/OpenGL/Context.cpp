@@ -28,8 +28,8 @@ Context::ContextImpl::~ContextImpl() {
 	functions.ResetChanges();
 }
 
-Context::Context(uvec2 defaultViewport) :
-		_default_viewport(defaultViewport) {
+Context::Context(uvec2 default_viewport) :
+		_default_viewport(default_viewport) {
 
 	_context_stack.push(std::make_unique<ContextImpl>(*this));
 }
@@ -90,8 +90,8 @@ void Context::BindTexture(unsigned unit, const Texture& texture) {
 	_context_stack.top()->bindings.BindTexture(unit, texture.GetTarget(), texture.GetName());
 }
 
-void Context::BindVertexArray(const VertexArray& vertexArray) {
-	_context_stack.top()->bindings.BindVertexArray(vertexArray.GetName());
+void Context::BindVertexArray(const VertexArray& vertex_array) {
+	_context_stack.top()->bindings.BindVertexArray(vertex_array.GetName());
 }
 
 void Context::UseProgram(const Program& program) {
@@ -114,8 +114,8 @@ void Context::SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor) {
 	_context_stack.top()->functions.SetBlendFunction(sfactor, dfactor);
 }
 
-void Context::SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha) {
-	_context_stack.top()->functions.SetBlendFunction(srcRGB, dstRGB, srcAlpha, dstAlpha);
+void Context::SetBlendFunction(BlendFactor src_rgb, BlendFactor dst_rgb, BlendFactor src_alpha, BlendFactor dst_alpha) {
+	_context_stack.top()->functions.SetBlendFunction(src_rgb, dst_rgb, src_alpha, dst_alpha);
 }
 
 void Context::SetLogicOp(LogicOp opcode) {
@@ -154,11 +154,11 @@ void Context::SetScissorTest(int x, int y, unsigned int width, unsigned int heig
 	_context_stack.top()->functions.SetScissorTest(x, y, width, height);
 }
 
-void Context::UseProgram_(GLuint handle) {
+void Context::_use_program(GLuint handle) {
 	_context_stack.top()->bindings.UseProgram(handle);
 }
 
-void Context::SetActiveTextureUnit_(unsigned unit) {
+void Context::_set_active_texture_unit(unsigned unit) {
 	if (_current_active_texture == unit) {
 		return;
 	}
@@ -168,8 +168,8 @@ void Context::SetActiveTextureUnit_(unsigned unit) {
 }
 
 Context& Context::Current() {
-	GLFWwindow* glfwWindow = glfwGetCurrentContext();
-	Window* window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+	GLFWwindow* glfw_window = glfwGetCurrentContext();
+	auto* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
 	return window->GetContext();
 }
 

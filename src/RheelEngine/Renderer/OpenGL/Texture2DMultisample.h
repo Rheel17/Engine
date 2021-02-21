@@ -18,7 +18,7 @@ public:
 	/**
 	 * Initialize the data storage for this texture.
 	 */
-	void Initialize(InternalFormat internalFormat, unsigned width, unsigned height, unsigned samples, bool fixedSampleLocations = true);
+	void Initialize(InternalFormat internal_format, unsigned width, unsigned height, unsigned samples, bool fixed_sample_locations = true);
 
 };
 

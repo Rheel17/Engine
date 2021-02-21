@@ -58,14 +58,14 @@ private:
 	std::mutex _mutex;
 
 private:
-	static window_hints CreateWindowHints_(const DisplayConfiguration& configuration);
+	static window_hints _create_window_hints(const DisplayConfiguration& configuration);
 
-	friend void glfwKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods);
-	friend void glfwCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint);
-	friend void glfwMouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos);
-	friend void glfwMouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods);
-	friend void glfwScrollCallback(GLFWwindow* glfwWindow, double x, double y);
-	friend void glfwWindowFocusCallback(GLFWwindow* glfwWindow, int focus);
+	friend void glfw_key_callback(GLFWwindow* glfw_window, int key, int scancode, int action, int mods);
+	friend void glfw_char_callback(GLFWwindow* glfw_window, unsigned int codepoint);
+	friend void glfw_mouse_move_callback(GLFWwindow* glfw_window, double xpos, double ypos);
+	friend void glfw_mouse_button_callback(GLFWwindow* glfw_window, int button, int action, int mods);
+	friend void glfw_scroll_callback(GLFWwindow* glfw_window, double x, double y);
+	friend void glfw_window_focus_callback(GLFWwindow* glfw_window, int focus);
 
 };
 

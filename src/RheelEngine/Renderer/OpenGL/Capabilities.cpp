@@ -9,14 +9,14 @@ std::unordered_map<GLenum, int> Capabilities::_integer_capabilities;
 std::unordered_map<GLenum, float> Capabilities::_float_capabilities;
 
 int Capabilities::GetMaxVertexAttribs() {
-	return GetInteger_(GL_MAX_VERTEX_ATTRIBS);
+	return _get_integer(GL_MAX_VERTEX_ATTRIBS);
 }
 
 float Capabilities::GetMaxTextureMaxAnisotropy() {
-	return GetFloat_(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+	return _get_float(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
 }
 
-int Capabilities::GetInteger_(GLenum cap) {
+int Capabilities::_get_integer(GLenum cap) {
 	auto iter = _integer_capabilities.find(cap);
 
 	if (iter == _integer_capabilities.end()) {
@@ -29,7 +29,7 @@ int Capabilities::GetInteger_(GLenum cap) {
 	return iter->second;
 }
 
-float Capabilities::GetFloat_(GLenum cap) {
+float Capabilities::_get_float(GLenum cap) {
 	auto iter = _float_capabilities.find(cap);
 
 	if (iter == _float_capabilities.end()) {

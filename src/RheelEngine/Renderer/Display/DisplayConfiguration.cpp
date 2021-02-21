@@ -8,7 +8,7 @@
 
 namespace rheel {
 
-const ivec2 DisplayConfiguration::RESOLUTION_NATIVE{ -1, -1 };
+const ivec2 DisplayConfiguration::resolution_native{ -1, -1 };
 DisplayConfiguration DisplayConfiguration::_display_configuration;
 
 unsigned DisplayConfiguration::SampleCount() const {
@@ -24,26 +24,26 @@ unsigned DisplayConfiguration::SampleCount() const {
 	}
 }
 
-void DisplayConfiguration::CalculateActualResolution_() {
+void DisplayConfiguration::_calculate_actual_resolution() {
 	// get the monitor on which to show the window
-	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+	GLFWmonitor* primary_monitor = glfwGetPrimaryMonitor();
 
 	// get the correct resolution.
-	int resolutionWidth = resolution.x;
-	int resolutionHeight = resolution.y;
+	int resolution_width = resolution.x;
+	int resolution_height = resolution.y;
 
-	if (resolutionWidth <= 0 || resolutionHeight <= 0) {
-		const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
+	if (resolution_width <= 0 || resolution_height <= 0) {
+		const GLFWvidmode* vidmode = glfwGetVideoMode(primary_monitor);
 
-		resolutionWidth = vidmode->width;
-		resolutionHeight = vidmode->height;
+		resolution_width = vidmode->width;
+		resolution_height = vidmode->height;
 	}
 
-	resolution.x = resolutionWidth;
-	resolution.y = resolutionHeight;
+	resolution.x = resolution_width;
+	resolution.y = resolution_height;
 }
 
-void DisplayConfiguration::ClampAnisotropicLevel_() {
+void DisplayConfiguration::_clamp_anisotropic_level() {
 	if (anisotropic_level < 1.0f) {
 		Log::Warning() << "Anisotropic level too low: " << anisotropic_level << " (min: 1.0). Automatically set to min." << std::endl;
 		anisotropic_level = 1.0f;
@@ -51,7 +51,7 @@ void DisplayConfiguration::ClampAnisotropicLevel_() {
 		float max = gl::Capabilities::GetMaxTextureMaxAnisotropy();
 
 		if (anisotropic_level > max) {
-			if (anisotropic_level != ANISOTROPIC_LEVEL_MAX) {
+			if (anisotropic_level != anisotropic_level_max) {
 				Log::Warning() << "Anisotropic level too high: " << anisotropic_level << " (max: " << max << "). Automatically set to max." << std::endl;
 			}
 
@@ -64,7 +64,7 @@ const DisplayConfiguration& DisplayConfiguration::Get() {
 	return _display_configuration;
 }
 
-void DisplayConfiguration::InitializeGLFW() {
+void DisplayConfiguration::InitializeGlfw() {
 	glfwSetErrorCallback([](int code, const char* description) {
 		Log::Error() << "GLFW " << code << ": " << description << std::endl;
 	});
@@ -75,12 +75,12 @@ void DisplayConfiguration::InitializeGLFW() {
 	}
 }
 
-void DisplayConfiguration::TerminateGLFW() {
+void DisplayConfiguration::TerminateGlfw() {
 	glfwTerminate();
 }
 
-void DisplayConfiguration::Set_(DisplayConfiguration&& displayConfiguration) {
-	_display_configuration = std::move(displayConfiguration);
+void DisplayConfiguration::_set(const DisplayConfiguration& display_configuration) {
+	_display_configuration = display_configuration;
 }
 
 }

@@ -55,7 +55,7 @@ public:
 	static void ClearDebugCallback();
 
 private:
-	friend void callbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *userParam);
+	friend void callback_function(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *user_param);
 
 	static Callback _callback;
 	static bool _initialized_opengl_callback;

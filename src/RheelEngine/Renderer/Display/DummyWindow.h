@@ -12,12 +12,12 @@ namespace rheel {
 class RE_API DummyWindow : public Window {
 
 public:
-	explicit DummyWindow(const Window& mainWindow);
+	explicit DummyWindow(const Window& main_window);
 
 	void CreateOglContext();
 
 private:
-	static window_hints CreateWindowHints_(const Window& mainWindow);
+	static window_hints _create_window_hints(const Window& main_window);
 
 };
 

@@ -29,7 +29,7 @@ class RE_API Game {
 	RE_NO_MOVE(Game);
 
 public:
-	Game(DisplayConfiguration displayConfiguration, const std::string& title = "Rheel Game Engine");
+	explicit Game(DisplayConfiguration display_configuration, const std::string& window_title = "Rheel Game Engine");
 	virtual ~Game();
 
 	/**
@@ -108,7 +108,7 @@ public:
 	std::future<void> PreloadTexture(const Image& image, ImageTexture::WrapType type = ImageTexture::WrapType::WRAP, bool linear = true);
 
 private:
-	void Loop_();
+	void _loop();
 
 	MainWindow* _window = nullptr;
 	UI* _ui;

@@ -17,7 +17,7 @@ public:
 	Image Load(const std::string& path) const override;
 
 private:
-	static Image LoadPng_(std::istream& input);
+	static Image _load_png(std::istream& input);
 
 };
 

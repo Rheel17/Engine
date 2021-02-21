@@ -42,29 +42,29 @@ static vec3 euler(const quat& q) {
 }
 
 void EulerController::Update() {
-	Rotate_(dt);
-	Move_(dt);
+	_rotate(dt);
+	_move(dt);
 }
 
 void EulerController::SetAngularVelocity(float velocity) {
 	SetAngularVelocity(velocity, velocity);
 }
 
-void EulerController::SetAngularVelocity(float yawVelocity, float pitchVelocity) {
-	_velocity_yaw = yawVelocity;
-	_velocity_pitch = pitchVelocity;
+void EulerController::SetAngularVelocity(float yaw_velocity, float pitch_velocity) {
+	_velocity_yaw = yaw_velocity;
+	_velocity_pitch = pitch_velocity;
 }
 
 void EulerController::SetVelocity(float velocity) {
 	SetVelocity(velocity, velocity);
 }
 
-void EulerController::SetVelocity(float forwardsBackwardsVelocity, float sideVelocity) {
-	_velocity_z = forwardsBackwardsVelocity;
-	_velocity_x = sideVelocity;
+void EulerController::SetVelocity(float forwards_backwards_velocity, float side_velocity) {
+	_velocity_z = forwards_backwards_velocity;
+	_velocity_x = side_velocity;
 }
 
-void EulerController::Rotate_(float) {
+void EulerController::_rotate(float) {
 	vec2 mouse = GetMouseDelta();
 
 	float yaw = glm::radians(mouse.x * _velocity_yaw / 100.0f);
@@ -95,32 +95,32 @@ void EulerController::Rotate_(float) {
 	GetEntity().transform.SetRotation(angles);
 }
 
-void EulerController::Move_(float dt) {
+void EulerController::_move(float dt) {
 	// get the movement
 	vec4 movement = vec4();
-	bool hasMovement = false;
+	bool has_movement = false;
 
 	if (IsKeyPressed(Input::Key::KEY_W)) {
 		movement.z -= _velocity_z;
-		hasMovement = true;
+		has_movement = true;
 	}
 
 	if (IsKeyPressed(Input::Key::KEY_S)) {
 		movement.z += _velocity_z;
-		hasMovement = true;
+		has_movement = true;
 	}
 
 	if (IsKeyPressed(Input::Key::KEY_A)) {
 		movement.x -= _velocity_x;
-		hasMovement = true;
+		has_movement = true;
 	}
 
 	if (IsKeyPressed(Input::Key::KEY_D)) {
 		movement.x += _velocity_x;
-		hasMovement = true;
+		has_movement = true;
 	}
 
-	if (hasMovement) {
+	if (has_movement) {
 		// rotate the movement vector so that it is pointed in the direction
 		// the camera is facing
 		movement = GetEntity().transform.GetRotation() * movement;

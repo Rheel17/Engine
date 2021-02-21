@@ -5,7 +5,7 @@
 
 namespace rheel {
 
-ThreadPool::ThreadPool(const Window& window) {
+ThreadPool::ThreadPool(const Window& main_window) {
 	// create the threads
 	unsigned numThreads =
 #ifdef RE_DEBUG
@@ -17,7 +17,7 @@ ThreadPool::ThreadPool(const Window& window) {
 	_threads.reserve(numThreads);
 
 	for (unsigned i = 0; i < numThreads; i++) {
-		_threads.emplace_back(ThreadMain_, this, DummyWindow(window));
+		_threads.emplace_back(_thread_main, this, DummyWindow(main_window));
 	}
 
 	Log::Info() << "Thread pool: " << numThreads << " threads" << std::endl;
@@ -40,7 +40,7 @@ ThreadPool::~ThreadPool() {
 	}
 }
 
-std::unique_ptr<TaskBase> ThreadPool::GetNextTask_() {
+std::unique_ptr<TaskBase> ThreadPool::_get_next_task() {
 	// wait for a task to become available
 	std::unique_lock lock(_queue_mutex);
 	_queue_wait.wait(lock, [this]() { return _stop_requested || !_execution_queue.empty(); });
@@ -56,13 +56,13 @@ std::unique_ptr<TaskBase> ThreadPool::GetNextTask_() {
 	return task;
 }
 
-void ThreadPool::ThreadMain_(ThreadPool* pool, DummyWindow contextWindow) {
+void ThreadPool::_thread_main(ThreadPool* pool, DummyWindow context_window) {
 	// ensure we have an OpenGL context
-	contextWindow.CreateOglContext();
+	context_window.CreateOglContext();
 
 	while (true) {
 		// fetch a task
-		auto task = pool->GetNextTask_();
+		auto task = pool->_get_next_task();
 
 		// exit condition: GetNextTask_() didn't return a task
 		if (!task) {

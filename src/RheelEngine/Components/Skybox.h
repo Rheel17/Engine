@@ -30,8 +30,8 @@ private:
 	float _scale;
 
 private:
-	static std::array<Image, 6> LoadImages_(const Image& image);
-	static Image LoadImage_(const Image& image, int part);
+	static std::array<Image, 6> _load_images(const Image& image);
+	static Image _load_image(const Image& image, int part);
 
 };
 

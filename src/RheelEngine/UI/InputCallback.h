@@ -137,7 +137,7 @@ public:
 	 * 	x: the x component of the scroll
 	 * 	y: the y component of the scroll
 	 */
-	virtual void OnMouseScroll(const vec2& scrollComponents) {}
+	virtual void OnMouseScroll(const vec2& scroll_components) {}
 
 };
 

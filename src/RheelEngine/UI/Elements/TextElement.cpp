@@ -32,8 +32,8 @@ TextElement::TextElement(std::string&& text, unsigned size, const Color& color, 
 void TextElement::DoDraw(float time, float dt) const {
 	const Bounds& bounds = GetBounds();
 
-	unsigned textBounds = size * (_font_ascend + _font_descend);
-	unsigned y = bounds.y + (bounds.height - textBounds) / 2 + (size * _font_ascend);
+	unsigned text_bounds = size * (_font_ascend + _font_descend);
+	unsigned y = bounds.y + (bounds.height - text_bounds) / 2 + (size * _font_ascend);
 
 	GetTextRenderer().DrawText(text, bounds.x, y, _font, size, color);
 }

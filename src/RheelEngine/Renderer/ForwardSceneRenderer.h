@@ -25,7 +25,7 @@ protected:
 	void Resize(unsigned width, unsigned height) override;
 
 private:
-	ForwardSceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned sampleCount);
+	ForwardSceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned sample_count);
 
 };
 

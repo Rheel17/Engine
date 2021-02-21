@@ -21,7 +21,7 @@ Skybox::Skybox(std::array<Image, 6> images, float scale) :
 }
 
 Skybox::Skybox(const Image& image, float scale) :
-		Skybox(LoadImages_(image), scale) {}
+		Skybox(_load_images(image), scale) {}
 
 const std::array<Image, 6>& Skybox::GetImages() const {
 	return _images;
@@ -31,18 +31,18 @@ float Skybox::GetScale() const {
 	return _scale;
 }
 
-std::array<Image, 6> Skybox::LoadImages_(const Image& image) {
+std::array<Image, 6> Skybox::_load_images(const Image& image) {
 	return std::array<Image, 6>{
-			LoadImage_(image, 0),
-			LoadImage_(image, 1),
-			LoadImage_(image, 2),
-			LoadImage_(image, 3),
-			LoadImage_(image, 4),
-			LoadImage_(image, 5)
+			_load_image(image, 0),
+			_load_image(image, 1),
+			_load_image(image, 2),
+			_load_image(image, 3),
+			_load_image(image, 4),
+			_load_image(image, 5)
 	};
 }
 
-Image Skybox::LoadImage_(const Image& image, int part) {
+Image Skybox::_load_image(const Image& image, int part) {
 	// get the coordinates of the texture in the skybox
 	unsigned size = image.GetWidth() / 4;
 	unsigned x;

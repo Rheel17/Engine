@@ -12,18 +12,18 @@ void scene_deleter::operator()(Scene* scene) {
 	delete scene;
 }
 
-Game::Game(DisplayConfiguration displayConfiguration, const std::string& windowTitle) {
+Game::Game(DisplayConfiguration display_configuration, const std::string& window_title) {
 	// initialize the engine
-	DisplayConfiguration::InitializeGLFW();
+	DisplayConfiguration::InitializeGlfw();
 	Font::Initialize();
 
 	// create the window
-	displayConfiguration.CalculateActualResolution_();
-	_window = new MainWindow(displayConfiguration, windowTitle, *this);
+	display_configuration._calculate_actual_resolution();
+	_window = new MainWindow(display_configuration, window_title, *this);
 
 	// update the display configuration
-	displayConfiguration.ClampAnisotropicLevel_();
-	DisplayConfiguration::Set_(std::move(displayConfiguration));
+	display_configuration._clamp_anisotropic_level();
+	DisplayConfiguration::_set(display_configuration);
 
 	// initialize the window contents
 	_ui = new UI(*this);
@@ -41,7 +41,7 @@ Game::Game(DisplayConfiguration displayConfiguration, const std::string& windowT
 
 Game::~Game() {
 	// stop all sounds
-	_audio_manager->StopAll_();
+	_audio_manager->_stop_all();
 
 	// hide the window before closing it to make the shutdown process invisible
 	// to the user
@@ -60,7 +60,7 @@ Game::~Game() {
 	delete _window;
 
 	// terminate the engine
-	DisplayConfiguration::TerminateGLFW();
+	DisplayConfiguration::TerminateGlfw();
 }
 
 void Game::Stop() {
@@ -115,7 +115,7 @@ std::future<void> Game::PreloadTexture(const Image& image, ImageTexture::WrapTyp
 	});
 }
 
-void Game::Loop_() {
+void Game::_loop() {
 	_window->Loop();
 }
 

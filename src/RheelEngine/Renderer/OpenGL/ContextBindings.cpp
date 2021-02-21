@@ -16,7 +16,7 @@ ContextBindings::ContextBindings(const ContextBindings* parent) :
 
 void ContextBindings::BindBuffer(Buffer::Target target, GLuint name) {
 	// check that a state change is necessary
-	if (GetBuffer_(target) == name) {
+	if (_get_buffer(target) == name) {
 		return;
 	}
 
@@ -24,7 +24,7 @@ void ContextBindings::BindBuffer(Buffer::Target target, GLuint name) {
 	glBindBuffer(GLenum(target), name);
 
 	// store the state change
-	if (_parent == nullptr ? (name == 0) : (name == _parent->GetBuffer_(target))) {
+	if (_parent == nullptr ? (name == 0) : (name == _parent->_get_buffer(target))) {
 		_buffer_changes.erase(target);
 	} else {
 		_buffer_changes[target] = name;
@@ -54,7 +54,7 @@ void ContextBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, u
 	// recursive base case
 
 	// check if a state change is necessary
-	if (GetFramebuffer_(target) == name) {
+	if (_get_framebuffer(target) == name) {
 		return;
 	}
 
@@ -62,11 +62,11 @@ void ContextBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, u
 	glBindFramebuffer(GLenum(target), name);
 
 	if (target == Framebuffer::Target::DRAW) {
-		SetViewport_({ width, height });
+		_set_viewport({ width, height });
 	}
 
 	// store the state change
-	if (_parent == nullptr ? (name == 0) : name == _parent->GetFramebuffer_(target)) {
+	if (_parent == nullptr ? (name == 0) : name == _parent->_get_framebuffer(target)) {
 		_framebuffer_changes.erase(target);
 	} else {
 		_framebuffer_changes[target] = name;
@@ -75,7 +75,7 @@ void ContextBindings::BindFramebuffer(Framebuffer::Target target, GLuint name, u
 
 void ContextBindings::BindRenderbuffer(GLuint name) {
 	// check if a state change is necessary
-	if (GetRenderbuffer_() == name) {
+	if (_get_renderbuffer() == name) {
 		return;
 	}
 
@@ -83,7 +83,7 @@ void ContextBindings::BindRenderbuffer(GLuint name) {
 	glBindRenderbuffer(GL_RENDERBUFFER, name);
 
 	// store the state change
-	if (_parent == nullptr ? (name == 0) : (name == _parent->GetRenderbuffer_())) {
+	if (_parent == nullptr ? (name == 0) : (name == _parent->_get_renderbuffer())) {
 		_renderbuffer_change.reset();
 	} else {
 		_renderbuffer_change = name;
@@ -94,15 +94,15 @@ void ContextBindings::BindTexture(unsigned unit, Texture::Target target, GLuint 
 	auto key = std::make_pair(unit, target);
 
 	// check if a state change is necessary
-	if (GetTexture_(unit, target) == name) {
+	if (_get_texture(unit, target) == name) {
 		return;
 	}
 
 	// perform the state change
-	_context.SetActiveTextureUnit_(unit);
+	_context._set_active_texture_unit(unit);
 	glBindTexture(GLenum(target), name);
 
-	if (_parent == nullptr ? (name == 0) : name == _parent->GetTexture_(unit, target)) {
+	if (_parent == nullptr ? (name == 0) : name == _parent->_get_texture(unit, target)) {
 		_texture_changes.erase(key);
 	} else {
 		_texture_changes[key] = name;
@@ -111,14 +111,14 @@ void ContextBindings::BindTexture(unsigned unit, Texture::Target target, GLuint 
 
 void ContextBindings::BindVertexArray(GLuint name) {
 	// check if a state change is necessary
-	if (GetVertexArray_() == name) {
+	if (_get_vertex_array() == name) {
 		return;
 	}
 
 	// perform the state change
 	glBindVertexArray(name);
 
-	if (_parent == nullptr ? name == 0 : name == _parent->GetVertexArray_()) {
+	if (_parent == nullptr ? name == 0 : name == _parent->_get_vertex_array()) {
 		_vertex_array_change.reset();
 	} else {
 		_vertex_array_change = name;
@@ -127,14 +127,14 @@ void ContextBindings::BindVertexArray(GLuint name) {
 
 void ContextBindings::UseProgram(GLuint handle) {
 	// check if a state change is necessary
-	if (GetProgram_() == handle) {
+	if (_get_program() == handle) {
 		return;
 	}
 
 	// perform the state change
 	glUseProgram(handle);
 
-	if (_parent == nullptr ? handle == 0 : handle == _parent->GetProgram_()) {
+	if (_parent == nullptr ? handle == 0 : handle == _parent->_get_program()) {
 		_program_change.reset();
 	} else {
 		_program_change = handle;
@@ -143,34 +143,34 @@ void ContextBindings::UseProgram(GLuint handle) {
 
 void ContextBindings::ResetChanges() {
 	for (const auto& [target, name] : _buffer_changes) {
-		glBindBuffer(GLenum(target), _parent == nullptr ? 0 : _parent->GetBuffer_(target));
+		glBindBuffer(GLenum(target), _parent == nullptr ? 0 : _parent->_get_buffer(target));
 	}
 
 	for (const auto& [target, name] : _framebuffer_changes) {
-		glBindFramebuffer(GLenum(target), _parent == nullptr ? 0 : _parent->GetFramebuffer_(target));
+		glBindFramebuffer(GLenum(target), _parent == nullptr ? 0 : _parent->_get_framebuffer(target));
 	}
 
 	if (_viewport_change.has_value()) {
-		const auto& viewport = _parent == nullptr ? Framebuffer::DefaultViewport() : _parent->GetViewport_();
+		const auto& viewport = _parent == nullptr ? Framebuffer::DefaultViewport() : _parent->_get_viewport();
 		glViewport(0, 0, viewport.x, viewport.y);
 	}
 
 	if (_renderbuffer_change.has_value()) {
-		glBindRenderbuffer(GL_RENDERBUFFER, _parent == nullptr ? 0 : _parent->GetRenderbuffer_());
+		glBindRenderbuffer(GL_RENDERBUFFER, _parent == nullptr ? 0 : _parent->_get_renderbuffer());
 	}
 
 	for (const auto& [pair, name] : _texture_changes) {
 		const auto& [unit, target] = pair;
-		_context.SetActiveTextureUnit_(unit);
-		glBindTexture(GLenum(target), _parent == nullptr ? 0 : _parent->GetTexture_(unit, target));
+		_context._set_active_texture_unit(unit);
+		glBindTexture(GLenum(target), _parent == nullptr ? 0 : _parent->_get_texture(unit, target));
 	}
 
 	if (_vertex_array_change.has_value()) {
-		glBindVertexArray(_parent == nullptr ? 0 : _parent->GetVertexArray_());
+		glBindVertexArray(_parent == nullptr ? 0 : _parent->_get_vertex_array());
 	}
 
 	if (_program_change.has_value()) {
-		glUseProgram(_parent == nullptr ? 0 : _parent->GetProgram_());
+		glUseProgram(_parent == nullptr ? 0 : _parent->_get_program());
 	}
 
 	_buffer_changes.clear();
@@ -181,7 +181,7 @@ void ContextBindings::ResetChanges() {
 	_program_change.reset();
 }
 
-GLuint ContextBindings::GetBuffer_(Buffer::Target target) const {
+GLuint ContextBindings::_get_buffer(Buffer::Target target) const {
 	// check the current instance
 	if (auto iter = _buffer_changes.find(target); iter != _buffer_changes.end()) {
 		return iter->second;
@@ -189,14 +189,14 @@ GLuint ContextBindings::GetBuffer_(Buffer::Target target) const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetBuffer_(target);
+		return _parent->_get_buffer(target);
 	}
 
 	// default: no binding
 	return 0;
 }
 
-GLuint ContextBindings::GetFramebuffer_(Framebuffer::Target target) const {
+GLuint ContextBindings::_get_framebuffer(Framebuffer::Target target) const {
 	// check the current instance
 	if (auto iter = _framebuffer_changes.find(target); iter != _framebuffer_changes.end()) {
 		return iter->second;
@@ -204,14 +204,14 @@ GLuint ContextBindings::GetFramebuffer_(Framebuffer::Target target) const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetFramebuffer_(target);
+		return _parent->_get_framebuffer(target);
 	}
 
 	// default: no binding
 	return 0;
 }
 
-GLuint ContextBindings::GetRenderbuffer_() const {
+GLuint ContextBindings::_get_renderbuffer() const {
 	// check the current instance
 	if (_renderbuffer_change.has_value()) {
 		return *_renderbuffer_change;
@@ -219,14 +219,14 @@ GLuint ContextBindings::GetRenderbuffer_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetRenderbuffer_();
+		return _parent->_get_renderbuffer();
 	}
 
 	// default: no binding
 	return 0;
 }
 
-GLuint ContextBindings::GetTexture_(unsigned unit, Texture::Target target) const {
+GLuint ContextBindings::_get_texture(unsigned unit, Texture::Target target) const {
 	// check the current instance
 	if (auto iter = _texture_changes.find({ unit, target }); iter != _texture_changes.end()) {
 		return iter->second;
@@ -234,14 +234,14 @@ GLuint ContextBindings::GetTexture_(unsigned unit, Texture::Target target) const
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetTexture_(unit, target);
+		return _parent->_get_texture(unit, target);
 	}
 
 	// default: no binding
 	return 0;
 }
 
-GLuint ContextBindings::GetVertexArray_() const {
+GLuint ContextBindings::_get_vertex_array() const {
 	// check the current instance
 	if (_vertex_array_change.has_value()) {
 		return *_vertex_array_change;
@@ -249,14 +249,14 @@ GLuint ContextBindings::GetVertexArray_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetVertexArray_();
+		return _parent->_get_vertex_array();
 	}
 
 	// default: no binding
 	return 0;
 }
 
-GLuint ContextBindings::GetProgram_() const {
+GLuint ContextBindings::_get_program() const {
 	// check the current instance
 	if (_program_change.has_value()) {
 		return *_program_change;
@@ -264,16 +264,16 @@ GLuint ContextBindings::GetProgram_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetProgram_();
+		return _parent->_get_program();
 	}
 
 	// default: no binding
 	return 0;
 }
 
-void ContextBindings::SetViewport_(uvec2 dim) {
+void ContextBindings::_set_viewport(uvec2 dim) {
 	// check if a state change is necessary
-	if (GetViewport_() == dim) {
+	if (_get_viewport() == dim) {
 		return;
 	}
 
@@ -281,14 +281,14 @@ void ContextBindings::SetViewport_(uvec2 dim) {
 	glViewport(0, 0, dim.x, dim.y);
 
 	// store the state change
-	if (_parent == nullptr ? dim == Framebuffer::DefaultViewport() : dim == _parent->GetViewport_()) {
+	if (_parent == nullptr ? dim == Framebuffer::DefaultViewport() : dim == _parent->_get_viewport()) {
 		_viewport_change.reset();
 	} else {
 		_viewport_change = dim;
 	}
 }
 
-uvec2 ContextBindings::GetViewport_() const {
+uvec2 ContextBindings::_get_viewport() const {
 	// check the current instance
 	if (_viewport_change.has_value()) {
 		return *_viewport_change;
@@ -296,7 +296,7 @@ uvec2 ContextBindings::GetViewport_() const {
 
 	// check the parent
 	if (_parent != nullptr) {
-		return _parent->GetViewport_();
+		return _parent->_get_viewport();
 	}
 
 	// default: no binding

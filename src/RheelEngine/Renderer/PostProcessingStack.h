@@ -39,12 +39,12 @@ public:
 	void ClearBloom();
 
 private:
-	const gl::Framebuffer& ResolveInput_(const gl::Framebuffer& input) const;
+	const gl::Framebuffer& _resolve_input(const gl::Framebuffer& input) const;
 
-	unsigned UnusedFramebufferIndex_() const;
-	unsigned GetFramebufferIndex_(const gl::Framebuffer& buffer) const;
-	gl::Framebuffer& Framebuffer_(unsigned index) const;
-	void MarkFramebufferUse_(unsigned index, bool flag) const;
+	unsigned _unused_framebuffer_index() const;
+	unsigned _get_framebuffer_index(const gl::Framebuffer& buffer) const;
+	gl::Framebuffer& _framebuffer(unsigned index) const;
+	void _mark_framebuffer_use(unsigned index, bool flag) const;
 
 	std::optional<Bloom> _bloom;
 

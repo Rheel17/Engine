@@ -102,9 +102,14 @@ private:
 	};
 
 public:
-	Constraint(Element* movingElement, ConstraintLocation movingLocation, Element* fixedElement, ConstraintLocation fixedLocation, int distance = 0);
-	Constraint(Element* movingElement, ConstraintLocation movingLocation, Element* fixedElement, ConstraintLocation fixedLocation, width_relative distance);
-	Constraint(Element* movingElement, ConstraintLocation movingLocation, Element* fixedElement, ConstraintLocation fixedLocation, height_relative distance);
+	Constraint(Element* moving_element, ConstraintLocation moving_location, Element* fixed_element, ConstraintLocation fixed_location, int distance = 0);
+	Constraint(Element* moving_element, ConstraintLocation moving_location, Element* fixed_element, ConstraintLocation fixed_location, width_relative distance);
+	Constraint(
+			Element* moving_element,
+			ConstraintLocation moving_location,
+			Element* fixed_element,
+			ConstraintLocation fixed_location,
+			height_relative distance);
 
 	/**
 	 * Copies this constraint, but replaces the anchors. The distance remains
@@ -157,7 +162,7 @@ public:
 	bool operator==(const Constraint& other) const;
 
 private:
-	Constraint(const Anchor& moving, const Anchor& fixed, distance_union distance, DistanceType distanceType);
+	Constraint(const Anchor& moving, const Anchor& fixed, distance_union distance, DistanceType distance_type);
 
 	Anchor _moving;
 	Anchor _fixed;
@@ -165,8 +170,8 @@ private:
 	DistanceType _distance_type;
 
 public:
-	static constexpr ConstraintLocation LOCATION_ITERATOR_BEGIN = NORTH_WEST;
-	static constexpr ConstraintLocation LOCATION_ITERATOR_END = SOUTH_EAST;
+	static constexpr ConstraintLocation location_iterator_begin = NORTH_WEST;
+	static constexpr ConstraintLocation location_iterator_end = SOUTH_EAST;
 
 	static constexpr bool IsLocationPure(ConstraintLocation location) {
 		return location == NORTH || location == SOUTH || location == EAST || location == WEST;

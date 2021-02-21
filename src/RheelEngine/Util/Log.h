@@ -44,7 +44,7 @@ public:
 	static std::ostream& Error(const SourceLoc& loc = SourceLoc::current());
 
 private:
-	static std::ostream& Log_(const SourceLoc& loc, Level level);
+	static std::ostream& _log(const SourceLoc& loc, Level level);
 
 };
 

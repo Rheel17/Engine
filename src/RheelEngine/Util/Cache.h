@@ -33,7 +33,7 @@ struct cache_policy {
 	 */
 	virtual uintptr_t MakeSpace() = 0;
 
-	static constexpr uintptr_t DONT_REMOVE = 0;
+	static constexpr uintptr_t dont_remove = 0;
 };
 
 /**
@@ -41,7 +41,7 @@ struct cache_policy {
  */
 struct keep_policy : public cache_policy {
 	uintptr_t MakeSpace() override {
-		return DONT_REMOVE;
+		return dont_remove;
 	}
 };
 
@@ -223,8 +223,8 @@ public:
 					return false;
 				}
 
-				if (auto iter2 = _loading.find(element); iter2 != _loading.end()) {
-					iter2->second->wait(lock, [&]() { return _loading.find(element) == _loading.end(); });
+				if (auto iter_2 = _loading.find(element); iter_2 != _loading.end()) {
+					iter_2->second->wait(lock, [&]() { return _loading.find(element) == _loading.end(); });
 					return false;
 				}
 			}
@@ -260,14 +260,14 @@ public:
 			_cache.try_emplace(pointer, std::move(value));
 
 			// remove the key from the loading set
-			auto conditionVariable = std::move(_loading[pointer]);
+			auto condition_variable = std::move(_loading[pointer]);
 			_loading.erase(pointer);
 
 			// notify the policy of the insertion
 			_policy.Insert(pointer);
 
 			// notify waiting threads
-			conditionVariable->notify_all();
+			condition_variable->notify_all();
 		}
 
 		return true;

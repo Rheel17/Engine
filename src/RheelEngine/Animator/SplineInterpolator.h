@@ -191,24 +191,24 @@ public:
 protected:
 	V GetValue(float t) const override {
 		if (_dirty) {
-			CalculateSpline_();
+			_calculate_spline();
 			_dirty = false;
 		}
 
-		return GetValue_(t);
+		return _get_value(t);
 	}
 
 private:
 	mutable bool _dirty = false;
 	mutable std::array<Spline, N> _splines{};
 
-	void CalculateSpline_() const {
+	void _calculate_spline() const {
 		for (unsigned i = 0; i < N; i++) {
 			_splines[i] = Spline(this->points.begin(), this->points.end(), this->points.size() - 1, i);
 		}
 	}
 
-	V GetValue_(float t) const {
+	V _get_value(float t) const {
 		if constexpr (N == 1) {
 			// GetValue for floats
 			return _splines[0](t);

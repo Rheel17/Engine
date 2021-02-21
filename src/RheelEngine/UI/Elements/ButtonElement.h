@@ -67,7 +67,7 @@ public:
 	Color color_background_disabled = 0x6f7072;
 
 private:
-	void DrawStandardButton_(Color foreground, Color background) const;
+	void _draw_standard_button(Color foreground, Color background) const;
 
 	std::function<void()> _action;
 

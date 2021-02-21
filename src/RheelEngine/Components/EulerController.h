@@ -30,7 +30,7 @@ public:
 	 *
 	 * This variant of the method allows for separate yaw and pitch velocities.
 	 */
-	void SetAngularVelocity(float yawVelocity, float pitchVelocity);
+	void SetAngularVelocity(float yaw_velocity, float pitch_velocity);
 
 	/**
 	 * Sets the velocity of the camera. This is the speed with which the camera
@@ -45,11 +45,11 @@ public:
 	 * This variant of the method allows for separate forward/backward and
 	 * sideways speeds.
 	 */
-	void SetVelocity(float forwardsBackwardsVelocity, float sideVelocity);
+	void SetVelocity(float forwards_backwards_velocity, float side_velocity);
 
 private:
-	void Rotate_(float dt);
-	void Move_(float dt);
+	void _rotate(float dt);
+	void _move(float dt);
 
 	float _velocity_yaw = 10.0f;
 	float _velocity_pitch = 10.0f;

@@ -59,7 +59,7 @@ public:
 		bool _normalize;
 
 		VertexAttribute();
-		GLsizei ByteSize_() const;
+		GLsizei _byte_size() const;
 
 	};
 
@@ -82,8 +82,8 @@ public:
 	VertexArray() = default;
 	~VertexArray() = default;
 
-	VertexArray(VertexArray&& vao);
-	VertexArray& operator=(VertexArray&& vao);
+	VertexArray(VertexArray&& vao) noexcept;
+	VertexArray& operator=(VertexArray&& vao) noexcept;
 
 	void Bind() const;
 
@@ -94,7 +94,7 @@ public:
 	 * instances that will pass between updates of the attribute. Use 0 to make
 	 * this a per-vertex attribute (the default).
 	 */
-	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, unsigned instanceDivisor = 0);
+	void SetVertexAttributes(const Buffer& buffer, const std::vector<VertexAttribute>& attributes, unsigned instance_divisor = 0);
 
 	/**
 	 * Set the vertex attributes of this VAO. The specified buffer must have an
@@ -121,8 +121,8 @@ public:
 	 * attribute (the default).
 	 */
 	template<typename... Types>
-	void SetVertexAttributes(const Buffer& buffer, GLsizei stride = 0, unsigned instanceDivisor = 0) {
-		SetVertexAttributes_(buffer, { typeid(Types)... }, stride, instanceDivisor);
+	void SetVertexAttributes(const Buffer& buffer, GLsizei stride = 0, unsigned instance_divisor = 0) {
+		_set_vertex_attributes(buffer, { typeid(Types)... }, stride, instance_divisor);
 	}
 
 	/**
@@ -191,7 +191,7 @@ public:
 
 private:
 	template<typename T>
-	void SetIndices_(const std::vector<T>& indices, Type type) {
+	void _set_indices(const std::vector<T>& indices, Type type) {
 		Bind();
 		SetIndexBuffer(_index_buffer);
 
@@ -208,8 +208,8 @@ private:
 		}
 	}
 
-	void SetVertexAttributes_(const Buffer& buffer, const std::vector<std::type_index>& attributeTypes, GLsizei stride, unsigned instanceDivisor);
-	GLuint FirstUnusedIndex_(GLuint consecutive = 1);
+	void _set_vertex_attributes(const Buffer& buffer, const std::vector<std::type_index>& attribute_types, GLsizei stride, unsigned instance_divisor);
+	GLuint _first_unused_index(GLuint consecutive = 1);
 
 	ElementArrayBuffer _index_buffer;
 	mutable const ElementArrayBuffer* _bound_index_buffer = nullptr;

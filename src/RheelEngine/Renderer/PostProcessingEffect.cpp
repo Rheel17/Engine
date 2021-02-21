@@ -19,19 +19,19 @@ PostProcessingEffect::screen_quad::screen_quad() :
 }
 
 unsigned PostProcessingEffect::UnusedFramebufferIndex() const {
-	return Stack_()->UnusedFramebufferIndex_();
+	return Stack_()->_unused_framebuffer_index();
 }
 
 unsigned PostProcessingEffect::GetFramebufferIndex(const gl::Framebuffer& buffer) const {
-	return Stack_()->GetFramebufferIndex_(buffer);
+	return Stack_()->_get_framebuffer_index(buffer);
 }
 
 gl::Framebuffer& PostProcessingEffect::Framebuffer(unsigned index) const {
-	return Stack_()->Framebuffer_(index);
+	return Stack_()->_framebuffer(index);
 }
 
 void PostProcessingEffect::MarkFramebufferUse(unsigned index, bool flag) const {
-    Stack_()->MarkFramebufferUse_(index, flag);
+	Stack_()->_mark_framebuffer_use(index, flag);
 }
 
 PostProcessingStack *PostProcessingEffect::Stack_() const {

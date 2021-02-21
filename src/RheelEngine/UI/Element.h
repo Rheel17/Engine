@@ -192,25 +192,25 @@ protected:
 	void MoveSuperFields(Element&& element);
 
 private:
-	void Callback_(const std::function<void(const CbPtr&)>& callback);
+	void _callback(const std::function<void(const CbPtr&)>& callback);
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-virtual-near-miss"
-	void OnResize_();
-	void OnFocusGained_();
-	void OnFocusLost_();
-	void OnKeyPress_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void OnKeyRepeat_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void OnKeyRelease_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
-	void OnCharacterInput_(Input::Unicode character);
-	void OnMouseButtonPress_(Input::MouseButton button, Input::Modifiers mods);
-	void OnMouseButtonRelease_(Input::MouseButton button, Input::Modifiers mods);
-	void OnMouseEnter_(const vec2& position);
-	void OnMouseExit_(const vec2& position);
-	void OnMouseMove_(const vec2& position);
-	void OnMouseJump_(const vec2& position);
-	void OnMouseDrag_(const vec2& origin, const vec2& position);
-	void OnMouseScroll_(const vec2& scrollComponents);
+	void _on_resize();
+	void _on_focus_gained();
+	void _on_focus_lost();
+	void _on_key_press(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void _on_key_repeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void _on_key_release(Input::Key key, Input::Scancode scancode, Input::Modifiers mods);
+	void _on_character_input(Input::Unicode character);
+	void _on_mouse_button_press(Input::MouseButton button, Input::Modifiers mods);
+	void _on_mouse_button_release(Input::MouseButton button, Input::Modifiers mods);
+	void _on_mouse_enter(const vec2& position);
+	void _on_mouse_exit(const vec2& position);
+	void _on_mouse_move(const vec2& position);
+	void _on_mouse_jump(const vec2& position);
+	void _on_mouse_drag(const vec2& origin, const vec2& position);
+	void _on_mouse_scroll(const vec2& scroll_components);
 #pragma clang diagnostic pop
 
 	Container* _parent_container;
@@ -250,13 +250,13 @@ protected:
 	 * Draws a colored triangle. Vertices are specified in pixel-space.
 	 * Counter-clockwise ordering is recommended.
 	 */
-	void DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3) const;
+	void DrawColoredTriangle(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3) const;
 
 	/**
 	 * Draws a colored quad. Vertices are specified in pixel-space.
 	 * Counter-clockwise ordering is required.
 	 */
-	void DrawColoredQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4) const;
+	void DrawColoredQuad(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3, const Vertex& v_4) const;
 
 	/**
 	 * Draws a rectangle with a single color.
@@ -267,13 +267,13 @@ protected:
 	 * Draws a textured quad. Vertices are specified in pixel-space.
 	 * Counter-clockwise ordering is recommended.
 	 */
-	void DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const gl::Texture2D& texture) const;
+	void DrawTexturedTriangle(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3, const gl::Texture2D& texture) const;
 
 	/**
 	 * Draws a textured quad. Vertices are specified in pixel-space.
 	 * Counter-clockwise ordering is required.
 	 */
-	void DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const gl::Texture2D& texture) const;
+	void DrawTexturedQuad(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3, const Vertex& v_4, const gl::Texture2D& texture) const;
 
 	/**
 	 * Draws the texture at the specified rectangle. The entire texture will be
@@ -285,7 +285,7 @@ protected:
 	 * Draws a textured quad. Vertices are specified in pixel-space.
 	 * Counter-clockwise ordering is required.
 	 */
-	void DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const Image& image, float alpha = 1.0f) const;
+	void DrawTexturedQuad(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3, const Vertex& v_4, const Image& image, float alpha = 1.0f) const;
 
 	/**
 	 * Draws the texture at the specified rectangle. The entire texture will be
@@ -305,7 +305,7 @@ protected:
 	const gl::Program& GetCustomShader(const Shader& shader) const;
 
 private:
-	void Draw_(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f) const;
+	void _draw(const std::vector<Vertex>& vertices, int mode, float alpha = 1.0f) const;
 
 	mutable std::unique_ptr<Animator> _animator;
 

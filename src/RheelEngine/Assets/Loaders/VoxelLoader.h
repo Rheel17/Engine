@@ -17,7 +17,7 @@ public:
 	VoxelImage Load(const std::string& path) const override;
 
 private:
-	static VoxelImage LoadVox_(std::istream& input);
+	static VoxelImage _load_vox(std::istream& input);
 
 };
 

@@ -9,8 +9,8 @@ namespace rheel {
 
 Cache<ImageTexture::CacheTuple, ImageTexture, keep_policy, true> ImageTexture::_texture_cache;
 
-void ImageTexture::Bind(unsigned textureUnit) const {
-	_texture.Bind(textureUnit);
+void ImageTexture::Bind(unsigned texture_unit) const {
+	_texture.Bind(texture_unit);
 }
 
 ImageTexture::ImageTexture(const Image& image, WrapType type, bool linear) {

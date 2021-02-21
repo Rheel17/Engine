@@ -15,8 +15,8 @@ std::string Encoding::CodePointToUtf8(char32_t c) {
 		return std::string(1, static_cast<char>(c));
 	}
 
-	auto b0 = static_cast<uint8_t>(c & 0xffu);
-	auto b1 = static_cast<uint8_t>((c >> 8u) & 0xffu);
+	auto b_0 = static_cast<uint8_t>(c & 0xffu);
+	auto b_1 = static_cast<uint8_t>((c >> 8u) & 0xffu);
 
 	std::string result;
 
@@ -24,25 +24,25 @@ std::string Encoding::CodePointToUtf8(char32_t c) {
 		// 110bbbcc 10cccccc
 
 		result.reserve(2);
-		result.push_back(0b11000000u | ((b1 & 0b00000111u) << 2u) | uint8_t(b0 >> 6u));
-		result.push_back(0b10000000u | (b0 & 0b00111111u));
+		result.push_back(0b11000000u | ((b_1 & 0b00000111u) << 2u) | uint8_t(b_0 >> 6u));
+		result.push_back(0b10000000u | (b_0 & 0b00111111u));
 	} else if (c < 0x10000) {
 		// 1110bbbb 10bbbbcc 10cccccc
 
 		result.reserve(3);
-		result.push_back(0b11100000u | uint8_t(b1 >> 4u));
-		result.push_back(0b10000000u | ((b1 & 0b00001111u) << 2u) | uint8_t(b0 >> 6u));
-		result.push_back(0b10000000u | (b0 & 0b00111111u));
+		result.push_back(0b11100000u | uint8_t(b_1 >> 4u));
+		result.push_back(0b10000000u | ((b_1 & 0b00001111u) << 2u) | uint8_t(b_0 >> 6u));
+		result.push_back(0b10000000u | (b_0 & 0b00111111u));
 	} else if (c < 0x110000) {
 		// 11110aaa 10aabbbb 10bbbbcc 10cccccc
 
-		auto b2 = static_cast<uint8_t>((c >> 16u) & 0xffu);
+		auto b_2 = static_cast<uint8_t>((c >> 16u) & 0xffu);
 
 		result.reserve(4);
-		result.push_back(0b11110000u | uint8_t(b2 >> 2u));
-		result.push_back(0b10000000u | ((b2 & 0b00000011u) << 4u) | uint8_t(b1 >> 4u));
-		result.push_back(0b10000000u | ((b1 & 0b00001111u) << 2u) | uint8_t(b0 >> 6u));
-		result.push_back(0b10000000u | (b0 & 0b00111111u));
+		result.push_back(0b11110000u | uint8_t(b_2 >> 2u));
+		result.push_back(0b10000000u | ((b_2 & 0b00000011u) << 4u) | uint8_t(b_1 >> 4u));
+		result.push_back(0b10000000u | ((b_1 & 0b00001111u) << 2u) | uint8_t(b_0 >> 6u));
+		result.push_back(0b10000000u | (b_0 & 0b00111111u));
 	} else {
 		return "";
 	}
@@ -62,8 +62,8 @@ char32_t Encoding::ReadUtf8(std::string_view& sv) {
 		return 0;
 	}
 
-	auto b0 = static_cast<uint8_t>(sv[0]);
-	uint8_t inv = ~b0;
+	auto b_0 = static_cast<uint8_t>(sv[0]);
+	uint8_t inv = ~b_0;
 
 	// valid 0th-byte binary representations are:
 	// 11110'100 -> 00001'011 -> 0B -> 11 [...]
@@ -83,14 +83,14 @@ char32_t Encoding::ReadUtf8(std::string_view& sv) {
 
 	// count the number of leading zeros to find out what character byte length
 	// we have.
-	unsigned leadingOnes = std::countl_one(b0);
+	unsigned leading_ones = std::countl_one(b_0);
 
 	// code point: aaaaa bbbbbbbb cccccccc
 
-	if (leadingOnes == 0) {
+	if (leading_ones == 0) {
 		// 0ccccccc
 		sv.remove_prefix(1);
-		return b0;
+		return b_0;
 	}
 
 	if (sv.length() < 2) {
@@ -98,16 +98,16 @@ char32_t Encoding::ReadUtf8(std::string_view& sv) {
 		return -1;
 	}
 
-	auto b1 = static_cast<uint8_t>(sv[1]);
-	if ((b1 & 0b11000000u) != 0b10000000) {
+	auto b_1 = static_cast<uint8_t>(sv[1]);
+	if ((b_1 & 0b11000000u) != 0b10000000) {
 		// not a valid continuation byte
 		return -1;
 	}
 
-	if (leadingOnes == 2) {
+	if (leading_ones == 2) {
 		// 110bbbcc 10cccccc
 		sv.remove_prefix(2);
-		return ((b0 & 0b00011111u) << 6u) | (b1 & 0b00111111u);
+		return ((b_0 & 0b00011111u) << 6u) | (b_1 & 0b00111111u);
 	}
 
 	if (sv.length() < 3) {
@@ -115,16 +115,16 @@ char32_t Encoding::ReadUtf8(std::string_view& sv) {
 		return -1;
 	}
 
-	auto b2 = static_cast<uint8_t>(sv[2]);
-	if ((b2 & 0b11000000u) != 0b10000000u) {
+	auto b_2 = static_cast<uint8_t>(sv[2]);
+	if ((b_2 & 0b11000000u) != 0b10000000u) {
 		// not a valid continuation byte
 		return -1;
 	}
 
-	if (leadingOnes == 3) {
+	if (leading_ones == 3) {
 		// 1110bbbb 10bbbbcc 10cccccc
 		sv.remove_prefix(3);
-		return ((b0 & 0b00001111u) << 12u) | ((b1 & 0b00111111u) << 6u) | (b2 & 0b00111111u);
+		return ((b_0 & 0b00001111u) << 12u) | ((b_1 & 0b00111111u) << 6u) | (b_2 & 0b00111111u);
 	}
 
 	if (sv.length() < 4) {
@@ -132,16 +132,16 @@ char32_t Encoding::ReadUtf8(std::string_view& sv) {
 		return -1;
 	}
 
-	auto b3 = static_cast<uint8_t>(sv[3]);
-	if ((b3 & 0b11000000u) != 0b10000000u) {
+	auto b_3 = static_cast<uint8_t>(sv[3]);
+	if ((b_3 & 0b11000000u) != 0b10000000u) {
 		// not a valid continuation byte
 		return -1;
 	}
 
-	if (leadingOnes == 4) {
+	if (leading_ones == 4) {
 		// 11110aaa 10aabbbb 10bbbbcc 10cccccc
 		sv.remove_prefix(4);
-		return ((b0 & 0b00001111u) << 18u) | ((b1 & 0b00111111u) << 12u) | ((b2 & 0b00111111u) << 6u) | (b3 & 0b00111111u);
+		return ((b_0 & 0b00001111u) << 18u) | ((b_1 & 0b00111111u) << 12u) | ((b_2 & 0b00111111u) << 6u) | (b_3 & 0b00111111u);
 	}
 
 	return -1;

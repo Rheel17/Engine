@@ -15,9 +15,9 @@ std::optional<const Container::ConstraintTreeNode*> Container::ConstraintTreeNod
 	}
 
 	for (auto child : children) {
-		auto childResult = child.first->GetNodeForAnchor(anchr);
-		if (childResult) {
-			return childResult;
+		auto child_result = child.first->GetNodeForAnchor(anchr);
+		if (child_result) {
+			return child_result;
 		}
 	}
 
@@ -30,9 +30,9 @@ std::optional<Container::ConstraintTreeNode*> Container::ConstraintTreeNode::Get
 	}
 
 	for (auto child : children) {
-		auto childResult = child.first->GetNodeForAnchor(anchr);
-		if (childResult) {
-			return childResult;
+		auto child_result = child.first->GetNodeForAnchor(anchr);
+		if (child_result) {
+			return child_result;
 		}
 	}
 
@@ -61,7 +61,7 @@ Container::Container(Container&& container) noexcept:
 }
 
 Container::~Container() {
-	DeleteConstraintTree_(_constraint_tree);
+	_delete_constraint_tree(_constraint_tree);
 
 	for (Element* element : _elements) {
 		delete element;
@@ -75,7 +75,7 @@ Container& Container::operator=(Container&& container) noexcept {
 	}
 
 	// delete current elements and their constraints
-	DeleteConstraintTree_(_constraint_tree);
+	_delete_constraint_tree(_constraint_tree);
 
 	for (Element* element : _elements) {
 		delete element;
@@ -166,31 +166,31 @@ Element* Container::OpaqueElementAt(unsigned x, unsigned y) {
 	return nullptr;
 }
 
-void Container::AddConstraint(Element* movingElement,
-		Constraint::ConstraintLocation movingLocation,
-		Element* fixedElement,
-		Constraint::ConstraintLocation fixedLocation,
+void Container::AddConstraint(Element* moving_element,
+		Constraint::ConstraintLocation moving_location,
+		Element* fixed_element,
+		Constraint::ConstraintLocation fixed_location,
 		int distance) {
 
-	AddConstraint(Constraint(movingElement, movingLocation, fixedElement, fixedLocation, distance));
+	AddConstraint(Constraint(moving_element, moving_location, fixed_element, fixed_location, distance));
 }
 
-void Container::AddWidthRelativeConstraint(Element* movingElement,
-		Constraint::ConstraintLocation movingLocation,
-		Element* fixedElement,
-		Constraint::ConstraintLocation fixedLocation,
+void Container::AddWidthRelativeConstraint(Element* moving_element,
+		Constraint::ConstraintLocation moving_location,
+		Element* fixed_element,
+		Constraint::ConstraintLocation fixed_location,
 		float distance) {
 
-	AddConstraint(Constraint(movingElement, movingLocation, fixedElement, fixedLocation, Constraint::width_relative{ distance }));
+	AddConstraint(Constraint(moving_element, moving_location, fixed_element, fixed_location, Constraint::width_relative{ distance }));
 }
 
-void Container::AddHeightRelativeConstraint(Element* movingElement,
-		Constraint::ConstraintLocation movingLocation,
-		Element* fixedElement,
-		Constraint::ConstraintLocation fixedLocation,
+void Container::AddHeightRelativeConstraint(Element* moving_element,
+		Constraint::ConstraintLocation moving_location,
+		Element* fixed_element,
+		Constraint::ConstraintLocation fixed_location,
 		float distance) {
 
-	AddConstraint(Constraint(movingElement, movingLocation, fixedElement, fixedLocation, Constraint::height_relative{ distance }));
+	AddConstraint(Constraint(moving_element, moving_location, fixed_element, fixed_location, Constraint::height_relative{ distance }));
 }
 
 void Container::AddConstraint(const Constraint& constraint) {
@@ -200,8 +200,8 @@ void Container::AddConstraint(const Constraint& constraint) {
 	}
 
 	// check that the acting elements are not null and part of this container.
-	CheckElement_(constraint.MovingAnchor().Element(), "Moving");
-	CheckElement_(constraint.FixedAnchor().Element(), "Fixed");
+	_check_element(constraint.MovingAnchor().Element(), "Moving");
+	_check_element(constraint.FixedAnchor().Element(), "Fixed");
 
 	// check that the two acting elements are not the same
 	if (constraint.FixedAnchor() == constraint.MovingAnchor()) {
@@ -209,15 +209,15 @@ void Container::AddConstraint(const Constraint& constraint) {
 	}
 
 	// get the component constraints
-	auto horizontalConstraint = constraint.HorizontalConstraint();
-	auto verticalConstraint = constraint.VerticalConstraint();
+	auto horizontal_constraint = constraint.HorizontalConstraint();
+	auto vertical_constraint = constraint.VerticalConstraint();
 
 	std::vector<Constraint> constraints;
-	if (horizontalConstraint) {
-		constraints.push_back(*horizontalConstraint);
+	if (horizontal_constraint) {
+		constraints.push_back(*horizontal_constraint);
 	}
-	if (verticalConstraint) {
-		constraints.push_back(*verticalConstraint);
+	if (vertical_constraint) {
+		constraints.push_back(*vertical_constraint);
 	}
 
 	// check that the destination anchor is not already constrained
@@ -241,37 +241,37 @@ void Container::AddConstraint(const Constraint& constraint) {
 	for (const Constraint& c : constraints) {
 
 		// get or create the source node
-		auto fixedNodeOpt = _constraint_tree->GetNodeForAnchor(c.FixedAnchor());
-		ConstraintTreeNode* fixedNode;
+		auto fixed_node_opt = _constraint_tree->GetNodeForAnchor(c.FixedAnchor());
+		ConstraintTreeNode* fixed_node;
 
-		if (fixedNodeOpt) {
-			fixedNode = *fixedNodeOpt;
+		if (fixed_node_opt) {
+			fixed_node = *fixed_node_opt;
 		} else {
-			fixedNode = new ConstraintTreeNode{ c.FixedAnchor(), _constraint_tree, {} };
-			_constraint_tree->children.insert({ fixedNode, c });
+			fixed_node = new ConstraintTreeNode{ c.FixedAnchor(), _constraint_tree, {} };
+			_constraint_tree->children.insert({ fixed_node, c });
 		}
 
 		// if the destination node exists, delete it from its parent,
 		// otherwise, create a new node
-		auto movingNodeOpt = _constraint_tree->GetNodeForAnchor(c.MovingAnchor());
-		ConstraintTreeNode* movingNode;
+		auto moving_node_opt = _constraint_tree->GetNodeForAnchor(c.MovingAnchor());
+		ConstraintTreeNode* moving_node;
 
-		if (movingNodeOpt) {
-			movingNode = *movingNodeOpt;
-			ConstraintTreeNode* parent = movingNode->parent;
-			parent->children.erase(*movingNodeOpt);
+		if (moving_node_opt) {
+			moving_node = *moving_node_opt;
+			ConstraintTreeNode* parent = moving_node->parent;
+			parent->children.erase(*moving_node_opt);
 		} else {
-			movingNode = new ConstraintTreeNode{ c.MovingAnchor(), nullptr, {} };
+			moving_node = new ConstraintTreeNode{ c.MovingAnchor(), nullptr, {} };
 		}
 
 		// link the source and destination node
-		movingNode->parent = fixedNode;
-		fixedNode->children.insert({ movingNode, c });
+		moving_node->parent = fixed_node;
+		fixed_node->children.insert({ moving_node, c });
 	}
 }
 
 void Container::ClearConstraints() {
-	DeleteConstraintTree_(_constraint_tree);
+	_delete_constraint_tree(_constraint_tree);
 	_constraint_tree = ConstraintTreeNode::NewRoot();
 }
 
@@ -282,21 +282,21 @@ void Container::Layout() {
 	}
 
 	// create a temporary map with bounds.
-	TempBoundsMap boundsMap;
+	TempBoundsMap bounds_map;
 
 	// initialize the temporary map with the default bounds of each element
 	for (Element* element : _elements) {
 		element->InitializeBounds();
 
-		boundsMap[element] = { 0, 0, 0, 0, false, false, false, false };
-		boundsMap[element].left = GetBounds().x + element->GetBounds().x;
-		boundsMap[element].top = GetBounds().y + element->GetBounds().y;
-		boundsMap[element].right = GetBounds().x + element->GetBounds().x + element->GetBounds().width;
-		boundsMap[element].bottom = GetBounds().y + element->GetBounds().y + element->GetBounds().height;
+		bounds_map[element] = { 0, 0, 0, 0, false, false, false, false };
+		bounds_map[element].left = GetBounds().x + element->GetBounds().x;
+		bounds_map[element].top = GetBounds().y + element->GetBounds().y;
+		bounds_map[element].right = GetBounds().x + element->GetBounds().x + element->GetBounds().width;
+		bounds_map[element].bottom = GetBounds().y + element->GetBounds().y + element->GetBounds().height;
 	}
 
 	// initialize the self bounds with the container bounds
-	boundsMap[nullptr] = {
+	bounds_map[nullptr] = {
 			int(GetBounds().x),
 			int(GetBounds().x + GetBounds().width),
 			int(GetBounds().y),
@@ -305,11 +305,11 @@ void Container::Layout() {
 	};
 
 	// layout the container
-	LayoutNode_(boundsMap, _constraint_tree);
+	_layout_node(bounds_map, _constraint_tree);
 
 	// apply the bounds
 	for (Element* element : _elements) {
-		element->SetBounds(boundsMap[element]);
+		element->SetBounds(bounds_map[element]);
 	}
 }
 
@@ -324,42 +324,42 @@ void Container::OnResize() {
 	Layout();
 }
 
-void Container::CheckElement_(Element* element, std::string sourceOrDestination) const {
+void Container::_check_element(Element* element, std::string source_or_destination) const {
 	if (element == nullptr) {
 		return;
 	}
 
 	// check that the element is in the element list.
 	if (std::find(_elements.begin(), _elements.end(), element) == _elements.end()) {
-		throw ConstraintException(sourceOrDestination + " element not in container");
+		throw ConstraintException(source_or_destination + " element not in container");
 	}
 }
 
-void Container::DeleteConstraintTree_(ConstraintTreeNode* node) {
+void Container::_delete_constraint_tree(ConstraintTreeNode* node) {
 	if (!node) {
 		return;
 	}
 
 	for (auto child : node->children) {
-		DeleteConstraintTree_(child.first);
+		_delete_constraint_tree(child.first);
 	}
 
 	delete node;
 }
 
-void Container::LayoutNode_(TempBoundsMap& boundsMap, ConstraintTreeNode* node) {
+void Container::_layout_node(TempBoundsMap& bounds_map, ConstraintTreeNode* node) {
 	for (auto child : node->children) {
 		if (child.first->anchor.Element() != nullptr) {
 			// actually apply the constraint
-			LayoutNode_(boundsMap, child.second);
+			_layout_node(bounds_map, child.second);
 		}
 
 		// recurse
-		LayoutNode_(boundsMap, child.first);
+		_layout_node(bounds_map, child.first);
 	}
 }
 
-void Container::LayoutNode_(TempBoundsMap& boundsMap, const Constraint& constraint) {
+void Container::_layout_node(TempBoundsMap& bounds_map, const Constraint& constraint) {
 	// we don't need to layout our own element
 	if (constraint.MovingAnchor().Element() == nullptr) {
 		return;
@@ -370,13 +370,13 @@ void Container::LayoutNode_(TempBoundsMap& boundsMap, const Constraint& constrai
 	auto elem_m = constraint.MovingAnchor().Element();
 
 	// lambda for moving an anchor towards another anchor
-	auto move = [](int fixed, int* moving, int* opposite, bool oppositeFixed, int distance) {
+	auto move = [](int fixed, int* moving, int* opposite, bool opposite_fixed, int distance) {
 		int target = fixed + distance;
 		int difference = target - *moving;
 
 		*moving += difference;
 
-		if (!oppositeFixed) {
+		if (!opposite_fixed) {
 			*opposite += difference;
 		}
 	};
@@ -392,21 +392,21 @@ void Container::LayoutNode_(TempBoundsMap& boundsMap, const Constraint& constrai
 	int fixed;
 	int* moving;
 	int* opposite;
-	bool oppositeFixed;
+	bool opposite_fixed;
 	int distance = constraint.Distance(GetBounds().width, GetBounds().height);
 
 	switch (constraint.FixedAnchor().Location()) {
 		case Constraint::EAST:
-			fixed = boundsMap[elem_f].right;
+			fixed = bounds_map[elem_f].right;
 			break;
 		case Constraint::WEST:
-			fixed = boundsMap[elem_f].left;
+			fixed = bounds_map[elem_f].left;
 			break;
 		case Constraint::NORTH:
-			fixed = boundsMap[elem_f].top;
+			fixed = bounds_map[elem_f].top;
 			break;
 		case Constraint::SOUTH:
-			fixed = boundsMap[elem_f].bottom;
+			fixed = bounds_map[elem_f].bottom;
 			break;
 		default:
 			abort();
@@ -414,38 +414,38 @@ void Container::LayoutNode_(TempBoundsMap& boundsMap, const Constraint& constrai
 
 	switch (constraint.MovingAnchor().Location()) {
 		case Constraint::EAST:
-			moving = &boundsMap[elem_m].right;
-			opposite = &boundsMap[elem_m].left;
-			oppositeFixed = boundsMap[elem_m].fixed_left;
-			boundsMap[elem_m].fixed_right = true;
+			moving = &bounds_map[elem_m].right;
+			opposite = &bounds_map[elem_m].left;
+			opposite_fixed = bounds_map[elem_m].fixed_left;
+			bounds_map[elem_m].fixed_right = true;
 			distance *= -1;
 			break;
 		case Constraint::WEST:
-			moving = &boundsMap[elem_m].left;
-			opposite = &boundsMap[elem_m].right;
-			oppositeFixed = boundsMap[elem_m].fixed_right;
-			boundsMap[elem_m].fixed_left = true;
+			moving = &bounds_map[elem_m].left;
+			opposite = &bounds_map[elem_m].right;
+			opposite_fixed = bounds_map[elem_m].fixed_right;
+			bounds_map[elem_m].fixed_left = true;
 			break;
 		case Constraint::NORTH:
-			moving = &boundsMap[elem_m].top;
-			opposite = &boundsMap[elem_m].bottom;
-			oppositeFixed = boundsMap[elem_m].fixed_bottom;
-			boundsMap[elem_m].fixed_top = true;
+			moving = &bounds_map[elem_m].top;
+			opposite = &bounds_map[elem_m].bottom;
+			opposite_fixed = bounds_map[elem_m].fixed_bottom;
+			bounds_map[elem_m].fixed_top = true;
 			break;
 		case Constraint::SOUTH:
-			moving = &boundsMap[elem_m].bottom;
-			opposite = &boundsMap[elem_m].top;
-			oppositeFixed = boundsMap[elem_m].fixed_top;
-			boundsMap[elem_m].fixed_bottom = true;
+			moving = &bounds_map[elem_m].bottom;
+			opposite = &bounds_map[elem_m].top;
+			opposite_fixed = bounds_map[elem_m].fixed_top;
+			bounds_map[elem_m].fixed_bottom = true;
 			distance *= -1;
 			break;
 		default:
 			abort();
 	}
 
-	move(fixed, moving, opposite, oppositeFixed, distance);
-	check(boundsMap[elem_m].left, boundsMap[elem_m].right);
-	check(boundsMap[elem_m].top, boundsMap[elem_m].bottom);
+	move(fixed, moving, opposite, opposite_fixed, distance);
+	check(bounds_map[elem_m].left, bounds_map[elem_m].right);
+	check(bounds_map[elem_m].top, bounds_map[elem_m].bottom);
 }
 
 }

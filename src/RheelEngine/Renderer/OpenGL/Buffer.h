@@ -111,7 +111,7 @@ public:
 	 * If this buffer's allocation policy is KEEP_BIGGER and the buffer is
 	 * already bigger than the required byte count, this method does nothing.
 	 */
-	void SetDataEmptySize(size_t byteCount, Usage usage = Usage::STATIC_DRAW);
+	void SetDataEmptySize(size_t byte_count, Usage usage = Usage::STATIC_DRAW);
 
 	/**
 	 * Set the contents of the buffer. Count elements will be read from the data
@@ -124,13 +124,13 @@ public:
 	void SetData(const T* data, size_t count, Usage usage = Usage::STATIC_DRAW) {
 		Bind();
 
-		size_t byteCount = count * sizeof(T);
+		size_t byte_count = count * sizeof(T);
 
-		if (_allocation_policy == AllocationPolicy::REALLOCATE || byteCount > _byte_size) {
-			glBufferData(GLenum(_target), byteCount, data, GLenum(usage));
-			_byte_size = byteCount;
+		if (_allocation_policy == AllocationPolicy::REALLOCATE || byte_count > _byte_size) {
+			glBufferData(GLenum(_target), byte_count, data, GLenum(usage));
+			_byte_size = byte_count;
 		} else if (_allocation_policy == AllocationPolicy::KEEP_BIGGER) {
-			glBufferSubData(GLenum(_target), 0, byteCount, data);
+			glBufferSubData(GLenum(_target), 0, byte_count, data);
 		} else {
 			Log::Error() << "Invalid allocation policy" << std::endl;
 			abort();

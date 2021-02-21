@@ -32,12 +32,12 @@ SkyboxRenderer::SkyboxRenderer(SceneRenderManager* manager) :
 	_shader["textures"] = 0;
 
 	// initialize the skybox model
-	_vertex_buffer_object.SetData(CreateSkyboxVertices_());
+	_vertex_buffer_object.SetData(_create_skybox_vertices());
 	_vao.SetVertexAttributes<vec3, vec3>(_vertex_buffer_object);
-	_vao.SetVertexIndices(CreateSkyboxIndices_());
+	_vao.SetVertexIndices(_create_skybox_indices());
 
 	// initialize the texture
-	_textures = CreateTexture_(1, 1);
+	_textures = _create_texture(1, 1);
 }
 
 void SkyboxRenderer::Render(const Camera* camera, unsigned width, unsigned height) const {
@@ -74,20 +74,20 @@ void SkyboxRenderer::Render(const Camera* camera, unsigned width, unsigned heigh
 	// _vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, 36);
 }
 
-void SkyboxRenderer::LoadImage_(Image image, unsigned layer) const {
-	unsigned imageWidth = std::max(image.GetWidth(), 1u);
-	unsigned imageHeight = std::max(image.GetHeight(), 1u);
+void SkyboxRenderer::_load_image(Image image, unsigned layer) const {
+	unsigned image_width = std::max(image.GetWidth(), 1u);
+	unsigned image_height = std::max(image.GetHeight(), 1u);
 
-	if (imageWidth != _current_width || imageHeight != _current_height) {
-		_current_width = imageWidth;
-		_current_height = imageHeight;
-		_textures = CreateTexture_(_current_width, _current_height);
+	if (image_width != _current_width || image_height != _current_height) {
+		_current_width = image_width;
+		_current_height = image_height;
+		_textures = _create_texture(_current_width, _current_height);
 	}
 
 	_textures.SetLayerData(image.GetWidth(), image.GetHeight(), layer, gl::Format::RGBA, image.GetRawColorData());
 }
 
-gl::Texture2DArray SkyboxRenderer::CreateTexture_(unsigned width, unsigned height) {
+gl::Texture2DArray SkyboxRenderer::_create_texture(unsigned width, unsigned height) {
 	gl::Texture2DArray texture;
 
 	if (DisplayConfiguration::Get().enable_mipmaps) {
@@ -105,50 +105,50 @@ gl::Texture2DArray SkyboxRenderer::CreateTexture_(unsigned width, unsigned heigh
 	return texture;
 }
 
-std::vector<SkyboxRenderer::vertex> SkyboxRenderer::CreateSkyboxVertices_() {
-	vec3 position0 = { -1.0f, -1.0f, -1.0f };
-	vec3 position1 = { -1.0f, -1.0f,  1.0f };
-	vec3 position2 = { -1.0f,  1.0f, -1.0f };
-	vec3 position3 = { -1.0f,  1.0f,  1.0f };
-	vec3 position4 = {  1.0f, -1.0f, -1.0f };
-	vec3 position5 = {  1.0f, -1.0f,  1.0f };
-	vec3 position6 = {  1.0f,  1.0f, -1.0f };
-	vec3 position7 = {  1.0f,  1.0f,  1.0f };
+std::vector<SkyboxRenderer::vertex> SkyboxRenderer::_create_skybox_vertices() {
+	vec3 position_0 = { -1.0f, -1.0f, -1.0f };
+	vec3 position_1 = { -1.0f, -1.0f,  1.0f };
+	vec3 position_2 = { -1.0f,  1.0f, -1.0f };
+	vec3 position_3 = { -1.0f,  1.0f,  1.0f };
+	vec3 position_4 = {  1.0f, -1.0f, -1.0f };
+	vec3 position_5 = {  1.0f, -1.0f,  1.0f };
+	vec3 position_6 = {  1.0f,  1.0f, -1.0f };
+	vec3 position_7 = {  1.0f,  1.0f,  1.0f };
 
 	return {
-			{ position0, { 1.0f, 1.0f, PART_WEST } },
-			{ position1, { 0.0f, 1.0f, PART_WEST } },
-			{ position2, { 1.0f, 0.0f, PART_WEST } },
-			{ position3, { 0.0f, 0.0f, PART_WEST } },
+			{ position_0, { 1.0f, 1.0f, PART_WEST } },
+			{ position_1, { 0.0f, 1.0f, PART_WEST } },
+			{ position_2, { 1.0f, 0.0f, PART_WEST } },
+			{ position_3, { 0.0f, 0.0f, PART_WEST } },
 
-			{ position4, { 0.0f, 1.0f, PART_EAST } },
-			{ position5, { 1.0f, 1.0f, PART_EAST } },
-			{ position6, { 0.0f, 0.0f, PART_EAST } },
-			{ position7, { 1.0f, 0.0f, PART_EAST } },
+			{ position_4, { 0.0f, 1.0f, PART_EAST } },
+			{ position_5, { 1.0f, 1.0f, PART_EAST } },
+			{ position_6, { 0.0f, 0.0f, PART_EAST } },
+			{ position_7, { 1.0f, 0.0f, PART_EAST } },
 
-			{ position0, { 0.0f, 0.0f, PART_DOWN } },
-			{ position4, { 1.0f, 0.0f, PART_DOWN } },
-			{ position5, { 1.0f, 1.0f, PART_DOWN } },
-			{ position1, { 0.0f, 1.0f, PART_DOWN } },
+			{ position_0, { 0.0f, 0.0f, PART_DOWN } },
+			{ position_4, { 1.0f, 0.0f, PART_DOWN } },
+			{ position_5, { 1.0f, 1.0f, PART_DOWN } },
+			{ position_1, { 0.0f, 1.0f, PART_DOWN } },
 
-			{ position2, { 0.0f, 1.0f, PART_UP } },
-			{ position3, { 0.0f, 0.0f, PART_UP } },
-			{ position6, { 1.0f, 1.0f, PART_UP } },
-			{ position7, { 1.0f, 0.0f, PART_UP } },
+			{ position_2, { 0.0f, 1.0f, PART_UP } },
+			{ position_3, { 0.0f, 0.0f, PART_UP } },
+			{ position_6, { 1.0f, 1.0f, PART_UP } },
+			{ position_7, { 1.0f, 0.0f, PART_UP } },
 
-			{ position0, { 0.0f, 1.0f, PART_NORTH } },
-			{ position2, { 0.0f, 0.0f, PART_NORTH } },
-			{ position6, { 1.0f, 0.0f, PART_NORTH } },
-			{ position4, { 1.0f, 1.0f, PART_NORTH } },
+			{ position_0, { 0.0f, 1.0f, PART_NORTH } },
+			{ position_2, { 0.0f, 0.0f, PART_NORTH } },
+			{ position_6, { 1.0f, 0.0f, PART_NORTH } },
+			{ position_4, { 1.0f, 1.0f, PART_NORTH } },
 
-			{ position1, { 1.0f, 1.0f, PART_SOUTH } },
-			{ position5, { 0.0f, 1.0f, PART_SOUTH } },
-			{ position3, { 1.0f, 0.0f, PART_SOUTH } },
-			{ position7, { 0.0f, 0.0f, PART_SOUTH } }
+			{ position_1, { 1.0f, 1.0f, PART_SOUTH } },
+			{ position_5, { 0.0f, 1.0f, PART_SOUTH } },
+			{ position_3, { 1.0f, 0.0f, PART_SOUTH } },
+			{ position_7, { 0.0f, 0.0f, PART_SOUTH } }
 	};
 }
 
-std::vector<unsigned> SkyboxRenderer::CreateSkyboxIndices_() {
+std::vector<unsigned> SkyboxRenderer::_create_skybox_indices() {
 	return std::vector<GLuint>{
 			 2,  3,  1,  2,  1,  0,
 			 7,  6,  4,  5,  7,  4,

@@ -55,12 +55,12 @@ public:
 	 *
 	 * This function returns nullptr if there was no hit found.
 	 */
-	RigidBody* ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT);
+	RigidBody* ShootRay(const vec3& origin, const vec3& direction, float min_t, float max_t);
 
 private:
-	void AddBody_(btRigidBody* body);
-	void RemoveBody_(btRigidBody* body, CollisionComponent* cc);
-	void HandleCollisions_();
+	void _add_body(btRigidBody* body);
+	void _remove_body(btRigidBody* body, CollisionComponent* cc);
+	void _handle_collisions();
 
 	vec3 _gravity = vec3(0.0f, -9.81f, 0.0f);
 

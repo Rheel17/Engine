@@ -54,7 +54,7 @@ void entry() {
 
 	Game* game = new GameClass;
 	game->Start();
-	game->Loop_();
+	game->_loop();
 	delete game;
 }
 

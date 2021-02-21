@@ -32,7 +32,7 @@ using uint = uint32_t;
  * end of file before the bytes could be completely read, an error will be shown and
  * the program will abort.
  */
-static void checkRead(std::istream& input, char* data, size_t count) {
+static void check_read(std::istream& input, char* data, size_t count) {
 	input.read(data, count);
 
 	if (!input.good() || input.gcount() != count) {
@@ -44,17 +44,17 @@ static void checkRead(std::istream& input, char* data, size_t count) {
 /*
  * Read a little-endian unsigned integer.
  */
-static uint readInt(std::istream& input) {
+static uint read_int(std::istream& input) {
 	char bytes[4];
-	checkRead(input, bytes, 4);
+	check_read(input, bytes, 4);
 
-	auto ubytes = reinterpret_cast<uint8_t*>(bytes);
-	uint part0 = uint(ubytes[0]);
-	uint part1 = uint(ubytes[1]) << 8;
-	uint part2 = uint(ubytes[2]) << 16;
-	uint part3 = uint(ubytes[3]) << 24;
+	auto ubytes = reinterpret_cast<uint8_t*>(bytes); // NOLINT (safe)
+	uint part_0 = uint(ubytes[0]);
+	uint part_1 = uint(ubytes[1]) << 8;
+	uint part_2 = uint(ubytes[2]) << 16;
+	uint part_3 = uint(ubytes[3]) << 24;
 
-	return part0 | part1 | part2 | part3;
+	return part_0 | part_1 | part_2 | part_3;
 }
 
 class Riff {
@@ -71,24 +71,24 @@ public:
 		 */
 		explicit Chunk(std::istream& input) {
 			// read the chunk header
-			checkRead(input, _chunk_id, 4);
-			_bytes_chunk = readInt(input);
-			_bytes_children = readInt(input);
+			check_read(input, _chunk_id, 4);
+			_bytes_chunk = read_int(input);
+			_bytes_children = read_int(input);
 
 			// read chunk data
 			_data.resize(_bytes_chunk);
-			checkRead(input, _data.data(), _bytes_chunk);
+			check_read(input, _data.data(), _bytes_chunk);
 
 			// read children
-			int64_t childBytesLeft = _bytes_children;
+			int64_t child_bytes_left = _bytes_children;
 
-			while (childBytesLeft > 0) {
+			while (child_bytes_left > 0) {
 				auto& child = _children.emplace_back(input);
-				childBytesLeft -= child._bytes_chunk + child._bytes_children + 12;
+				child_bytes_left -= child._bytes_chunk + child._bytes_children + 12;
 			}
 		}
 
-		std::string GetID() const {
+		std::string GetId() const {
 			return std::string(_chunk_id, 4);
 		}
 
@@ -117,12 +117,12 @@ public:
 	 * Read a RIFF file.
 	 */
 	explicit Riff(std::istream& input) {
-		checkRead(input, _id, 4);
-		_version = readInt(input);
+		check_read(input, _id, 4);
+		_version = read_int(input);
 		_root = Chunk(input);
 	}
 
-	std::string GetID() const {
+	std::string GetId() const {
 		return std::string(_id, 4);
 	}
 
@@ -152,21 +152,21 @@ VoxelImage VoxelLoader::Load(const std::string& path) const {
 		throw std::runtime_error("Error while reading image file: " + path);
 	}
 
-	return LoadVox_(f);
+	return _load_vox(f);
 }
 
-VoxelImage VoxelLoader::LoadVox_(std::istream& input) {
+VoxelImage VoxelLoader::_load_vox(std::istream& input) {
 	// read the riff-formated file.
 	Riff riff(input);
 
 	// check the file header
-	if (riff.GetID() != "VOX " || riff.GetVersion() != 150) {
+	if (riff.GetId() != "VOX " || riff.GetVersion() != 150) {
 		Log::Error() << "Failed reading .vox file: file header invalid." << std::endl;
 		abort();
 	}
 
 	const auto& main = riff.GetRoot();
-	if (main.GetID() != "MAIN") {
+	if (main.GetId() != "MAIN") {
 		Log::Error() << "Failed reading .vox file: invalid chunk." << std::endl;
 		abort();
 	}
@@ -178,34 +178,34 @@ VoxelImage VoxelLoader::LoadVox_(std::istream& input) {
 
 	// currently we only accept a single model.
 	// TODO: add support for multiple models
-	if (main.GetChildren()[0].GetID() == "PACK") {
+	if (main.GetChildren()[0].GetId() == "PACK") {
 		Log::Error() << "Failed reading .vox file: multiple models via 'PACK' unsupported." << std::endl;
 		abort();
 	}
 
 	// read the model. Note that XYZ in the engine is XZY in the .vox format.
 	const auto& size = main.GetChildren()[0];
-	auto sizeStreamProxy = size.GetDataStream();
-	std::istream sizeStream(&sizeStreamProxy);
+	auto size_stream_proxy = size.GetDataStream();
+	std::istream size_stream(&size_stream_proxy);
 
-	unsigned width = readInt(sizeStream);
-	unsigned depth = readInt(sizeStream);
-	unsigned height = readInt(sizeStream);
+	unsigned width = read_int(size_stream);
+	unsigned depth = read_int(size_stream);
+	unsigned height = read_int(size_stream);
 
 	std::vector<Color> voxels;
 	voxels.resize(width * height * depth);
 
 	const auto& xyzi = main.GetChildren()[1];
-	auto xyziStreamProxy = xyzi.GetDataStream();
-	std::istream xyziStream(&xyziStreamProxy);
+	auto xyzi_stream_proxy = xyzi.GetDataStream();
+	std::istream xyzi_stream(&xyzi_stream_proxy);
 
-	uint voxelCount = readInt(xyziStream);
-	std::array<std::vector<ivec3>, 256> rawVoxels;
+	uint voxel_count = read_int(xyzi_stream);
+	std::array<std::vector<ivec3>, 256> raw_voxels;
 	char data[4];
 
-	for (uint i = 0; i < voxelCount; i++) {
-		checkRead(xyziStream, data, 4);
-		rawVoxels[data[3]].emplace_back(data[0], data[2], data[1]);
+	for (uint i = 0; i < voxel_count; i++) {
+		check_read(xyzi_stream, data, 4);
+		raw_voxels[data[3]].emplace_back(data[0], data[2], data[1]);
 	}
 
 	// read the rest: ignore the materials for now, search for the palette.
@@ -215,15 +215,15 @@ VoxelImage VoxelLoader::LoadVox_(std::istream& input) {
 
 	for (size_t i = 2; i < main.GetChildren().size(); i++) {
 		const auto& rgba = main.GetChildren()[i];
-		if (rgba.GetID() != "RGBA") {
+		if (rgba.GetId() != "RGBA") {
 			continue;
 		}
 
-		auto rgbaStreamProxy = rgba.GetDataStream();
-		std::istream rgbaStream(&rgbaStreamProxy);
+		auto rgba_stream_proxy = rgba.GetDataStream();
+		std::istream rgba_stream(&rgba_stream_proxy);
 
 		for (int idx = 1; idx < 256; idx++) {
-			checkRead(rgbaStream, data, 4);
+			check_read(rgba_stream, data, 4);
 			palette[idx] = { data[0] / 255.0f, data[1] / 255.0f, data[2] / 255.0f, data[3] / 255.0f };
 		}
 
@@ -233,7 +233,7 @@ VoxelImage VoxelLoader::LoadVox_(std::istream& input) {
 	// push the voxels to the internal vector
 	for (int i = 0; i < 256; i++) {
 		Color c = palette[i];
-		const std::vector<ivec3>& locations = rawVoxels[i];
+		const std::vector<ivec3>& locations = raw_voxels[i];
 
 		for (ivec3 v : locations) {
 			voxels[v.x + v.y * width + v.z * width * height] = c;

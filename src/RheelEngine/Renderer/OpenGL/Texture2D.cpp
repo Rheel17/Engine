@@ -28,19 +28,19 @@ void Texture2D::SetCompareMode(CompareMode parameter) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GLint(parameter));
 }
 
-void Texture2D::SetEmpty(InternalFormat internalFormat, unsigned width, unsigned height, Format format) {
+void Texture2D::SetEmpty(InternalFormat internal_format, unsigned width, unsigned height, Format format) {
 	std::vector<float> zeros;
 	zeros.resize(width * height * 4);
-	SetData(internalFormat, width, height, format, zeros.data());
+	SetData(internal_format, width, height, format, zeros.data());
 }
 
-void Texture2D::SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, Type type, const void* data) {
+void Texture2D::SetData(InternalFormat internal_format, unsigned width, unsigned height, Format format, Type type, const void* data) {
 	Bind();
-	glTexImage2D(GL_TEXTURE_2D, 0, GLenum(internalFormat), width, height, 0, GLenum(format), GLenum(type), data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GLenum(internal_format), width, height, 0, GLenum(format), GLenum(type), data);
 }
 
-void Texture2D::SetData(InternalFormat internalFormat, unsigned width, unsigned height, Format format, const float* data) {
-	SetData(internalFormat, width, height, format, Type::FLOAT, data);
+void Texture2D::SetData(InternalFormat internal_format, unsigned width, unsigned height, Format format, const float* data) {
+	SetData(internal_format, width, height, format, Type::FLOAT, data);
 }
 
 }

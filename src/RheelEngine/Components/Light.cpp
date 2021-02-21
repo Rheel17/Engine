@@ -9,9 +9,9 @@ Light::Light(const Color& color) :
 		_color(color),
 		_shadow_distance(0.0f) {}
 
-Light::Light(const Color& color, float shadowDistance) :
+Light::Light(const Color& color, float shadow_distance) :
 		_color(color),
-		_shadow_distance(shadowDistance) {}
+		_shadow_distance(shadow_distance) {}
 
 void Light::SetColor(const Color& color) {
 	_color = color;
@@ -21,8 +21,8 @@ const Color& Light::GetColor() const {
 	return _color;
 }
 
-void Light::SetShadowDistance(float shadowDistance) {
-	_shadow_distance = shadowDistance;
+void Light::SetShadowDistance(float shadow_distance) {
+	_shadow_distance = shadow_distance;
 }
 
 float Light::ShadowDistance() const {

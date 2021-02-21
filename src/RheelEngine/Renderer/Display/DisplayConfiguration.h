@@ -18,13 +18,13 @@ public:
 	enum AntiAliasing { AA_OFF, MSAA_4, MSAA_8, MSAA_16 };
 	enum ShadowQuality { SHADOW_OFF, SHADOW_LOW, SHADOW_MEDIUM, SHADOW_HIGH };
 
-	static constexpr auto ANISOTROPIC_LEVEL_MAX = std::numeric_limits<float>::infinity();
+	static constexpr auto anisotropic_level_max = std::numeric_limits<float>::infinity();
 
 public:
 	unsigned SampleCount() const;
 
 	WindowMode window_mode = FULLSCREEN;
-	ivec2 resolution = RESOLUTION_NATIVE;
+	ivec2 resolution = resolution_native;
 	bool vsync = true;
 	AntiAliasing aa_mode = AA_OFF;
 	ShadowQuality shadow_quality = SHADOW_OFF;
@@ -32,18 +32,18 @@ public:
 	float anisotropic_level = 1.0f;
 
 private:
-	void CalculateActualResolution_();
-	void ClampAnisotropicLevel_();
+	void _calculate_actual_resolution();
+	void _clamp_anisotropic_level();
 
 public:
-	static void InitializeGLFW();
-	static void TerminateGLFW();
+	static void InitializeGlfw();
+	static void TerminateGlfw();
 	static const DisplayConfiguration& Get();
 
-	static const ivec2 RESOLUTION_NATIVE;
+	static const ivec2 resolution_native;
 
 private:
-	static void Set_(DisplayConfiguration&& displayConfiguration);
+	static void _set(const DisplayConfiguration& display_configuration);
 
 	static DisplayConfiguration _display_configuration;
 

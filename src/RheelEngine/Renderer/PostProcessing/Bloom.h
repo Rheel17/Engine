@@ -20,7 +20,7 @@ class RE_API Bloom : public PostProcessingEffect {
 	mutable pseudo_static_pointer<shaders> _shaders;
 
 public:
-	Bloom(float thresholdStart, float thresholdEnd, float multiplier, float sigma, unsigned samples);
+	Bloom(float threshold_start, float threshold_end, float multiplier, float sigma, unsigned samples);
 
 	const gl::Framebuffer& Render(const gl::Framebuffer& input) const override;
 

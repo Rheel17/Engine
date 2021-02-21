@@ -26,7 +26,7 @@ public:
 private:
 	ShadowMapDirectional(SceneRenderManager* manager, const Light& light);
 
-	void CalculateViewProjectionMatrices_(const Camera* camera, unsigned width, unsigned height);
+	void _calculate_view_projection_matrices(const Camera* camera, unsigned width, unsigned height);
 
 	std::vector<unsigned> _csm_split;
 	std::vector<float> _csm_borders;

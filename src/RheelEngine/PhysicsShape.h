@@ -17,16 +17,16 @@ public:
 
 private:
 	PhysicsShape() = default;
-	PhysicsShape(btCollisionShape* shape);
-	btCollisionShape* Pointer_() const;
+	explicit PhysicsShape(btCollisionShape* shape);
+	btCollisionShape* _pointer() const;
 
 	std::shared_ptr<btCollisionShape> _shape;
 
 public:
-	static PhysicsShape Box(const vec3& halfSize);
-	static PhysicsShape Box(float halfX, float halfY, float halfZ);
+	static PhysicsShape Box(const vec3& half_size);
+	static PhysicsShape Box(float half_x, float half_y, float half_z);
 	static PhysicsShape Sphere(float radius);
-	static PhysicsShape Capsule(float radius, float straightHeight);
+	static PhysicsShape Capsule(float radius, float straight_height);
 
 };
 

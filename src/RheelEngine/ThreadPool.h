@@ -22,7 +22,7 @@ public:
 	 * Constructs and starts a thread pool. The mainWindow parameter represents
 	 * the window to share an OpenGL context with.
 	 */
-	explicit ThreadPool(const Window& mainWindow);
+	explicit ThreadPool(const Window& main_window);
 
 	~ThreadPool();
 
@@ -50,7 +50,7 @@ public:
 	}
 
 private:
-	std::unique_ptr<TaskBase> GetNextTask_();
+	std::unique_ptr<TaskBase> _get_next_task();
 
 	std::vector<std::thread> _threads;
 	std::queue<std::unique_ptr<TaskBase>> _execution_queue;
@@ -59,7 +59,7 @@ private:
 	bool _stop_requested = false;
 
 private:
-	static void ThreadMain_(ThreadPool* pool, DummyWindow contextWindow);
+	static void _thread_main(ThreadPool* pool, DummyWindow context_window);
 
 };
 

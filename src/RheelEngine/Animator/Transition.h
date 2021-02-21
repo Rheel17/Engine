@@ -8,32 +8,28 @@
 namespace rheel {
 
 class RE_API Transition {
-	RE_NO_COPY(Transition);
-	RE_NO_MOVE(Transition);
 
 public:
-	~Transition() = default;
-
 	template<typename V>
-	V operator()(float t, float tMin, float tMax, V vMin, V vMax) const {
-		return _function((t - tMin) / (tMax - tMin)) * (vMax - vMin) + vMin;
+	V operator()(float t, float t_min, float t_max, V v_min, V v_max) const {
+		return _function((t - t_min) / (t_max - t_min)) * (v_max - v_min) + v_min;
 	}
 
 private:
-	typedef float (* TransitionFunction)(float t);
+	using TransitionFunction = float (*)(float);
 
 	explicit Transition(TransitionFunction function);
 
 	TransitionFunction _function;
 
 public:
-	static const Transition LINEAR;
-	static const Transition QUADRATIC_IN;
-	static const Transition QUADRATIC_OUT;
-	static const Transition CUBIC;
-	static const Transition CUBIC_IN;
-	static const Transition CUBIC_OUT;
-	static const Transition COSINE;
+	static const Transition linear;
+	static const Transition quadratic_in;
+	static const Transition quadratic_out;
+	static const Transition cubic;
+	static const Transition cubic_in;
+	static const Transition cubic_out;
+	static const Transition cosine;
 
 };
 

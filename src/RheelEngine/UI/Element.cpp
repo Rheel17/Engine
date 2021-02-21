@@ -21,8 +21,8 @@ Element::ogl_data::ogl_data() :
 	ui_shader.AttachShader(gl::Shader::ShaderType::FRAGMENT, EngineResources::PreprocessShader("Shaders_uishader_frag_glsl"));
 	ui_shader.Link();
 
-	ivec2 screenDimension = DisplayConfiguration::Get().resolution;
-	ui_shader.GetUniform("_screen_dimensions") = vec2{ screenDimension.x, screenDimension.y };
+	ivec2 screen_dimension = DisplayConfiguration::Get().resolution;
+	ui_shader.GetUniform("_screen_dimensions") = vec2{ screen_dimension.x, screen_dimension.y };
 	ui_shader.GetUniform("_texture_sampler") = 0;
 
 	ui_vertex_data.SetDataEmpty(gl::Buffer::Usage::STREAM_DRAW);
@@ -157,7 +157,7 @@ void Element::MoveSuperFields(Element&& element) {
 	_default_height = element._default_height;
 }
 
-void Element::Callback_(const std::function<void(const CbPtr&)>& callback) {
+void Element::_callback(const std::function<void(const CbPtr&)>& callback) {
 	for (const CbPtr& ptr : _callback_list) {
 		callback(ptr);
 	}
@@ -165,79 +165,79 @@ void Element::Callback_(const std::function<void(const CbPtr&)>& callback) {
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-virtual-near-miss"
-void Element::OnResize_() {
+void Element::_on_resize() {
 	OnResize();
-	Callback_([](const CbPtr& ptr) { ptr->OnResize(); });
+	_callback([](const CbPtr& ptr) { ptr->OnResize(); });
 }
 
-void Element::OnFocusGained_() {
+void Element::_on_focus_gained() {
 	OnFocusGained();
-	Callback_([](const CbPtr& ptr) { ptr->OnFocusGained(); });
+	_callback([](const CbPtr& ptr) { ptr->OnFocusGained(); });
 }
 
-void Element::OnFocusLost_() {
+void Element::_on_focus_lost() {
 	OnFocusLost();
-	Callback_([](const CbPtr& ptr) { ptr->OnFocusLost(); });
+	_callback([](const CbPtr& ptr) { ptr->OnFocusLost(); });
 }
 
-void Element::OnKeyPress_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+void Element::_on_key_press(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
 	OnKeyPress(key, scancode, mods);
-	Callback_([key, scancode, mods](const CbPtr& ptr) { ptr->OnKeyPress(key, scancode, mods); });
+	_callback([key, scancode, mods](const CbPtr& ptr) { ptr->OnKeyPress(key, scancode, mods); });
 }
 
-void Element::OnKeyRepeat_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+void Element::_on_key_repeat(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
 	OnKeyRepeat(key, scancode, mods);
-	Callback_([key, scancode, mods](const CbPtr& ptr) { ptr->OnKeyRepeat(key, scancode, mods); });
+	_callback([key, scancode, mods](const CbPtr& ptr) { ptr->OnKeyRepeat(key, scancode, mods); });
 }
 
-void Element::OnKeyRelease_(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
+void Element::_on_key_release(Input::Key key, Input::Scancode scancode, Input::Modifiers mods) {
 	OnKeyRelease(key, scancode, mods);
-	Callback_([key, scancode, mods](const CbPtr& ptr) { ptr->OnKeyRelease(key, scancode, mods); });
+	_callback([key, scancode, mods](const CbPtr& ptr) { ptr->OnKeyRelease(key, scancode, mods); });
 }
 
-void Element::OnCharacterInput_(Input::Unicode character) {
+void Element::_on_character_input(Input::Unicode character) {
 	OnCharacterInput(character);
-	Callback_([character](const CbPtr& ptr) { ptr->OnCharacterInput(character); });
+	_callback([character](const CbPtr& ptr) { ptr->OnCharacterInput(character); });
 }
 
-void Element::OnMouseButtonPress_(Input::MouseButton button, Input::Modifiers mods) {
+void Element::_on_mouse_button_press(Input::MouseButton button, Input::Modifiers mods) {
 	OnMouseButtonPress(button, mods);
-	Callback_([button, mods](const CbPtr& ptr) { ptr->OnMouseButtonPress(button, mods); });
+	_callback([button, mods](const CbPtr& ptr) { ptr->OnMouseButtonPress(button, mods); });
 }
 
-void Element::OnMouseButtonRelease_(Input::MouseButton button, Input::Modifiers mods) {
+void Element::_on_mouse_button_release(Input::MouseButton button, Input::Modifiers mods) {
 	OnMouseButtonRelease(button, mods);
-	Callback_([button, mods](const CbPtr& ptr) { ptr->OnMouseButtonRelease(button, mods); });
+	_callback([button, mods](const CbPtr& ptr) { ptr->OnMouseButtonRelease(button, mods); });
 }
 
-void Element::OnMouseEnter_(const vec2& position) {
+void Element::_on_mouse_enter(const vec2& position) {
 	OnMouseEnter(position);
-	Callback_([position](const CbPtr& ptr) { ptr->OnMouseEnter(position); });
+	_callback([position](const CbPtr& ptr) { ptr->OnMouseEnter(position); });
 }
 
-void Element::OnMouseExit_(const vec2& position) {
+void Element::_on_mouse_exit(const vec2& position) {
 	OnMouseExit(position);
-	Callback_([position](const CbPtr& ptr) { ptr->OnMouseExit(position); });
+	_callback([position](const CbPtr& ptr) { ptr->OnMouseExit(position); });
 }
 
-void Element::OnMouseMove_(const vec2& position) {
+void Element::_on_mouse_move(const vec2& position) {
 	OnMouseMove(position);
-	Callback_([position](const CbPtr& ptr) { ptr->OnMouseMove(position); });
+	_callback([position](const CbPtr& ptr) { ptr->OnMouseMove(position); });
 }
 
-void Element::OnMouseJump_(const vec2& position) {
+void Element::_on_mouse_jump(const vec2& position) {
 	OnMouseJump(position);
-	Callback_([position](const CbPtr& ptr) { ptr->OnMouseJump(position); });
+	_callback([position](const CbPtr& ptr) { ptr->OnMouseJump(position); });
 }
 
-void Element::OnMouseDrag_(const vec2& origin, const vec2& position) {
+void Element::_on_mouse_drag(const vec2& origin, const vec2& position) {
 	OnMouseDrag(origin, position);
-	Callback_([origin, position](const CbPtr& ptr) { ptr->OnMouseDrag(origin, position); });
+	_callback([origin, position](const CbPtr& ptr) { ptr->OnMouseDrag(origin, position); });
 }
 
-void Element::OnMouseScroll_(const vec2& scrollComponents) {
-	OnMouseScroll(scrollComponents);
-	Callback_([scrollComponents](const CbPtr& ptr) { ptr->OnMouseScroll(scrollComponents); });
+void Element::_on_mouse_scroll(const vec2& scroll_components) {
+	OnMouseScroll(scroll_components);
+	_callback([scroll_components](const CbPtr& ptr) { ptr->OnMouseScroll(scroll_components); });
 }
 #pragma clang diagnostic pop
 
@@ -257,12 +257,12 @@ TextRenderer& Element::GetTextRenderer() const {
 	return _ogl_data->text_renderer;
 }
 
-void Element::DrawColoredTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3) const {
-	Draw_({ v1, v2, v3 }, MODE_COLORED);
+void Element::DrawColoredTriangle(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3) const {
+	_draw({ v_1, v_2, v_3 }, MODE_COLORED);
 }
 
-void Element::DrawColoredQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4) const {
-	Draw_({ v1, v2, v3, v3, v4, v1 }, MODE_COLORED);
+void Element::DrawColoredQuad(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3, const Vertex& v_4) const {
+	_draw({ v_1, v_2, v_3, v_3, v_4, v_1 }, MODE_COLORED);
 }
 
 void Element::DrawColoredQuad(const Bounds& bounds, const Color& color) const {
@@ -273,14 +273,14 @@ void Element::DrawColoredQuad(const Bounds& bounds, const Color& color) const {
 			Vertex({ bounds.x + bounds.width, bounds.y }, color));
 }
 
-void Element::DrawTexturedTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const gl::Texture2D& texture) const {
+void Element::DrawTexturedTriangle(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3, const gl::Texture2D& texture) const {
 	texture.Bind(0);
-	Draw_({ v1, v2, v3 }, MODE_TEXTURED);
+	_draw({ v_1, v_2, v_3 }, MODE_TEXTURED);
 }
 
-void Element::DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const gl::Texture2D& texture) const {
+void Element::DrawTexturedQuad(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3, const Vertex& v_4, const gl::Texture2D& texture) const {
 	texture.Bind(0);
-	Draw_({ v1, v2, v3, v3, v4, v1 }, MODE_TEXTURED);
+	_draw({ v_1, v_2, v_3, v_3, v_4, v_1 }, MODE_TEXTURED);
 }
 
 void Element::DrawTexturedQuad(const Bounds& bounds, const gl::Texture2D& texture) const {
@@ -292,9 +292,9 @@ void Element::DrawTexturedQuad(const Bounds& bounds, const gl::Texture2D& textur
 			texture);
 }
 
-void Element::DrawTexturedQuad(const Vertex& v1, const Vertex& v2, const Vertex& v3, const Vertex& v4, const Image& image, float alpha) const {
+void Element::DrawTexturedQuad(const Vertex& v_1, const Vertex& v_2, const Vertex& v_3, const Vertex& v_4, const Image& image, float alpha) const {
 	ImageTexture::Get(image).Bind(0);
-	Draw_({ v1, v2, v3, v3, v4, v1 }, MODE_TEXTURED, alpha);
+	_draw({ v_1, v_2, v_3, v_3, v_4, v_1 }, MODE_TEXTURED, alpha);
 }
 
 void Element::DrawTexturedQuad(const Bounds& bounds, const Image& image, float alpha) const {
@@ -307,15 +307,15 @@ void Element::DrawTexturedQuad(const Bounds& bounds, const Image& image, float a
 }
 
 void Element::DrawShaderedQuad(const Bounds& bounds, const Shader& shader) const {
-	Vertex v1({ bounds.x, bounds.y });
-	Vertex v2({ bounds.x, bounds.y + bounds.height });
-	Vertex v3({ bounds.x + bounds.width, bounds.y + bounds.height });
-	Vertex v4({ bounds.x + bounds.width, bounds.y });
+	Vertex v_1({ bounds.x, bounds.y });
+	Vertex v_2({ bounds.x, bounds.y + bounds.height });
+	Vertex v_3({ bounds.x + bounds.width, bounds.y + bounds.height });
+	Vertex v_4({ bounds.x + bounds.width, bounds.y });
 
 	const gl::Program& program = GetCustomShader(shader);
 	program.Use();
 
-	std::vector<Vertex> vertices = { v1, v2, v3, v3, v4, v1 };
+	std::vector<Vertex> vertices = { v_1, v_2, v_3, v_3, v_4, v_1 };
 	_ogl_data->ui_vertex_data.SetData(vertices, gl::Buffer::Usage::STREAM_DRAW);
 	_ogl_data->ui_vao.DrawArrays(gl::VertexArray::Mode::TRIANGLES, 0, vertices.size());
 }
@@ -326,24 +326,24 @@ const gl::Program& Element::GetCustomShader(const Shader& shader) const {
 	return _ogl_data->custom_shaders.Get(address, [shader](std::uintptr_t) {
 		gl::ContextScope cs;
 
-		std::string shaderSource = EngineResources::PreprocessShader("Shaders_uishader_custom_header_frag_glsl");
-		shaderSource += "\n\n";
-		shaderSource += "#line 1\n";
-		shaderSource += shader.GetSource();
+		std::string shader_source = EngineResources::PreprocessShader("Shaders_uishader_custom_header_frag_glsl");
+		shader_source += "\n\n";
+		shader_source += "#line 1\n";
+		shader_source += shader.GetSource();
 
-		gl::Program shaderProgram;
-		shaderProgram.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
-		shaderProgram.AttachShader(gl::Shader::ShaderType::FRAGMENT, shaderSource);
-		shaderProgram.Link();
+		gl::Program shader_program;
+		shader_program.AttachShader(gl::Shader::ShaderType::VERTEX, EngineResources::PreprocessShader("Shaders_uishader_vert_glsl"));
+		shader_program.AttachShader(gl::Shader::ShaderType::FRAGMENT, shader_source);
+		shader_program.Link();
 
-		ivec2 screenDimension = DisplayConfiguration::Get().resolution;
-		shaderProgram["_screen_dimensions"] = vec2{ screenDimension.x, screenDimension.y };
+		ivec2 screen_dimension = DisplayConfiguration::Get().resolution;
+		shader_program["_screen_dimensions"] = vec2{ screen_dimension.x, screen_dimension.y };
 
-		return shaderProgram;
+		return shader_program;
 	});
 }
 
-void Element::Draw_(const std::vector<Vertex>& vertices, int mode, float alpha) const {
+void Element::_draw(const std::vector<Vertex>& vertices, int mode, float alpha) const {
 	if (mode == MODE_COLORED) {
 		gl::Context::Current().ClearTexture(0, gl::Texture::Target::TEXTURE_2D);
 	}

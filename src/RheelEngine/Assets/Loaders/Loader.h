@@ -39,7 +39,7 @@ public:
 	 * is only loaded from disk once. This method is thread-safe.
 	 */
 	T Load(const std::string& path) {
-		return _cache.Get(path, Load_);
+		return _cache.Get(path, _load);
 	}
 
 	/**
@@ -47,14 +47,14 @@ public:
 	 * is only loaded from disk once. This method is thread-safe.
 	 */
 	void Preload(const std::string& path) {
-		_cache.Put(path, Load_);
+		_cache.Put(path, _load);
 	}
 
 private:
 	Cache<std::string, T, keep_policy, true> _cache;
 
 private:
-	static T Load_(const std::string& path) {
+	static T _load(const std::string& path) {
 		Log::Info() << "Loading asset " << path << std::endl;
 		return LoaderImpl().Load(path);
 	}

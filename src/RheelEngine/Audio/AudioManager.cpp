@@ -6,12 +6,12 @@
 namespace rheel {
 
 AudioManager::AudioManager() {
-	const ALCchar* defaultDevice = alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER);
-	Log::Info() << "Audio device: " << defaultDevice << std::endl;
+	const ALCchar* default_device = alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER);
+	Log::Info() << "Audio device: " << default_device << std::endl;
 
 	// TODO: handle errors
 
-	_device = alcOpenDevice(defaultDevice);
+	_device = alcOpenDevice(default_device);
 	if (!_device) {
 		Log::Error() << "Could not create audio device" << std::endl;
 		return;
@@ -35,7 +35,7 @@ AudioManager::~AudioManager() {
 }
 
 AudioSource& AudioManager::Play(const Sound& sound) {
-	const AudioClip& clip = GetAudioClip_(sound);
+	const AudioClip& clip = _get_audio_clip(sound);
 
 	auto source = std::make_unique<AudioSource>(*this, clip);
 	source->Play();
@@ -45,7 +45,7 @@ AudioSource& AudioManager::Play(const Sound& sound) {
 }
 
 AudioSource& AudioManager::Loop(const Sound& sound) {
-	const AudioClip& clip = GetAudioClip_(sound);
+	const AudioClip& clip = _get_audio_clip(sound);
 
 	auto source = std::make_unique<AudioSource>(*this, clip);
 	source->Loop();
@@ -55,7 +55,7 @@ AudioSource& AudioManager::Loop(const Sound& sound) {
 }
 
 void AudioManager::Stop(AudioSource& source) {
-	source.Stop_();
+	source._stop();
 
 	auto iter = std::find_if(_sources.begin(), _sources.end(),
 			[&](const auto& ptr) { return ptr.get() == &source; });
@@ -66,7 +66,7 @@ al::Listener& AudioManager::GetListener() {
 	return _listener;
 }
 
-const AudioClip& AudioManager::GetAudioClip_(const Sound& sound) {
+const AudioClip& AudioManager::_get_audio_clip(const Sound& sound) {
 	auto iter = _clip_cache.find(sound.GetAddress());
 
 	if (iter == _clip_cache.end()) {
@@ -76,9 +76,9 @@ const AudioClip& AudioManager::GetAudioClip_(const Sound& sound) {
 	return iter->second;
 }
 
-void AudioManager::StopAll_() {
+void AudioManager::_stop_all() {
 	for (const auto& source : _sources) {
-		source->Stop_();
+		source->_stop();
 	}
 
 	_sources.clear();

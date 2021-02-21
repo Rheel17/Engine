@@ -16,7 +16,7 @@ public:
 	static constexpr const ComponentId id = 65288;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
-	PointLight(Color color, vec3 position, float attenuation = 0.0f);
+	PointLight(const Color& color, const vec3& position, float attenuation = 0.0f);
 
 	void SetPosition(const vec3& position);
 	const vec3& Position() const;

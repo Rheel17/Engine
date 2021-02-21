@@ -24,7 +24,7 @@ public:
 	virtual void Render(float dt) = 0;
 
 protected:
-	SceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned samples, bool depthComponent);
+	SceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned sample_count, bool depth_component);
 
 	void RenderShadowMaps();
 
@@ -43,7 +43,7 @@ protected:
 	virtual void Resize(unsigned width, unsigned height) = 0;
 
 private:
-	void CorrectShadowMapList_();
+	void _correct_shadow_map_list();
 
 	SceneRenderManager* _manager;
 	ConstEntityId _camera_entity;

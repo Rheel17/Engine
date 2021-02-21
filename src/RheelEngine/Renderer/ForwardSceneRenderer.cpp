@@ -15,8 +15,8 @@ ForwardSceneRenderer::empty_shadow_map::empty_shadow_map() {
 	texture.SetCompareFunction(gl::CompareFunction::LEQUAL);
 }
 
-ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned sampleCount) :
-		SceneRenderer(manager, camera_entity, width, height, sampleCount, true) {}
+ForwardSceneRenderer::ForwardSceneRenderer(SceneRenderManager* manager, ConstEntityId camera_entity, unsigned width, unsigned height, unsigned sample_count) :
+		SceneRenderer(manager, camera_entity, width, height, sample_count, true) {}
 
 void ForwardSceneRenderer::Render(float dt) {
 	// get the camera
@@ -42,57 +42,57 @@ void ForwardSceneRenderer::Render(float dt) {
 
 		// get the shaders for the custom shaded models, add the normal
 		// model shader
-		auto modelShaders = GetManager()->CustomShaderPrograms();
-		modelShaders.emplace_back(GetManager()->GetForwardModelShader());
+		auto model_shaders = GetManager()->CustomShaderPrograms();
+		model_shaders.emplace_back(GetManager()->GetForwardModelShader());
 
 		// initialize the model shaders
-		for (auto modelShaderRef : modelShaders) {
-			gl::Program& modelShader = modelShaderRef;
+		for (auto model_shader_ref : model_shaders) {
+			gl::Program& model_shader = model_shader_ref;
 
-			GetManager()->InitializeShaderLights(modelShader);
-			modelShader["_cameraMatrix"] = camera->CreateMatrix(Width(), Height());
+			GetManager()->InitializeShaderLights(model_shader);
+			model_shader["_cameraMatrix"] = camera->CreateMatrix(Width(), Height());
 
-			if (modelShader.HasUniform("_cameraPosition")) {
-				modelShader["_cameraPosition"] = camera->GetEntity().AbsoluteTransform().GetTranslation();
+			if (model_shader.HasUniform("_cameraPosition")) {
+				model_shader["_cameraPosition"] = camera->GetEntity().AbsoluteTransform().GetTranslation();
 			}
 		}
 
 		// bind the shadow objects
-		int shadowMapCount = 0;
-		int textureUnit = 3;
+		int shadow_map_count = 0;
+		int texture_unit = 3;
 
 		if (GetManager()->ShouldDrawShadows()) {
-			const auto& shadowMaps = ShadowMaps();
+			const auto& shadow_maps = ShadowMaps();
 
-			auto iter = std::find_if(shadowMaps.begin(), shadowMaps.end(), [](const auto& entry) {
+			auto iter = std::find_if(shadow_maps.begin(), shadow_maps.end(), [](const auto& entry) {
 				return (bool) dynamic_cast<ShadowMapDirectional*>(entry.second.get());
 			});
 
-			if (iter != shadowMaps.end()) {
+			if (iter != shadow_maps.end()) {
 				auto sm = dynamic_cast<ShadowMapDirectional*>(iter->second.get());
-				shadowMapCount = sm->Textures().size();
+				shadow_map_count = sm->Textures().size();
 
-				for (int i = 0; i < shadowMapCount; i++) {
-					sm->Textures()[i].get().Bind(textureUnit++);
+				for (int i = 0; i < shadow_map_count; i++) {
+					sm->Textures()[i].get().Bind(texture_unit++);
 
-					for (auto modelShaderRef : modelShaders) {
-						gl::Program& modelShader = modelShaderRef;
-						std::string uniformName = "_lightspaceMatrix" + std::to_string(i);
+					for (auto model_shader_ref : model_shaders) {
+						gl::Program& model_shader = model_shader_ref;
+						std::string uniform_name = "_lightspaceMatrix" + std::to_string(i);
 
-						if (modelShader.HasUniform(uniformName)) {
-							modelShader[uniformName] = sm->LightMatrices()[i];
+						if (model_shader.HasUniform(uniform_name)) {
+							model_shader[uniform_name] = sm->LightMatrices()[i];
 						}
 					}
 				}
 
-				for (auto modelShaderRef : modelShaders) {
-					gl::Program& modelShader = modelShaderRef;
+				for (auto model_shader_ref : model_shaders) {
+					gl::Program& model_shader = model_shader_ref;
 
-					if (modelShader.HasUniform("_shadowMapCount")) {
-						modelShader["_shadowMapCount"] = shadowMapCount;
+					if (model_shader.HasUniform("_shadowMapCount")) {
+						model_shader["_shadowMapCount"] = shadow_map_count;
 					}
-					if (modelShader.HasUniform("_baseBias")) {
-						modelShader["_baseBias"] = sm->Bias();
+					if (model_shader.HasUniform("_baseBias")) {
+						model_shader["_baseBias"] = sm->Bias();
 					}
 				}
 			}
@@ -101,8 +101,8 @@ void ForwardSceneRenderer::Render(float dt) {
 		// Bind empty shadow map textures to the remaining (if any) shadow map
 		// texture units, to make sure OpenGL doesn't complain about non-depth
 		// textures bound to sampler2DShadow uniforms.
-		for (int i = shadowMapCount; i < 4; i++) {
-			_empty_shadow_map->texture.Bind(textureUnit++);
+		for (int i = shadow_map_count; i < 4; i++) {
+			_empty_shadow_map->texture.Bind(texture_unit++);
 		}
 
 		// render all the models

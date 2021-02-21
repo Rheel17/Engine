@@ -14,7 +14,7 @@ class CosineInterpolator : public TransitionInterpolator<V> {
 
 public:
 	CosineInterpolator() :
-			TransitionInterpolator<V>(Transition::COSINE) {}
+			TransitionInterpolator<V>(Transition::cosine) {}
 
 };
 

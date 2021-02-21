@@ -17,12 +17,12 @@ public:
 	/**
 	 * Sets the minifying function for this texture.
 	 */
-	void SetMinifyingFilter(FilterFunction filterFunction);
+	void SetMinifyingFilter(FilterFunction filter_function);
 
 	/**
 	 * Sets the magnification function for this texture.
 	 */
-	void SetMagnificationFilter(FilterFunction filterFunction);
+	void SetMagnificationFilter(FilterFunction filter_function);
 
 	/**
 	 * Sets the anisotropy parameter

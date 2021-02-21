@@ -16,7 +16,7 @@ public:
 	static constexpr const ComponentId id = 65291;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
-	SpotLight(Color color, vec3 position, vec3 direction, float spotAttenuation = 1.0f, float attenuation = 0.0f);
+	SpotLight(const Color& color, const vec3& position, const vec3& direction, float spot_attenuation = 1.0f, float attenuation = 0.0f);
 
 	void SetPosition(const vec3& position);
 	const vec3& Position() const;
@@ -24,7 +24,7 @@ public:
 	void SetDirection(const vec3& direction);
 	const vec3& Direction() const;
 
-	void SetSpotAttenuation(float spotAttenuation);
+	void SetSpotAttenuation(float spot_attenuation);
 	float SpotAttenuation() const;
 
 	void SetAttenuation(float attenuation);

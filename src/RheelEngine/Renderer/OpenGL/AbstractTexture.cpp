@@ -10,18 +10,18 @@ namespace rheel::gl {
 AbstractTexture::AbstractTexture(Texture::Target target) :
 		Texture(target) {}
 
-void AbstractTexture::SetMinifyingFilter(FilterFunction filterFunction) {
+void AbstractTexture::SetMinifyingFilter(FilterFunction filter_function) {
 	Bind();
-	glTexParameteri(GLenum(GetTarget()), GL_TEXTURE_MIN_FILTER, GLint(filterFunction));
+	glTexParameteri(GLenum(GetTarget()), GL_TEXTURE_MIN_FILTER, GLint(filter_function));
 }
 
-void AbstractTexture::SetMagnificationFilter(FilterFunction filterFunction) {
-	if (filterFunction != FilterFunction::NEAREST && filterFunction != FilterFunction::LINEAR) {
+void AbstractTexture::SetMagnificationFilter(FilterFunction filter_function) {
+	if (filter_function != FilterFunction::NEAREST && filter_function != FilterFunction::LINEAR) {
 		throw std::invalid_argument("Magnification filterFunction must be NEAREST of LINEAR");
 	}
 
 	Bind();
-	glTexParameteri(GLenum(GetTarget()), GL_TEXTURE_MAG_FILTER, GLint(filterFunction));
+	glTexParameteri(GLenum(GetTarget()), GL_TEXTURE_MAG_FILTER, GLint(filter_function));
 }
 
 void AbstractTexture::SetAnisotropyParameter(float parameter) {

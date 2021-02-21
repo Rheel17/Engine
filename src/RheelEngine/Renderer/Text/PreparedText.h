@@ -35,12 +35,12 @@ public:
 public:
 	using DrawCommand = gl::DrawElementsIndirectBuffer::Command;
 
-	static unsigned Prepare(const prepare_text_input& input, gl::Buffer& transformBuffer, gl::DrawElementsIndirectBuffer& indirectBuffer, vec4& bounds);
+	static unsigned Prepare(const prepare_text_input& input, gl::Buffer& transform_buffer, gl::DrawElementsIndirectBuffer& indirect_buffer, vec4& bounds);
 
 private:
-	static unsigned Prepare_(const prepare_text_input& input);
-	static void AlignLine_(size_t lineStart, size_t lineEnd, float space, TextAlign align);
-	static vec4 CombineBounds_();
+	static unsigned _prepare(const prepare_text_input& input);
+	static void _align_line(size_t line_start, size_t line_end, float space, TextAlign align);
+	static vec4 _combine_bounds();
 
 	static std::vector<vec2> _transforms;
 	static std::vector<DrawCommand> _commands;

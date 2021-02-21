@@ -11,14 +11,14 @@ void Renderbuffer::Bind() const {
 	Context::Current().BindRenderbuffer(*this);
 }
 
-void Renderbuffer::SetStorage(InternalFormat internalFormat, unsigned width, unsigned height) {
+void Renderbuffer::SetStorage(InternalFormat internal_format, unsigned width, unsigned height) {
 	Bind();
-	glRenderbufferStorage(GL_RENDERBUFFER, GLenum(internalFormat), width, height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GLenum(internal_format), width, height);
 }
 
-void Renderbuffer::SetStorageMultisample(InternalFormat internalFormat, unsigned width, unsigned height, unsigned samples) {
+void Renderbuffer::SetStorageMultisample(InternalFormat internal_format, unsigned width, unsigned height, unsigned samples) {
 	Bind();
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GLenum(internalFormat), width, height);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GLenum(internal_format), width, height);
 }
 
 }

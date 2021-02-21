@@ -43,7 +43,7 @@ public:
 	void SetVelocity(const vec3& velocity);
 
 private:
-	void Stop_();
+	void _stop();
 
 	AudioManager& _manager;
 	al::Source _source;

@@ -22,7 +22,7 @@ public:
 
 	// blending
 	void SetBlendFunction(BlendFactor sfactor, BlendFactor dfactor);
-	void SetBlendFunction(BlendFactor srcRGB, BlendFactor dstRGB, BlendFactor srcAlpha, BlendFactor dstAlpha);
+	void SetBlendFunction(BlendFactor src_rgb, BlendFactor dst_rgb, BlendFactor src_alpha, BlendFactor dst_alpha);
 
 	// logic
 	void SetLogicOp(LogicOp opcode);
@@ -48,17 +48,17 @@ public:
 	void ResetChanges();
 
 private:
-	std::tuple<float, float, float, float> GetClearColor_() const;
-	std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> GetBlendFunction_() const;
-	LogicOp GetLogicOp_() const;
-	CompareFunction GetDepthFunction_() const;
-	CullFace GetCullFace_() const;
-	std::tuple<bool, bool, bool, bool> GetColorMask_() const;
-	bool GetDepthMask_() const;
-	std::tuple<CompareFunction, uint8_t, uint8_t> GetStencilFunc_() const;
-	uint8_t GetStencilMask_() const;
-	std::tuple<StencilFunction, StencilFunction, StencilFunction> GetStencilOp_() const;
-	std::tuple<int, int, unsigned, unsigned> GetScissorTest_() const;
+	std::tuple<float, float, float, float> _get_clear_color() const;
+	std::tuple<BlendFactor, BlendFactor, BlendFactor, BlendFactor> _get_blend_function() const;
+	LogicOp _get_logic_op() const;
+	CompareFunction _get_depth_function() const;
+	CullFace _get_cull_face() const;
+	std::tuple<bool, bool, bool, bool> _get_color_mask() const;
+	bool _get_depth_mask() const;
+	std::tuple<CompareFunction, uint8_t, uint8_t> _get_stencil_func() const;
+	uint8_t _get_stencil_mask() const;
+	std::tuple<StencilFunction, StencilFunction, StencilFunction> _get_stencil_op() const;
+	std::tuple<int, int, unsigned, unsigned> _get_scissor_test() const;
 
 	Context& _context;
 
@@ -91,7 +91,7 @@ private:
 	static constexpr std::tuple<StencilFunction, StencilFunction, StencilFunction> _default_stencil_op =
 			{ StencilFunction::KEEP, StencilFunction::KEEP, StencilFunction::KEEP };
 
-	std::tuple<int, int, unsigned, unsigned> GetDefaultScissorTest_() const;
+	std::tuple<int, int, unsigned, unsigned> _get_default_scissor_test() const;
 
 };
 

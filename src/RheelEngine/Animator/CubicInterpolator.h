@@ -14,7 +14,7 @@ class CubicInterpolator : public TransitionInterpolator<V> {
 
 public:
 	CubicInterpolator() :
-			TransitionInterpolator<V>(Transition::CUBIC) {}
+			TransitionInterpolator<V>(Transition::cubic) {}
 
 };
 

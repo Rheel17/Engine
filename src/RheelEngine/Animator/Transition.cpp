@@ -5,21 +5,21 @@
 
 namespace rheel {
 
-static float transitionLinear(float t) { return t; }
-static float transitionQuadraticIn(float t) { return t * t; }
-static float transitionQuadraticOut(float t) { return 1.0f - (t - 1.0f) * (t - 1.0f); }
-static float transitionCubic(float t) { return -2.0f * t * t * t + 3.0f * t * t; }
-static float transitionCubicIn(float t) { return t * t * t; }
-static float transitionCubicOut(float t) { return t * t * t - 3 * t * t + 3 * t; }
-static float transitionCosine(float t) { return (1.0f - static_cast<float>(std::cos(M_PI * t))) / 2.0f; }
+static float transition_linear(float t) { return t; }
+static float transition_quadratic_in(float t) { return t * t; }
+static float transition_quadratic_out(float t) { return 1.0f - (t - 1.0f) * (t - 1.0f); }
+static float transition_cubic(float t) { return -2.0f * t * t * t + 3.0f * t * t; }
+static float transition_cubic_in(float t) { return t * t * t; }
+static float transition_cubic_out(float t) { return t * t * t - 3 * t * t + 3 * t; }
+static float transition_cosine(float t) { return (1.0f - static_cast<float>(std::cos(M_PI * t))) / 2.0f; }
 
-const Transition Transition::LINEAR(transitionLinear);
-const Transition Transition::QUADRATIC_IN(transitionQuadraticIn);
-const Transition Transition::QUADRATIC_OUT(transitionQuadraticOut);
-const Transition Transition::CUBIC(transitionCubic);
-const Transition Transition::CUBIC_IN(transitionCubicIn);
-const Transition Transition::CUBIC_OUT(transitionCubicOut);
-const Transition Transition::COSINE(transitionCosine);
+const Transition Transition::linear(transition_linear);
+const Transition Transition::quadratic_in(transition_quadratic_in);
+const Transition Transition::quadratic_out(transition_quadratic_out);
+const Transition Transition::cubic(transition_cubic);
+const Transition Transition::cubic_in(transition_cubic_in);
+const Transition Transition::cubic_out(transition_cubic_out);
+const Transition Transition::cosine(transition_cosine);
 
 Transition::Transition(Transition::TransitionFunction function) :
 		_function(function) {}

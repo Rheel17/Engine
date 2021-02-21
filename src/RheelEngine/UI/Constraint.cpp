@@ -54,30 +54,30 @@ std::optional<Constraint::Anchor> Constraint::Anchor::VerticalComponent() const 
 	}
 }
 
-Constraint::Constraint(Element* movingElement, ConstraintLocation movingLocation, Element* fixedElement, ConstraintLocation fixedLocation, int distance) :
-		_moving(movingElement, movingLocation),
-		_fixed(fixedElement, fixedLocation),
+Constraint::Constraint(Element* moving_element, ConstraintLocation moving_location, Element* fixed_element, ConstraintLocation fixed_location, int distance) :
+		_moving(moving_element, moving_location),
+		_fixed(fixed_element, fixed_location),
 		_distance(distance),
 		_distance_type(ABSOLUTE) {}
 
-Constraint::Constraint(Element* movingElement,
-		ConstraintLocation movingLocation,
-		Element* fixedElement,
-		ConstraintLocation fixedLocation,
+Constraint::Constraint(Element* moving_element,
+		ConstraintLocation moving_location,
+		Element* fixed_element,
+		ConstraintLocation fixed_location,
 		width_relative distance) :
 
-		_moving(movingElement, movingLocation),
-		_fixed(fixedElement, fixedLocation),
+		_moving(moving_element, moving_location),
+		_fixed(fixed_element, fixed_location),
 		_distance(distance.value),
 		_distance_type(RELATIVE_TO_WIDTH) {}
 
-Constraint::Constraint(Element* movingElement,
-		ConstraintLocation movingLocation,
-		Element* fixedElement,
-		ConstraintLocation fixedLocation,
+Constraint::Constraint(Element* moving_element,
+		ConstraintLocation moving_location,
+		Element* fixed_element,
+		ConstraintLocation fixed_location,
 		height_relative distance) :
-		_moving(movingElement, movingLocation),
-		_fixed(fixedElement, fixedLocation),
+		_moving(moving_element, moving_location),
+		_fixed(fixed_element, fixed_location),
 		_distance(distance.value),
 		_distance_type(RELATIVE_TO_HEIGHT) {}
 
@@ -114,11 +114,11 @@ bool Constraint::operator==(const Constraint& other) const {
 	return other._fixed == _fixed && other._moving == _moving && other._distance == _distance;
 }
 
-Constraint::Constraint(const Anchor& moving, const Anchor& fixed, distance_union distance, DistanceType distanceType) :
+Constraint::Constraint(const Anchor& moving, const Anchor& fixed, distance_union distance, DistanceType distance_type) :
 		_moving(moving),
 		_fixed(fixed),
 		_distance(distance),
-		_distance_type(distanceType) {}
+		_distance_type(distance_type) {}
 
 bool Constraint::IsValid() const {
 	return static_cast<bool>(_fixed.HorizontalComponent()) == static_cast<bool>(_moving.HorizontalComponent()) &&
@@ -126,22 +126,22 @@ bool Constraint::IsValid() const {
 }
 
 std::optional<Constraint> Constraint::HorizontalConstraint() const {
-	auto horizontalMoving = _moving.HorizontalComponent();
-	auto horizontalFixed = _fixed.HorizontalComponent();
+	auto horizontal_moving = _moving.HorizontalComponent();
+	auto horizontal_fixed = _fixed.HorizontalComponent();
 
-	if (horizontalMoving && horizontalFixed) {
-		return Constraint(*horizontalMoving, *horizontalFixed, _distance, _distance_type);
+	if (horizontal_moving && horizontal_fixed) {
+		return Constraint(*horizontal_moving, *horizontal_fixed, _distance, _distance_type);
 	}
 
 	return {};
 }
 
 std::optional<Constraint> Constraint::VerticalConstraint() const {
-	auto verticalMoving = _moving.VerticalComponent();
-	auto verticalFixed = _fixed.VerticalComponent();
+	auto vertical_moving = _moving.VerticalComponent();
+	auto vertical_fixed = _fixed.VerticalComponent();
 
-	if (verticalMoving && verticalFixed) {
-		return Constraint(*verticalMoving, *verticalFixed, _distance, _distance_type);
+	if (vertical_moving && vertical_fixed) {
+		return Constraint(*vertical_moving, *vertical_fixed, _distance, _distance_type);
 	}
 
 	return {};

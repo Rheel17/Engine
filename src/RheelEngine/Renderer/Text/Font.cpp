@@ -27,13 +27,13 @@ Font::Font(FT_Face face) :
 	std::vector<Glyph::Triangle> triangles;
 	std::vector<Glyph::Triangle> beziers;
 
-	for (unsigned glyphIndex = 0; glyphIndex < face->num_glyphs; glyphIndex++) {
+	for (unsigned glyph_index = 0; glyph_index < face->num_glyphs; glyph_index++) {
 		triangles.clear();
 		beziers.clear();
 
-		FT_Load_Glyph(face, glyphIndex, FT_LOAD_NO_SCALE);
-		_glyphs[glyphIndex] = Glyph(face->glyph, face->units_per_EM, triangles, beziers);
-		_glyph_offsets[glyphIndex] = LoadGlyph_(triangles, beziers);
+		FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
+		_glyphs[glyph_index] = Glyph(face->glyph, face->units_per_EM, triangles, beziers);
+		_glyph_offsets[glyph_index] = _load_glyph(triangles, beziers);
 	}
 
 	for (char32_t charcode = 0; charcode < 0x110000; charcode++) {
@@ -68,16 +68,16 @@ size_t Font::GetGlyphIndex(char32_t c) const {
 	return _glyph_index[c];
 }
 
-const Glyph& Font::GetGlyph(size_t glyphIndex) const {
-	return _glyphs[glyphIndex];
+const Glyph& Font::GetGlyph(size_t glyph_index) const {
+	return _glyphs[glyph_index];
 }
 
 const std::pair<unsigned, unsigned>& Font::GetGlyphOffset(size_t glyph) const {
 	return _glyph_offsets[glyph];
 }
 
-std::pair<unsigned int, unsigned int> Font::LoadGlyph_(const std::vector<Glyph::Triangle>& triangles, const std::vector<Glyph::Triangle>& beziers) {
-	size_t startIndex = _glyph_indices.size();
+std::pair<unsigned int, unsigned int> Font::_load_glyph(const std::vector<Glyph::Triangle>& triangles, const std::vector<Glyph::Triangle>& beziers) {
+	size_t start_index = _glyph_indices.size();
 	size_t offset = _glyph_vertices.size();
 
 	// common point for the triangles
@@ -108,12 +108,12 @@ std::pair<unsigned int, unsigned int> Font::LoadGlyph_(const std::vector<Glyph::
 		_glyph_indices.push_back(offset++);
 	}
 
-	size_t indexCount = _glyph_indices.size() - startIndex;
-	return std::make_pair(startIndex, indexCount);
+	size_t index_count = _glyph_indices.size() - start_index;
+	return std::make_pair(start_index, index_count);
 }
 
 void Font::Initialize() {
-	std::vector<std::string> testDefaults = {
+	std::vector<std::string> test_defaults = {
 #if defined(_WIN32)
 			"C:/Windows/Fonts/ARIALUNI.TTF",
 			"C:/Windows/Fonts/arial.ttf"
@@ -122,16 +122,16 @@ void Font::Initialize() {
 #endif
 	};
 
-	for (const auto& test : testDefaults) {
+	for (const auto& test : test_defaults) {
 		if (std::ifstream(test).good()) {
-			RegisterFont(test, DEFAULT_FONT);
+			RegisterFont(test, default_font);
 			break;
 		}
 	}
 }
 
 void Font::RegisterFont(const std::string& filename, const std::string& name) {
-	InitializeFreeType_();
+	_initialize_free_type();
 
 	if (_registered_fonts.find(name) != _registered_fonts.end()) {
 		Log::Error() << "Font '" << name << "' already registered" << std::endl;
@@ -159,10 +159,10 @@ const Font& Font::GetFont(const std::string& name) {
 }
 
 const Font& Font::GetDefaultFont() {
-	return GetFont(DEFAULT_FONT);
+	return GetFont(default_font);
 }
 
-void Font::InitializeFreeType_() {
+void Font::_initialize_free_type() {
 	if (!_ft) {
 		FT_Library* library = new FT_Library;
 		_ft = std::unique_ptr<FT_Library, delete_free_type_library>(library);

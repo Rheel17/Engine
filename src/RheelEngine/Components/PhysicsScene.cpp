@@ -29,7 +29,7 @@ void PhysicsScene::OnActivate() {
 void PhysicsScene::Update() {
 	if (_world) {
 		_world->stepSimulation(dt);
-		HandleCollisions_();
+		_handle_collisions();
 	}
 }
 
@@ -41,20 +41,20 @@ void PhysicsScene::SetGravity(vec3 gravity) {
 	}
 }
 
-RigidBody* PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, float minT, float maxT) {
+RigidBody* PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, float min_t, float max_t) {
 	// calculate the from and to positions
 	vec3 dir = glm::normalize(direction);
 
 	btVector3 from = {
-			origin.x + minT * dir.x,
-			origin.y + minT * dir.y,
-			origin.z + minT * dir.z
+			origin.x + min_t * dir.x,
+			origin.y + min_t * dir.y,
+			origin.z + min_t * dir.z
 	};
 
 	btVector3 to = {
-			origin.x + maxT * dir.x,
-			origin.y + maxT * dir.y,
-			origin.z + maxT * dir.z
+			origin.x + max_t * dir.x,
+			origin.y + max_t * dir.y,
+			origin.z + max_t * dir.z
 	};
 
 	btCollisionWorld::ClosestRayResultCallback callback(from, to);
@@ -67,11 +67,11 @@ RigidBody* PhysicsScene::ShootRay(const vec3& origin, const vec3& direction, flo
 	return static_cast<RigidBody*>(callback.m_collisionObject->getUserPointer());
 }
 
-void PhysicsScene::AddBody_(btRigidBody* body) {
+void PhysicsScene::_add_body(btRigidBody* body) {
 	_world->addRigidBody(body);
 }
 
-void PhysicsScene::RemoveBody_(btRigidBody* body, CollisionComponent* cc) {
+void PhysicsScene::_remove_body(btRigidBody* body, CollisionComponent* cc) {
 	// handle current collisions
 	std::vector<collision_data> to_remove;
 
@@ -99,7 +99,7 @@ void PhysicsScene::RemoveBody_(btRigidBody* body, CollisionComponent* cc) {
 	_world->removeRigidBody(body);
 }
 
-void PhysicsScene::HandleCollisions_() {
+void PhysicsScene::_handle_collisions() {
 	for (int i = 0; i < _world->getDispatcher()->getNumManifolds(); i++) {
 		auto* manifold = _world->getDispatcher()->getManifoldByIndexInternal(i);
 

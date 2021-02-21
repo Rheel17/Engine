@@ -18,14 +18,14 @@ struct RE_API create_program {
 	}
 };
 
-struct RE_API delete_program_ {
+struct RE_API delete_program {
 	static constexpr auto glfn = "glDeleteProgram";
 	void operator()(GLuint name) const {
 		glDeleteProgram(name);
 	}
 };
 
-class RE_API Program : Object<create_program, delete_program_> {
+class RE_API Program : Object<create_program, delete_program> {
 
 public:
 	Program() = default;
@@ -69,10 +69,10 @@ public:
 	bool HasUniform(const std::string& name) const;
 
 private:
-	void EnsureLinked_() const;
-	void EnsureNotLinked_() const;
+	void _ensure_linked() const;
+	void _ensure_not_linked() const;
 
-	Uniform& GetUniform_(const std::string& name, bool checkWarning) const;
+	Uniform& _get_uniform(const std::string& name, bool check_warning) const;
 
 	bool _linked = false;
 

@@ -39,7 +39,7 @@ public:
 private:
 	// pointer will be freed when the textrenderer gets destructed. This is to
 	// re-use its memory. Under the hood, it uses a std::vector.
-	std::u32string_view GetUnicodeArray_(std::string_view text);
+	std::u32string_view _get_unicode_array(std::string_view text);
 
 	std::vector<char32_t> _unicode_array;
 

@@ -31,7 +31,7 @@ private:
 	private:
 		struct vertex_hash {
 			constexpr std::size_t operator()(const model_vertex& v) const {
-				return hashAll(v.position, v.position, v.texture);
+				return hash_all(v.position, v.position, v.texture);
 			}
 		};
 
@@ -54,11 +54,11 @@ public:
 	Model Load(const std::string& path) const override;
 
 private:
-	void ParseCollada_() const;
-	void ParseGeometry_(XmlNode geometry) const;
-	void ParseScene_(XmlNode scene) const;
+	void _parse_collada() const;
+	void _parse_geometry(XmlNode geometry) const;
+	void _parse_scene(XmlNode scene) const;
 
-	void AddGeometry_(const Geometry& geometry, const mat4& transform) const;
+	void _add_geometry(const Geometry& geometry, const mat4& transform) const;
 
 	// TODO: clean up mutable mess
 	mutable std::unique_ptr<XmlDocument> _xml_document;
@@ -70,9 +70,9 @@ private:
 	mutable char _up = 'y';
 
 private:
-	static std::vector<unsigned> CreateVectorUnsigned_(XmlNode node, int size = -1);
-	static std::vector<float> CreateVectorFloat_(XmlNode node, int size = -1);
-	static mat4 CreateMatrix_(XmlNode node);
+	static std::vector<unsigned> _create_vector_unsigned(XmlNode node, int size = -1);
+	static std::vector<float> _create_vector_float(XmlNode node, int size = -1);
+	static mat4 _create_matrix(XmlNode node);
 
 };
 

@@ -29,18 +29,18 @@ public:
 	 * Initializes the storage of this texture. Must be called before
 	 * SetLayerData(...).
 	 */
-	void Initialize(InternalFormat internalFormat, unsigned width, unsigned height, unsigned layers);
+	void Initialize(InternalFormat internal_format, unsigned width, unsigned height, unsigned layers);
 
 	/**
 	 * Sets the data of this texture. A raw data pointer is used. Make sure the
 	 * type and data type match up.
 	 */
-	void SetData(InternalFormat internalFormat, unsigned width, unsigned height, unsigned layers, Format format, Type type, const void* data);
+	void SetData(InternalFormat internal_format, unsigned width, unsigned height, unsigned layers, Format format, Type type, const void* data);
 
 	/**
 	 * Sets the data of this texture using the float type.
 	 */
-	void SetData(InternalFormat internalFormat, unsigned width, unsigned height, unsigned layers, Format format, const float* data);
+	void SetData(InternalFormat internal_format, unsigned width, unsigned height, unsigned layers, Format format, const float* data);
 
 	/**
 	 * Sets a single layer of this texture. A raw data pointer is used. Make

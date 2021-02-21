@@ -98,7 +98,7 @@ public:
 	void OnFocusChanged(bool focus);
 
 private:
-	void InitContainer_();
+	void _init_container();
 
 	std::unique_ptr<Container> _ui_container;
 

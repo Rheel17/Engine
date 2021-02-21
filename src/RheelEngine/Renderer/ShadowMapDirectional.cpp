@@ -10,23 +10,23 @@ namespace rheel {
 ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, const Light& light) :
 		ShadowMap(manager, light) {
 
-	unsigned textureSize = 1024;
+	unsigned texture_size = 1024;
 
 	switch (DisplayConfiguration::Get().shadow_quality) {
 		case DisplayConfiguration::SHADOW_OFF:
 			abort();
 		case DisplayConfiguration::SHADOW_LOW:
-			textureSize = 1024;
+			texture_size = 1024;
 			_bias = 0.005f;
 			_csm_split = { 25, 75 };
 			break;
 		case DisplayConfiguration::SHADOW_MEDIUM:
-			textureSize = 1024;
+			texture_size = 1024;
 			_bias = 0.005f;
 			_csm_split = { 10, 30, 60 };
 			break;
 		case DisplayConfiguration::SHADOW_HIGH:
-			textureSize = 2048;
+			texture_size = 2048;
 			_bias = 0.001f;
 			_csm_split = { 10, 10, 30, 50 };
 			break;
@@ -46,7 +46,7 @@ ShadowMapDirectional::ShadowMapDirectional(SceneRenderManager* manager, const Li
 		accumulator += _csm_split[i];
 
 		// initialize the buffer
-		gl::Framebuffer buffer(textureSize, textureSize);
+		gl::Framebuffer buffer(texture_size, texture_size);
 		buffer.AttachTexture(gl::InternalFormat::DEPTH_COMPONENT_32F, gl::Format::DEPTH_COMPONENT, gl::Framebuffer::Attachment::DEPTH);
 
 		// set the texture paramters
@@ -68,12 +68,12 @@ void ShadowMapDirectional::Update(const Camera* camera, unsigned width, unsigned
 	gl::ContextScope cs;
 
 	// set the lightspace matrices
-	CalculateViewProjectionMatrices_(camera, width, height);
+	_calculate_view_projection_matrices(camera, width, height);
 
-	gl::Program& modelShader = GetManager()->GetOpaqueShader();
+	gl::Program& model_shader = GetManager()->GetOpaqueShader();
 
 	for (unsigned i = 0; i < _csm_count; i++) {
-		modelShader["lightspaceMatrix"] = _light_matrices[i];
+		model_shader["lightspaceMatrix"] = _light_matrices[i];
 
 		// write the scene to the framebuffer.
 		_shadow_buffers[i].Clear(gl::Framebuffer::BitField::DEPTH);
@@ -92,8 +92,8 @@ std::vector<std::reference_wrapper<const gl::Texture2D>> ShadowMapDirectional::T
 	std::vector<std::reference_wrapper<const gl::Texture2D>> textures;
 	textures.reserve(_csm_count);
 
-	for (const auto& shadowBuffer : _shadow_buffers) {
-		textures.push_back(std::ref(shadowBuffer.GetTextureAttachment(gl::Framebuffer::Attachment::DEPTH)));
+	for (const auto& shadow_buffer : _shadow_buffers) {
+		textures.push_back(std::ref(shadow_buffer.GetTextureAttachment(gl::Framebuffer::Attachment::DEPTH)));
 	}
 
 	return textures;
@@ -107,7 +107,7 @@ float ShadowMapDirectional::Bias() const {
 	return _bias;
 }
 
-void ShadowMapDirectional::CalculateViewProjectionMatrices_(const Camera* camera, unsigned width, unsigned height) {
+void ShadowMapDirectional::_calculate_view_projection_matrices(const Camera* camera, unsigned width, unsigned height) {
 	// calculate the light coordinate system axis
 	vec3 zplus = -GetLight<DirectionalLight>().Direction();
 	vec3 xplus;
@@ -120,8 +120,8 @@ void ShadowMapDirectional::CalculateViewProjectionMatrices_(const Camera* camera
 
 	vec3 yplus = glm::cross(zplus, xplus);
 
-	mat3 lightMatrix = glm::transpose(mat3(xplus, yplus, zplus));
-	mat3 lightMatrixInv = glm::inverse(lightMatrix);
+	mat3 light_matrix = glm::transpose(mat3(xplus, yplus, zplus));
+	mat3 light_matrix_inv = glm::inverse(light_matrix);
 
 	for (unsigned i = 0; i < _csm_count; i++) {
 		// calculate the AABB of the camera frustum in light space
@@ -132,37 +132,37 @@ void ShadowMapDirectional::CalculateViewProjectionMatrices_(const Camera* camera
 
 		float min = std::numeric_limits<float>::lowest();
 		float max = std::numeric_limits<float>::max();
-		float xMin = max, xMax = min, yMin = max, yMax = min, zMin = max, zMax = min;
+		float x_min = max, x_max = min, y_min = max, y_max = min, z_min = max, z_max = min;
 
 		for (vec3 corner : corners) {
-			vec3 c = lightMatrix * corner;
+			vec3 c = light_matrix * corner;
 
-			xMin = std::min(xMin, c.x);
-			xMax = std::max(xMax, c.x);
+			x_min = std::min(x_min, c.x);
+			x_max = std::max(x_max, c.x);
 
-			yMin = std::min(yMin, c.y);
-			yMax = std::max(yMax, c.y);
+			y_min = std::min(y_min, c.y);
+			y_max = std::max(y_max, c.y);
 
-			zMin = std::min(zMin, c.z);
-			zMax = std::max(zMax, c.z);
+			z_min = std::min(z_min, c.z);
+			z_max = std::max(z_max, c.z);
 		}
 
 		// calculate the light view and projection matrices
-		vec3 aabbHalfDim = vec3(xMax - xMin, yMax - yMin, zMax - zMin) / 2.0f;
-		aabbHalfDim.x = std::max(aabbHalfDim.x, aabbHalfDim.y);
-		aabbHalfDim.y = aabbHalfDim.x;
-		aabbHalfDim.z += 200;
+		vec3 aabb_half_dim = vec3(x_max - x_min, y_max - y_min, z_max - z_min) / 2.0f;
+		aabb_half_dim.x = std::max(aabb_half_dim.x, aabb_half_dim.y);
+		aabb_half_dim.y = aabb_half_dim.x;
+		aabb_half_dim.z += 200;
 
-		vec3 center = vec3(xMax + xMin, yMax + yMin, zMax + zMin) / 2.0f;
-		vec3 centerWorldSpace = lightMatrixInv * center;
+		vec3 center = vec3(x_max + x_min, y_max + y_min, z_max + z_min) / 2.0f;
+		vec3 center_world_space = light_matrix_inv * center;
 
-		mat4 viewMatrix = glm::translate(mat4(lightMatrix), -centerWorldSpace);
-		mat4 projectionMatrix = glm::ortho(
-				-aabbHalfDim.x, aabbHalfDim.x,
-				-aabbHalfDim.y, aabbHalfDim.y,
-				-aabbHalfDim.z, aabbHalfDim.z);
+		mat4 view_matrix = glm::translate(mat4(light_matrix), -center_world_space);
+		mat4 projection_matrix = glm::ortho(
+				-aabb_half_dim.x, aabb_half_dim.x,
+				-aabb_half_dim.y, aabb_half_dim.y,
+				-aabb_half_dim.z, aabb_half_dim.z);
 
-		_light_matrices[i] = projectionMatrix * viewMatrix;
+		_light_matrices[i] = projection_matrix * view_matrix;
 	}
 }
 

@@ -76,7 +76,7 @@ void SceneRenderManager::Update() {
 		_lights_spot_attenuation.push_back(0.0f);
 	}
 
-	_shadow_level = ShadowLevel_();
+	_shadow_level = _get_shadow_quality();
 }
 
 ModelRenderer& SceneRenderManager::GetModelRenderer(const Model& model) {
@@ -142,37 +142,37 @@ std::vector<std::reference_wrapper<gl::Program>> SceneRenderManager::CustomShade
 	return shaders;
 }
 
-void SceneRenderManager::InitializeShaderLights(gl::Program& shaderProgram) const {
-	if (shaderProgram.HasUniform("_lights_type")) {
-		shaderProgram["_lights_type"] = _lights_type;
+void SceneRenderManager::InitializeShaderLights(gl::Program& shader_program) const {
+	if (shader_program.HasUniform("_lights_type")) {
+		shader_program["_lights_type"] = _lights_type;
 	}
 
-	if (shaderProgram.HasUniform("_lights_position")) {
-		shaderProgram["_lights_position"] = _lights_position;
+	if (shader_program.HasUniform("_lights_position")) {
+		shader_program["_lights_position"] = _lights_position;
 	}
 
-	if (shaderProgram.HasUniform("_lights_direction")) {
-		shaderProgram["_lights_direction"] = _lights_direction;
+	if (shader_program.HasUniform("_lights_direction")) {
+		shader_program["_lights_direction"] = _lights_direction;
 	}
 
-	if (shaderProgram.HasUniform("_lights_color")) {
-		shaderProgram["_lights_color"] = _lights_color;
+	if (shader_program.HasUniform("_lights_color")) {
+		shader_program["_lights_color"] = _lights_color;
 	}
 
-	if (shaderProgram.HasUniform("_lights_attenuation")) {
-		shaderProgram["_lights_attenuation"] = _lights_attenuation;
+	if (shader_program.HasUniform("_lights_attenuation")) {
+		shader_program["_lights_attenuation"] = _lights_attenuation;
 	}
 
-	if (shaderProgram.HasUniform("_lights_spot_attenuation")) {
-		shaderProgram["_lights_spot_attenuation"] = _lights_spot_attenuation;
+	if (shader_program.HasUniform("_lights_spot_attenuation")) {
+		shader_program["_lights_spot_attenuation"] = _lights_spot_attenuation;
 	}
 
-	if (shaderProgram.HasUniform("_lightCount")) {
-		shaderProgram["_lightCount"] = (GLint) _lights_type.size();
+	if (shader_program.HasUniform("_lightCount")) {
+		shader_program["_lightCount"] = (GLint) _lights_type.size();
 	}
 
-	if (shaderProgram.HasUniform("_shadowLevel")) {
-		shaderProgram["_shadowLevel"] = (GLint) _shadow_level;
+	if (shader_program.HasUniform("_shadowLevel")) {
+		shader_program["_shadowLevel"] = (GLint) _shadow_level;
 	}
 }
 
@@ -184,7 +184,7 @@ gl::Program& SceneRenderManager::GetOpaqueShader() {
 	return _model_shaders->opaque_shader;
 }
 
-int SceneRenderManager::ShadowLevel_() {
+int SceneRenderManager::_get_shadow_quality() {
 	if (std::ranges::any_of(_scene->GetRegistry().GetComponents<PointLight, SpotLight, DirectionalLight>().As<Light>(),
 			[](const Light& light) { return light.CastsShadows(); })) {
 		return DisplayConfiguration::Get().shadow_quality;

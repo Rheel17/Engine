@@ -31,22 +31,22 @@ void PostProcessingStack::Render(const gl::Framebuffer& input, const ivec2& pos,
 	_height = size.y;
 
 	// reset temporary framebuffer usage
-	for (auto& _temp_buffer : _temp_buffers) {
-		_temp_buffer.second = false;
+	for (auto& temp_buffer : _temp_buffers) {
+		temp_buffer.second = false;
 	}
 
 	// resolve the input as first buffer
-	std::reference_wrapper<const gl::Framebuffer> inputBuffer =
-			std::ref(ResolveInput_(input));
+	std::reference_wrapper<const gl::Framebuffer> input_buffer =
+			std::ref(_resolve_input(input));
 
 	// helper function for rendering a single effect
-	static const auto pp = [&inputBuffer, this](const auto& effect) {
+	static const auto pp = [&input_buffer, this](const auto& effect) {
 		if (effect) {
-			const gl::Framebuffer& prev = inputBuffer.get();
-			inputBuffer = std::ref(effect->Render(inputBuffer.get()));
+			const gl::Framebuffer& prev = input_buffer.get();
+			input_buffer = std::ref(effect->Render(input_buffer.get()));
 
-			if (&inputBuffer.get() != &prev) {
-				MarkFramebufferUse_(GetFramebufferIndex_(prev), false);
+			if (&input_buffer.get() != &prev) {
+				_mark_framebuffer_use(_get_framebuffer_index(prev), false);
 			}
 		}
 	};
@@ -58,21 +58,21 @@ void PostProcessingStack::Render(const gl::Framebuffer& input, const ivec2& pos,
 	gl::Context::Current().Pop();
 	gl::Context::Current().Push();
 
-	inputBuffer.get().Blit({ 0, 0, _width, _height }, { pos.x, pos.y, size.x, size.y }, gl::Framebuffer::BitField::COLOR);
+	input_buffer.get().Blit({ 0, 0, _width, _height }, { pos.x, pos.y, size.x, size.y }, gl::Framebuffer::BitField::COLOR);
 
 	gl::Context::Current().Pop();
 }
 
-const gl::Framebuffer& PostProcessingStack::ResolveInput_(const gl::Framebuffer& input) const {
+const gl::Framebuffer& PostProcessingStack::_resolve_input(const gl::Framebuffer& input) const {
 	auto type = input.GetAttachmentType(0);
 
 	// if the input is multisampled, blit it to the first temporary
 	// framebuffer to result the multisampling.
 	if (type == gl::Framebuffer::AttachmentType::TEXTURE_MULTISAMPLE) {
 		// setup the framebuffers
-		unsigned index = UnusedFramebufferIndex_();
-		gl::Framebuffer& tmp = Framebuffer_(index);
-		MarkFramebufferUse_(index, true);
+		unsigned index = _unused_framebuffer_index();
+		gl::Framebuffer& tmp = _framebuffer(index);
+		_mark_framebuffer_use(index, true);
 
 		// blit
 		{
@@ -100,7 +100,7 @@ void PostProcessingStack::ClearBloom() {
 	_bloom.reset();
 }
 
-unsigned PostProcessingStack::UnusedFramebufferIndex_() const {
+unsigned PostProcessingStack::_unused_framebuffer_index() const {
 	for (unsigned i = 0; i < _temp_buffers.size(); i++) {
 		if (!_temp_buffers[i].second) {
 			return i;
@@ -110,7 +110,7 @@ unsigned PostProcessingStack::UnusedFramebufferIndex_() const {
 	throw std::runtime_error("Out of temp buffers!");
 }
 
-unsigned PostProcessingStack::GetFramebufferIndex_(const gl::Framebuffer& buffer) const {
+unsigned PostProcessingStack::_get_framebuffer_index(const gl::Framebuffer& buffer) const {
 	for (unsigned i = 0; i < _temp_buffers.size(); i++) {
 		if (&_temp_buffers[i].first == &buffer) {
 			return i;
@@ -120,7 +120,7 @@ unsigned PostProcessingStack::GetFramebufferIndex_(const gl::Framebuffer& buffer
 	throw std::runtime_error("");
 }
 
-gl::Framebuffer& PostProcessingStack::Framebuffer_(unsigned index) const {
+gl::Framebuffer& PostProcessingStack::_framebuffer(unsigned index) const {
 	gl::Framebuffer& fbo = _temp_buffers[index].first;
 
 	if (fbo.GetViewportWidth() != _width || fbo.GetViewportHeight() != _height) {
@@ -131,7 +131,7 @@ gl::Framebuffer& PostProcessingStack::Framebuffer_(unsigned index) const {
 	return fbo;
 }
 
-void PostProcessingStack::MarkFramebufferUse_(unsigned index, bool flag) const {
+void PostProcessingStack::_mark_framebuffer_use(unsigned index, bool flag) const {
 	_temp_buffers[index].second = flag;
 }
 
