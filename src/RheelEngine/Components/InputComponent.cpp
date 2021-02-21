@@ -5,6 +5,11 @@
 
 namespace rheel {
 
+void InputComponent::ResetDeltas() {
+	_mouse_delta = { 0.0f, 0.0f };
+	_mouse_scroll = { 0.0f, 0.0f };
+}
+
 vec2 InputComponent::GetMousePosition() const {
 	return _mouse_position;
 }

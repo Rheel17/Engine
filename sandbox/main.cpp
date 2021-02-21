@@ -111,7 +111,7 @@ public:
 		auto* scene_element = ui.InsertElement(SceneElement("main_camera"_id));
 		ui.AddConstraint(scene_element, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(scene_element, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
-		scene_element->SetGrabOnFocus(false);
+		scene_element->SetGrabOnFocus(true);
 
 		auto *vignette_element = ui.InsertElement(VignetteElement(Color{ 0.0f, 0.0f, 0.0f, 0.5f }, 0.5f, 2.0f));
 		ui.AddConstraint(vignette_element, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);

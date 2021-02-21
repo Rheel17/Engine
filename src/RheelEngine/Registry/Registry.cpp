@@ -80,6 +80,7 @@ const Entity* Registry::GetRootEntity() const {
 }
 
 void Registry::UpdateComponents(float time, float dt) {
+	// update builtin components
 	for (std::size_t i = _builtin_start; i < _builtin_end; i++) {
 		for (auto& component : ComponentView<Component>(_components[i])) {
 			component._time = time;
@@ -88,12 +89,18 @@ void Registry::UpdateComponents(float time, float dt) {
 		}
 	}
 
+	// update user-defined components
 	for (std::size_t i = _user_defined_start; i < _user_defined_end; i++) {
 		for (auto& component : ComponentView<Component>(_components[i])) {
 			component._time = time;
 			component._dt = dt;
 			component.Update();
 		}
+	}
+
+	// reset input components
+	for (auto* component : _input_components) {
+		component->ResetDeltas();
 	}
 }
 

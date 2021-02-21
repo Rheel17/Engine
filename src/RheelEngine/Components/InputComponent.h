@@ -14,6 +14,8 @@ class InputComponent : public Component {
 	friend class SceneElement;
 
 public:
+	void ResetDeltas();
+
 	/**
 	 * Called when a key on the keyboard is pressed down.
 	 *
