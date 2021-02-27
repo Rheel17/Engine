@@ -94,3 +94,5 @@ install(DIRECTORY src/
 
 install(EXPORT RheelEngineConfig DESTINATION share/RheelEngine/cmake)
 export(TARGETS RheelEngine FILE RheelEngineConfig.cmake EXPORT_LINK_INTERFACE_LIBRARIES)
+
+add_subdirectory(wowie3)

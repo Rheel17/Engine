@@ -8,7 +8,7 @@
 #error "Do not include directly, include via Registry.h"
 #endif
 
-class Entity {
+class RE_API Entity {
 	friend class ComponentStorage;
 	friend class Registry;
 

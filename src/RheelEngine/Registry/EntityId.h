@@ -75,8 +75,12 @@ private:
 	std::uint64_t _value{}; // default-initialized with 0, which is equal to the null entity.
 };
 
+namespace literals {
+
 constexpr EntityId operator "" _id(const char* str, std::size_t n) noexcept {
 	return EntityId(std::string_view(str, str + n));
+}
+
 }
 
 class ConstEntityId {

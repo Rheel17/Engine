@@ -72,4 +72,9 @@ void entry() {
 		rheel::entry<GameClass>();										\
 	}
 
+// easy access to the literals
+#ifndef RHEEL_NO_USING_LITERALS
+using namespace rheel::literals;
+#endif
+
 #endif
