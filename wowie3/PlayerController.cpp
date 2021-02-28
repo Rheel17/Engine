@@ -24,7 +24,7 @@ void PlayerController::Update() {
 	// out of maze
 	if (!_ended && _source_location.x == maze.GetExit().x && _source_location.y == maze.GetExit().y) {
 		_ended = true;
-		GetEntity().GetScene().GetRootComponent<game_over_show>()->show = 0.5f;
+		GetEntity().GetScene().GetRootComponent<game_over_show>()->show.x = 0.5f;
 	}
 
 	if (_ended) {
@@ -60,6 +60,7 @@ void PlayerController::Update() {
 		};
 
 		_camera.AddComponent<CameraShaker>(shake_x, shake_y);
+		GetEntity().GetScene().GetRootComponent<game_over_show>()->show = { 4.0f, 0.95f, 8.6f };
 	}
 
 	if (!_moving) {

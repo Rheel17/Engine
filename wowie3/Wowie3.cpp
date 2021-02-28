@@ -152,6 +152,7 @@ void Wowie3::NewGame() {
 	GetActiveScene()->GetRootComponent<score_updater>()->text_element = score_element;
 	GetActiveScene()->GetRootComponent<tutorial_hide>()->element = tutorial_overlay;
 	GetActiveScene()->GetRootComponent<game_over_show>()->element = game_over_overlay;
+	GetActiveScene()->GetRootComponent<game_over_show>()->text_element = score_element;
 }
 
 const Maze& Wowie3::GetCurrentMaze() const {
@@ -218,7 +219,7 @@ rheel::ScenePointer Wowie3::_create_maze_scene(const Maze& maze) {
 
 rheel::DisplayConfiguration Wowie3::_get_display_configuration() {
 	rheel::DisplayConfiguration config;
-	config.window_mode = rheel::DisplayConfiguration::WINDOWED_UNRESIZABLE;
+	config.window_mode = rheel::DisplayConfiguration::FULLSCREEN;
 	config.shadow_quality = rheel::DisplayConfiguration::SHADOW_HIGH;
 	config.aa_mode = rheel::DisplayConfiguration::AntiAliasing::MSAA_4;
 	config.vsync = true;
