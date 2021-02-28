@@ -36,11 +36,11 @@ unsigned int Maze::GetGridHeight() const {
 }
 
 bool Maze::IsWall(int x, int y) const {
-	return (*this)[{ x, y }] == _wall;
+	return (*this)[{ x, y }] == wall;
 }
 
 bool Maze::IsWall(location loc) const {
-	return (*this)[loc] == _wall;
+	return (*this)[loc] == wall;
 }
 
 bool Maze::IsValid() const {
@@ -49,8 +49,8 @@ bool Maze::IsValid() const {
 	// mark all floor tiles as unvisited
 	for (int x = 0; x < _width; x++) {
 		for (int y = 0; y < _height; y++) {
-			if (copy[{ x, y }] == _floor) {
-				copy[{ x, y }] = _unvisited;
+			if (copy[{ x, y }] == floor) {
+				copy[{ x, y }] = unvisited;
 			}
 		}
 	}
@@ -63,14 +63,14 @@ bool Maze::IsValid() const {
 		location loc = fringe.top();
 		fringe.pop();
 
-		if (copy[loc] == _unvisited) {
-			copy[loc] = _floor;
+		if (copy[loc] == unvisited) {
+			copy[loc] = floor;
 
 			auto ns = loc.neighbors(copy);
 
 			for (auto l : ns) {
 				location mid{ (l.x + loc.x) / 2, (l.y + loc.y) / 2 };
-				if (copy[mid] != Maze::_wall) {
+				if (copy[mid] != Maze::wall) {
 					fringe.push(l);
 				}
 			}
@@ -80,13 +80,21 @@ bool Maze::IsValid() const {
 	// check if all cells were visited
 	for (int x = 1; x < _width; x += 2) {
 		for (int y = 1; y < _height; y += 2) {
-			if (copy[{ x, y }] == Maze::_unvisited) {
+			if (copy[{ x, y }] == Maze::unvisited) {
 				return false;
 			}
 		}
 	}
 
 	return true;
+}
+
+location Maze::GetExit() const {
+	return _exit;
+}
+
+location Maze::GetExitDelta() const {
+	return _delta_exit;
 }
 
 Maze::Maze(unsigned int grid_width, unsigned int grid_height) :

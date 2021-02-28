@@ -45,6 +45,13 @@ void PlayerController::Update() {
 	_camera.transform.SetTranslation(GetEntity().transform.GetTranslation() + Wowie3::camera_offset);
 	_current_fraction += finish_fraction;
 
+	// in a certain interval: mark the target tile as visited
+	static_assert(grace_period + 0.15f <= 0.4f);
+	if (grace_period + 0.15f <= _current_fraction && _current_fraction <= 0.6f) {
+		static_cast<Wowie3&>(GetEntity().GetScene().GetGame()).MarkVisited(_target_location); // NOLINT (safe)
+	}
+
+	// move to the new tile if needed
 	if (!direction_change) {
 		if (_current_fraction >= 1.0f) {
 			_current_fraction--;

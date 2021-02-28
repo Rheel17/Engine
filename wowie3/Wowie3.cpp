@@ -6,6 +6,12 @@
 #include "MazeGenerator.h"
 #include "PlayerController.h"
 
+void Wowie3::score_updater::Update() {
+	if (text_element) {
+		text_element->text = std::to_string(score) + "%";
+	}
+}
+
 void Wowie3::Start() {
 	NewGame();
 
@@ -15,19 +21,89 @@ void Wowie3::Start() {
 	ui.AddConstraint(scene_element, rheel::Constraint::TOP_LEFT, nullptr, rheel::Constraint::TOP_LEFT);
 	ui.AddConstraint(scene_element, rheel::Constraint::BOTTOM_RIGHT, nullptr, rheel::Constraint::BOTTOM_RIGHT);
 
+	auto* vignette_element = ui.InsertElement(rheel::VignetteElement(rheel::Color{ 0.0f, 0.0f, 0.0f, 0.65f }, 0.5f, 2.0f));
+	ui.AddConstraint(vignette_element, rheel::Constraint::TOP_LEFT, nullptr, rheel::Constraint::TOP_LEFT);
+	ui.AddConstraint(vignette_element, rheel::Constraint::BOTTOM_RIGHT, nullptr, rheel::Constraint::BOTTOM_RIGHT);
+
+	auto* score_element = ui.InsertElement(rheel::TextElement("0%", 0.33f, 0xECDCB0));
+	ui.AddWidthRelativeConstraint(score_element, rheel::Constraint::TOP, nullptr, rheel::Constraint::TOP, 0.02f);
+	ui.AddWidthRelativeConstraint(score_element, rheel::Constraint::LEFT, nullptr, rheel::Constraint::LEFT, 0.03f);
+	ui.AddWidthRelativeConstraint(score_element, rheel::Constraint::BOTTOM, nullptr, rheel::Constraint::TOP, -0.05f);
+	ui.AddWidthRelativeConstraint(score_element, rheel::Constraint::RIGHT, nullptr, rheel::Constraint::LEFT, -0.10f);
+
 	GetUI().SetContainer(std::move(ui));
 	scene_element->RequestFocus();
+	GetActiveScene()->GetRootComponent<score_updater>()->text_element = score_element;
 }
 
 void Wowie3::NewGame() {
 	static auto maze_generator = MazeGenerator(17, 11);
 	_current_maze = maze_generator.Generate();
+	_visited_status = _current_maze;
+
+	// calculate number of tiles needed for 100%
+	_num_tiles = 0;
+	_cur_tile_count = 0;
+
+	for (int i = 0; i < _visited_status->GetGridWidth(); i++) {
+		for (int j = 0; j < _visited_status->GetGridHeight(); j++) {
+			if (!_visited_status->IsWall(i, j)) {
+				_num_tiles++;
+				_visited_status->operator[]({ i, j }) = Maze::unvisited;
+			}
+		}
+	}
+
+	// remove 5x5 center
+	_num_tiles -= 25;
+
+	for (int i = -2; i <= 2; i++) {
+		for (int j = -2; j <= 2; j++) {
+			_visited_status->operator[](
+					{ static_cast<int>(_visited_status->GetGridWidth() / 2 + i), static_cast<int>(_visited_status->GetGridHeight() / 2 + j) }) = Maze::floor;
+		}
+	}
+
+	// remove exit corridor
+	location loc = _visited_status->GetExit();
+	location d = _visited_status->GetExitDelta();
+
+	_visited_status->operator[](loc) = Maze::floor;
+	loc.x += d.x;
+	loc.y += d.y;
+
+	llvm::SmallVector<location, 4> ns = loc.neighbors(*_visited_status);
+
+	int remove_corridor = 2;
+
+	do {
+		if (_visited_status->IsWall(loc.x + d.y, loc.y - d.x) && _visited_status->IsWall(loc.x - d.y, loc.y + d.x)) {
+			_visited_status->operator[](loc) = Maze::floor;
+			remove_corridor++;
+			loc.x += d.x;
+			loc.y += d.y;
+			continue;
+		}
+
+		break;
+	} while (true);
+
+	_num_tiles -= remove_corridor;
 
 	SetActiveScene(_create_maze_scene(*_current_maze));
 }
 
 const Maze& Wowie3::GetCurrentMaze() const {
 	return *_current_maze;
+}
+
+void Wowie3::MarkVisited(location loc) {
+	auto& val = _visited_status->operator[](loc);
+	if (val == Maze::unvisited) {
+		val = Maze::floor;
+		_cur_tile_count++;
+		GetActiveScene()->GetRootComponent<score_updater>()->score = (100 * _cur_tile_count) / _num_tiles;
+	}
 }
 
 rheel::ScenePointer Wowie3::_create_maze_scene(const Maze& maze) {
@@ -70,6 +146,9 @@ rheel::ScenePointer Wowie3::_create_maze_scene(const Maze& maze) {
 	auto& player = scene->AddEntity();
 	player.AddComponent<rheel::ModelRenderComponent>(player_model, rheel::Material(0xECDCB0, 0.8f, 0.01f));
 	player.AddComponent<PlayerController>(camera);
+
+	// score updater
+	scene->AddRootComponent<score_updater>();
 
 	return scene;
 }
