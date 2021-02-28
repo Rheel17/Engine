@@ -13,10 +13,9 @@ ModelRenderer::ObjectData::ObjectData() :
 		_model_matrix(glm::identity<mat4>()),
 		_normal_model_matrix(glm::identity<mat4>()),
 		_material_vector(0, 0, 0, 0),
-		_material_color(0, 0, 0, 0),
-		_ptr(nullptr) {}
+		_material_color(0, 0, 0, 0) {}
 
-ModelRenderer::ObjectData::ObjectData(const ObjectData& data) :
+ModelRenderer::ObjectData::ObjectData(ObjectData&& data) noexcept :
 		_model_matrix(data._model_matrix),
 		_normal_model_matrix(data._normal_model_matrix),
 		_material_vector(data._material_vector),
@@ -29,6 +28,10 @@ ModelRenderer::ObjectData::ObjectData(const ObjectData& data) :
 }
 
 ModelRenderer::ObjectData& ModelRenderer::ObjectData::operator=(ObjectData&& data) noexcept {
+	if (this == &data) {
+		return *this;
+	}
+
 	_model_matrix = data._model_matrix;
 	_normal_model_matrix = data._normal_model_matrix;
 	_material_vector = data._material_vector;
