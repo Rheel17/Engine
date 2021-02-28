@@ -1,10 +1,10 @@
 project(wowie3)
 
-add_executable(wowie3)
-target_link_libraries(wowie3 PRIVATE RheelEngine)
-target_include_directories(wowie3 PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_executable(Memomaze)
+target_link_libraries(Memomaze PRIVATE RheelEngine)
+target_include_directories(Memomaze PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
-target_sources(wowie3 PRIVATE
+target_sources(Memomaze PRIVATE
         CameraShaker.cpp CameraShaker.h
         GameOverOverlay.cpp GameOverOverlay.h
         MainMenu.cpp MainMenu.h
