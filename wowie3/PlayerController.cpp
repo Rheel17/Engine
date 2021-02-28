@@ -6,13 +6,14 @@
 #include "Wowie3.h"
 #include "TutorialOverlay.h"
 #include "GameOverOverlay.h"
+#include "CameraShaker.h"
 
 PlayerController::PlayerController(rheel::Entity& camera) :
 		_camera(camera) {}
 
 void PlayerController::Update() {
 	constexpr static float velocity = 3.0f;
-	constexpr static float grace_period = 0.2f;
+	constexpr static float grace_period = 0.175f;
 	float step_size = dt * velocity;
 	const auto& maze = static_cast<Wowie3&>(GetEntity().GetScene().GetGame()).GetCurrentMaze(); // NOLINT (safe)
 
@@ -27,15 +28,38 @@ void PlayerController::Update() {
 	}
 
 	if (_ended) {
-		vec3 move{
-				static_cast<float>(_direction_x[(int) _direction]) * step_size,
-				0.0f,
-				static_cast<float>(_direction_y[(int) _direction]) * step_size
+		if (_moving) {
+			vec3 move{
+					static_cast<float>(_direction_x[(int) _direction]) * step_size,
+					0.0f,
+					static_cast<float>(_direction_y[(int) _direction]) * step_size
+			};
+
+			GetEntity().transform.Move(move);
+			_camera.transform.SetTranslation(GetEntity().transform.GetTranslation() + Wowie3::camera_offset);
+		}
+
+		return;
+	}
+
+	// against wall
+	if (_current_fraction > grace_period && !_is_valid_tile(_target_location, maze)) {
+		_ended = true;
+		_moving = false;
+
+		vec3 shake_x{
+				_direction_x[(int) _direction] * 0.08f,
+				47.0f,
+				17.0f
 		};
 
-		GetEntity().transform.Move(move);
-		_camera.transform.SetTranslation(GetEntity().transform.GetTranslation() + Wowie3::camera_offset);
-		return;
+		vec3 shake_y{
+				_direction_y[(int) _direction] * 0.08f,
+				47.0f,
+				17.0f
+		};
+
+		_camera.AddComponent<CameraShaker>(shake_x, shake_y);
 	}
 
 	if (!_moving) {
@@ -175,6 +199,10 @@ void PlayerController::Update() {
 
 void PlayerController::_check_key_presses() {
 	auto set = [this](Direction dir) {
+		if (_ended) {
+			return;
+		}
+
 		_queued_direction = dir;
 
 		if (!_moving) {
