@@ -5,6 +5,7 @@ target_link_libraries(wowie3 PRIVATE RheelEngine)
 target_include_directories(wowie3 PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 target_sources(wowie3 PRIVATE
+        GameOverOverlay.cpp GameOverOverlay.h
         MainMenu.cpp MainMenu.h
         Maze.cpp Maze.h
         MazeGenerator.cpp MazeGenerator.h

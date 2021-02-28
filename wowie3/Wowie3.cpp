@@ -6,6 +6,7 @@
 #include "MazeGenerator.h"
 #include "PlayerController.h"
 #include "MainMenu.h"
+#include "GameOverOverlay.h"
 
 void Wowie3::score_updater::Update() {
 	if (text_element) {
@@ -141,11 +142,16 @@ void Wowie3::NewGame() {
 	ui.AddConstraint(tutorial_overlay, rheel::Constraint::TOP_LEFT, nullptr, rheel::Constraint::TOP_LEFT);
 	ui.AddConstraint(tutorial_overlay, rheel::Constraint::BOTTOM_RIGHT, nullptr, rheel::Constraint::BOTTOM_RIGHT);
 
+	auto* game_over_overlay = ui.InsertElement(GameOverOverlay(*this));
+	ui.AddConstraint(game_over_overlay, rheel::Constraint::TOP_LEFT, nullptr, rheel::Constraint::TOP_LEFT);
+	ui.AddConstraint(game_over_overlay, rheel::Constraint::BOTTOM_RIGHT, nullptr, rheel::Constraint::BOTTOM_RIGHT);
+
 	GetUI().SetContainer(std::move(ui));
 	scene_element->RequestFocus();
 
 	GetActiveScene()->GetRootComponent<score_updater>()->text_element = score_element;
 	GetActiveScene()->GetRootComponent<tutorial_hide>()->element = tutorial_overlay;
+	GetActiveScene()->GetRootComponent<game_over_show>()->element = game_over_overlay;
 }
 
 const Maze& Wowie3::GetCurrentMaze() const {
@@ -205,6 +211,7 @@ rheel::ScenePointer Wowie3::_create_maze_scene(const Maze& maze) {
 	// ui related
 	scene->AddRootComponent<score_updater>();
 	scene->AddRootComponent<tutorial_hide>();
+	scene->AddRootComponent<game_over_show>();
 
 	return scene;
 }

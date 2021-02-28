@@ -31,6 +31,7 @@ private:
 
 	rheel::Entity& _camera;
 
+	bool _ended = false;
 	bool _moving = false;
 	float _current_fraction = 0.0f;
 

@@ -5,6 +5,7 @@
 
 #include "Wowie3.h"
 #include "TutorialOverlay.h"
+#include "GameOverOverlay.h"
 
 PlayerController::PlayerController(rheel::Entity& camera) :
 		_camera(camera) {}
@@ -12,9 +13,30 @@ PlayerController::PlayerController(rheel::Entity& camera) :
 void PlayerController::Update() {
 	constexpr static float velocity = 3.0f;
 	constexpr static float grace_period = 0.2f;
+	float step_size = dt * velocity;
 	const auto& maze = static_cast<Wowie3&>(GetEntity().GetScene().GetGame()).GetCurrentMaze(); // NOLINT (safe)
 
 	_check_key_presses();
+
+	// check for game-over states
+
+	// out of maze
+	if (!_ended && _source_location.x == maze.GetExit().x && _source_location.y == maze.GetExit().y) {
+		_ended = true;
+		GetEntity().GetScene().GetRootComponent<game_over_show>()->show = 0.5f;
+	}
+
+	if (_ended) {
+		vec3 move{
+				static_cast<float>(_direction_x[(int) _direction]) * step_size,
+				0.0f,
+				static_cast<float>(_direction_y[(int) _direction]) * step_size
+		};
+
+		GetEntity().transform.Move(move);
+		_camera.transform.SetTranslation(GetEntity().transform.GetTranslation() + Wowie3::camera_offset);
+		return;
+	}
 
 	if (!_moving) {
 		_source_location = { static_cast<int>(maze.GetGridWidth() / 2), static_cast<int>(maze.GetGridHeight() / 2) };
@@ -33,7 +55,6 @@ void PlayerController::Update() {
 	// if we do not change direction, we can even complete the whole movement in
 	// one go.
 	bool direction_change = _direction != _queued_direction;
-	float step_size = dt * velocity;
 	float finish_fraction = direction_change ? std::min(1.0f - _current_fraction, step_size) : step_size;
 	float remainder_fraction = step_size - finish_fraction;
 
