@@ -89,6 +89,9 @@ public:
 
 	template<ComponentClass C>
 	void RemoveComponent(std::size_t instance) {
+		// deactivate
+		_components[C::id][instance].OnDeactivate();
+
 		// If the component is an input component, remove it from the input
 		// components
 		if constexpr (std::is_base_of_v<InputComponent, C>) {

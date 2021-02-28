@@ -21,8 +21,8 @@ public:
 
 	std::string text;
 	Color color;
-	unsigned size;
-	float width_relative_size;
+	unsigned size{};
+	float width_relative_size{};
 	bool enable_width_relative_size;
 
 private:

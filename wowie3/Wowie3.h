@@ -23,7 +23,7 @@ public:
 	static constexpr vec3 camera_offset{ 0.0f, 2.9f, 0.6f };
 
 	Wowie3() :
-			rheel::Game(_get_display_configuration()),
+			rheel::Game(_get_display_configuration(), "Memomaze"),
 			font(_get_font()) {}
 
 	void Start() override;

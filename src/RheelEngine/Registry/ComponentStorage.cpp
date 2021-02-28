@@ -7,6 +7,7 @@ namespace rheel {
 
 ComponentStorage::~ComponentStorage() {
 	for (auto& component : ComponentView<Component>(*this)) {
+		component.OnDeactivate();
 		component.~Component();
 	}
 
