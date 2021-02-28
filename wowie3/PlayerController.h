@@ -34,6 +34,8 @@ private:
 	bool _ended = false;
 	bool _moving = false;
 	float _current_fraction = 0.0f;
+	float _velocity = 3.0f;
+	float _decel = 0.0f;
 
 	Direction _direction{};
 	Direction _queued_direction{};

@@ -9,7 +9,7 @@ MazeGenerator::MazeGenerator(unsigned int width, unsigned int height) :
 		_width(width),
 		_height(height),
 		_rng(std::random_device{}() ^ reinterpret_cast<std::uintptr_t>(this)) {} // NOLINT (safety not needed)
-		// _rng(0) {}
+		// _rng(4) {}
 
 Maze MazeGenerator::Generate() {
 	while (true) {

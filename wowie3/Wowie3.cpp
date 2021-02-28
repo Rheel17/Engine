@@ -168,6 +168,10 @@ void Wowie3::MarkVisited(location loc) {
 	}
 }
 
+bool Wowie3::HasVisitedAll() const {
+	return _cur_tile_count >= _num_tiles;
+}
+
 rheel::ScenePointer Wowie3::_create_maze_scene(const Maze& maze) {
 	auto scene = rheel::Game::CreateScene();
 

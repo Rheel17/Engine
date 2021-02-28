@@ -12,19 +12,34 @@ PlayerController::PlayerController(rheel::Entity& camera) :
 		_camera(camera) {}
 
 void PlayerController::Update() {
-	constexpr static float velocity = 3.0f;
 	constexpr static float grace_period = 0.175f;
-	float step_size = dt * velocity;
+	_velocity -= _decel * dt;
+	float step_size = dt * _velocity;
 	const auto& maze = static_cast<Wowie3&>(GetEntity().GetScene().GetGame()).GetCurrentMaze(); // NOLINT (safe)
 
 	_check_key_presses();
 
 	// check for game-over states
 
+	// finished
+	if (static_cast<Wowie3&>(GetEntity().GetScene().GetGame()).HasVisitedAll()) { // NOLINT (safe)
+		if (_decel == 0.0f && _velocity >= 0.0f) {
+			_decel = _velocity * 1.4f;
+		}
+	}
+
+	if (_velocity <= 0.0f && !_ended) {
+		_decel = 0.0f;
+		_velocity = 0.0f;
+		_ended = true;
+		_moving = false;
+		GetEntity().GetScene().GetRootComponent<game_over_show>()->show = { 6.4f, 0.95f, 16.1f };
+	}
+
 	// out of maze
 	if (!_ended && _source_location.x == maze.GetExit().x && _source_location.y == maze.GetExit().y) {
 		_ended = true;
-		GetEntity().GetScene().GetRootComponent<game_over_show>()->show.x = 0.5f;
+		GetEntity().GetScene().GetRootComponent<game_over_show>()->show = { 0.5f, 1.0f, 0.2f };
 	}
 
 	if (_ended) {

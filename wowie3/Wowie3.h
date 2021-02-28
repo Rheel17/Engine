@@ -32,6 +32,7 @@ public:
 	const Maze& GetCurrentMaze() const;
 
 	void MarkVisited(location loc);
+	bool HasVisitedAll() const;
 
 	const rheel::Font& font;
 
