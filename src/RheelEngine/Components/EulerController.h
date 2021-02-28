@@ -13,7 +13,7 @@ class RE_API EulerController : public InputComponent {
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 65283;
+	static constexpr const ComponentId id = 65282;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	void Update() override;

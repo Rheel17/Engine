@@ -13,7 +13,7 @@ class RE_API PerspectiveCamera : public Camera {
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 65286;
+	static constexpr const ComponentId id = 65285;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	PerspectiveCamera(float fov, float near, float far);

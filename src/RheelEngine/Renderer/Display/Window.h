@@ -11,6 +11,7 @@
 #else
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
 #undef GLFW_INCLUDE_NONE
 #endif
 
@@ -89,6 +90,12 @@ public:
 	 */
 	void SetVisible(bool visible);
 
+	/**
+	 * Runs the function `f` after the current frame has completely finished
+	 * updating and rendering.
+	 */
+	void RunAfterCurrentFrame(std::function<void()> f);
+
 protected:
 	/**
 	 * Creates an OpenGL context for this window, and makes it the context on
@@ -100,6 +107,7 @@ protected:
 	void CreateContext();
 
 	GLFWwindow* handle;
+	std::vector<std::function<void()>> after_frame_queue;
 
 private:
 	window_hints _hints;

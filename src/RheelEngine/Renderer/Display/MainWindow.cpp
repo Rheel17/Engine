@@ -130,6 +130,13 @@ void MainWindow::Loop() {
 		// draw the game
 		_game.GetUI().Draw(time, dt);
 
+		// perform the after-frame queue
+		for (const auto& f : after_frame_queue) {
+			f();
+		}
+
+		after_frame_queue.clear();
+
 		// finish the update/render cycle
 		GetContext().Pop();
 

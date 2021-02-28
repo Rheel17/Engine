@@ -12,7 +12,7 @@ PlayerController::PlayerController(rheel::Entity& camera) :
 		_camera(camera) {}
 
 void PlayerController::Update() {
-	constexpr static float grace_period = 0.175f;
+	constexpr static float grace_period = 0.225f;
 	_velocity -= _decel * dt;
 	float step_size = dt * _velocity;
 	const auto& maze = static_cast<Wowie3&>(GetEntity().GetScene().GetGame()).GetCurrentMaze(); // NOLINT (safe)

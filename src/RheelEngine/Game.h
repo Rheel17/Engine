@@ -107,6 +107,12 @@ public:
 	 */
 	std::future<void> PreloadTexture(const Image& image, ImageTexture::WrapType type = ImageTexture::WrapType::WRAP, bool linear = true);
 
+	/**
+	 * Runs the function `f` after the current frame has completely finished
+	 * updating and rendering.
+	 */
+	void RunAfterCurrentFrame(std::function<void()> f);
+
 private:
 	void _loop();
 

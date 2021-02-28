@@ -13,7 +13,7 @@ class RE_API DirectionalLight : public Light {
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 65282;
+	static constexpr const ComponentId id = 65281;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	DirectionalLight(const Color& color, const vec3& direction);

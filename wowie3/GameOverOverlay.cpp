@@ -4,13 +4,31 @@
 #include "GameOverOverlay.h"
 
 GameOverOverlay::GameOverOverlay(Wowie3& game) :
-		_game(game) {}
+		_game(game) {
+
+	SetFocusable(true);
+}
 
 void GameOverOverlay::Show(rheel::TextElement* score_element, float speed, float max_alpha, float wait_period) {
 	_score_element = score_element;
 	_fade_direction = speed;
 	_max_alpha = max_alpha;
 	_alpha = -wait_period / speed;
+	RequestFocus();
+}
+
+void GameOverOverlay::OnKeyPress(rheel::Input::Key key, rheel::Input::Scancode scancode, rheel::Input::Modifiers mods) {
+	if (_alpha <= 0.0f) {
+		return;
+	}
+
+	if (key == rheel::Input::Key::KEY_ESCAPE) {
+		_game.RunAfterCurrentFrame([this] { _game.Stop(); });
+	} else if (key == rheel::Input::Key::KEY_SPACE) {
+		_game.RunAfterCurrentFrame([this] { _game.NewGame(); });
+	} else if (key == rheel::Input::Key::KEY_M) {
+		_game.RunAfterCurrentFrame([this] { _game.Start(); });
+	}
 }
 
 void GameOverOverlay::DoDraw(float time, float dt) const {

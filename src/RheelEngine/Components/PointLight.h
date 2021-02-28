@@ -13,7 +13,7 @@ class RE_API PointLight : public Light {
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 65288;
+	static constexpr const ComponentId id = 65286;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	PointLight(const Color& color, const vec3& position, float attenuation = 0.0f);

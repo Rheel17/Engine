@@ -117,4 +117,8 @@ GLFWmonitor* Window::GetPrimaryMonitor() {
 	return monitor;
 }
 
+void Window::RunAfterCurrentFrame(std::function<void()> f) {
+	after_frame_queue.push_back(std::move(f));
+}
+
 }

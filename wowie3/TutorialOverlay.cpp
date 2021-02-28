@@ -30,6 +30,10 @@ void TutorialOverlay::DoDraw(float time, float dt) const {
 	_draw(_down, 0.5f, 0.8f);
 	_draw(_left, 0.3f, 0.5f);
 	_draw(_right, 0.7f, 0.5f);
+
+	auto bounds = GetBounds();
+	GetTextRenderer().DrawParagraph("Explore the entire maze without finding the exit.\nHitting a wall ends the game.", 0, bounds.height * 0.62f, bounds.width,
+			rheel::Font::GetFont("font"), bounds.height * 0.03f, { 0xECDCB0, (int) (_alpha * 255) }, TextAlign::CENTER);
 }
 
 void TutorialOverlay::_draw(const rheel::Image& image, float xf, float yf) const {

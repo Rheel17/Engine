@@ -68,6 +68,7 @@ void Wowie3::Start() {
 
 void Wowie3::NewGame() {
 	static auto maze_generator = MazeGenerator(17, 11);
+	// static auto maze_generator = MazeGenerator(9, 7);
 	_current_maze = maze_generator.Generate();
 	_visited_status = _current_maze;
 

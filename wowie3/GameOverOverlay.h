@@ -14,6 +14,7 @@ public:
 	explicit GameOverOverlay(Wowie3& game);
 
 	void Show(rheel::TextElement* score_element, float speed, float max_alpha = 1.0f, float wait_period = 0.0f);
+	void OnKeyPress(rheel::Input::Key key, rheel::Input::Scancode scancode, rheel::Input::Modifiers mods) override;
 
 protected:
 	void DoDraw(float time, float dt) const override;
