@@ -24,7 +24,7 @@ public:
 
 	Wowie3() :
 			rheel::Game(_get_display_configuration()),
-			_font(_get_font()) {}
+			font(_get_font()) {}
 
 	void Start() override;
 	void NewGame();
@@ -32,6 +32,8 @@ public:
 	const Maze& GetCurrentMaze() const;
 
 	void MarkVisited(location loc);
+
+	const rheel::Font& font;
 
 private:
 	rheel::ScenePointer _create_maze_scene(const Maze& maze);
@@ -42,8 +44,6 @@ private:
 	std::optional<Maze> _visited_status;
 	int _num_tiles = 0;
 	int _cur_tile_count = 0;
-
-	const rheel::Font& _font;
 
 };
 
