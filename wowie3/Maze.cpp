@@ -5,8 +5,8 @@
 
 #include <stack>
 
-llvm::SmallVector<location, 4> location::neighbors(const Maze& maze) const {
-	llvm::SmallVector<location, 4> locations{};
+std::vector<location> location::neighbors(const Maze& maze) const {
+	std::vector<location> locations{};
 
 	auto test = [this, &locations, &maze](int dx, int dy) {
 		int new_x = x + dx;

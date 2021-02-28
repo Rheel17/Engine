@@ -4,6 +4,7 @@
 #include "PlayerController.h"
 
 #include "Wowie3.h"
+#include "TutorialOverlay.h"
 
 PlayerController::PlayerController(rheel::Entity& camera) :
 		_camera(camera) {}
@@ -25,6 +26,7 @@ void PlayerController::Update() {
 	if (_source_location.x == _target_location.x && _source_location.y == _target_location.y) {
 		_target_location.x += (int) _direction_x[(int) _direction];
 		_target_location.y += (int) _direction_y[(int) _direction];
+		GetEntity().GetScene().GetRootComponent<tutorial_hide>()->hide = true;
 	}
 
 	// current movement, up to the finished fraction or maximum velocity.

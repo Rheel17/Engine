@@ -15,7 +15,7 @@ namespace rheel {
 Cache<const Font*, FontRenderer> FontRenderer::_renderers;
 
 FontRenderer::static_data::static_data() :
-		text_buffer(1920, 1080),
+		text_buffer(1, 1),
 		resolve_vbo(gl::Buffer::Target::ARRAY) {
 
 	gl::ContextScope cs;

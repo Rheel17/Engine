@@ -25,15 +25,21 @@ void Wowie3::Start() {
 	ui.AddConstraint(vignette_element, rheel::Constraint::TOP_LEFT, nullptr, rheel::Constraint::TOP_LEFT);
 	ui.AddConstraint(vignette_element, rheel::Constraint::BOTTOM_RIGHT, nullptr, rheel::Constraint::BOTTOM_RIGHT);
 
-	auto* score_element = ui.InsertElement(rheel::TextElement("0%", 0.33f, 0xECDCB0));
+	auto* score_element = ui.InsertElement(rheel::TextElement("0%", 0.33f, 0xECDCB0, _font));
 	ui.AddWidthRelativeConstraint(score_element, rheel::Constraint::TOP, nullptr, rheel::Constraint::TOP, 0.02f);
 	ui.AddWidthRelativeConstraint(score_element, rheel::Constraint::LEFT, nullptr, rheel::Constraint::LEFT, 0.03f);
 	ui.AddWidthRelativeConstraint(score_element, rheel::Constraint::BOTTOM, nullptr, rheel::Constraint::TOP, -0.05f);
 	ui.AddWidthRelativeConstraint(score_element, rheel::Constraint::RIGHT, nullptr, rheel::Constraint::LEFT, -0.10f);
 
+	auto* tutorial_overlay = ui.InsertElement(TutorialOverlay(*this));
+	ui.AddConstraint(tutorial_overlay, rheel::Constraint::TOP_LEFT, nullptr, rheel::Constraint::TOP_LEFT);
+	ui.AddConstraint(tutorial_overlay, rheel::Constraint::BOTTOM_RIGHT, nullptr, rheel::Constraint::BOTTOM_RIGHT);
+
 	GetUI().SetContainer(std::move(ui));
 	scene_element->RequestFocus();
+
 	GetActiveScene()->GetRootComponent<score_updater>()->text_element = score_element;
+	GetActiveScene()->GetRootComponent<tutorial_hide>()->element = tutorial_overlay;
 }
 
 void Wowie3::NewGame() {
@@ -72,7 +78,7 @@ void Wowie3::NewGame() {
 	loc.x += d.x;
 	loc.y += d.y;
 
-	llvm::SmallVector<location, 4> ns = loc.neighbors(*_visited_status);
+	auto ns = loc.neighbors(*_visited_status);
 
 	int remove_corridor = 2;
 
@@ -147,8 +153,9 @@ rheel::ScenePointer Wowie3::_create_maze_scene(const Maze& maze) {
 	player.AddComponent<rheel::ModelRenderComponent>(player_model, rheel::Material(0xECDCB0, 0.8f, 0.01f));
 	player.AddComponent<PlayerController>(camera);
 
-	// score updater
+	// ui related
 	scene->AddRootComponent<score_updater>();
+	scene->AddRootComponent<tutorial_hide>();
 
 	return scene;
 }
@@ -160,6 +167,11 @@ rheel::DisplayConfiguration Wowie3::_get_display_configuration() {
 	config.aa_mode = rheel::DisplayConfiguration::AntiAliasing::MSAA_4;
 	config.vsync = true;
 	return config;
+}
+
+const rheel::Font& Wowie3::_get_font() {
+	rheel::Font::RegisterFont("Montserrat-Regular.ttf", "font");
+	return rheel::Font::GetFont("font");
 }
 
 RHEEL_ENGINE_ENTRY(Wowie3)

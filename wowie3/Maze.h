@@ -6,14 +6,12 @@
 
 #include <vector>
 
-#include <llvm/ADT/SmallVector.h>
-
 class Maze;
 
 struct location {
 	int x, y;
 
-	llvm::SmallVector<location, 4> neighbors(const Maze& maze) const;
+	std::vector<location> neighbors(const Maze& maze) const;
 };
 
 class Maze {

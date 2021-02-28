@@ -8,4 +8,5 @@ target_sources(wowie3 PRIVATE
         Maze.cpp Maze.h
         MazeGenerator.cpp MazeGenerator.h
         PlayerController.cpp PlayerController.h
+        TutorialOverlay.cpp TutorialOverlay.h
         Wowie3.cpp Wowie3.h)

@@ -4,9 +4,9 @@
 #ifndef RHEELENGINE_LOG_H
 #define RHEELENGINE_LOG_H
 
-#ifndef RE_API
-#error "Do not include Log.h directly, use _common.h"
-#endif
+// #ifndef RE_API
+// #error "Do not include Log.h directly, use _common.h"
+// #endif
 
 #include <string>
 #include <chrono>

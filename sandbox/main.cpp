@@ -123,7 +123,7 @@ public:
 		ui.AddConstraint(crosshair_element, Constraint::TOP, nullptr, Constraint::TOP);
 		ui.AddConstraint(crosshair_element, Constraint::BOTTOM, nullptr, Constraint::BOTTOM);
 
-		auto* fps_element = ui.InsertElement(TextElement("0 FPS", 20, 0xFFFFFF));
+		auto* fps_element = ui.InsertElement(TextElement("0 FPS", 20u, 0xFFFFFF));
 		ui.AddConstraint(fps_element, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT, 10);
 
 		auto* button_element = ui.InsertElement(ButtonElement([this]() { Stop(); }));

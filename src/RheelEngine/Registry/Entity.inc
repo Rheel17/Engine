@@ -50,11 +50,11 @@ private:
 
 	// In release mode, we can probably win some performance by allocating small
 	// entities completely on the stack. Small entities: <= 4 components.
-#if NDEBUG
-	llvm::SmallVector<Component*, 4> _components{};
-#else
+// #if NDEBUG
+// 	llvm::SmallVector<Component*, 4> _components{};
+// #else
 	std::vector<Component*> _components{};
-#endif
+// #endif
 
 };
 

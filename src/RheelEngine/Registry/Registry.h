@@ -11,12 +11,12 @@
 #include "../Transform.h"
 #include "../Components/InputComponent.h"
 
-#if NDEBUG
-#include <llvm/ADT/DenseMap.h>
-#include <llvm/ADT/SmallVector.h>
-#else
+// #if NDEBUG
+// #include <llvm/ADT/DenseMap.h>
+// #include <llvm/ADT/SmallVector.h>
+// #else
 #include <map>
-#endif
+// #endif
 
 namespace rheel {
 
@@ -127,16 +127,16 @@ public:
 
 private:
 	// mapping Entity Ids to indices for this registry
-#if NDEBUG
-	llvm::DenseMap<std::uint64_t, std::size_t> _id_to_index_map;
-#else
+// #if NDEBUG
+// 	llvm::DenseMap<std::uint64_t, std::size_t> _id_to_index_map;
+// #else
 	std::map<std::uint64_t, std::size_t> _id_to_index_map;
-#endif
+// #endif
 
 	std::size_t _entity_index(std::uint64_t id) const {
-#ifdef NDEBUG
-		return _id_to_index_map.find(id)->getSecond();
-#else
+// #ifdef NDEBUG
+// 		return _id_to_index_map.find(id)->getSecond();
+// #else
 		auto iter = _id_to_index_map.find(id);
 
 		if (iter == _id_to_index_map.end()) {
@@ -144,7 +144,7 @@ private:
 		}
 
 		return iter->second;
-#endif
+// #endif
 	}
 
 	// entities and their components
