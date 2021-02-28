@@ -4,8 +4,9 @@
 #include "Maze.h"
 
 #include <stack>
+#include <iostream>
 
-std::vector<location> location::neighbors(const Maze& maze) const {
+std::vector<location> location::neighbors(const Maze& maze, int delta) const {
 	std::vector<location> locations{};
 
 	auto test = [this, &locations, &maze](int dx, int dy) {
@@ -19,10 +20,10 @@ std::vector<location> location::neighbors(const Maze& maze) const {
 		}
 	};
 
-	test(-2, 0);
-	test(2, 0);
-	test(0, -2);
-	test(0, 2);
+	test(-delta, 0);
+	test(delta, 0);
+	test(0, -delta);
+	test(0, delta);
 
 	return locations;
 }
@@ -41,6 +42,26 @@ bool Maze::IsWall(int x, int y) const {
 
 bool Maze::IsWall(location loc) const {
 	return (*this)[loc] == wall;
+}
+
+void Maze::Print() const {
+	for (int y = 0; y < _height; y++) {
+		for (int x = 0; x < _width; x++) {
+			switch ((*this)[{ x, y }]) {
+				case wall:
+					std::cout << "#";
+					break;
+				case floor:
+					std::cout << ".";
+					break;
+				case unvisited:
+					std::cout << "!";
+					break;
+			}
+		}
+
+		std::cout << std::endl;
+	}
 }
 
 bool Maze::IsValid() const {
@@ -66,11 +87,10 @@ bool Maze::IsValid() const {
 		if (copy[loc] == unvisited) {
 			copy[loc] = floor;
 
-			auto ns = loc.neighbors(copy);
+			auto ns = loc.neighbors(copy, 1);
 
 			for (auto l : ns) {
-				location mid{ (l.x + loc.x) / 2, (l.y + loc.y) / 2 };
-				if (copy[mid] != Maze::wall) {
+				if (copy[l] != Maze::wall) {
 					fringe.push(l);
 				}
 			}
@@ -78,8 +98,8 @@ bool Maze::IsValid() const {
 	}
 
 	// check if all cells were visited
-	for (int x = 1; x < _width; x += 2) {
-		for (int y = 1; y < _height; y += 2) {
+	for (int x = 0; x < _width; x++) {
+		for (int y = 0; y < _height; y++) {
 			if (copy[{ x, y }] == Maze::unvisited) {
 				return false;
 			}

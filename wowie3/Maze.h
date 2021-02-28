@@ -11,7 +11,7 @@ class Maze;
 struct location {
 	int x, y;
 
-	std::vector<location> neighbors(const Maze& maze) const;
+	std::vector<location> neighbors(const Maze& maze, int delta = 2) const;
 };
 
 class Maze {
@@ -27,6 +27,8 @@ public:
 
 	bool IsWall(int x, int y) const;
 	bool IsWall(location loc) const;
+
+	void Print() const;
 
 	bool IsValid() const;
 	location GetExit() const;

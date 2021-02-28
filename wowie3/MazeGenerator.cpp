@@ -9,7 +9,7 @@ MazeGenerator::MazeGenerator(unsigned int width, unsigned int height) :
 		_width(width),
 		_height(height),
 		_rng(std::random_device{}() ^ reinterpret_cast<std::uintptr_t>(this)) {} // NOLINT (safety not needed)
-		// _rng(4) {}
+// _rng(4) {}
 
 Maze MazeGenerator::Generate() {
 	while (true) {
@@ -48,7 +48,7 @@ Maze MazeGenerator::_do_generate() {
 			exit_corridor_dy = -1;
 			break;
 		case 2:
-			maze._exit = { 0, std::uniform_int_distribution<int>(0, _height - 1)(_rng) * 2 + 1 };
+			maze._exit = { 1, std::uniform_int_distribution<int>(0, _height - 1)(_rng) * 2 + 1 };
 			maze[location{ 0, maze._exit.y }] = Maze::floor;
 			exit_corridor_dx = 1;
 			break;
