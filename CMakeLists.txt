@@ -79,12 +79,12 @@ set_target_properties(RheelEngine PROPERTIES LINK_SEARCH_END_STATIC 1)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
 target_link_libraries(RheelEngine PUBLIC glfw3 glew32 opengl32)
-target_link_libraries(RheelEngine PUBLIC ${OPENAL_LIBRARY})
+#target_link_libraries(RheelEngine PUBLIC ${OPENAL_LIBRARY})
 target_link_libraries(RheelEngine PUBLIC freetype brotlicommon-static freetype bz2 freetype harfbuzz freetype brotlidec-static freetype graphite2 pcre iconv glib-2.0 intl Rpcrt4)
 #target_link_libraries(RheelEngine PUBLIC ${BULLET_LIBRARIES})
 target_link_libraries(RheelEngine PUBLIC png z)
-target_link_libraries(RheelEngine PUBLIC alut)
-target_link_libraries(RheelEngine PUBLIC pugixml)
+#target_link_libraries(RheelEngine PUBLIC alut)
+#target_link_libraries(RheelEngine PUBLIC pugixml)
 
 # Installation
 include(GNUInstallDirs)
