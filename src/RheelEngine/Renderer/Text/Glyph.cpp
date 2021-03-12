@@ -24,9 +24,9 @@ Glyph::Triangle Glyph::_create_triangle(const vec2& v_1, const vec2& v_2, const 
 	// calculate the determinant of the matrix [u v]. The sign of y will
 	// determine the side of the third point, and thus if a flip is needed.
 	if (u.y * v.x - u.x * v.y > 0) {
-		return Triangle {{ vec3(v_1, -1.0f), vec3(v_3, -1.0f), vec3(v_2, -1.0f) }};
+		return Triangle {{ vec3(v_1, 3.0f), vec3(v_3, 3.0f), vec3(v_2, 3.0f) }};
 	} else {
-		return Triangle {{ vec3(v_1, -1.0f), vec3(v_2, -1.0f), vec3(v_3, -1.0f) }};
+		return Triangle {{ vec3(v_1, 3.0f), vec3(v_2, 3.0f), vec3(v_3, 3.0f) }};
 	}
 }
 
