@@ -110,7 +110,6 @@ void PhysicsScene::_handle_collisions() {
 		auto* body_0 = static_cast<RigidBody*>(manifold->getBody0()->getUserPointer());
 		auto* body_1 = static_cast<RigidBody*>(manifold->getBody1()->getUserPointer());
 
-		// TODO: notify all CollisionComponents?
 		auto* cc_0 = body_0->GetEntity().GetComponent<CollisionComponent>();
 		if (!cc_0) {
 			continue;

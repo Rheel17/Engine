@@ -98,10 +98,8 @@ public:
 			std::erase(_input_components, _components[C::id][instance]);
 		}
 
-		auto[entity_index, index_in_entity] = _components[C::id].template RemoveInstance<C>(_entities, instance);
-
-		auto& entity = _entities[entity_index];
-		entity._components.erase(entity._components.begin() + index_in_entity);
+		auto[entity, index_in_entity] = _components[C::id].template RemoveInstance<C>(_entities, instance);
+		entity->_components.erase(entity->_components.begin() + index_in_entity);
 	}
 
 	void UpdateComponents(float time, float dt);
@@ -152,7 +150,7 @@ private:
 
 	// entities and their components
 	EntityStorage<Entity> _entities;
-	std::vector<ComponentStorage> _components{ 65536 };
+	std::array<ComponentStorage, 65536> _components;
 
 	// input components
 	std::vector<InputComponent*> _input_components{};

@@ -19,13 +19,24 @@ namespace rheel {
 //}
 
 RigidBody::RigidBody(PhysicsShape shape, float mass, float bounciness) :
-		_shape(std::move(shape)),
-		_mass(mass),
-		_bounciness(bounciness),
-		_last_transform_update(std::make_unique<btTransform>()) {}
+		_data({
+				.last_transform_update = std::make_unique<btTransform>(),
+				.shape = std::move(shape),
+				.mass = mass,
+				.bounciness = bounciness
+		}) {}
+
+RigidBody::RigidBody(RigidBody&& rb) noexcept :
+		Component(static_cast<Component&&>(rb)),
+		_data(std::move(rb._data)) {
+
+	if (_data.body) {
+		_data.body->setUserPointer(this);
+	}
+}
 
 void RigidBody::OnActivate() {
-	if (!_shape) {
+	if (!_data.shape) {
 		throw std::runtime_error("no model set");
 	}
 
@@ -36,25 +47,25 @@ void RigidBody::OnActivate() {
 
 	btVector3 inertia(0, 0, 0);
 
-	if (_mass > 0) {
-		_shape._pointer()->calculateLocalInertia(_mass, inertia);
+	if (_data.mass > 0) {
+		_data.shape._pointer()->calculateLocalInertia(_data.mass, inertia);
 	}
 
-	_motion_state = std::make_unique<btDefaultMotionState>();
+	_data.motion_state = std::make_unique<btDefaultMotionState>();
 
-	btRigidBody::btRigidBodyConstructionInfo cinfo(_mass, _motion_state.get(), _shape._pointer(), inertia);
-	cinfo.m_restitution = _bounciness;
+	btRigidBody::btRigidBodyConstructionInfo cinfo(_data.mass, _data.motion_state.get(), _data.shape._pointer(), inertia);
+	cinfo.m_restitution = _data.bounciness;
 
 	auto matrix = GetEntity().AbsoluteTransform().AsMatrix();
-	*_last_transform_update = btTransform::getIdentity();
-	_last_transform_update->setFromOpenGLMatrix(&matrix[0][0]);
+	*_data.last_transform_update = btTransform::getIdentity();
+	_data.last_transform_update->setFromOpenGLMatrix(&matrix[0][0]);
 
-	_body = std::make_unique<btRigidBody>(cinfo);
-	_body->setUserPointer(this);
-	_body->setWorldTransform(*_last_transform_update);
-	_body->setFriction(0.5f);
+	_data.body = std::make_unique<btRigidBody>(cinfo);
+	_data.body->setUserPointer(this);
+	_data.body->setWorldTransform(*_data.last_transform_update);
+	_data.body->setFriction(0.5f);
 
-	physics_scene->_add_body(_body.get());
+	physics_scene->_add_body(_data.body.get());
 }
 
 void RigidBody::OnDeactivate() {
@@ -63,39 +74,41 @@ void RigidBody::OnDeactivate() {
 		return;
 	}
 
-	physics_scene->_remove_body(_body.get(), GetEntity().GetComponent<CollisionComponent>());
+	physics_scene->_remove_body(_data.body.get(), GetEntity().GetComponent<CollisionComponent>());
 }
 
 void RigidBody::Update() {
-	if (_body->getWorldTransform() == *_last_transform_update) {
+	if (_data.mass == 0) {
+		// Kinematic object: update the Bullet3 body transform from the actual
+		// transform.
+		mat4 transform = GetEntity().AbsoluteTransform().AsMatrix();
+		_data.body->getWorldTransform().setFromOpenGLMatrix(&transform[0][0]);
 		return;
 	}
 
-	mat4 m_prime, p_inv, c_inv;
-	*_last_transform_update = _body->getWorldTransform();
-	_last_transform_update->getOpenGLMatrix(&m_prime[0][0]);
-
-	if (GetEntity().GetParent() == nullptr) {
-		p_inv = glm::identity<mat4>();
-	} else {
-		p_inv = glm::inverse(GetEntity().GetParent()->AbsoluteTransform().AsMatrix());
+	if (_data.body->getWorldTransform() == *_data.last_transform_update) {
+		return;
 	}
 
-	c_inv = glm::inverse(GetEntity().AbsoluteTransform().AsMatrix());
+	// compute the parent-relative transform
+	mat4 transform;
+	*_data.last_transform_update = _data.body->getWorldTransform();
+	_data.last_transform_update->getOpenGLMatrix(&transform[0][0]);
 
-	mat4 o_prime = p_inv * m_prime * c_inv;
+	if (GetEntity().GetParent() != nullptr) {
+		mat4 inverse_parent = glm::inverse(GetEntity().GetParent()->AbsoluteTransform().AsMatrix());
+		transform = inverse_parent * transform;
+	}
 
-	_transform_event_from_update = true;
-	GetEntity().transform = Transform(o_prime);
-	_transform_event_from_update = false;
+	GetEntity().transform = Transform(transform);
 }
 
 void RigidBody::ApplyForce(const vec3& force) {
-	_body->applyCentralForce({ force.x, force.y, force.z });
+	_data.body->applyCentralForce({ force.x, force.y, force.z });
 }
 
 void RigidBody::ApplyImpulse(const vec3& impulse) {
-	_body->applyCentralImpulse({ impulse.x, impulse.y, impulse.z });
+	_data.body->applyCentralImpulse({ impulse.x, impulse.y, impulse.z });
 }
 
 }

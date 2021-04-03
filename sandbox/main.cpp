@@ -22,11 +22,52 @@ private:
 
 };
 
+class CubeSpawner : public Component {
+
+public:
+	static constexpr const ComponentId id = 1;
+
+	void Update() override {
+		if (_num == 0) {
+			return;
+		}
+
+		_t += dt;
+		if (_t > 0.2f) {
+			_spawn();
+			_t -= 0.2f;
+			_num--;
+		}
+	}
+
+private:
+	void _spawn() {
+		static auto box_model = StaticModelGeneratorBox({ 1.0f, 1.0f, 1.0f })();
+		auto& entity = GetEntity().GetScene().AddEntity(Transform(vec3{ 0.0f, 10.0f, 0.0f }, vec3{ 0.5f, 0.5f, 0.5f }));
+		entity.AddComponent<ModelRenderComponent>(box_model, Material({ 0.9f, 0.9f, 0.9f, 1.0f }, 0.7f, 0.2f));
+		entity.AddComponent<RigidBody>(PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }), 1000.0f);
+	}
+
+	float _t = 0.0f;
+	int _num = 1;
+
+};
+
+class Test : public Component {
+
+public:
+	static constexpr const ComponentId id = 2;
+
+};
+
 static void create_cube(Entity& cube, Game& game) {
 	static auto box_model = StaticModelGeneratorBox({ 1.0f, 1.0f, 1.0f })();
 	auto box_shader = game.GetAssetLoader().glsl.Load("Resources/test_shader.glsl");
 
 	cube.AddComponent<ModelRenderComponent>(box_model, Material({ 0.0f, 0.2f, 0.2f, 1.0f }, 0.7f, 0.5f));
+	cube.AddComponent<RigidBody>(PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }));
+	cube.AddComponent<Test>();
+	cube.RemoveComponent<Test>();
 
 	CosineInterpolator<float> interpolator_1;
 	interpolator_1.AddPoint(0.0f, 0.2f);
@@ -70,6 +111,7 @@ static void create_floor(Entity& floor) {
 static ScenePointer create_scene(Game& game) {
 	auto scene = game.CreateScene();
 	scene->AddRootComponent<FpsUpdater>();
+	scene->AddRootComponent<CubeSpawner>();
 
 	auto& physics_scene = scene->AddRootComponent<PhysicsScene>();
 	physics_scene.SetGravity({ 0.0f, -9.81f, 0.0f });
@@ -113,7 +155,7 @@ public:
 		ui.AddConstraint(scene_element, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 		scene_element->SetGrabOnFocus(true);
 
-		auto *vignette_element = ui.InsertElement(VignetteElement(Color{ 0.0f, 0.0f, 0.0f, 0.5f }, 0.5f, 2.0f));
+		auto* vignette_element = ui.InsertElement(VignetteElement(Color{ 0.0f, 0.0f, 0.0f, 0.5f }, 0.5f, 2.0f));
 		ui.AddConstraint(vignette_element, Constraint::TOP_LEFT, nullptr, Constraint::TOP_LEFT);
 		ui.AddConstraint(vignette_element, Constraint::BOTTOM_RIGHT, nullptr, Constraint::BOTTOM_RIGHT);
 
