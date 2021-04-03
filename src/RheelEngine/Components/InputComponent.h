@@ -10,7 +10,7 @@
 
 namespace rheel {
 
-class InputComponent : public Component {
+class RE_API InputComponent : public Component {
 	friend class SceneElement;
 
 public:

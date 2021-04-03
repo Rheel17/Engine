@@ -5,6 +5,7 @@
 #define ENGINE_COMPONENTSTORAGE_H
 #include "../_common.h"
 
+#include "EntityStorage.h"
 #include "../Component.h"
 
 #include <span>
@@ -49,16 +50,16 @@ public:
 		return ptr;
 	}
 
-	// Returned: (entity_index, index_in_entity)
+	// Returned: (entity pointer, index of component in entity's component list)
 	template<typename C>
-	std::pair<std::size_t, std::uint16_t> RemoveInstance(Entity* entities, std::size_t index) {
+	std::pair<Entity*, std::uint16_t> RemoveInstance(const EntityStorage<Entity>& entities, std::size_t index) {
 		auto* c_storage = static_cast<C*>(_storage);
-		auto entity_index = c_storage[index]._entity_index;
+		auto* entity = c_storage[index]._entity;
 		auto index_in_entity = c_storage[index]._index_in_entity;
 
 		// find references to the to-be-swapped components
-		Component** ptr_1 = &entities[entity_index]._components[index_in_entity];
-		Component** ptr_2 = &entities[c_storage[_size - 1]._entity_index]._components[c_storage[_size - 1]._index_in_entity];
+		auto** ptr_1 = _component_pp(entity, index_in_entity);
+		auto** ptr_2 = _component_pp(c_storage[_size - 1]._entity, c_storage[_size - 1]._index_in_entity);
 
 		// swap last and the to-remove index
 		Component* tmp = *ptr_1;
@@ -66,15 +67,18 @@ public:
 		*ptr_2 = tmp;
 
 		std::swap(c_storage[index], c_storage[_size - 1]);
-		c_storage[index]->_index = index;
+		c_storage[index]._index = index;
 
 		// element is now at last index, delete it
 		_size--;
 		auto* ptr = c_storage + _size;
 		ptr->~C();
 
-		return { entity_index, index_in_entity };
+		return { entity, index_in_entity };
 	}
+
+	Component& operator[](std::size_t idx);
+	const Component& operator[](std::size_t idx) const;
 
 private:
 	template<typename C>
@@ -123,6 +127,8 @@ private:
 		free(_storage); // NOLINT (malloc used, so need to free)
 		_storage = new_storage;
 	}
+
+	Component** _component_pp(Entity* entity, std::size_t index_in_entity);
 
 	void* _storage = nullptr;
 	std::size_t _byte_capacity = 0;

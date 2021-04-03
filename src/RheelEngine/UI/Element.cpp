@@ -299,10 +299,10 @@ void Element::DrawTexturedQuad(const Vertex& v_1, const Vertex& v_2, const Verte
 
 void Element::DrawTexturedQuad(const Bounds& bounds, const Image& image, float alpha) const {
 	DrawTexturedQuad(
-			Vertex({ bounds.x, bounds.y }, { 0.0f, 1.0f }),
-			Vertex({ bounds.x, bounds.y + bounds.height }, { 0.0f, 0.0f }),
-			Vertex({ bounds.x + bounds.width, bounds.y + bounds.height }, { 1.0f, 0.0f }),
-			Vertex({ bounds.x + bounds.width, bounds.y }, { 1.0f, 1.0f }),
+			Vertex({ bounds.x, bounds.y }, { 0.0f, 0.0f }),
+			Vertex({ bounds.x, bounds.y + bounds.height }, { 0.0f, 1.0f }),
+			Vertex({ bounds.x + bounds.width, bounds.y + bounds.height }, { 1.0f, 1.0f }),
+			Vertex({ bounds.x + bounds.width, bounds.y }, { 1.0f, 0.0f }),
 			image, alpha);
 }
 

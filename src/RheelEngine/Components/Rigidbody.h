@@ -22,6 +22,12 @@ public:
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	explicit RigidBody(PhysicsShape shape, float mass = 0.0f, float bounciness = 0.5f);
+	~RigidBody() = default;
+
+	RE_NO_COPY(RigidBody);
+
+	RigidBody(RigidBody&& rb) noexcept;
+	RigidBody& operator=(RigidBody&& rb) = delete;
 
 protected:
 	void OnActivate() override;
@@ -41,16 +47,15 @@ public:
 	void ApplyImpulse(const vec3& impulse);
 
 private:
-	std::unique_ptr<btMotionState> _motion_state;
-	std::unique_ptr<btRigidBody> _body;
+	struct data {
+		std::unique_ptr<btMotionState> motion_state;
+		std::unique_ptr<btRigidBody> body;
+		std::unique_ptr<btTransform> last_transform_update;
 
-	std::unique_ptr<btTransform> _last_transform_update;
-
-	PhysicsShape _shape;
-	float _mass = 0.0f;
-	float _bounciness = 0.5f;
-
-	bool _transform_event_from_update = false;
+		PhysicsShape shape;
+		float mass = 0.0f;
+		float bounciness = 0.5f;
+	} _data;
 
 };
 

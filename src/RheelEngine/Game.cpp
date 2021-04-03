@@ -115,6 +115,10 @@ std::future<void> Game::PreloadTexture(const Image& image, ImageTexture::WrapTyp
 	});
 }
 
+void Game::RunAfterCurrentFrame(std::function<void()> f) {
+	_window->RunAfterCurrentFrame(std::move(f));
+}
+
 void Game::_loop() {
 	_window->Loop();
 }

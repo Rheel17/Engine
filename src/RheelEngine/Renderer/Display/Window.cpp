@@ -3,6 +3,8 @@
  */
 #include "Window.h"
 
+#include <windows.h>
+
 namespace rheel {
 
 void window_hints::Set() const {
@@ -109,12 +111,27 @@ void Window::CreateContext() {
 		abort();
 	}
 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _hints.context_version_major);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _hints.context_version_minor);
+
+	std::string gl_version_string = "GL_VERSION_" + std::to_string(_hints.context_version_major) + "_" + std::to_string(_hints.context_version_minor);
+	std::string caption = "Your graphics device does not support " + gl_version_string;
+	if (!glewIsSupported(gl_version_string.c_str())) {
+		glfwDestroyWindow(handle);
+		MessageBoxA(nullptr, caption.c_str(), "Unsupported graphics device", MB_OK | MB_ICONEXCLAMATION);
+		exit(-1);
+	}
+
 	_context = std::unique_ptr<gl::Context>(new gl::Context(GetWindowSize()));
 }
 
 GLFWmonitor* Window::GetPrimaryMonitor() {
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 	return monitor;
+}
+
+void Window::RunAfterCurrentFrame(std::function<void()> f) {
+	after_frame_queue.push_back(std::move(f));
 }
 
 }

@@ -7,10 +7,11 @@
 
 namespace rheel {
 
-TextElement::TextElement(const std::string& text, unsigned size, const Color& color, const Font& font) :
-		text(text),
+TextElement::TextElement(std::string text, unsigned size, const Color& color, const Font& font) :
+		text(std::move(text)),
 		color(color),
 		size(size),
+		enable_width_relative_size(false),
 		_font(font) {
 
 	_font_ascend = _font.Ascend();
@@ -18,10 +19,11 @@ TextElement::TextElement(const std::string& text, unsigned size, const Color& co
 	SetDefaultSize(_font.StringWidth(text) * size, size * (_font_ascend + _font_descend));
 }
 
-TextElement::TextElement(std::string&& text, unsigned size, const Color& color, const Font& font) :
+TextElement::TextElement(std::string text, float width_relative_size, const Color& color, const Font& font) :
 		text(std::move(text)),
 		color(color),
-		size(size),
+		width_relative_size(width_relative_size),
+		enable_width_relative_size(true),
 		_font(font) {
 
 	_font_ascend = _font.Ascend();
@@ -32,10 +34,12 @@ TextElement::TextElement(std::string&& text, unsigned size, const Color& color, 
 void TextElement::DoDraw(float time, float dt) const {
 	const Bounds& bounds = GetBounds();
 
-	unsigned text_bounds = size * (_font_ascend + _font_descend);
-	unsigned y = bounds.y + (bounds.height - text_bounds) / 2 + (size * _font_ascend);
+	unsigned actual_size = enable_width_relative_size ? width_relative_size * bounds.width : size;
 
-	GetTextRenderer().DrawText(text, bounds.x, y, _font, size, color);
+	unsigned text_bounds = actual_size * (_font_ascend + _font_descend);
+	unsigned y = bounds.y + (bounds.height - text_bounds) / 2 + (actual_size * _font_ascend);
+
+	GetTextRenderer().DrawText(text, bounds.x, y, _font, actual_size, color);
 }
 
 }

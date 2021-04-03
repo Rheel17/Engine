@@ -14,11 +14,14 @@
 #error "Platform not supported"
 #endif
 
+
 #ifdef RE_BUILDING_LIBRARY
-#define RE_API RE_API_EXPORT
+// #define RE_API RE_API_EXPORT
 #else
-#define RE_API RE_API_IMPORT
+//#define RE_API RE_API_IMPORT
 #endif
+
+#define RE_API
 
 #include "Util/Math.h"
 #include "Util/Log.h"

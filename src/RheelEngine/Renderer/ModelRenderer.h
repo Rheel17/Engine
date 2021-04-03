@@ -27,16 +27,21 @@ public:
 
 	public:
 		ObjectData();
-		ObjectData(const ObjectData& data);
+		~ObjectData() = default;
+
+		ObjectData(const ObjectData& data) = delete;
+		ObjectData& operator=(const ObjectData& data) = delete;
+
+		ObjectData(ObjectData&& data) noexcept;
 		ObjectData& operator=(ObjectData&& data) noexcept;
 
 	private:
-		mat4 _model_matrix;
-		mat4 _normal_model_matrix;
-		vec4 _material_vector;
-		vec4 _material_color;
+		mat4 _model_matrix{};
+		mat4 _normal_model_matrix{};
+		vec4 _material_vector{};
+		vec4 _material_color{};
 
-		ObjectDataPtr* _ptr;
+		ObjectDataPtr* _ptr{};
 
 	};
 
