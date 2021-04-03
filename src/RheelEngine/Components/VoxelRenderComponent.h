@@ -14,7 +14,7 @@ class RE_API VoxelRenderComponent : public Component {
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 65289;
+	static constexpr const ComponentId id = 65292;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	explicit VoxelRenderComponent(VoxelImage model);

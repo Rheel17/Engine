@@ -72,19 +72,19 @@ add_subdirectory(src)
 
 # Add external libraries
 target_include_directories(RheelEngine PUBLIC ${FREETYPE_INCLUDE_DIRS})
-#target_include_directories(RheelEngine PUBLIC ${BULLET_INCLUDE_DIRS})
+target_include_directories(RheelEngine PUBLIC ${BULLET_INCLUDE_DIRS})
 
 set_target_properties(RheelEngine PROPERTIES LINK_SEARCH_START_STATIC 1)
 set_target_properties(RheelEngine PROPERTIES LINK_SEARCH_END_STATIC 1)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
 target_link_libraries(RheelEngine PUBLIC glfw3 glew32 opengl32)
-#target_link_libraries(RheelEngine PUBLIC ${OPENAL_LIBRARY})
+target_link_libraries(RheelEngine PUBLIC ${OPENAL_LIBRARY})
 target_link_libraries(RheelEngine PUBLIC freetype brotlicommon-static freetype bz2 freetype harfbuzz freetype brotlidec-static freetype graphite2 pcre iconv glib-2.0 intl Rpcrt4)
-#target_link_libraries(RheelEngine PUBLIC ${BULLET_LIBRARIES})
+target_link_libraries(RheelEngine PUBLIC ${BULLET_LIBRARIES})
 target_link_libraries(RheelEngine PUBLIC png z)
-#target_link_libraries(RheelEngine PUBLIC alut)
-#target_link_libraries(RheelEngine PUBLIC pugixml)
+target_link_libraries(RheelEngine PUBLIC alut)
+target_link_libraries(RheelEngine PUBLIC pugixml)
 
 # Installation
 include(GNUInstallDirs)
@@ -98,5 +98,3 @@ install(DIRECTORY src/
 
 install(EXPORT RheelEngineConfig DESTINATION share/RheelEngine/cmake)
 export(TARGETS RheelEngine FILE RheelEngineConfig.cmake EXPORT_LINK_INTERFACE_LIBRARIES)
-
-add_subdirectory(wowie3)
