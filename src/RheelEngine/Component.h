@@ -90,6 +90,7 @@ private:
 	std::size_t _index{};
 	std::size_t _size{};
 	std::uint16_t _index_in_entity{};
+	ComponentId _id{};
 
 	float _time = 0.0f;
 	float _dt = 1.0f / 60.0f;

@@ -43,7 +43,8 @@ public:
 	Entity& AddEntity(const Transform& transform);
 	Entity& AddChildEntity(Entity* parent, const Transform& transform);
 
-	void EraseEntity(EntityId id);
+	void RemoveEntity(EntityId id);
+	void RemoveEntity(Entity* entity);
 
 	Entity* GetEntity(EntityId id);
 	const Entity* GetEntity(ConstEntityId id) const;
@@ -62,12 +63,13 @@ public:
 
 		// create the component
 		C* component = _components[id].template NewInstance<C>(args...);
-		component->_entity = entity;
-		component->_index_in_entity = static_cast<std::uint16_t>(entity->_components.size());
-		entity->_components.push_back(component);
+		auto* comp = static_cast<Component*>(component);
+		comp->_entity = entity;
+		comp->_index_in_entity = static_cast<std::uint16_t>(entity->_components.size());
+		entity->_components.push_back(comp);
 
 		// activate the component
-		static_cast<Component*>(component)->OnActivate();
+		comp->OnActivate();
 
 		// If the component is an input component, add it to the input
 		// components
@@ -98,7 +100,23 @@ public:
 			std::erase(_input_components, _components[C::id][instance]);
 		}
 
-		auto[entity, index_in_entity] = _components[C::id].template RemoveInstance<C>(_entities, instance);
+		// Delete it, and remove it from the entity
+		auto [entity, index_in_entity] = _components[C::id].template RemoveInstance<C>(_entities, instance);
+		entity->_components.erase(entity->_components.begin() + index_in_entity);
+	}
+
+	void RemoveComponent(Component* component) {
+		// deactivate
+		component->OnDeactivate();
+
+		// If the component is an input component, remove it from the input
+		// components
+		if (auto* input_component = dynamic_cast<InputComponent*>(component)) {
+			std::erase(_input_components, input_component);
+		}
+
+		// Delete it, and remove it from the entity
+		auto [entity, index_in_entity] = _components[component->_id].RemoveInstanceTE(_entities, component->_index, component);
 		entity->_components.erase(entity->_components.begin() + index_in_entity);
 	}
 

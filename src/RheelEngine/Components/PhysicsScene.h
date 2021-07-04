@@ -31,7 +31,7 @@ private:
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 65287;
+	static constexpr const ComponentId id = 65288;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	PhysicsScene() = default;

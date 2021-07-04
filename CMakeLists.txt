@@ -12,12 +12,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Build the sandbox, if required.
 if (BUILD_SANDBOX)
 	add_subdirectory(sandbox)
-endif()
+endif ()
 
 # Add the test, if required
 if (BUILD_TEST)
 	add_subdirectory(test)
-endif()
+endif ()
 
 
 # Set project name
@@ -94,7 +94,9 @@ install(TARGETS RheelEngine
 		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY src/
 		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-		FILES_MATCHING PATTERN "*.h")
+		FILES_MATCHING
+		PATTERN "*.h"
+		PATTERN "*.inc")
 
 install(EXPORT RheelEngineConfig DESTINATION share/RheelEngine/cmake)
 export(TARGETS RheelEngine FILE RheelEngineConfig.cmake EXPORT_LINK_INTERFACE_LIBRARIES)

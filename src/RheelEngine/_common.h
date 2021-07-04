@@ -49,7 +49,7 @@
 
 #define RE_DEFAULT_COPY(X)                \
     X(const X&) = default;                \
-    X& operator=(const X&) = delete
+    X& operator=(const X&) = default
 
 #define RE_DEFAULT_MOVE(X)                \
     X(X&&) noexcept = default;            \

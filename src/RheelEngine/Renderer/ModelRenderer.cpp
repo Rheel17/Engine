@@ -105,6 +105,7 @@ bool ModelRenderer::material_texture_compare::operator()(const Material& mat_1, 
 }
 
 ModelRenderer::ModelRenderer(const Model& model) :
+		_mode(_get_mode(model.GetRenderType())),
 		_vertex_buffer_object(gl::Buffer::Target::ARRAY),
 		_object_data_buffer(gl::Buffer::Target::ARRAY) {
 
@@ -140,14 +141,25 @@ void ModelRenderer::RenderObjects() const {
 	gl::Context::Current().ClearTexture(2, gl::Texture::Target::TEXTURE_2D);
 
 	_object_data_buffer.SetData(_objects, gl::Buffer::Usage::STREAM_DRAW);
-	_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, _objects.size());
+	_vao.DrawElements(_mode, _objects.size());
 
 	for (const auto&[material, objects] : _textured_objects) {
 		material.BindTextures();
 
 		_object_data_buffer.SetData(objects, gl::Buffer::Usage::STREAM_DRAW);
-		_vao.DrawElements(gl::VertexArray::Mode::TRIANGLES, _objects.size());
+		_vao.DrawElements(_mode, _objects.size());
 	}
+}
+
+gl::VertexArray::Mode ModelRenderer::_get_mode(RenderType type) {
+	switch (type) {
+		case RenderType::TRIANGLES:
+			return gl::VertexArray::Mode::TRIANGLES;
+		case RenderType::LINES:
+			return gl::VertexArray::Mode::LINES;
+	}
+
+	return gl::VertexArray::Mode::TRIANGLES;
 }
 
 ModelRenderer::ObjectDataPtr ModelRenderer::_add(ObjectDataVector& objects) {

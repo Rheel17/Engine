@@ -5,6 +5,26 @@
 
 namespace rheel {
 
+Entity& Entity::AddChild(EntityId id, const Transform& t) {
+	auto& child = _registry->AddChildEntity(this, id, t);
+	_children.push_back(&child);
+	return child;
+}
+
+Entity& Entity::AddChild(const Transform& t) {
+	auto& child = _registry->AddChildEntity(this, t);
+	_children.push_back(&child);
+	return child;
+}
+
+void Entity::RemoveChild(Entity* child) {
+	_registry->RemoveEntity(child);
+}
+
+std::span<Entity*> Entity::GetChildren() {
+	return _children;
+}
+
 Transform Entity::AbsoluteTransform() const {
 	if (!_parent) {
 		return transform;
@@ -39,9 +59,9 @@ Entity& Registry::AddEntity(EntityId id, const Transform& transform) {
 }
 
 Entity& Registry::AddChildEntity(Entity* parent, EntityId id, const Transform& transform) {
-	auto [ref, index] = _entities.Add(parent, this, transform);
+	auto [ref, index] = _entities.Add(parent, this, id, transform);
 
-	if (auto[iter, inserted] = _id_to_index_map.try_emplace(id._get_value(), index); !inserted) {
+	if (auto [iter, inserted] = _id_to_index_map.try_emplace(id._get_value(), index); !inserted) {
 		throw std::runtime_error("Duplicate entity id detected (possible hash collision)");
 	}
 
@@ -56,9 +76,27 @@ Entity& Registry::AddChildEntity(Entity* parent, const Transform& transform) {
 	return AddChildEntity(parent, EntityId::_generate(), transform);
 }
 
-void Registry::EraseEntity(EntityId id) {
+void Registry::RemoveEntity(EntityId id) {
 	auto index = _entity_index(id._get_value());
+	auto* entity = _entities[index];
+
+	for (auto* child : entity->_children) {
+		RemoveEntity(child);
+	}
+
+	for (auto* component : entity->_components) {
+		RemoveComponent(component);
+	}
+
+	if (entity->_parent) {
+		std::erase(entity->_parent->_children, entity);
+	}
+
 	_entities.Remove(index);
+}
+
+void Registry::RemoveEntity(Entity* entity) {
+	RemoveEntity(entity->_id);
 }
 
 Entity* Registry::GetEntity(EntityId id) {

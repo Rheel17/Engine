@@ -38,9 +38,13 @@ C& Entity::AddComponent(Args&&... args) {
 }
 
 template<typename C>
-void Entity::RemoveComponent() {
-	auto* instance = GetComponent<C>();
-	_registry->RemoveComponent<C>(instance->_index);
+bool Entity::RemoveComponent() {
+	if (auto* instance = GetComponent<C>()) {
+		_registry->RemoveComponent<C>(instance->_index);
+		return true;
+	}
+
+	return false;
 }
 
 }

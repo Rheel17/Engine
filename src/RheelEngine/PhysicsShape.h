@@ -23,8 +23,8 @@ private:
 	std::shared_ptr<btCollisionShape> _shape;
 
 public:
-	static PhysicsShape Box(const vec3& half_size);
-	static PhysicsShape Box(float half_x, float half_y, float half_z);
+	static PhysicsShape Box(const vec3& size);
+	static PhysicsShape Box(float x, float y, float z);
 	static PhysicsShape Sphere(float radius);
 	static PhysicsShape Capsule(float radius, float straight_height);
 

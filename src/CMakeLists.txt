@@ -32,6 +32,7 @@ target_sources(RheelEngine PRIVATE
         RheelEngine/Assets/Generators/StaticModelGenerator.cpp RheelEngine/Assets/Generators/StaticModelGenerator.h
         RheelEngine/Assets/Generators/StaticModelGeneratorBox.cpp RheelEngine/Assets/Generators/StaticModelGeneratorBox.h
         RheelEngine/Assets/Generators/StaticModelGeneratorCapsule.cpp RheelEngine/Assets/Generators/StaticModelGeneratorCapsule.h
+        RheelEngine/Assets/Generators/StaticModelGeneratorCone.cpp RheelEngine/Assets/Generators/StaticModelGeneratorCone.h
         RheelEngine/Assets/Generators/StaticModelGeneratorSphere.cpp RheelEngine/Assets/Generators/StaticModelGeneratorSphere.h
         RheelEngine/Assets/Loaders/ColladaLoader.cpp RheelEngine/Assets/Loaders/ColladaLoader.h
         RheelEngine/Assets/Loaders/GlslLoader.cpp RheelEngine/Assets/Loaders/GlslLoader.h
@@ -48,6 +49,7 @@ target_sources(RheelEngine PRIVATE
         RheelEngine/Components/AnimatorComponent.cpp RheelEngine/Components/AnimatorComponent.h
         RheelEngine/Components/Camera.cpp RheelEngine/Components/Camera.h
         RheelEngine/Components/CollisionComponent.h
+        RheelEngine/Components/DebugLines.cpp RheelEngine/Components/DebugLines.h
         RheelEngine/Components/DirectionalLight.cpp RheelEngine/Components/DirectionalLight.h
         RheelEngine/Components/EulerController.cpp RheelEngine/Components/EulerController.h
         RheelEngine/Components/InputComponent.cpp RheelEngine/Components/InputComponent.h

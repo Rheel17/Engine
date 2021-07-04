@@ -13,8 +13,9 @@ class RE_API Entity {
 	friend class Registry;
 
 public:
-	Entity(Entity* parent, Registry* registry, const Transform& transform) :
+	Entity(Entity* parent, Registry* registry, EntityId id, const Transform& transform) :
 			transform(transform),
+			_id(id),
 			_parent(parent),
 			_registry(registry) {}
 
@@ -22,6 +23,12 @@ public:
 
 	RE_NO_COPY(Entity);
 	RE_NO_MOVE(Entity);
+
+	Entity& AddChild(EntityId id, const Transform& transform = Transform());
+	Entity& AddChild(const Transform& transform = Transform());
+	void RemoveChild(Entity* child);
+
+	std::span<Entity*> GetChildren();
 
 	template<typename C, typename... Args>
 	C& AddComponent(Args&&... args);
@@ -32,8 +39,9 @@ public:
 	template<ComponentBaseClass C>
 	const C* GetComponent() const;
 
+	// returns true if a component was removed
 	template<typename C>
-	void RemoveComponent();
+	bool RemoveComponent();
 
 	Transform transform;
 	Transform AbsoluteTransform() const;
@@ -45,6 +53,7 @@ public:
 	const Scene& GetScene() const;
 
 private:
+	EntityId _id;
 	Entity* _parent;
 	Registry* _registry;
 
@@ -54,6 +63,7 @@ private:
 // 	llvm::SmallVector<Component*, 4> _components{};
 // #else
 	std::vector<Component*> _components{};
+	std::vector<Entity*> _children{};
 // #endif
 
 };

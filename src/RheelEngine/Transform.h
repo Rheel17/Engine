@@ -61,6 +61,14 @@ public:
 	void Rotate(const quat& rotation);
 
 	/**
+	 * Sets the 'forward' vector. This will be done by re-calculating the
+	 * rotation matrix based on this forward vector.
+	 *
+	 * \param forward The new forward vector.
+	 */
+	void SetForward(vec3 forward);
+
+	/**
 	 * Returns the scale component of this transform.
 	 */
 	const vec3& GetScale() const;
@@ -106,6 +114,14 @@ public:
 	 * With A = this, B = t, computes M = AB as matrix multiplication
 	 */
 	Transform operator*(const Transform& t) const;
+
+	/**
+	 * Transforms the vector according to this transform. A vector has a
+	 * distance and a direction. So, the translation of this transform has no
+	 * effect.
+	 * \return The transformed vector.
+	 */
+	vec3 TransformVector(vec3 v) const;
 
 protected:
 	mat4 CalculateMatrix() const;

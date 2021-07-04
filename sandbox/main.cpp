@@ -22,52 +22,12 @@ private:
 
 };
 
-class CubeSpawner : public Component {
-
-public:
-	static constexpr const ComponentId id = 1;
-
-	void Update() override {
-		if (_num == 0) {
-			return;
-		}
-
-		_t += dt;
-		if (_t > 0.2f) {
-			_spawn();
-			_t -= 0.2f;
-			_num--;
-		}
-	}
-
-private:
-	void _spawn() {
-		static auto box_model = StaticModelGeneratorBox({ 1.0f, 1.0f, 1.0f })();
-		auto& entity = GetEntity().GetScene().AddEntity(Transform(vec3{ 0.0f, 10.0f, 0.0f }, vec3{ 0.5f, 0.5f, 0.5f }));
-		entity.AddComponent<ModelRenderComponent>(box_model, Material({ 0.9f, 0.9f, 0.9f, 1.0f }, 0.7f, 0.2f));
-		entity.AddComponent<RigidBody>(PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }), 1000.0f);
-	}
-
-	float _t = 0.0f;
-	int _num = 1;
-
-};
-
-class Test : public Component {
-
-public:
-	static constexpr const ComponentId id = 2;
-
-};
-
 static void create_cube(Entity& cube, Game& game) {
 	static auto box_model = StaticModelGeneratorBox({ 1.0f, 1.0f, 1.0f })();
 	auto box_shader = game.GetAssetLoader().glsl.Load("Resources/test_shader.glsl");
 
 	cube.AddComponent<ModelRenderComponent>(box_model, Material({ 0.0f, 0.2f, 0.2f, 1.0f }, 0.7f, 0.5f));
-	cube.AddComponent<RigidBody>(PhysicsShape::Box({ 0.5f, 0.5f, 0.5f }));
-	cube.AddComponent<Test>();
-	cube.RemoveComponent<Test>();
+	cube.AddComponent<RigidBody>(PhysicsShape::Box(1.0f, 1.0f, 1.0f));
 
 	CosineInterpolator<float> interpolator_1;
 	interpolator_1.AddPoint(0.0f, 0.2f);
@@ -98,20 +58,19 @@ static void create_ramp(Entity& ramp) {
 	static auto ramp_model = StaticModelGeneratorBox({ 8.0f, 1.0f, 10.0f })();
 
 	ramp.AddComponent<ModelRenderComponent>(ramp_model, Material({ 0.3f, 0.7f, 0.4f, 1.0f }, 0.7f, 0.2f));
-	ramp.AddComponent<RigidBody>(PhysicsShape::Box({ 4.0f, 0.5f, 5.0f }));
+	ramp.AddComponent<RigidBody>(PhysicsShape::Box(8.0f, 1.0f, 10.0f));
 }
 
 static void create_floor(Entity& floor) {
 	static auto floor_model = StaticModelGeneratorBox({ 40.0f, 1.0f, 40.0f })();
 
 	floor.AddComponent<ModelRenderComponent>(floor_model, Material({ 0.6f, 0.7f, 1.0f, 1.0f }, 0.7f, 0.2f));
-	floor.AddComponent<RigidBody>(PhysicsShape::Box({ 20.0f, 0.5f, 20.0f }));
+	floor.AddComponent<RigidBody>(PhysicsShape::Box(40.0f, 1.0f, 40.0f));
 }
 
 static ScenePointer create_scene(Game& game) {
 	auto scene = game.CreateScene();
 	scene->AddRootComponent<FpsUpdater>();
-	scene->AddRootComponent<CubeSpawner>();
 
 	auto& physics_scene = scene->AddRootComponent<PhysicsScene>();
 	physics_scene.SetGravity({ 0.0f, -9.81f, 0.0f });
@@ -143,7 +102,7 @@ class SandboxGame : public Game {
 
 public:
 	SandboxGame() :
-			Game(GetDisplayConfiguration_(), "Sandbox") {}
+			Game(GetDisplayConfiguration(), "Sandbox") {}
 
 	void Start() override {
 		SetActiveScene(create_scene(*this));
@@ -176,7 +135,7 @@ public:
 		GetActiveScene()->GetRootComponent<FpsUpdater>()->SetElement(fps_element);
 	}
 
-	static DisplayConfiguration GetDisplayConfiguration_() {
+	static DisplayConfiguration GetDisplayConfiguration() {
 		DisplayConfiguration config;
 		config.window_mode = DisplayConfiguration::WINDOWED_UNRESIZABLE;
 		config.shadow_quality = DisplayConfiguration::SHADOW_HIGH;
@@ -188,5 +147,3 @@ public:
 };
 
 RHEEL_ENGINE_ENTRY(SandboxGame)
-
-static_assert(rheel::ComponentWithFlag<ModelRenderComponent, rheel::ComponentFlags::BUILTIN>);

@@ -77,6 +77,36 @@ public:
 		return { entity, index_in_entity };
 	}
 
+	// Type-erased version of RemoveInstance.
+	// Returned: (entity pointer, index of component in entity's component list)
+	std::pair<Entity*, std::uint16_t> RemoveInstanceTE(const EntityStorage<Entity>& entities, std::size_t index, Component* component) {
+		auto c_storage = [this, size = component->_size](std::size_t index) -> Component& {
+			return *reinterpret_cast<Component*>(static_cast<char*>(_storage) + size * index);
+		};
+
+		auto* entity = component->_entity;
+		auto index_in_entity = component->_index_in_entity;
+
+		// find references to the to-be-swapped components
+		auto** ptr_1 = _component_pp(entity, index_in_entity);
+		auto** ptr_2 = _component_pp(entity, c_storage(_size - 1)._index_in_entity);
+
+		// swap last and the to-remove index
+		Component* tmp = *ptr_1;
+		*ptr_1 = *ptr_2;
+		*ptr_2 = tmp;
+
+		std::swap(c_storage(index), c_storage(_size - 1));
+		c_storage(index)._index = index;
+
+		// element is now at last index, delete it
+		_size--;
+		auto& ref = c_storage(_size);
+		ref.~Component();
+
+		return { entity, index_in_entity };
+	}
+
 	Component& operator[](std::size_t idx);
 	const Component& operator[](std::size_t idx) const;
 
@@ -114,13 +144,14 @@ private:
 
 		// move containers to new storage
 		for (std::size_t i = 0; i < _size; i++) {
-			auto* entity = old_c_storage[i]._entity;
-			auto index_in_entity = old_c_storage[i]._index_in_entity;
+			auto* comp = static_cast<Component*>(old_c_storage + i);
+			auto* entity = comp->_entity;
+			auto index_in_entity = comp->_index_in_entity;
 
 			new(new_c_storage + i) C(std::move(old_c_storage[i]));
 			old_c_storage[i].~C();
 
-			entity->_components[index_in_entity] = new_c_storage + i;
+			_entity_set_component_p(entity, index_in_entity, new_c_storage + i);
 		}
 
 		// free old storage and finish
@@ -129,6 +160,7 @@ private:
 	}
 
 	Component** _component_pp(Entity* entity, std::size_t index_in_entity);
+	void _entity_set_component_p(Entity* entity, std::size_t idx, Component* component_p);
 
 	void* _storage = nullptr;
 	std::size_t _byte_capacity = 0;

@@ -73,6 +73,24 @@ void Transform::Rotate(const quat& rotation) {
 	SetRotation(rotation * _rotation);
 }
 
+void Transform::SetForward(vec3 forward) {
+	forward = glm::normalize(forward);
+
+	// nudge slightly, to avoid the singularity
+	if (std::abs(forward.y - 1.0f) < 0.001f) {
+		forward.x = 0.001f;
+	}
+
+	vec3 right = glm::normalize(vec3{ -forward.z, 0.0f, forward.x });
+	vec3 up = glm::cross(right, forward);
+
+	mat3 matrix;
+	matrix[0] = right;
+	matrix[1] = up;
+	matrix[2] = -forward;
+	SetRotation(glm::quat_cast(matrix));
+}
+
 const vec3& Transform::GetScale() const {
 	return _scale;
 }
@@ -111,6 +129,10 @@ vec3 Transform::RightVector() const {
 
 Transform Transform::operator*(const Transform& t) const {
 	return Transform(AsMatrix() * t.AsMatrix());
+}
+
+vec3 Transform::TransformVector(vec3 v) const {
+	return _scale * _rotation * v;
 }
 
 mat4 Transform::CalculateMatrix() const {

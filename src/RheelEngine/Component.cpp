@@ -9,13 +9,15 @@ Component::Component(Component&& c) noexcept :
 		_entity(c._entity),
 		_index(c._index),
 		_size(c._size),
-		_index_in_entity(c._index_in_entity) {}
+		_index_in_entity(c._index_in_entity),
+		_id(c._id) {}
 
 Component& Component::operator=(Component&& c) noexcept {
 	_entity = c._entity;
 	_index = c._index;
 	_size = c._size;
 	_index_in_entity = c._index_in_entity;
+	_id = c._id;
 	return *this;
 }
 

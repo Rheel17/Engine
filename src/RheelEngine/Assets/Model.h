@@ -9,24 +9,30 @@
 
 namespace rheel {
 
-struct RE_API model_vertex {
+enum class RenderType {
+	TRIANGLES, LINES
+};
+
+struct model_vertex {
 	vec3 position;
 	vec3 normal;
 	vec2 texture;
 };
 
-struct RE_API model_data {
+struct model_data {
 	std::vector<model_vertex> vertices;
 	std::vector<unsigned> indices;
+	RenderType render_type;
 };
 
 class RE_API Model : public Asset<model_data> {
 
 public:
-	Model(std::vector<model_vertex> vertices, std::vector<unsigned> indices);
+	Model(std::vector<model_vertex> vertices, std::vector<unsigned> indices, RenderType render_type = RenderType::TRIANGLES);
 
 	const std::vector<model_vertex>& GetVertices() const;
 	const std::vector<unsigned>& GetIndices() const;
+	RenderType GetRenderType() const;
 
 };
 

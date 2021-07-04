@@ -91,9 +91,11 @@ public:
 	void RenderObjects() const;
 
 private:
+	static gl::VertexArray::Mode _get_mode(RenderType type);
 	static ObjectDataPtr _add(ObjectDataVector& objects);
 	static void _remove(ObjectDataVector& objects, ObjectDataPtr&& data);
 
+	gl::VertexArray::Mode _mode;
 	gl::VertexArray _vao;
 	gl::Buffer _vertex_buffer_object;
 	mutable gl::Buffer _object_data_buffer;

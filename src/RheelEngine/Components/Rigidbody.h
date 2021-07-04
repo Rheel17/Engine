@@ -18,7 +18,7 @@ class RE_API RigidBody : public Component {
 
 public:
 	// gen_component_id
-	static constexpr const ComponentId id = 65289;
+	static constexpr const ComponentId id = 65290;
 	static constexpr const ComponentFlags flags = ComponentFlags::BUILTIN;
 
 	explicit RigidBody(PhysicsShape shape, float mass = 0.0f, float bounciness = 0.5f);

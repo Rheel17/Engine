@@ -16,12 +16,12 @@ btCollisionShape* PhysicsShape::_pointer() const {
 	return _shape.get();
 }
 
-PhysicsShape PhysicsShape::Box(const vec3& half_size) {
-	return PhysicsShape(new btBoxShape({ half_size.x, half_size.y, half_size.z }));
+PhysicsShape PhysicsShape::Box(const vec3& size) {
+	return Box(size.x, size.y, size.z);
 }
 
-PhysicsShape PhysicsShape::Box(float half_x, float half_y, float half_z) {
-	return PhysicsShape(new btBoxShape({ half_x, half_y, half_z }));
+PhysicsShape PhysicsShape::Box(float x, float y, float z) {
+	return PhysicsShape(new btBoxShape({ x * 0.5f, y * 0.5f, z * 0.5f }));
 }
 
 PhysicsShape PhysicsShape::Sphere(float radius) {

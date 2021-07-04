@@ -63,4 +63,8 @@ Component** ComponentStorage::_component_pp(Entity* entity, std::size_t index_in
 	return &(entity->_components[index_in_entity]);
 }
 
+void ComponentStorage::_entity_set_component_p(Entity* entity, std::size_t idx, Component* component_p) {
+	entity->_components[idx] = component_p;
+}
+
 }

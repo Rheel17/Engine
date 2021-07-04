@@ -30,7 +30,7 @@ Entity& Scene::AddEntity(const Transform& transform) {
 }
 
 void Scene::RemoveEntity(EntityId entity) {
-	_registry.EraseEntity(entity);
+	_registry.RemoveEntity(entity);
 }
 
 void Scene::Update(float time, float dt) {
