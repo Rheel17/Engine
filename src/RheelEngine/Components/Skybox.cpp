@@ -9,11 +9,11 @@ Skybox::Skybox(std::array<Image, 6> images, float scale) :
 		_images(std::move(images)),
 		_scale(scale) {
 
-	auto width = images[0].GetWidth();
-	auto height = images[0].GetHeight();
+	auto width = _images[0].GetWidth();
+	auto height = _images[0].GetHeight();
 
 	for (size_t i = 1; i < 6; i++) {
-		if (images[0].GetWidth() != width || images[0].GetHeight() != height) {
+		if (_images[i].GetWidth() != width || _images[i].GetHeight() != height) {
 			Log::Error() << "Skybox image dimensions must match" << std::endl;
 			abort();
 		}
